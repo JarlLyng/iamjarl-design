@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>IAMJARL Design System</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 24px; }
+    header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 24px; }
+    .pill { padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(0,0,0,.12); font-size: 12px; }
+    h2 { margin-top: 32px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .card { border: 1px solid rgba(0,0,0,.12); border-radius: 12px; padding: 12px; }
+    .swatch { height: 56px; border-radius: 12px; border: 1px solid rgba(0,0,0,.10); }
+    .row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; margin-top: 8px; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+    button { border: 1px solid rgba(0,0,0,.18); border-radius: 10px; padding: 6px 10px; background: white; cursor: pointer; }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 720px) { .two { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 style="margin:0;">IAMJARL Design System</h1>
+    <span class="pill" id="version">v?</span>
+    <button id="reload">Reload tokens</button>
+  </header>
+
+  <p>Human-friendly viewer for <code>tokens.json</code>. Edit tokens once, reuse everywhere.</p>
+
+  <div class="two">
+    <section>
+      <h2>Light mode</h2>
+      <div id="light" class="grid"></div>
+    </section>
+    <section>
+      <h2>Dark mode</h2>
+      <div id="dark" class="grid"></div>
+    </section>
+  </div>
+
+  <section>
+    <h2>Shared state colors</h2>
+    <div id="shared" class="grid"></div>
+  </section>
+
+  <section>
+    <h2>Typography</h2>
+    <div id="type" class="card"></div>
+  </section>
+
+  <script>
+    async function loadTokens() {
+      const res = await fetch('./tokens.json', { cache: 'no-store' });
+      if (!res.ok) throw new Error('Could not load tokens.json');
+      return await res.json();
+    }
+
+    function swatchCard(name, value) {
+      const el = document.createElement('div');
+      el.className = 'card';
+      const sw = document.createElement('div');
+      sw.className = 'swatch';
+      sw.style.background = value;
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      const left = document.createElement('div');
+      left.innerHTML = `<strong>${name}</strong><br/><code>${value}</code>`;
+
+      const btn = document.createElement('button');
+      btn.textContent = 'Copy';
+      btn.onclick = async () => {
+        await navigator.clipboard.writeText(value);
+        btn.textContent = 'Copied';
+        setTimeout(() => (btn.textContent = 'Copy'), 800);
+      };
+
+      row.appendChild(left);
+      row.appendChild(btn);
+      el.appendChild(sw);
+      el.appendChild(row);
+      return el;
+    }
+
+    function renderMode(container, modeObj) {
+      container.innerHTML = '';
+      // Pick key swatches that matter most
+      const items = [
+        ['Primary', modeObj.primary],
+        ['Background / App', modeObj.background.app],
+        ['Background / Muted', modeObj.background.muted],
+        ['Background / Card', modeObj.background.card],
+        ['Text / Primary', modeObj.text.primary],
+        ['Text / Secondary', modeObj.text.secondary],
+        ['Border / Subtle', modeObj.border.subtle]
+      ];
+      items.forEach(([k,v]) => container.appendChild(swatchCard(k, v)));
+    }
+
+    function renderShared(container, sharedObj) {
+      container.innerHTML = '';
+      Object.entries(sharedObj).forEach(([k,v]) => {
+        container.appendChild(swatchCard(k, v));
+      });
+    }
+
+    function renderType(container, t) {
+      container.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div><strong>UI font:</strong> <code>${t.family.ui}</code></div>
+          <div><strong>Mono:</strong> <code>${t.family.mono}</code></div>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <span class="pill">weights: ${Object.values(t.weights).join(', ')}</span>
+            <span class="pill">sizes: ${Object.entries(t.sizes).map(([k,v])=>`${k}:${v}`).join(' | ')}</span>
+          </div>
+          <div style="margin-top:8px;">
+            <div style="font-size:${t.sizes.xxl}px; line-height:${t.lineHeights.xxl}px; font-weight:${t.weights.bold};">Then the Letting Go</div>
+            <div style="font-size:${t.sizes.xl}px; line-height:${t.lineHeights.relaxed}px; font-weight:${t.weights.semibold}; margin-top:6px;">A calm, minimal UI with a neon accent.</div>
+            <div style="font-size:${t.sizes.base}px; line-height:${t.lineHeights.normal}px; font-weight:${t.weights.regular}; margin-top:8px;">
+              Body text should be readable, neutral, and consistent across products.
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function main() {
+      const tokens = await loadTokens();
+      document.getElementById('version').textContent = `v${tokens.meta.version}`;
+
+      const light = tokens.tokens.colors.modes.light;
+      const dark  = tokens.tokens.colors.modes.dark;
+      const shared = tokens.tokens.colors.shared;
+      const type = tokens.brand.typography;
+
+      renderMode(document.getElementById('light'), light);
+      renderMode(document.getElementById('dark'), dark);
+      renderShared(document.getElementById('shared'), shared);
+      renderType(document.getElementById('type'), type);
+    }
+
+    document.getElementById('reload').onclick = () => main().catch(console.error);
+    main().catch(console.error);
+  </script>
+</body>
+</html>

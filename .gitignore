@@ -1,0 +1,24 @@
+# OS
+.DS_Store
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local env files (if added later)
+.env
+.env.local
+
+# Build output (if site ever gets a build step)
+dist/
+build/
+
+# Temporary files
+*.tmp
+*.bak
