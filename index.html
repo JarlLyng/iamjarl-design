@@ -16,6 +16,9 @@
     code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
     button { border: 1px solid rgba(0,0,0,.18); border-radius: 10px; padding: 6px 10px; background: white; cursor: pointer; }
     .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .small { font-size: 13px; line-height: 1.4; }
+    .muted { opacity: 0.75; }
+    .list { margin: 8px 0 0 18px; }
     @media (max-width: 720px) { .two { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -26,7 +29,10 @@
     <button id="reload">Reload tokens</button>
   </header>
 
-  <p>Human-friendly viewer for <code>tokens.json</code>. Edit tokens once, reuse everywhere.</p>
+  <p class="small">Human-friendly viewer for <code>tokens.json</code>. Edit tokens once, reuse everywhere.</p>
+  <p class="small muted">
+    SwiftUI template: <code>templates/swiftui/DesignTokens.swift</code> · Icons: Phosphor
+  </p>
 
   <div class="two">
     <section>
@@ -47,6 +53,11 @@
   <section>
     <h2>Typography</h2>
     <div id="type" class="card"></div>
+  </section>
+
+  <section>
+    <h2>Icons</h2>
+    <div id="icons" class="card"></div>
   </section>
 
   <script>
@@ -81,6 +92,19 @@
       el.appendChild(sw);
       el.appendChild(row);
       return el;
+    }
+
+    function attachCopyHandlers(root) {
+      const buttons = root.querySelectorAll('button[data-copy]');
+      buttons.forEach((btn) => {
+        btn.onclick = async () => {
+          const value = btn.getAttribute('data-copy') || '';
+          await navigator.clipboard.writeText(value);
+          const prev = btn.textContent;
+          btn.textContent = 'Copied';
+          setTimeout(() => (btn.textContent = prev || 'Copy'), 800);
+        };
+      });
     }
 
     function renderMode(container, modeObj) {
@@ -125,6 +149,49 @@
       `;
     }
 
+    function renderIcons(container, icons) {
+      const allowedWeights = icons.weightsAllowed.join(', ');
+      const defaultSizes = icons.defaultSizes.join(', ');
+
+      container.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:10px;">
+
+          <div class="row">
+            <div><strong>Library:</strong> <code>${icons.library}</code></div>
+            <button data-copy="${icons.library}">Copy</button>
+          </div>
+
+          <div class="row">
+            <div><strong>Default weight:</strong> <code>${icons.defaultWeight}</code></div>
+            <button data-copy="${icons.defaultWeight}">Copy</button>
+          </div>
+
+          <div class="row">
+            <div><strong>Allowed weights:</strong> <code>${allowedWeights}</code></div>
+            <button data-copy="${allowedWeights}">Copy</button>
+          </div>
+
+          <div class="row">
+            <div><strong>Default sizes:</strong> <code>${defaultSizes}</code></div>
+            <button data-copy="${defaultSizes}">Copy</button>
+          </div>
+
+          <div>
+            <strong>Usage rules</strong>
+            <ul class="list">
+              <li>Use <code>regular</code> for core UI by default.</li>
+              <li>Use <code>duotone</code> only for highlights/illustrations, not core navigation.</li>
+              <li>Avoid mixing icon weights within the same screen.</li>
+              <li>Default icon color is <code>text.primary</code>; use <code>primary</code> for active/emphasis; use <code>error</code> for destructive.</li>
+            </ul>
+          </div>
+
+        </div>
+      `;
+
+      attachCopyHandlers(container);
+    }
+
     async function main() {
       const tokens = await loadTokens();
       document.getElementById('version').textContent = `v${tokens.meta.version}`;
@@ -133,11 +200,13 @@
       const dark  = tokens.tokens.colors.modes.dark;
       const shared = tokens.tokens.colors.shared;
       const type = tokens.brand.typography;
+      const icons = tokens.brand.icons;
 
       renderMode(document.getElementById('light'), light);
       renderMode(document.getElementById('dark'), dark);
       renderShared(document.getElementById('shared'), shared);
       renderType(document.getElementById('type'), type);
+      renderIcons(document.getElementById('icons'), icons);
     }
 
     document.getElementById('reload').onclick = () => main().catch(console.error);

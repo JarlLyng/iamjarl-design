@@ -25,10 +25,29 @@ Use together with `tokens.json` (single source of truth).
 - Prefer semibold for headings, regular for body.
 
 ### Icons (Phosphor)
-- Icon set: Phosphor
-- Default weight: regular
-- Default sizes: 20 or 24
-- Use icons as meaning, not decoration.
+- Icon set: **Phosphor**
+- Default icon weight: **regular**
+- Allowed weights: thin, light, regular, bold, fill, duotone
+
+#### Usage rules
+- Use **regular** weight for all core UI by default.
+- Use **duotone** only for highlights, illustrations, or special emphasis — never for core navigation or standard actions.
+- Avoid mixing different icon weights within the same screen or component.
+
+#### Sizes
+- **20** → inline actions (toolbars, list rows, secondary actions)
+- **24** → primary actions, navigation, empty states
+
+#### Color
+- Icons should be single-color.
+- Default icon color:
+  - Use `text.primary` from the current color mode.
+- Active or emphasized icons:
+  - May use `primary`.
+- Destructive actions:
+  - Use `error`.
+
+Icons should communicate meaning, not decoration. If an icon does not add clarity, omit it.
 
 ## Rules (non-negotiable)
 1. **Do not hardcode colors**.
