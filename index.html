@@ -112,11 +112,13 @@
       // Pick key swatches that matter most
       const items = [
         ['Primary', modeObj.primary],
+        ['On Primary', modeObj.onPrimary],
         ['Background / App', modeObj.background.app],
         ['Background / Muted', modeObj.background.muted],
         ['Background / Card', modeObj.background.card],
         ['Text / Primary', modeObj.text.primary],
         ['Text / Secondary', modeObj.text.secondary],
+        ['Text / Tertiary', modeObj.text.tertiary],
         ['Border / Subtle', modeObj.border.subtle]
       ];
       items.forEach(([k,v]) => container.appendChild(swatchCard(k, v)));
