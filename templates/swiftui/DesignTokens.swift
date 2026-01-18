@@ -71,13 +71,19 @@ public enum DesignTokens {
     // Shared state colors
     public enum State {
       public static let success = Color(hex: "#4CAF50")
+      public static let onSuccess = Color(hex: "#FFFFFF")
+
       public static let warning = Color(hex: "#FF6B35")
+      public static let onWarning = Color(hex: "#000000")
+
       public static let error = Color(hex: "#FF3B30")
+      public static let onError = Color(hex: "#FFFFFF")
     }
 
     // Mode-aware colors (Light/Dark)
     public enum Light {
       public static let primary = Color(hex: "#00FF7B")
+      public static let onPrimary = Color(hex: "#000000")
 
       public enum Text {
         public static let primary = Color(hex: "#000000")
@@ -105,6 +111,7 @@ public enum DesignTokens {
 
     public enum Dark {
       public static let primary = Color(hex: "#D0FF00")
+      public static let onPrimary = Color(hex: "#000000")
 
       public enum Text {
         public static let primary = Color(hex: "#FFFFFF")
@@ -145,6 +152,15 @@ public enum DesignTokens {
 
   /// Convenient accessors for common colors without nesting.
   public enum Common {
+    public enum OnPrimary {
+      public static func text(_ scheme: ColorScheme) -> Color {
+        DesignTokens.color(
+          light: ColorToken.Light.onPrimary,
+          dark: ColorToken.Dark.onPrimary,
+          scheme: scheme
+        )
+      }
+    }
     public static func primary(_ scheme: ColorScheme) -> Color {
       DesignTokens.color(light: ColorToken.Light.primary, dark: ColorToken.Dark.primary, scheme: scheme)
     }
@@ -256,7 +272,7 @@ struct TokenPreview: View {
         .padding(.horizontal, DesignTokens.Spacing.xl)
         .padding(.vertical, DesignTokens.Spacing.md)
         .background(DesignTokens.Common.primary(scheme))
-        .foregroundStyle(DesignTokens.Common.Text.inverse(scheme))
+        .foregroundStyle(DesignTokens.Common.OnPrimary.text(scheme))
         .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
 
       RoundedRectangle(cornerRadius: DesignTokens.Radius.lg)

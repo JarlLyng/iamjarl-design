@@ -32,6 +32,7 @@ Rules:
 - Do NOT invent new colors, spacing, radius or typography values.
 - Always support light + dark mode using the tokens.
 - Use Phosphor icons and follow the icon rules in design.md.
+- For colored backgrounds, always use semantic on-colors (onPrimary, onSuccess, onWarning, onError) to ensure sufficient contrast.
 
 Task:
 1) Read tokens.json and design.md.

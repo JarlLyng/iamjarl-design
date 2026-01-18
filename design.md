@@ -1,4 +1,4 @@
-# IAMJARL Design System (v0.1)
+# IAMJARL Design System (v0.1.1)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -18,6 +18,15 @@ Use together with `tokens.json` (single source of truth).
   - Success: #4CAF50
   - Error:   #FF3B30
   - Warning: #FF6B35
+
+#### Semantic usage
+- `primary` is an accent color and must always be paired with a semantic on-color.
+- Never guess text color on top of colored backgrounds.
+- Use the following rules:
+  - `primary` → use `onPrimary` for text and icons
+  - `success` → use `onSuccess`
+  - `warning` → use `onWarning`
+  - `error` → use `onError`
 
 ### Typography
 - Default UI font: system-ui (platform native)
@@ -61,6 +70,13 @@ Icons should communicate meaning, not decoration. If an icon does not add clarit
 5. **Keep corner radius consistent**.
    - Use radius tokens (sm/md/lg).
 
+6. **Always use semantic on-colors for contrast**.
+   - Never place `text.primary` or `text.inverse` directly on `primary`, `success`, `warning`, or `error`.
+   - Always use the matching `on*` token.
+7. **If contrast is uncertain, default to maximum contrast**.
+   - Black text on bright colors.
+   - White text on dark colors.
+
 ## Implementation Guidance
 
 ### Token mapping
@@ -72,9 +88,29 @@ Icons should communicate meaning, not decoration. If an icon does not add clarit
 
 ### Accessibility
 - Primary must not be used for long text paragraphs.
-- For text on primary backgrounds, use:
-  - light mode: text.inverse (#FFFFFF) if needed
-  - dark mode:  text.inverse (#000000) if needed
+- All text/background combinations must meet WCAG 2.1 AA contrast:
+  - 4.5:1 for normal text
+  - 3:1 for large text (≥ 18pt regular / 14pt bold)
+- For text or icons on colored backgrounds:
+  - Always use semantic on-colors (`onPrimary`, `onSuccess`, `onWarning`, `onError`).
+  - Never guess or invert colors manually.
+
+### UI Recipes (Canonical)
+
+#### Primary Button
+- Background: `primary`
+- Text / Icon: `onPrimary`
+- Radius: `radius.md`
+- Padding: `spacing.md` (vertical) / `spacing.xl` (horizontal)
+
+#### Secondary Button
+- Background: `background.card`
+- Border: `border.subtle`
+- Text / Icon: `text.primary`
+
+#### Destructive Button
+- Background: `error`
+- Text / Icon: `onError`
 
 ## Cursor usage
 When starting a new project:
