@@ -1,0 +1,41 @@
+name: Build Tokens
+
+on:
+  push:
+    paths: ['tokens.json']
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate tokens
+        run: node scripts/validate.js
+
+      - name: Build platform files
+        run: node scripts/build.js
+
+      - name: Commit generated files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Sources/ dist/
+          git diff --cached --quiet || git commit -m "chore: regenerate platform tokens from tokens.json"
+          git push
+
+      - name: Tag version if bumped
+        run: |
+          VERSION=$(node -e "console.log(require('./tokens.json').meta.version)")
+          if ! git tag | grep -q "^v${VERSION}$"; then
+            git tag "v${VERSION}"
+            git push origin "v${VERSION}"
+            echo "Tagged v${VERSION}"
+          else
+            echo "Tag v${VERSION} already exists, skipping"
+          fi

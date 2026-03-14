@@ -114,9 +114,8 @@ Icons should communicate meaning, not decoration. If an icon does not add clarit
 
 ## Cursor usage
 When starting a new project:
-- Read `tokens.json` and implement design tokens in the project.
-- Create a local file like:
-  - iOS/macOS (SwiftUI): `DesignTokens.swift`
-  - React Native: `src/constants/design.ts`
-  - Web: `tokens.css` or `tailwind.config.js` mapping
+- **SwiftUI**: Add the SPM package (`https://github.com/jarllyng/iamjarl-design.git`) and `import IAMJARLDesignTokens`.
+- **React web**: `npm install github:jarllyng/iamjarl-design`, then import from `@iamjarl/design-tokens` (TS) or `@iamjarl/design-tokens/css` (CSS).
+- **Expo / React Native**: Same npm install, import the TS module.
+- If package installation is not possible, read `tokens.json` and create local token mappings.
 - Never invent new colors unless the design system is updated first.

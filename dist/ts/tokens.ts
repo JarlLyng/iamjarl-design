@@ -1,0 +1,111 @@
+// IAMJARL Design Tokens v0.1.1 — generated, do not edit
+
+export const meta = {"name":"IAMJARL Design System","version":"0.1.1"} as const;
+
+export const spacing = {"xs":4,"sm":8,"md":12,"lg":16,"xl":20,"xxl":24,"xxxl":32} as const;
+
+export const radius = {"sm":8,"md":12,"lg":16} as const;
+
+export const typography = {
+  "family": {
+    "ui": "system-ui",
+    "mono": "ui-monospace"
+  },
+  "weights": {
+    "regular": 400,
+    "semibold": 600,
+    "bold": 700
+  },
+  "sizes": {
+    "xs": 12,
+    "sm": 14,
+    "base": 16,
+    "lg": 18,
+    "xl": 24,
+    "xxl": 36
+  },
+  "lineHeights": {
+    "tight": 20,
+    "normal": 24,
+    "relaxed": 28,
+    "xxl": 43.2,
+    "sm": 18
+  }
+} as const;
+
+export const icons = {
+  "library": "phosphor",
+  "defaultWeight": "regular",
+  "weightsAllowed": [
+    "thin",
+    "light",
+    "regular",
+    "bold",
+    "fill",
+    "duotone"
+  ],
+  "defaultSizes": [
+    16,
+    20,
+    24,
+    28
+  ]
+} as const;
+
+export const colors = {
+  static: {"black":"#000000","white":"#FFFFFF"},
+  shared: {"success":"#4CAF50","onSuccess":"#FFFFFF","warning":"#FF6B35","onWarning":"#000000","error":"#FF3B30","onError":"#FFFFFF"},
+  light: {
+      "primary": "#00FF7B",
+      "onPrimary": "#000000",
+      "text": {
+          "primary": "#000000",
+          "secondary": "rgba(0, 0, 0, 0.70)",
+          "tertiary": "rgba(0, 0, 0, 0.55)",
+          "inverse": "#FFFFFF"
+      },
+      "background": {
+          "app": "#FFFFFF",
+          "muted": "rgba(0, 0, 0, 0.04)",
+          "card": "rgba(0, 0, 0, 0.04)"
+      },
+      "surface": {
+          "default": "#FFFFFF",
+          "raised": "rgba(0, 0, 0, 0.02)"
+      },
+      "border": {
+          "subtle": "rgba(0, 0, 0, 0.10)",
+          "default": "rgba(0, 0, 0, 0.16)"
+      }
+  },
+  dark: {
+      "primary": "#D0FF00",
+      "onPrimary": "#000000",
+      "text": {
+          "primary": "#FFFFFF",
+          "secondary": "rgba(255, 255, 255, 0.75)",
+          "tertiary": "rgba(255, 255, 255, 0.60)",
+          "inverse": "#000000"
+      },
+      "background": {
+          "app": "#000000",
+          "muted": "rgba(255, 255, 255, 0.05)",
+          "card": "rgba(255, 255, 255, 0.05)"
+      },
+      "surface": {
+          "default": "#000000",
+          "raised": "rgba(255, 255, 255, 0.03)"
+      },
+      "border": {
+          "subtle": "rgba(255, 255, 255, 0.12)",
+          "default": "rgba(255, 255, 255, 0.18)"
+      }
+  },
+} as const;
+
+export type ColorMode = "light" | "dark";
+
+/** Get mode-aware colors */
+export function modeColors(mode: ColorMode) {
+  return colors[mode];
+}

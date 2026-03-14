@@ -2,11 +2,10 @@ import SwiftUI
 
 // MARK: - IAMJARL Design Tokens (SwiftUI)
 //
-// This file is generated/mapped from `tokens.json` in the iamjarl-design repo.
-// Treat it as a local copy inside each app. When tokens change, regenerate or
-// overwrite this file using Cursor with links to `tokens.json` and `design.md`.
+// Auto-generated from tokens.json v0.1.1 — do not edit manually.
+// Run: node scripts/build.js
 //
-// Design DNA (Beef-first):
+// Design DNA:
 // - Neon primary (light: #00FF7B, dark: #D0FF00)
 // - Subtle translucent surfaces
 // - Consistent state colors (success/warning/error)
@@ -50,8 +49,8 @@ public enum DesignTokens {
       public static let tight: CGFloat = 20
       public static let normal: CGFloat = 24
       public static let relaxed: CGFloat = 28
-      public static let sm: CGFloat = 18
       public static let xxl: CGFloat = 43.2
+      public static let sm: CGFloat = 18
     }
 
     public enum Weight {
@@ -80,7 +79,7 @@ public enum DesignTokens {
       public static let onError = Color(hex: "#FFFFFF")
     }
 
-    // Mode-aware colors (Light/Dark)
+    // Mode-aware colors (Light)
     public enum Light {
       public static let primary = Color(hex: "#00FF7B")
       public static let onPrimary = Color(hex: "#000000")
@@ -109,6 +108,7 @@ public enum DesignTokens {
       }
     }
 
+    // Mode-aware colors (Dark)
     public enum Dark {
       public static let primary = Color(hex: "#D0FF00")
       public static let onPrimary = Color(hex: "#000000")
@@ -251,40 +251,3 @@ public extension Color {
     self.init(.sRGB, red: r / 255.0, green: g / 255.0, blue: b / 255.0, opacity: a)
   }
 }
-
-// MARK: - Example Usage (remove in apps if you prefer)
-
-/*
-struct TokenPreview: View {
-  @Environment(\.colorScheme) private var scheme
-
-  var body: some View {
-    VStack(alignment: .leading, spacing: DesignTokens.Spacing.lg) {
-      Text("IAMJARL Tokens")
-        .font(.system(size: DesignTokens.Typography.Size.xl, weight: DesignTokens.Typography.Weight.bold))
-        .foregroundStyle(DesignTokens.Common.Text.primary(scheme))
-
-      Text("Beef-first neon accent")
-        .font(.system(size: DesignTokens.Typography.Size.base, weight: DesignTokens.Typography.Weight.regular))
-        .foregroundStyle(DesignTokens.Common.Text.secondary(scheme))
-
-      Button("CTA") {}
-        .padding(.horizontal, DesignTokens.Spacing.xl)
-        .padding(.vertical, DesignTokens.Spacing.md)
-        .background(DesignTokens.Common.primary(scheme))
-        .foregroundStyle(DesignTokens.Common.OnPrimary.text(scheme))
-        .clipShape(RoundedRectangle(cornerRadius: DesignTokens.Radius.md))
-
-      RoundedRectangle(cornerRadius: DesignTokens.Radius.lg)
-        .fill(DesignTokens.Common.Background.card(scheme))
-        .frame(height: 56)
-        .overlay(
-          RoundedRectangle(cornerRadius: DesignTokens.Radius.lg)
-            .stroke(DesignTokens.Common.Border.subtle(scheme), lineWidth: 1)
-        )
-    }
-    .padding(DesignTokens.Spacing.xl)
-    .background(DesignTokens.Common.Background.app(scheme))
-  }
-}
-*/

@@ -1,0 +1,116 @@
+/* IAMJARL Design Tokens v0.1.1 — generated, do not edit */
+
+:root {
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 20px;
+  --spacing-xxl: 24px;
+  --spacing-xxxl: 32px;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  /* Typography */
+  --font-ui: system-ui;
+  --font-mono: ui-monospace;
+
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-xxl: 36px;
+
+  --line-height-tight: 20px;
+  --line-height-normal: 24px;
+  --line-height-relaxed: 28px;
+  --line-height-xxl: 43.2px;
+  --line-height-sm: 18px;
+
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Static colors */
+  --color-black: #000000;
+  --color-white: #FFFFFF;
+
+  /* Shared state colors */
+  --color-success: #4CAF50;
+  --color-on-success: #FFFFFF;
+  --color-warning: #FF6B35;
+  --color-on-warning: #000000;
+  --color-error: #FF3B30;
+  --color-on-error: #FFFFFF;
+
+  /* Mode colors (light default) */
+  --color-primary: #00FF7B;
+  --color-on-primary: #000000;
+  --color-text-primary: #000000;
+  --color-text-secondary: rgba(0, 0, 0, 0.70);
+  --color-text-tertiary: rgba(0, 0, 0, 0.55);
+  --color-text-inverse: #FFFFFF;
+  --color-bg-app: #FFFFFF;
+  --color-bg-muted: rgba(0, 0, 0, 0.04);
+  --color-bg-card: rgba(0, 0, 0, 0.04);
+  --color-surface-default: #FFFFFF;
+  --color-surface-raised: rgba(0, 0, 0, 0.02);
+  --color-border-subtle: rgba(0, 0, 0, 0.10);
+  --color-border-default: rgba(0, 0, 0, 0.16);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-primary: #D0FF00;
+    --color-on-primary: #000000;
+    --color-text-primary: #FFFFFF;
+    --color-text-secondary: rgba(255, 255, 255, 0.75);
+    --color-text-tertiary: rgba(255, 255, 255, 0.60);
+    --color-text-inverse: #000000;
+    --color-bg-app: #000000;
+    --color-bg-muted: rgba(255, 255, 255, 0.05);
+    --color-bg-card: rgba(255, 255, 255, 0.05);
+    --color-surface-default: #000000;
+    --color-surface-raised: rgba(255, 255, 255, 0.03);
+    --color-border-subtle: rgba(255, 255, 255, 0.12);
+    --color-border-default: rgba(255, 255, 255, 0.18);
+  }
+}
+
+/* Explicit class overrides for manual mode switching */
+.light {
+  --color-primary: #00FF7B;
+  --color-on-primary: #000000;
+  --color-text-primary: #000000;
+  --color-text-secondary: rgba(0, 0, 0, 0.70);
+  --color-text-tertiary: rgba(0, 0, 0, 0.55);
+  --color-text-inverse: #FFFFFF;
+  --color-bg-app: #FFFFFF;
+  --color-bg-muted: rgba(0, 0, 0, 0.04);
+  --color-bg-card: rgba(0, 0, 0, 0.04);
+  --color-surface-default: #FFFFFF;
+  --color-surface-raised: rgba(0, 0, 0, 0.02);
+  --color-border-subtle: rgba(0, 0, 0, 0.10);
+  --color-border-default: rgba(0, 0, 0, 0.16);
+}
+
+.dark {
+  --color-primary: #D0FF00;
+  --color-on-primary: #000000;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: rgba(255, 255, 255, 0.75);
+  --color-text-tertiary: rgba(255, 255, 255, 0.60);
+  --color-text-inverse: #000000;
+  --color-bg-app: #000000;
+  --color-bg-muted: rgba(255, 255, 255, 0.05);
+  --color-bg-card: rgba(255, 255, 255, 0.05);
+  --color-surface-default: #000000;
+  --color-surface-raised: rgba(255, 255, 255, 0.03);
+  --color-border-subtle: rgba(255, 255, 255, 0.12);
+  --color-border-default: rgba(255, 255, 255, 0.18);
+}

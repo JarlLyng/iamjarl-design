@@ -7,12 +7,99 @@ It is designed to work equally well for **humans** (design overview) and **AI to
 
 ---
 
-## What’s inside
+## What's inside
 - `tokens.json` — machine-readable design tokens (colors, spacing, radius, typography, icons)
 - `design.md` — rules, principles and non-negotiables (Cursor-friendly)
 - `index.html` — human-friendly viewer that renders tokens visually
-- `templates/` — optional implementation templates (e.g. SwiftUI)
-  - `templates/swiftui/DesignTokens.swift`
+- `scripts/build.js` — generates platform-specific token files from `tokens.json`
+- `scripts/validate.js` — validates token structure and contrast ratios
+
+### Generated outputs
+- `Sources/IAMJARLDesignTokens/DesignTokens.swift` — Swift (SPM package)
+- `dist/css/tokens.css` — CSS custom properties (light + dark mode)
+- `dist/ts/tokens.ts` — TypeScript module (React + Expo)
+
+---
+
+## Quick start: Install in your project
+
+### SwiftUI (iOS / macOS) via Swift Package Manager
+
+In Xcode: File > Add Package Dependencies, enter:
+
+```
+https://github.com/jarllyng/iamjarl-design.git
+```
+
+Or in your `Package.swift`:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "0.1.1")
+]
+```
+
+Then use in code:
+
+```swift
+import IAMJARLDesignTokens
+
+// Mode-aware colors
+let primary = DesignTokens.Common.primary(scheme)
+let textColor = DesignTokens.Common.Text.primary(scheme)
+
+// Spacing and radius
+let padding = DesignTokens.Spacing.md
+let corner = DesignTokens.Radius.lg
+```
+
+### React web (npm)
+
+```bash
+npm install github:jarllyng/iamjarl-design
+```
+
+CSS custom properties:
+
+```css
+@import '@iamjarl/design-tokens/css';
+
+.button {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md) var(--spacing-xl);
+}
+```
+
+TypeScript imports:
+
+```typescript
+import { colors, spacing, radius } from '@iamjarl/design-tokens';
+
+const theme = colors.light;
+// theme.primary, theme.text.primary, etc.
+```
+
+### Expo / React Native
+
+```bash
+npm install github:jarllyng/iamjarl-design
+```
+
+```typescript
+import { colors, spacing, typography } from '@iamjarl/design-tokens';
+import { useColorScheme } from 'react-native';
+
+function useTheme() {
+  const scheme = useColorScheme() ?? 'light';
+  return colors[scheme];
+}
+
+// In a component:
+const theme = useTheme();
+// theme.primary, theme.text.primary, theme.background.app, etc.
+```
 
 ---
 
@@ -34,54 +121,20 @@ Rules:
 - Use Phosphor icons and follow the icon rules in design.md.
 - For colored backgrounds, always use semantic on-colors (onPrimary, onSuccess, onWarning, onError) to ensure sufficient contrast.
 
+Integration:
+- SwiftUI: Add the SPM package from https://github.com/jarllyng/iamjarl-design.git and use `import IAMJARLDesignTokens`.
+- React/Expo: Install via `npm install github:jarllyng/iamjarl-design` and import from `@iamjarl/design-tokens`.
+- If SPM/npm is not an option, read tokens.json and create local token mappings.
+
 Task:
-1) Read tokens.json and design.md.
-2) Create local design token mappings for this project.
-3) Update the UI to use tokens only (no hardcoded values).
-4) If there are conflicts, prefer the design system.
+1) Install the design tokens package for this project type.
+2) Update the UI to use tokens only (no hardcoded values).
+3) If there are conflicts, prefer the design system.
 ```
 
 ---
 
-## How to use in a new project
-
-1. Give Cursor these links:
-   - `tokens.json`
-   - `design.md`
-
-2. Ask Cursor to generate **local design tokens** for the project.
-   - iOS / macOS (SwiftUI): copy from `templates/swiftui/DesignTokens.swift` or generate a local `DesignTokens.swift`
-   - Web: CSS variables / Tailwind config
-   - React Native: `design.ts`
-
-3. Build UI **using tokens only**.
-   - No hardcoded colors
-   - No ad-hoc spacing or radius values
-
----
-
-## SwiftUI workflow (recommended)
-
-- Each SwiftUI app should contain its own local `DesignTokens.swift` file.
-- That file is generated/mapped from `tokens.json` and follows the rules in `design.md`.
-- When the design system changes:
-  1. Update `tokens.json` (and/or `design.md`)
-  2. Commit + push this repo
-  3. Re-run Cursor in the app project with updated links
-
-Reference implementation:
-
-```
-templates/swiftui/DesignTokens.swift
-```
-
-Treat the Swift file as generated code.
-
----
-
-## Update checklist (when changing the design system)
-
-Use this checklist whenever you change tokens or rules.
+## Update workflow (when changing the design system)
 
 ### 1) Make the change
 - [ ] Update `tokens.json` (preferred) or `design.md` (rules)
@@ -89,29 +142,42 @@ Use this checklist whenever you change tokens or rules.
 - [ ] Update `meta.updated` date in `tokens.json`
 
 ### 2) Verify locally
+```bash
+node scripts/validate.js   # check structure + contrast
+node scripts/build.js       # regenerate platform files
+```
 - [ ] Open `index.html` locally and confirm tokens render correctly
-- [ ] Sanity check light + dark mode values
-- [ ] Confirm the change does not break JSON validity
 
 ### 3) Publish
-- [ ] Commit with a clear message (e.g. `tokens: adjust primary dark`)
+- [ ] Commit everything (including generated files in `Sources/` and `dist/`)
 - [ ] Push to GitHub
-- [ ] Confirm GitHub Pages reflects the update
+- [ ] GitHub Actions will auto-regenerate and tag the version
 
 ### 4) Sync projects
-- [ ] For each app/web project: paste the **Cursor start prompt** and ask it to sync tokens
-- [ ] Run the app and visually verify key screens in light + dark mode
+- **SwiftUI**: In Xcode, update the package version (File > Packages > Update)
+- **React/Expo**: Run `npm update @iamjarl/design-tokens`
+- Visually verify key screens in light + dark mode
+
+---
+
+## Building locally
+
+```bash
+# Validate tokens.json
+node scripts/validate.js
+
+# Generate platform files
+node scripts/build.js
+```
+
+No dependencies required — scripts use only Node.js built-ins.
 
 ---
 
 ## Hosting
 
-This repo is intended to be hosted on GitHub Pages.
-
-Typical URL:
+This repo is hosted on GitHub Pages:
 
 ```
 https://jarllyng.github.io/iamjarl-design/
 ```
-
-This URL is safe to share with Cursor and other tools.

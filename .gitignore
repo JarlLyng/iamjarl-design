@@ -15,9 +15,8 @@ yarn-error.log*
 .env
 .env.local
 
-# Build output (if site ever gets a build step)
-dist/
-build/
+# Node
+node_modules/
 
 # Temporary files
 *.tmp
