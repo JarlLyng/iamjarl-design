@@ -1,4 +1,4 @@
-/* IAMJARL Design Tokens v0.1.2 — generated, do not edit */
+/* IAMJARL Design Tokens v0.1.3 — generated, do not edit */
 
 :root {
   /* Spacing */
@@ -49,7 +49,7 @@
   --color-on-error: #FFFFFF;
 
   /* Mode colors (light default) */
-  --color-primary: #00E56F;
+  --color-primary: #CE63FF;
   --color-on-primary: #000000;
   --color-text-primary: #000000;
   --color-text-secondary: rgba(0, 0, 0, 0.70);
@@ -84,7 +84,7 @@
 
 /* Explicit class overrides for manual mode switching */
 .light {
-  --color-primary: #00E56F;
+  --color-primary: #CE63FF;
   --color-on-primary: #000000;
   --color-text-primary: #000000;
   --color-text-secondary: rgba(0, 0, 0, 0.70);
