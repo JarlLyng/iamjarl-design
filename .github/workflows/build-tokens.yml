@@ -2,7 +2,7 @@ name: Build Tokens
 
 on:
   push:
-    paths: ['tokens.json']
+    paths: ['tokens.json', '.github/workflows/build-tokens.yml']
     branches: [main]
 
 permissions:
