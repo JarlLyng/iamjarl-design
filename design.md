@@ -1,4 +1,4 @@
-# IAMJARL Design System (v0.1.1)
+# IAMJARL Design System (v0.1.2)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -11,7 +11,7 @@ Use together with `tokens.json` (single source of truth).
 ## The DNA
 ### Color
 - Primary is a bold neon accent:
-  - Light: #00FF7B
+  - Light: #00E56F
   - Dark:  #D0FF00
 - UI uses subtle translucent backgrounds (muted/card) instead of heavy borders.
 - States are consistent across all products:
