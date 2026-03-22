@@ -5,6 +5,8 @@ Shared design system for all IAMJARL products (apps + web).
 This repository is the **single source of truth** for colors, typography, spacing, radius and icon usage across all IAMJARL projects.
 It is designed to work equally well for **humans** (design overview) and **AI tools like Cursor** (deterministic tokens + rules).
 
+![Co-created with AI](https://madebyhuman.iamjarl.com/badges/co-created-white.svg)
+
 ---
 
 ## What's inside
