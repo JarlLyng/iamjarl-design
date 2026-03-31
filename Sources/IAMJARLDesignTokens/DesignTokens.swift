@@ -2,11 +2,11 @@ import SwiftUI
 
 // MARK: - IAMJARL Design Tokens (SwiftUI)
 //
-// Auto-generated from tokens.json v0.1.3 — do not edit manually.
+// Auto-generated from tokens.json v0.1.4 — do not edit manually.
 // Run: node scripts/build.js
 //
 // Design DNA:
-// - Neon primary (light: #CE63FF, dark: #D0FF00)
+// - Neon primary (light: #A435D2, dark: #D0FF00)
 // - Subtle translucent surfaces
 // - Consistent state colors (success/warning/error)
 
@@ -81,8 +81,8 @@ public enum DesignTokens {
 
     // Mode-aware colors (Light)
     public enum Light {
-      public static let primary = Color(hex: "#CE63FF")
-      public static let onPrimary = Color(hex: "#000000")
+      public static let primary = Color(hex: "#A435D2")
+      public static let onPrimary = Color(hex: "#FFFFFF")
 
       public enum Text {
         public static let primary = Color(hex: "#000000")

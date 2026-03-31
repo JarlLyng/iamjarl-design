@@ -37,7 +37,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "0.1.3")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "0.1.4")
 ]
 ```
 
