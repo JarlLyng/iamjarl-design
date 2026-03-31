@@ -18,6 +18,9 @@ yarn-error.log*
 # Node
 node_modules/
 
+# Claude local settings
+.claude/
+
 # Temporary files
 *.tmp
 *.bak
