@@ -1,4 +1,4 @@
-# IAMJARL Design System (v0.1.4)
+# IAMJARL Design System (v0.2.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -27,6 +27,27 @@ Use together with `tokens.json` (single source of truth).
   - `success` → use `onSuccess`
   - `warning` → use `onWarning`
   - `error` → use `onError`
+
+### Shadows
+- Three elevation levels: `sm` (subtle), `md` (default), `lg` (modals/popovers)
+- All shadows are black with varying opacity for cross-mode consistency
+- Use sparingly — prefer flat UI with translucent backgrounds
+
+### Motion
+- Three durations: `fast` (150ms), `normal` (250ms), `slow` (400ms)
+- Two easing curves:
+  - `standard` — cubic-bezier(0.4, 0, 0.2, 1), for most transitions
+  - `emphasized` — cubic-bezier(0.2, 0, 0, 1), for attention-grabbing motion
+- Prefer `normal` + `standard` as defaults
+
+### Breakpoints (web only)
+- `sm: 640`, `md: 768`, `lg: 1024`, `xl: 1280`, `xxl: 1536`
+- Mobile-first approach: default styles target smallest, media queries add larger
+
+### Focus
+- Ring width: 2px, offset: 2px
+- Focus ring color should be `primary` (mode-aware)
+- Always preserve keyboard focus — never `outline: none` without replacement
 
 ### Typography
 - Default UI font: system-ui (platform native)

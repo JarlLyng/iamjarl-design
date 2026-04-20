@@ -35,6 +35,21 @@ DesignTokens.Radius.lg    // 16pt
 // Typography
 DesignTokens.Typography.Size.base   // 16pt
 DesignTokens.Typography.Weight.semibold
+
+// Shadows
+let s = DesignTokens.Shadow.md  // Value(x, y, blur, opacity)
+.shadow(color: .black.opacity(s.opacity), radius: s.blur, x: s.x, y: s.y)
+
+// Motion
+DesignTokens.Motion.Duration.normal       // 0.25
+DesignTokens.Motion.Easing.standard()     // Animation
+
+// Breakpoints (adaptive layouts)
+DesignTokens.Breakpoint.md  // 768
+
+// Focus ring
+DesignTokens.Focus.width   // 2
+DesignTokens.Focus.offset  // 2
 ```
 
 ### React web
@@ -45,13 +60,18 @@ CSS custom properties (auto light/dark via `prefers-color-scheme`):
 ```css
 @import '@iamjarl/design-tokens/css';
 ```
-Use `var(--color-primary)`, `var(--spacing-md)`, `var(--radius-lg)`, etc.
+Use `var(--color-primary)`, `var(--spacing-md)`, `var(--radius-lg)`, `var(--shadow-md)`, `var(--duration-normal)`, `var(--easing-standard)`, `var(--focus-width)`, etc.
 
 For manual mode switching, add class `.light` or `.dark` to a parent element.
 
 TypeScript:
 ```typescript
-import { colors, spacing, radius, typography } from '@iamjarl/design-tokens';
+import {
+  colors, spacing, radius, typography,
+  shadows, shadowCss,
+  motion, easingCss,
+  breakpoints, focus
+} from '@iamjarl/design-tokens';
 ```
 
 ### Expo / React Native

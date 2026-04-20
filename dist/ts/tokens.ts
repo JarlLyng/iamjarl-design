@@ -1,6 +1,6 @@
-// IAMJARL Design Tokens v0.1.4 — generated, do not edit
+// IAMJARL Design Tokens v0.2.0 — generated, do not edit
 
-export const meta = {"name":"IAMJARL Design System","version":"0.1.4"} as const;
+export const meta = {"name":"IAMJARL Design System","version":"0.2.0"} as const;
 
 export const spacing = {"xs":4,"sm":8,"md":12,"lg":16,"xl":20,"xxl":24,"xxxl":32} as const;
 
@@ -54,7 +54,7 @@ export const icons = {
 
 export const colors = {
   static: {"black":"#000000","white":"#FFFFFF"},
-  shared: {"success":"#4CAF50","onSuccess":"#FFFFFF","warning":"#FF6B35","onWarning":"#000000","error":"#FF3B30","onError":"#FFFFFF"},
+  shared: {"success":"#4CAF50","onSuccess":"#000000","warning":"#FF6B35","onWarning":"#000000","error":"#FF3B30","onError":"#FFFFFF"},
   light: {
       "primary": "#A435D2",
       "onPrimary": "#FFFFFF",
@@ -109,3 +109,61 @@ export type ColorMode = "light" | "dark";
 export function modeColors(mode: ColorMode) {
   return colors[mode];
 }
+
+export const shadows = {
+  "sm": {
+    "x": 0,
+    "y": 1,
+    "blur": 2,
+    "opacity": 0.05
+  },
+  "md": {
+    "x": 0,
+    "y": 4,
+    "blur": 8,
+    "opacity": 0.08
+  },
+  "lg": {
+    "x": 0,
+    "y": 8,
+    "blur": 24,
+    "opacity": 0.12
+  }
+} as const;
+
+/** Format a shadow token as a CSS box-shadow string */
+export function shadowCss(name: keyof typeof shadows): string {
+  const s = shadows[name];
+  return `${s.x}px ${s.y}px ${s.blur}px rgba(0, 0, 0, ${s.opacity})`;
+}
+
+export const motion = {
+  "duration": {
+    "fast": 150,
+    "normal": 250,
+    "slow": 400
+  },
+  "easing": {
+    "standard": [
+      0.4,
+      0,
+      0.2,
+      1
+    ],
+    "emphasized": [
+      0.2,
+      0,
+      0,
+      1
+    ]
+  }
+} as const;
+
+/** Format an easing token as a CSS cubic-bezier string */
+export function easingCss(name: keyof typeof motion.easing): string {
+  return `cubic-bezier(${motion.easing[name].join(", ")})`;
+}
+
+export const breakpoints = {"sm":640,"md":768,"lg":1024,"xl":1280,"xxl":1536} as const;
+
+export const focus = {"width":2,"offset":2} as const;

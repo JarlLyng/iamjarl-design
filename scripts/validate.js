@@ -105,6 +105,46 @@ function validateStructure(tokens) {
     fail('tokens.radius is missing');
   }
 
+  // Shadows (optional)
+  if (tokens.tokens.shadows) {
+    let bad = 0;
+    for (const [k, v] of Object.entries(tokens.tokens.shadows)) {
+      const hasAll = ['x', 'y', 'blur', 'opacity'].every(f => typeof v[f] === 'number');
+      if (!hasAll) { fail(`Shadow "${k}" missing x/y/blur/opacity numeric fields`); bad++; }
+    }
+    if (!bad) pass(`shadows: ${Object.keys(tokens.tokens.shadows).length} values`);
+  }
+
+  // Motion (optional)
+  if (tokens.tokens.motion) {
+    const m = tokens.tokens.motion;
+    if (!m.duration || !m.easing) {
+      fail('motion must have duration and easing');
+    } else {
+      const badDur = Object.entries(m.duration).filter(([, v]) => typeof v !== 'number' || v < 0);
+      const badEase = Object.entries(m.easing).filter(([, v]) => !Array.isArray(v) || v.length !== 4);
+      if (badDur.length) fail(`Invalid duration values: ${badDur.map(([k]) => k).join(', ')}`);
+      if (badEase.length) fail(`Invalid easing values (must be [x1,y1,x2,y2]): ${badEase.map(([k]) => k).join(', ')}`);
+      if (!badDur.length && !badEase.length) {
+        pass(`motion: ${Object.keys(m.duration).length} durations, ${Object.keys(m.easing).length} easings`);
+      }
+    }
+  }
+
+  // Breakpoints (optional)
+  if (tokens.tokens.breakpoints) {
+    const invalid = Object.entries(tokens.tokens.breakpoints).filter(([, v]) => typeof v !== 'number' || v <= 0);
+    if (invalid.length) fail(`Invalid breakpoint values: ${invalid.map(([k]) => k).join(', ')}`);
+    else pass(`breakpoints: ${Object.keys(tokens.tokens.breakpoints).length} values`);
+  }
+
+  // Focus (optional)
+  if (tokens.tokens.focus) {
+    const invalid = Object.entries(tokens.tokens.focus).filter(([, v]) => typeof v !== 'number' || v < 0);
+    if (invalid.length) fail(`Invalid focus values: ${invalid.map(([k]) => k).join(', ')}`);
+    else pass(`focus: ${Object.keys(tokens.tokens.focus).length} values`);
+  }
+
   // Colors structure
   const colors = tokens.tokens.colors;
   if (!colors) {

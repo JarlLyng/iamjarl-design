@@ -115,6 +115,68 @@ function generateSwift(tokens) {
   w('  }');
   w();
 
+  // Shadows
+  if (t.shadows) {
+    w('  // MARK: Shadow');
+    w('  public enum Shadow {');
+    w('    public struct Value {');
+    w('      public let x: CGFloat');
+    w('      public let y: CGFloat');
+    w('      public let blur: CGFloat');
+    w('      public let opacity: Double');
+    w('    }');
+    for (const [key, val] of Object.entries(t.shadows)) {
+      w(`    public static let ${key} = Value(x: ${val.x}, y: ${val.y}, blur: ${val.blur}, opacity: ${val.opacity})`);
+    }
+    w('  }');
+    w();
+  }
+
+  // Motion
+  if (t.motion) {
+    w('  // MARK: Motion');
+    w('  public enum Motion {');
+    w('    public enum Duration {');
+    for (const [key, val] of Object.entries(t.motion.duration)) {
+      const seconds = val / 1000;
+      w(`      public static let ${key}: Double = ${seconds}`);
+    }
+    w('    }');
+    w();
+    w('    public enum Easing {');
+    for (const [key, val] of Object.entries(t.motion.easing)) {
+      const [c1x, c1y, c2x, c2y] = val;
+      w(`      public static func ${key}(duration: Double = Duration.normal) -> Animation {`);
+      w(`        Animation.timingCurve(${c1x}, ${c1y}, ${c2x}, ${c2y}, duration: duration)`);
+      w('      }');
+    }
+    w('    }');
+    w('  }');
+    w();
+  }
+
+  // Breakpoints
+  if (t.breakpoints) {
+    w('  // MARK: Breakpoints');
+    w('  public enum Breakpoint {');
+    for (const [key, val] of Object.entries(t.breakpoints)) {
+      w(`    public static let ${key}: CGFloat = ${val}`);
+    }
+    w('  }');
+    w();
+  }
+
+  // Focus
+  if (t.focus) {
+    w('  // MARK: Focus');
+    w('  public enum Focus {');
+    for (const [key, val] of Object.entries(t.focus)) {
+      w(`    public static let ${key}: CGFloat = ${val}`);
+    }
+    w('  }');
+    w();
+  }
+
   // Color Tokens
   w('  // MARK: Color Tokens');
   w('  public enum ColorToken {');
@@ -354,6 +416,47 @@ function generateCSS(tokens) {
   }
   w();
 
+  // Shadows
+  if (t.shadows) {
+    w('  /* Shadows */');
+    for (const [key, val] of Object.entries(t.shadows)) {
+      w(`  --shadow-${key}: ${val.x}px ${val.y}px ${val.blur}px rgba(0, 0, 0, ${val.opacity});`);
+    }
+    w();
+  }
+
+  // Motion
+  if (t.motion) {
+    w('  /* Motion — duration */');
+    for (const [key, val] of Object.entries(t.motion.duration)) {
+      w(`  --duration-${key}: ${val}ms;`);
+    }
+    w();
+    w('  /* Motion — easing */');
+    for (const [key, val] of Object.entries(t.motion.easing)) {
+      w(`  --easing-${key}: cubic-bezier(${val.join(', ')});`);
+    }
+    w();
+  }
+
+  // Breakpoints
+  if (t.breakpoints) {
+    w('  /* Breakpoints (for JS / SCSS use; CSS media queries need literal px values) */');
+    for (const [key, val] of Object.entries(t.breakpoints)) {
+      w(`  --breakpoint-${key}: ${val}px;`);
+    }
+    w();
+  }
+
+  // Focus
+  if (t.focus) {
+    w('  /* Focus ring */');
+    for (const [key, val] of Object.entries(t.focus)) {
+      w(`  --focus-${camelToKebab(key)}: ${val}px;`);
+    }
+    w();
+  }
+
   // Static colors
   w('  /* Static colors */');
   for (const [key, val] of Object.entries(t.colors.static)) {
@@ -495,6 +598,41 @@ function generateTS(tokens) {
   w('  return colors[mode];');
   w('}');
   w();
+
+  // Shadows
+  if (t.shadows) {
+    w(`export const shadows = ${JSON.stringify(t.shadows, null, 2)} as const;`);
+    w();
+    w('/** Format a shadow token as a CSS box-shadow string */');
+    w('export function shadowCss(name: keyof typeof shadows): string {');
+    w('  const s = shadows[name];');
+    w('  return `${s.x}px ${s.y}px ${s.blur}px rgba(0, 0, 0, ${s.opacity})`;');
+    w('}');
+    w();
+  }
+
+  // Motion
+  if (t.motion) {
+    w(`export const motion = ${JSON.stringify(t.motion, null, 2)} as const;`);
+    w();
+    w('/** Format an easing token as a CSS cubic-bezier string */');
+    w('export function easingCss(name: keyof typeof motion.easing): string {');
+    w('  return `cubic-bezier(${motion.easing[name].join(", ")})`;');
+    w('}');
+    w();
+  }
+
+  // Breakpoints
+  if (t.breakpoints) {
+    w(`export const breakpoints = ${JSON.stringify(t.breakpoints)} as const;`);
+    w();
+  }
+
+  // Focus
+  if (t.focus) {
+    w(`export const focus = ${JSON.stringify(t.focus)} as const;`);
+    w();
+  }
 
   return lines.join('\n');
 }

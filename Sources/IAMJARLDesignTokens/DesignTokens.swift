@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - IAMJARL Design Tokens (SwiftUI)
 //
-// Auto-generated from tokens.json v0.1.4 — do not edit manually.
+// Auto-generated from tokens.json v0.2.0 — do not edit manually.
 // Run: node scripts/build.js
 //
 // Design DNA:
@@ -60,6 +60,52 @@ public enum DesignTokens {
     }
   }
 
+  // MARK: Shadow
+  public enum Shadow {
+    public struct Value {
+      public let x: CGFloat
+      public let y: CGFloat
+      public let blur: CGFloat
+      public let opacity: Double
+    }
+    public static let sm = Value(x: 0, y: 1, blur: 2, opacity: 0.05)
+    public static let md = Value(x: 0, y: 4, blur: 8, opacity: 0.08)
+    public static let lg = Value(x: 0, y: 8, blur: 24, opacity: 0.12)
+  }
+
+  // MARK: Motion
+  public enum Motion {
+    public enum Duration {
+      public static let fast: Double = 0.15
+      public static let normal: Double = 0.25
+      public static let slow: Double = 0.4
+    }
+
+    public enum Easing {
+      public static func standard(duration: Double = Duration.normal) -> Animation {
+        Animation.timingCurve(0.4, 0, 0.2, 1, duration: duration)
+      }
+      public static func emphasized(duration: Double = Duration.normal) -> Animation {
+        Animation.timingCurve(0.2, 0, 0, 1, duration: duration)
+      }
+    }
+  }
+
+  // MARK: Breakpoints
+  public enum Breakpoint {
+    public static let sm: CGFloat = 640
+    public static let md: CGFloat = 768
+    public static let lg: CGFloat = 1024
+    public static let xl: CGFloat = 1280
+    public static let xxl: CGFloat = 1536
+  }
+
+  // MARK: Focus
+  public enum Focus {
+    public static let width: CGFloat = 2
+    public static let offset: CGFloat = 2
+  }
+
   // MARK: Color Tokens
   public enum ColorToken {
 
@@ -70,7 +116,7 @@ public enum DesignTokens {
     // Shared state colors
     public enum State {
       public static let success = Color(hex: "#4CAF50")
-      public static let onSuccess = Color(hex: "#FFFFFF")
+      public static let onSuccess = Color(hex: "#000000")
 
       public static let warning = Color(hex: "#FF6B35")
       public static let onWarning = Color(hex: "#000000")
