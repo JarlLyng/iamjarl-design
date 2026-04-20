@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Design system viewer
+    url: https://jarllyng.github.io/iamjarl-design/
+    about: See all tokens rendered visually before opening an issue.

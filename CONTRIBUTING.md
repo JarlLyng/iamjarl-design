@@ -1,0 +1,43 @@
+# Contributing to IAMJARL Design System
+
+Thanks for your interest! This is primarily a personal design system, but PRs and issues are welcome.
+
+## Reporting issues
+
+- **Bug in tokens** (wrong value, missing token) → [open an issue](https://github.com/jarllyng/iamjarl-design/issues/new?template=bug-report.md)
+- **Token request** (need a new token category or value) → [open an issue](https://github.com/jarllyng/iamjarl-design/issues/new?template=token-request.md)
+
+## Proposing changes
+
+1. Fork the repo
+2. Edit `tokens.json` (never edit generated files in `Sources/` or `dist/` directly — they're rebuilt by CI)
+3. Bump `meta.version` in `tokens.json` following [SemVer](https://semver.org/):
+   - **Patch** (0.0.x) — color tweaks, adding optional tokens
+   - **Minor** (0.x.0) — new token categories
+   - **Major** (x.0.0) — breaking changes to token structure
+4. Update `meta.updated` date
+5. Run locally to verify:
+   ```bash
+   node scripts/validate.js   # checks structure + WCAG contrast
+   node scripts/build.js      # regenerates platform files
+   ```
+6. Update `CHANGELOG.md` with your change
+7. Open a PR
+
+## Development
+
+No dependencies required. Scripts use only Node.js built-ins (Node 20+).
+
+```bash
+# Validate token structure and contrast
+node scripts/validate.js
+
+# Generate platform files
+node scripts/build.js
+```
+
+## Code style
+
+- Keep `tokens.json` human-readable (2-space indentation)
+- Generated files are committed — don't `.gitignore` them
+- Never invent new tokens locally in consuming projects; always update `tokens.json` first

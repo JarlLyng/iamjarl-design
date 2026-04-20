@@ -1,5 +1,10 @@
 # iamjarl-design
 
+[![Version](https://img.shields.io/github/v/tag/jarllyng/iamjarl-design?label=version&sort=semver)](https://github.com/jarllyng/iamjarl-design/releases)
+[![License](https://img.shields.io/github/license/jarllyng/iamjarl-design)](LICENSE)
+[![Build Tokens](https://github.com/jarllyng/iamjarl-design/actions/workflows/build-tokens.yml/badge.svg)](https://github.com/jarllyng/iamjarl-design/actions/workflows/build-tokens.yml)
+[![SPM compatible](https://img.shields.io/badge/SPM-compatible-brightgreen.svg)](https://swift.org/package-manager/)
+
 Shared design system for all IAMJARL products (apps + web).
 
 This repository is the **single source of truth** for colors, typography, spacing, radius and icon usage across all IAMJARL projects.
