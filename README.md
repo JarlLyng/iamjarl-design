@@ -12,6 +12,8 @@ It is designed to work equally well for **humans** (design overview) and **AI to
 
 [![Co-created with AI](https://madebyhuman.iamjarl.com/badges/co-created-white.svg)](https://madebyhuman.iamjarl.com)
 
+> **⚠️ Upgrading from v0.2 → v0.3?** All CSS variables are now prefixed with `--ij-` (e.g. `var(--color-primary)` → `var(--ij-color-primary)`). See **[MIGRATION.md](MIGRATION.md)** for a one-line `sed` script to update your project. SwiftUI and TypeScript imports are unaffected.
+
 ---
 
 ## What's inside
@@ -107,6 +109,20 @@ function useTheme() {
 const theme = useTheme();
 // theme.primary, theme.text.primary, theme.background.app, etc.
 ```
+
+---
+
+## Upgrading
+
+When updating to a new version, check **[MIGRATION.md](MIGRATION.md)** for breaking changes and step-by-step instructions.
+
+| From → To | Breaking? | Affects |
+| --- | --- | --- |
+| 0.2.x → 0.3.0 | Yes | CSS variables now prefixed with `--ij-` |
+| 0.1.x → 0.2.0 | No | Additive only (new shadow/motion/breakpoint/focus tokens) |
+
+For SwiftUI: **File → Packages → Update to Latest Package Versions**
+For npm: `npm update @iamjarl/design-tokens`
 
 ---
 
