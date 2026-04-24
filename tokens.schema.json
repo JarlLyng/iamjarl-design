@@ -1,0 +1,216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jarllyng.github.io/iamjarl-design/tokens.schema.json",
+  "title": "IAMJARL Design Tokens",
+  "description": "Schema for tokens.json — single source of truth for the IAMJARL design system",
+  "type": "object",
+  "required": ["meta", "brand", "tokens"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "meta": {
+      "type": "object",
+      "required": ["name", "version", "updated"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Semantic version (MAJOR.MINOR.PATCH)"
+        },
+        "updated": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO date (YYYY-MM-DD) of last update"
+        },
+        "source": { "type": "string" }
+      }
+    },
+    "brand": {
+      "type": "object",
+      "required": ["name", "icons", "typography"],
+      "properties": {
+        "name": { "type": "string" },
+        "icons": {
+          "type": "object",
+          "required": ["library", "defaultWeight", "weightsAllowed", "defaultSizes"],
+          "properties": {
+            "library": { "type": "string" },
+            "defaultWeight": { "type": "string" },
+            "weightsAllowed": { "type": "array", "items": { "type": "string" } },
+            "defaultSizes": { "type": "array", "items": { "type": "number" } }
+          }
+        },
+        "typography": {
+          "type": "object",
+          "required": ["family", "weights", "sizes", "lineHeights"],
+          "properties": {
+            "family": {
+              "type": "object",
+              "required": ["ui", "mono"],
+              "properties": {
+                "ui": { "type": "string" },
+                "mono": { "type": "string" }
+              }
+            },
+            "weights": {
+              "type": "object",
+              "additionalProperties": { "type": "integer", "minimum": 100, "maximum": 900 }
+            },
+            "sizes": {
+              "type": "object",
+              "additionalProperties": { "type": "number", "minimum": 0 }
+            },
+            "lineHeights": {
+              "type": "object",
+              "additionalProperties": { "type": "number", "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+    "tokens": {
+      "type": "object",
+      "required": ["radius", "spacing", "colors"],
+      "properties": {
+        "radius": {
+          "type": "object",
+          "additionalProperties": { "type": "number", "minimum": 0 }
+        },
+        "spacing": {
+          "type": "object",
+          "additionalProperties": { "type": "number", "minimum": 0 }
+        },
+        "colors": {
+          "type": "object",
+          "required": ["static", "shared", "modes"],
+          "properties": {
+            "static": {
+              "type": "object",
+              "additionalProperties": { "$ref": "#/$defs/color" }
+            },
+            "shared": {
+              "type": "object",
+              "required": ["success", "onSuccess", "warning", "onWarning", "error", "onError"],
+              "properties": {
+                "success": { "$ref": "#/$defs/color" },
+                "onSuccess": { "$ref": "#/$defs/color" },
+                "warning": { "$ref": "#/$defs/color" },
+                "onWarning": { "$ref": "#/$defs/color" },
+                "error": { "$ref": "#/$defs/color" },
+                "onError": { "$ref": "#/$defs/color" }
+              }
+            },
+            "modes": {
+              "type": "object",
+              "required": ["light", "dark"],
+              "properties": {
+                "light": { "$ref": "#/$defs/colorMode" },
+                "dark": { "$ref": "#/$defs/colorMode" }
+              }
+            }
+          }
+        },
+        "shadows": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["x", "y", "blur", "opacity"],
+            "properties": {
+              "x": { "type": "number" },
+              "y": { "type": "number" },
+              "blur": { "type": "number", "minimum": 0 },
+              "opacity": { "type": "number", "minimum": 0, "maximum": 1 }
+            }
+          }
+        },
+        "motion": {
+          "type": "object",
+          "required": ["duration", "easing"],
+          "properties": {
+            "duration": {
+              "type": "object",
+              "additionalProperties": { "type": "number", "minimum": 0 }
+            },
+            "easing": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": { "type": "number" },
+                "minItems": 4,
+                "maxItems": 4,
+                "description": "Cubic-bezier control points [x1, y1, x2, y2]"
+              }
+            }
+          }
+        },
+        "breakpoints": {
+          "type": "object",
+          "additionalProperties": { "type": "number", "minimum": 0 }
+        },
+        "focus": {
+          "type": "object",
+          "additionalProperties": { "type": "number", "minimum": 0 }
+        }
+      }
+    },
+    "guidance": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" }
+      }
+    }
+  },
+  "$defs": {
+    "color": {
+      "type": "string",
+      "pattern": "^(#[0-9A-Fa-f]{6}|#[0-9A-Fa-f]{8}|rgba\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*[0-9.]+\\s*\\))$",
+      "description": "Hex (#RRGGBB or #AARRGGBB) or rgba(r, g, b, a)"
+    },
+    "colorMode": {
+      "type": "object",
+      "required": ["primary", "onPrimary", "text", "background", "surface", "border"],
+      "properties": {
+        "primary": { "$ref": "#/$defs/color" },
+        "onPrimary": { "$ref": "#/$defs/color" },
+        "text": {
+          "type": "object",
+          "required": ["primary", "secondary", "tertiary", "inverse"],
+          "properties": {
+            "primary": { "$ref": "#/$defs/color" },
+            "secondary": { "$ref": "#/$defs/color" },
+            "tertiary": { "$ref": "#/$defs/color" },
+            "inverse": { "$ref": "#/$defs/color" }
+          }
+        },
+        "background": {
+          "type": "object",
+          "required": ["app", "muted", "card"],
+          "properties": {
+            "app": { "$ref": "#/$defs/color" },
+            "muted": { "$ref": "#/$defs/color" },
+            "card": { "$ref": "#/$defs/color" }
+          }
+        },
+        "surface": {
+          "type": "object",
+          "required": ["default", "raised"],
+          "properties": {
+            "default": { "$ref": "#/$defs/color" },
+            "raised": { "$ref": "#/$defs/color" }
+          }
+        },
+        "border": {
+          "type": "object",
+          "required": ["subtle", "default"],
+          "properties": {
+            "subtle": { "$ref": "#/$defs/color" },
+            "default": { "$ref": "#/$defs/color" }
+          }
+        }
+      }
+    }
+  }
+}

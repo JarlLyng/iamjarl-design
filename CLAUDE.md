@@ -60,7 +60,7 @@ CSS custom properties (auto light/dark via `prefers-color-scheme`):
 ```css
 @import '@iamjarl/design-tokens/css';
 ```
-Use `var(--color-primary)`, `var(--spacing-md)`, `var(--radius-lg)`, `var(--shadow-md)`, `var(--duration-normal)`, `var(--easing-standard)`, `var(--focus-width)`, etc.
+All CSS variables are prefixed with `--ij-` to avoid collisions. Use `var(--ij-color-primary)`, `var(--ij-spacing-md)`, `var(--ij-radius-lg)`, `var(--ij-shadow-md)`, `var(--ij-duration-normal)`, `var(--ij-easing-standard)`, `var(--ij-focus-width)`, etc.
 
 For manual mode switching, add class `.light` or `.dark` to a parent element.
 

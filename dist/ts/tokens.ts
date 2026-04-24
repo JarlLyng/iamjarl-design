@@ -1,6 +1,6 @@
-// IAMJARL Design Tokens v0.2.0 — generated, do not edit
+// IAMJARL Design Tokens v0.3.0 — generated, do not edit
 
-export const meta = {"name":"IAMJARL Design System","version":"0.2.0"} as const;
+export const meta = {"name":"IAMJARL Design System","version":"0.3.0"} as const;
 
 export const spacing = {"xs":4,"sm":8,"md":12,"lg":16,"xl":20,"xxl":24,"xxxl":32} as const;
 
@@ -167,3 +167,24 @@ export function easingCss(name: keyof typeof motion.easing): string {
 export const breakpoints = {"sm":640,"md":768,"lg":1024,"xl":1280,"xxl":1536} as const;
 
 export const focus = {"width":2,"offset":2} as const;
+
+// Type aliases
+export type Spacing = typeof spacing;
+export type SpacingKey = keyof Spacing;
+export type Radius = typeof radius;
+export type RadiusKey = keyof Radius;
+export type Typography = typeof typography;
+export type FontSize = keyof Typography["sizes"];
+export type FontWeight = keyof Typography["weights"];
+export type LineHeight = keyof Typography["lineHeights"];
+export type ThemeColors = typeof colors.light;
+export type StaticColors = typeof colors.static;
+export type SharedColors = typeof colors.shared;
+export type Shadows = typeof shadows;
+export type ShadowKey = keyof Shadows;
+export type Motion = typeof motion;
+export type DurationKey = keyof Motion["duration"];
+export type EasingKey = keyof Motion["easing"];
+export type Breakpoints = typeof breakpoints;
+export type BreakpointKey = keyof Breakpoints;
+export type Focus = typeof focus;

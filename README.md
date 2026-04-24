@@ -42,7 +42,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "0.2.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "0.3.0")
 ]
 ```
 
@@ -72,10 +72,10 @@ CSS custom properties:
 @import '@iamjarl/design-tokens/css';
 
 .button {
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-  border-radius: var(--radius-md);
-  padding: var(--spacing-md) var(--spacing-xl);
+  background: var(--ij-color-primary);
+  color: var(--ij-color-on-primary);
+  border-radius: var(--ij-radius-md);
+  padding: var(--ij-spacing-md) var(--ij-spacing-xl);
 }
 ```
 

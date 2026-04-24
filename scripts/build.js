@@ -387,32 +387,32 @@ function generateCSS(tokens) {
   // Spacing
   w('  /* Spacing */');
   for (const [key, val] of Object.entries(t.spacing)) {
-    w(`  --spacing-${key}: ${val}px;`);
+    w(`  --ij-spacing-${key}: ${val}px;`);
   }
   w();
 
   // Radius
   w('  /* Radius */');
   for (const [key, val] of Object.entries(t.radius)) {
-    w(`  --radius-${key}: ${val}px;`);
+    w(`  --ij-radius-${key}: ${val}px;`);
   }
   w();
 
   // Typography
   w('  /* Typography */');
-  w(`  --font-ui: ${brand.typography.family.ui};`);
-  w(`  --font-mono: ${brand.typography.family.mono};`);
+  w(`  --ij-font-ui: ${brand.typography.family.ui};`);
+  w(`  --ij-font-mono: ${brand.typography.family.mono};`);
   w();
   for (const [key, val] of Object.entries(brand.typography.sizes)) {
-    w(`  --font-size-${key}: ${val}px;`);
+    w(`  --ij-font-size-${key}: ${val}px;`);
   }
   w();
   for (const [key, val] of Object.entries(brand.typography.lineHeights)) {
-    w(`  --line-height-${key}: ${val}px;`);
+    w(`  --ij-line-height-${key}: ${val}px;`);
   }
   w();
   for (const [key, val] of Object.entries(brand.typography.weights)) {
-    w(`  --font-weight-${key}: ${val};`);
+    w(`  --ij-font-weight-${key}: ${val};`);
   }
   w();
 
@@ -420,7 +420,7 @@ function generateCSS(tokens) {
   if (t.shadows) {
     w('  /* Shadows */');
     for (const [key, val] of Object.entries(t.shadows)) {
-      w(`  --shadow-${key}: ${val.x}px ${val.y}px ${val.blur}px rgba(0, 0, 0, ${val.opacity});`);
+      w(`  --ij-shadow-${key}: ${val.x}px ${val.y}px ${val.blur}px rgba(0, 0, 0, ${val.opacity});`);
     }
     w();
   }
@@ -429,12 +429,12 @@ function generateCSS(tokens) {
   if (t.motion) {
     w('  /* Motion — duration */');
     for (const [key, val] of Object.entries(t.motion.duration)) {
-      w(`  --duration-${key}: ${val}ms;`);
+      w(`  --ij-duration-${key}: ${val}ms;`);
     }
     w();
     w('  /* Motion — easing */');
     for (const [key, val] of Object.entries(t.motion.easing)) {
-      w(`  --easing-${key}: cubic-bezier(${val.join(', ')});`);
+      w(`  --ij-easing-${key}: cubic-bezier(${val.join(', ')});`);
     }
     w();
   }
@@ -443,7 +443,7 @@ function generateCSS(tokens) {
   if (t.breakpoints) {
     w('  /* Breakpoints (for JS / SCSS use; CSS media queries need literal px values) */');
     for (const [key, val] of Object.entries(t.breakpoints)) {
-      w(`  --breakpoint-${key}: ${val}px;`);
+      w(`  --ij-breakpoint-${key}: ${val}px;`);
     }
     w();
   }
@@ -452,7 +452,7 @@ function generateCSS(tokens) {
   if (t.focus) {
     w('  /* Focus ring */');
     for (const [key, val] of Object.entries(t.focus)) {
-      w(`  --focus-${camelToKebab(key)}: ${val}px;`);
+      w(`  --ij-focus-${camelToKebab(key)}: ${val}px;`);
     }
     w();
   }
@@ -460,14 +460,14 @@ function generateCSS(tokens) {
   // Static colors
   w('  /* Static colors */');
   for (const [key, val] of Object.entries(t.colors.static)) {
-    w(`  --color-${camelToKebab(key)}: ${val};`);
+    w(`  --ij-color-${camelToKebab(key)}: ${val};`);
   }
   w();
 
   // Shared state colors
   w('  /* Shared state colors */');
   for (const [key, val] of Object.entries(t.colors.shared)) {
-    w(`  --color-${camelToKebab(key)}: ${val};`);
+    w(`  --ij-color-${camelToKebab(key)}: ${val};`);
   }
   w();
 
@@ -478,14 +478,14 @@ function generateCSS(tokens) {
       if (typeof val === 'object') {
         flattenColors(val, `${prefix}-${camelToKebab(key)}`);
       } else {
-        w(`  --color-${prefix}-${camelToKebab(key)}: ${val};`);
+        w(`  --ij-color-${prefix}-${camelToKebab(key)}: ${val};`);
       }
     }
   }
   // Top-level mode colors
   const light = t.colors.modes.light;
-  w(`  --color-primary: ${light.primary};`);
-  w(`  --color-on-primary: ${light.onPrimary};`);
+  w(`  --ij-color-primary: ${light.primary};`);
+  w(`  --ij-color-on-primary: ${light.onPrimary};`);
   flattenColors(light.text, 'text');
   flattenColors(light.background, 'bg');
   flattenColors(light.surface, 'surface');
@@ -498,14 +498,14 @@ function generateCSS(tokens) {
   w('@media (prefers-color-scheme: dark) {');
   w('  :root {');
   const dark = t.colors.modes.dark;
-  w(`    --color-primary: ${dark.primary};`);
-  w(`    --color-on-primary: ${dark.onPrimary};`);
+  w(`    --ij-color-primary: ${dark.primary};`);
+  w(`    --ij-color-on-primary: ${dark.onPrimary};`);
   function flattenColorsDark(obj, prefix) {
     for (const [key, val] of Object.entries(obj)) {
       if (typeof val === 'object') {
         flattenColorsDark(val, `${prefix}-${camelToKebab(key)}`);
       } else {
-        w(`    --color-${prefix}-${camelToKebab(key)}: ${val};`);
+        w(`    --ij-color-${prefix}-${camelToKebab(key)}: ${val};`);
       }
     }
   }
@@ -520,14 +520,14 @@ function generateCSS(tokens) {
   // Explicit class overrides
   w('/* Explicit class overrides for manual mode switching */');
   w('.light {');
-  w(`  --color-primary: ${light.primary};`);
-  w(`  --color-on-primary: ${light.onPrimary};`);
+  w(`  --ij-color-primary: ${light.primary};`);
+  w(`  --ij-color-on-primary: ${light.onPrimary};`);
   flattenColorsClass(lines, light, '  ');
   w('}');
   w();
   w('.dark {');
-  w(`  --color-primary: ${dark.primary};`);
-  w(`  --color-on-primary: ${dark.onPrimary};`);
+  w(`  --ij-color-primary: ${dark.primary};`);
+  w(`  --ij-color-on-primary: ${dark.onPrimary};`);
   flattenColorsClass(lines, dark, '  ');
   w('}');
   w();
@@ -541,7 +541,7 @@ function flattenColorsClass(lines, mode, indent) {
       if (typeof val === 'object') {
         flatten(val, `${prefix}-${camelToKebab(key)}`);
       } else {
-        lines.push(`${indent}--color-${prefix}-${camelToKebab(key)}: ${val};`);
+        lines.push(`${indent}--ij-color-${prefix}-${camelToKebab(key)}: ${val};`);
       }
     }
   }
@@ -633,6 +633,37 @@ function generateTS(tokens) {
     w(`export const focus = ${JSON.stringify(t.focus)} as const;`);
     w();
   }
+
+  // Named type aliases for ergonomic consumer use
+  w('// Type aliases');
+  w('export type Spacing = typeof spacing;');
+  w('export type SpacingKey = keyof Spacing;');
+  w('export type Radius = typeof radius;');
+  w('export type RadiusKey = keyof Radius;');
+  w('export type Typography = typeof typography;');
+  w('export type FontSize = keyof Typography["sizes"];');
+  w('export type FontWeight = keyof Typography["weights"];');
+  w('export type LineHeight = keyof Typography["lineHeights"];');
+  w('export type ThemeColors = typeof colors.light;');
+  w('export type StaticColors = typeof colors.static;');
+  w('export type SharedColors = typeof colors.shared;');
+  if (t.shadows) {
+    w('export type Shadows = typeof shadows;');
+    w('export type ShadowKey = keyof Shadows;');
+  }
+  if (t.motion) {
+    w('export type Motion = typeof motion;');
+    w('export type DurationKey = keyof Motion["duration"];');
+    w('export type EasingKey = keyof Motion["easing"];');
+  }
+  if (t.breakpoints) {
+    w('export type Breakpoints = typeof breakpoints;');
+    w('export type BreakpointKey = keyof Breakpoints;');
+  }
+  if (t.focus) {
+    w('export type Focus = typeof focus;');
+  }
+  w();
 
   return lines.join('\n');
 }

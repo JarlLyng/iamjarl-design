@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] — 2026-04-25
+
+### Added
+- **JSON Schema** (`tokens.schema.json`) for IDE autocomplete and inline validation in `tokens.json`. Referenced via `$schema`.
+- **Named TypeScript types** for ergonomic consumer use (`Spacing`, `SpacingKey`, `ThemeColors`, `ShadowKey`, `BreakpointKey`, etc.).
+- **`npm run serve`** and **`npm run dev`** scripts for running `index.html` locally without CORS issues.
+
+### Changed
+- **CSS variables now prefixed with `--ij-`** to avoid collisions with third-party libraries (Tailwind, UI kits). Existing CSS using `var(--color-primary)` must update to `var(--ij-color-primary)`.
+
+### Breaking
+- All CSS custom properties have been renamed (e.g. `--color-primary` → `--ij-color-primary`). Update any consuming web project to use the new prefixed names.
+
 ## [0.2.0] — 2026-04-20
 
 ### Added
@@ -52,6 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[0.3.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v0.3.0
 [0.2.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v0.2.0
 [0.1.4]: https://github.com/jarllyng/iamjarl-design/releases/tag/v0.1.4
 [0.1.3]: https://github.com/jarllyng/iamjarl-design/releases/tag/v0.1.3
