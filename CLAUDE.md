@@ -74,6 +74,15 @@ import {
 } from '@iamjarl/design-tokens';
 ```
 
+### Chrome extension (Manifest V3)
+```bash
+npm install github:jarllyng/iamjarl-design
+```
+- **Popup/options/sidepanel**: link `dist/css/tokens.css`. Use `--ij-breakpoint-popup` (320px) for popup width.
+- **Content scripts with Shadow DOM**: import `@iamjarl/design-tokens/css/shadow` (`:host`-scoped variant) instead of the regular CSS to avoid host page collisions.
+- **Background/service worker**: import from `@iamjarl/design-tokens` for color values.
+- Remember to declare CSS files in `web_accessible_resources` if accessed from content scripts.
+
 ### Expo / React Native
 ```bash
 npm install github:jarllyng/iamjarl-design

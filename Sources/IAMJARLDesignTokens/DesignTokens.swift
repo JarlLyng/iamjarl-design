@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - IAMJARL Design Tokens (SwiftUI)
 //
-// Auto-generated from tokens.json v0.4.0 — do not edit manually.
+// Auto-generated from tokens.json v0.5.0 — do not edit manually.
 // Run: node scripts/build.js
 //
 // Design DNA:
@@ -93,6 +93,7 @@ public enum DesignTokens {
 
   // MARK: Breakpoints
   public enum Breakpoint {
+    public static let popup: CGFloat = 320
     public static let sm: CGFloat = 640
     public static let md: CGFloat = 768
     public static let lg: CGFloat = 1024

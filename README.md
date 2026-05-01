@@ -44,7 +44,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "0.4.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "0.5.0")
 ]
 ```
 
@@ -110,6 +110,79 @@ const theme = useTheme();
 // theme.primary, theme.text.primary, theme.background.app, etc.
 ```
 
+### Chrome extension (Manifest V3)
+
+```bash
+npm install github:jarllyng/iamjarl-design
+```
+
+**Popup, options page, side panel** — link the standard CSS file:
+
+```html
+<!-- popup.html / options.html / sidepanel.html -->
+<link rel="stylesheet" href="dist/css/tokens.css">
+<style>
+  body {
+    width: var(--ij-breakpoint-popup);  /* 320px popup width */
+    padding: var(--ij-spacing-lg);
+    background: var(--ij-color-bg-app);
+    color: var(--ij-color-text-primary);
+  }
+</style>
+```
+
+Add the file to `web_accessible_resources` in `manifest.json` if needed:
+
+```json
+{
+  "web_accessible_resources": [{
+    "resources": ["dist/css/tokens.css"],
+    "matches": ["<all_urls>"]
+  }]
+}
+```
+
+**Content script with Shadow DOM** — use the `:host`-scoped variant to isolate from the host page:
+
+```typescript
+import shadowCss from '@iamjarl/design-tokens/css/shadow' with { type: 'css' };
+
+const container = document.createElement('div');
+const shadow = container.attachShadow({ mode: 'open' });
+shadow.adoptedStyleSheets = [shadowCss];
+
+shadow.innerHTML = `
+  <style>
+    .card {
+      background: var(--ij-color-bg-card);
+      color: var(--ij-color-text-primary);
+      padding: var(--ij-spacing-md);
+      border-radius: var(--ij-radius-md);
+    }
+  </style>
+  <div class="card">Hello from extension</div>
+`;
+document.body.appendChild(container);
+```
+
+If your bundler doesn't support CSS imports as `CSSStyleSheet`, fetch and inject as text:
+
+```typescript
+const cssUrl = chrome.runtime.getURL('dist/css/tokens.shadow.css');
+const cssText = await fetch(cssUrl).then(r => r.text());
+
+const style = document.createElement('style');
+style.textContent = cssText;
+shadow.appendChild(style);
+```
+
+**Background/service worker** — use the TS module for color values without DOM:
+
+```typescript
+import { colors } from '@iamjarl/design-tokens';
+chrome.action.setBadgeBackgroundColor({ color: colors.light.primary });
+```
+
 ---
 
 ## Upgrading
@@ -118,6 +191,7 @@ When updating to a new version, check **[MIGRATION.md](MIGRATION.md)** for break
 
 | From → To | Breaking? | Affects |
 | --- | --- | --- |
+| 0.4.x → 0.5.0 | No | Additive only (Chrome extension support, popup breakpoint, shadow CSS) |
 | 0.3.x → 0.4.0 | Yes | Error color (visual) + npm package now ESM |
 | 0.2.x → 0.3.0 | Yes | CSS variables now prefixed with `--ij-` |
 | 0.1.x → 0.2.0 | No | Additive only (new shadow/motion/breakpoint/focus tokens) |

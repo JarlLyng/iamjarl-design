@@ -1,6 +1,6 @@
-// IAMJARL Design Tokens v0.4.0 — generated, do not edit
+// IAMJARL Design Tokens v0.5.0 — generated, do not edit
 
-export const meta = {"name":"IAMJARL Design System","version":"0.4.0"} as const;
+export const meta = {"name":"IAMJARL Design System","version":"0.5.0"} as const;
 
 export const spacing = {"xs":4,"sm":8,"md":12,"lg":16,"xl":20,"xxl":24,"xxxl":32} as const;
 
@@ -164,7 +164,7 @@ export function easingCss(name: keyof typeof motion.easing): string {
   return `cubic-bezier(${motion.easing[name].join(", ")})`;
 }
 
-export const breakpoints = {"sm":640,"md":768,"lg":1024,"xl":1280,"xxl":1536} as const;
+export const breakpoints = {"popup":320,"sm":640,"md":768,"lg":1024,"xl":1280,"xxl":1536} as const;
 
 export const focus = {"width":2,"offset":2} as const;
 

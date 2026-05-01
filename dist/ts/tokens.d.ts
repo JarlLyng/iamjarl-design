@@ -1,4 +1,4 @@
-// IAMJARL Design Tokens v0.4.0 — generated, do not edit
+// IAMJARL Design Tokens v0.5.0 — generated, do not edit
 
 export declare const meta: { readonly name: string; readonly version: string };
 
@@ -15,7 +15,7 @@ export declare const shadows: {"sm":{"x":0,"y":1,"blur":2,"opacity":0.05},"md":{
 export declare function shadowCss(name: keyof typeof shadows): string;
 export declare const motion: {"duration":{"fast":150,"normal":250,"slow":400},"easing":{"standard":[0.4,0,0.2,1],"emphasized":[0.2,0,0,1]}};
 export declare function easingCss(name: keyof typeof motion.easing): string;
-export declare const breakpoints: {"sm":640,"md":768,"lg":1024,"xl":1280,"xxl":1536};
+export declare const breakpoints: {"popup":320,"sm":640,"md":768,"lg":1024,"xl":1280,"xxl":1536};
 export declare const focus: {"width":2,"offset":2};
 
 export type Spacing = typeof spacing;

@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] — 2026-05-01
+
+### Added
+- **Chrome extension support** with first-class documentation:
+  - New `popup` breakpoint at 320px for Chrome extension popup widths.
+  - New `dist/css/tokens.shadow.css` — same variables but scoped to `:host` for use in Shadow DOM (content scripts that don't want to inherit host page styles).
+  - New `@iamjarl/design-tokens/css/shadow` export.
+  - README, AGENTS.md, and CLAUDE.md now document popup, options, sidepanel, content script (Shadow DOM), and service worker patterns.
+
 ## [0.4.0] — 2026-05-01
 
 ### Added
@@ -87,6 +96,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[0.5.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v0.5.0
 [0.4.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v0.4.0
 [0.3.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v0.3.0
 [0.2.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v0.2.0

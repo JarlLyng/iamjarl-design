@@ -1,4 +1,4 @@
-# IAMJARL Design System (v0.4.0)
+# IAMJARL Design System (v0.5.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -41,7 +41,7 @@ Use together with `tokens.json` (single source of truth).
 - Prefer `normal` + `standard` as defaults
 
 ### Breakpoints (web only)
-- `sm: 640`, `md: 768`, `lg: 1024`, `xl: 1280`, `xxl: 1536`
+- `popup: 320` (Chrome extension popups), `sm: 640`, `md: 768`, `lg: 1024`, `xl: 1280`, `xxl: 1536`
 - Mobile-first approach: default styles target smallest, media queries add larger
 
 ### Focus

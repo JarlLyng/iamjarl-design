@@ -378,14 +378,18 @@ function camelToKebab(str) {
   return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 }
 
-function generateCSS(tokens) {
+function generateCSS(tokens, scope = ':root') {
   const { meta, brand, tokens: t } = tokens;
   const lines = [];
   const w = (line = '') => lines.push(line);
+  const isShadow = scope === ':host';
 
   w(`/* IAMJARL Design Tokens v${meta.version} — generated, do not edit */`);
+  if (isShadow) {
+    w('/* Shadow DOM variant: variables scoped to :host for content scripts */');
+  }
   w();
-  w(':root {');
+  w(`${scope} {`);
 
   // Spacing
   w('  /* Spacing */');
@@ -499,7 +503,7 @@ function generateCSS(tokens) {
 
   // Dark mode
   w('@media (prefers-color-scheme: dark) {');
-  w('  :root {');
+  w(`  ${scope} {`);
   const dark = t.colors.modes.dark;
   w(`    --ij-color-primary: ${dark.primary};`);
   w(`    --ij-color-on-primary: ${dark.onPrimary};`);
@@ -832,8 +836,11 @@ function main() {
   // Swift
   writeFile(path.join(ROOT, 'Sources', 'IAMJARLDesignTokens', 'DesignTokens.swift'), generateSwift(tokens));
 
-  // CSS
-  writeFile(path.join(ROOT, 'dist', 'css', 'tokens.css'), generateCSS(tokens));
+  // CSS (default scope :root for normal pages)
+  writeFile(path.join(ROOT, 'dist', 'css', 'tokens.css'), generateCSS(tokens, ':root'));
+
+  // CSS (Shadow DOM variant for content scripts)
+  writeFile(path.join(ROOT, 'dist', 'css', 'tokens.shadow.css'), generateCSS(tokens, ':host'));
 
   // TypeScript source (for inspection/import in TS-aware bundlers)
   writeFile(path.join(ROOT, 'dist', 'ts', 'tokens.ts'), generateTS(tokens));
@@ -844,7 +851,7 @@ function main() {
   // TypeScript declarations
   writeFile(path.join(ROOT, 'dist', 'ts', 'tokens.d.ts'), generateDTS(tokens));
 
-  console.log('\nDone! Generated 5 platform files.');
+  console.log('\nDone! Generated 6 platform files.');
 }
 
 main();

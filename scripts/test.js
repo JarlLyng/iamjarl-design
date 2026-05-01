@@ -74,6 +74,15 @@ for (const v of cssVars) {
 check('CSS has dark-mode media query', css.includes('@media (prefers-color-scheme: dark)'));
 check('CSS has .light class override', /\.light\s*\{/.test(css));
 check('CSS has .dark class override', /\.dark\s*\{/.test(css));
+check('CSS has popup breakpoint', css.includes('--ij-breakpoint-popup'));
+
+// --- Shadow DOM CSS (for Chrome extension content scripts) ---
+console.log('\nShadow DOM CSS:');
+const shadowCss = read('dist/css/tokens.shadow.css');
+check('shadow.css uses :host scope', shadowCss.includes(':host {'));
+check('shadow.css does NOT use :root', !shadowCss.includes(':root'));
+check('shadow.css has all --ij- variables', shadowCss.includes('--ij-color-primary') && shadowCss.includes('--ij-spacing-md'));
+check('shadow.css has dark mode support', shadowCss.includes('@media (prefers-color-scheme: dark)'));
 
 // --- TypeScript declarations ---
 console.log('\nTypeScript declarations:');
