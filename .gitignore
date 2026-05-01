@@ -21,6 +21,11 @@ node_modules/
 # Claude local settings
 .claude/
 
+# Swift build artifacts
+.build/
+.swiftpm/
+*.xcodeproj/
+
 # Temporary files
 *.tmp
 *.bak

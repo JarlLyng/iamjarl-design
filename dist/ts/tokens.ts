@@ -1,6 +1,6 @@
-// IAMJARL Design Tokens v0.3.0 — generated, do not edit
+// IAMJARL Design Tokens v0.4.0 — generated, do not edit
 
-export const meta = {"name":"IAMJARL Design System","version":"0.3.0"} as const;
+export const meta = {"name":"IAMJARL Design System","version":"0.4.0"} as const;
 
 export const spacing = {"xs":4,"sm":8,"md":12,"lg":16,"xl":20,"xxl":24,"xxxl":32} as const;
 
@@ -54,7 +54,7 @@ export const icons = {
 
 export const colors = {
   static: {"black":"#000000","white":"#FFFFFF"},
-  shared: {"success":"#4CAF50","onSuccess":"#000000","warning":"#FF6B35","onWarning":"#000000","error":"#FF3B30","onError":"#FFFFFF"},
+  shared: {"success":"#4CAF50","onSuccess":"#000000","warning":"#FF6B35","onWarning":"#000000","error":"#D70015","onError":"#FFFFFF"},
   light: {
       "primary": "#A435D2",
       "onPrimary": "#FFFFFF",

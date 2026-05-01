@@ -14,6 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          fetch-depth: 0
+          fetch-tags: true
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-node@v4
@@ -26,6 +28,9 @@ jobs:
       - name: Build platform files
         run: node scripts/build.js
 
+      - name: Run contract tests
+        run: node scripts/test.js
+
       - name: Commit generated files
         run: |
           git config user.name "github-actions[bot]"
@@ -36,8 +41,8 @@ jobs:
 
       - name: Tag version if bumped
         run: |
-          VERSION=$(node -e "console.log(require('./tokens.json').meta.version)")
-          if ! git tag | grep -q "^v${VERSION}$"; then
+          VERSION=$(node -e "console.log(JSON.parse(require('node:fs').readFileSync('./tokens.json','utf8')).meta.version)")
+          if ! git rev-parse "v${VERSION}" >/dev/null 2>&1; then
             git tag "v${VERSION}"
             git push origin "v${VERSION}"
             echo "Tagged v${VERSION}"

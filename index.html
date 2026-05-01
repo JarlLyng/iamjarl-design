@@ -4,21 +4,58 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>IAMJARL Design System</title>
+  <link rel="stylesheet" href="./dist/css/tokens.css">
   <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 24px; }
-    header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 24px; }
-    .pill { padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(0,0,0,.12); font-size: 12px; }
-    h2 { margin-top: 32px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-    .card { border: 1px solid rgba(0,0,0,.12); border-radius: 12px; padding: 12px; }
-    .swatch { height: 56px; border-radius: 12px; border: 1px solid rgba(0,0,0,.10); }
-    .row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; margin-top: 8px; }
-    code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
-    button { border: 1px solid rgba(0,0,0,.18); border-radius: 10px; padding: 6px 10px; background: white; cursor: pointer; }
-    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .small { font-size: 13px; line-height: 1.4; }
-    .muted { opacity: 0.75; }
-    .list { margin: 8px 0 0 18px; }
+    /* Viewer styles using its own design tokens */
+    body {
+      font-family: var(--ij-font-ui);
+      margin: var(--ij-spacing-xxl);
+      background: var(--ij-color-bg-app);
+      color: var(--ij-color-text-primary);
+    }
+    header { display: flex; align-items: baseline; gap: var(--ij-spacing-md); margin-bottom: var(--ij-spacing-xxl); }
+    .pill {
+      padding: var(--ij-spacing-xs) var(--ij-spacing-sm);
+      border-radius: 999px;
+      border: 1px solid var(--ij-color-border-subtle);
+      font-size: var(--ij-font-size-xs);
+    }
+    h2 { margin-top: var(--ij-spacing-xxxl); font-size: var(--ij-font-size-xl); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--ij-spacing-md); }
+    .card {
+      border: 1px solid var(--ij-color-border-subtle);
+      border-radius: var(--ij-radius-md);
+      padding: var(--ij-spacing-md);
+      background: var(--ij-color-surface-default);
+    }
+    .swatch { height: 56px; border-radius: var(--ij-radius-md); border: 1px solid var(--ij-color-border-subtle); }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--ij-spacing-md);
+      font-size: var(--ij-font-size-sm);
+      margin-top: var(--ij-spacing-sm);
+    }
+    code { font-family: var(--ij-font-mono); font-size: var(--ij-font-size-xs); }
+    button {
+      border: 1px solid var(--ij-color-border-default);
+      border-radius: var(--ij-radius-sm);
+      padding: var(--ij-spacing-xs) var(--ij-spacing-sm);
+      background: var(--ij-color-surface-default);
+      color: var(--ij-color-text-primary);
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform var(--ij-duration-fast) var(--ij-easing-standard);
+    }
+    button:hover { transform: translateY(-1px); }
+    button:focus-visible {
+      outline: var(--ij-focus-width) solid var(--ij-color-primary);
+      outline-offset: var(--ij-focus-offset);
+    }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ij-spacing-lg); }
+    .small { font-size: var(--ij-font-size-sm); line-height: 1.4; }
+    .muted { color: var(--ij-color-text-secondary); }
+    .list { margin: var(--ij-spacing-sm) 0 0 var(--ij-spacing-lg); }
     @media (max-width: 720px) { .two { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -31,7 +68,7 @@
 
   <p class="small">Human-friendly viewer for <code>tokens.json</code>. Edit tokens once, reuse everywhere.</p>
   <p class="small muted">
-    SwiftUI template: <code>templates/swiftui/DesignTokens.swift</code> · Icons: Phosphor
+    SwiftUI: <code>Sources/IAMJARLDesignTokens/DesignTokens.swift</code> · Icons: Phosphor
   </p>
 
   <div class="two">

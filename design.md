@@ -1,4 +1,4 @@
-# IAMJARL Design System (v0.3.0)
+# IAMJARL Design System (v0.4.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -16,7 +16,7 @@ Use together with `tokens.json` (single source of truth).
 - UI uses subtle translucent backgrounds (muted/card) instead of heavy borders.
 - States are consistent across all products:
   - Success: #4CAF50
-  - Error:   #FF3B30
+  - Error:   #D70015
   - Warning: #FF6B35
 
 #### Semantic usage

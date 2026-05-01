@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] — 2026-05-01
+
+### Added
+- **Proper npm package contract**: generates `dist/ts/tokens.js` (ESM runtime) and `dist/ts/tokens.d.ts` (type declarations) alongside the `.ts` source. `package.json` now uses `"type": "module"` with strict `exports` map.
+- **Contract tests** (`scripts/test.js`) — 56 assertions verifying generated Swift, CSS, JS, and `.d.ts` outputs match the documented API.
+- **PR-CI workflow** — runs validate, build, drift check, contract tests, `npm pack --dry-run`, and `swift build` on every PR touching tokens or generators.
+- **Dependabot config** for monthly GitHub Actions updates.
+- **PR template** with version-bump, validate/build, and changelog checklist.
+- **Version sync check** — validator fails if `tokens.json` `meta.version` and `package.json` `version` disagree.
+- `tokens.json` and `design.md` now ship in the npm tarball.
+
+### Changed
+- **Error color updated from `#FF3B30` to `#D70015`** so white text reaches WCAG AA (5.38:1 vs previous 3.55:1).
+- **Validator now fails** (not just warns) when any semantic `on*` pair drops below WCAG AA 4.5:1. The design system now refuses to ship inaccessible color pairs.
+- **`index.html` viewer now consumes `dist/css/tokens.css`** — the design system is its own first consumer.
+- **Build pipeline auto-tags** with proper `git fetch-tags` so it doesn't miss existing tags.
+- Stricter `rgba()` validation: r/g/b must be 0–255, alpha 0–1.
+
+### Breaking
+- Error color changed (visual change for any UI using `error` token).
+- `package.json` is now ESM (`"type": "module"`). Runtime entry is `.js` not `.ts` — most consumers are unaffected, but projects deep-importing the `.ts` source need to switch to the package's main export.
+
 ## [0.3.0] — 2026-04-25
 
 ### Added
@@ -65,6 +87,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[0.4.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v0.4.0
 [0.3.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v0.3.0
 [0.2.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v0.2.0
 [0.1.4]: https://github.com/jarllyng/iamjarl-design/releases/tag/v0.1.4

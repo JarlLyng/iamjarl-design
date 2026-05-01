@@ -1,4 +1,4 @@
-/* IAMJARL Design Tokens v0.3.0 — generated, do not edit */
+/* IAMJARL Design Tokens v0.4.0 — generated, do not edit */
 
 :root {
   /* Spacing */
@@ -70,7 +70,7 @@
   --ij-color-on-success: #000000;
   --ij-color-warning: #FF6B35;
   --ij-color-on-warning: #000000;
-  --ij-color-error: #FF3B30;
+  --ij-color-error: #D70015;
   --ij-color-on-error: #FFFFFF;
 
   /* Mode colors (light default) */

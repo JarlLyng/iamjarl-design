@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '..');
 const TOKENS_PATH = path.join(ROOT, 'tokens.json');
 
@@ -669,6 +672,156 @@ function generateTS(tokens) {
 }
 
 // ============================================================
+// JAVASCRIPT (ESM) GENERATOR — strips types from TS output
+// ============================================================
+
+function generateJS(tokens) {
+  const { meta, brand, tokens: t } = tokens;
+  const lines = [];
+  const w = (line = '') => lines.push(line);
+
+  w(`// IAMJARL Design Tokens v${meta.version} — generated, do not edit`);
+  w();
+  w(`export const meta = ${JSON.stringify({ name: meta.name, version: meta.version })};`);
+  w();
+  w(`export const spacing = ${JSON.stringify(t.spacing)};`);
+  w();
+  w(`export const radius = ${JSON.stringify(t.radius)};`);
+  w();
+  w(`export const typography = ${JSON.stringify({
+    family: brand.typography.family,
+    weights: brand.typography.weights,
+    sizes: brand.typography.sizes,
+    lineHeights: brand.typography.lineHeights,
+  })};`);
+  w();
+  w(`export const icons = ${JSON.stringify({
+    library: brand.icons.library,
+    defaultWeight: brand.icons.defaultWeight,
+    weightsAllowed: brand.icons.weightsAllowed,
+    defaultSizes: brand.icons.defaultSizes,
+  })};`);
+  w();
+  w(`export const colors = ${JSON.stringify({
+    static: t.colors.static,
+    shared: t.colors.shared,
+    light: t.colors.modes.light,
+    dark: t.colors.modes.dark,
+  })};`);
+  w();
+  w('export function modeColors(mode) { return colors[mode]; }');
+  w();
+  if (t.shadows) {
+    w(`export const shadows = ${JSON.stringify(t.shadows)};`);
+    w('export function shadowCss(name) {');
+    w('  const s = shadows[name];');
+    w('  return `${s.x}px ${s.y}px ${s.blur}px rgba(0, 0, 0, ${s.opacity})`;');
+    w('}');
+    w();
+  }
+  if (t.motion) {
+    w(`export const motion = ${JSON.stringify(t.motion)};`);
+    w('export function easingCss(name) {');
+    w('  return `cubic-bezier(${motion.easing[name].join(", ")})`;');
+    w('}');
+    w();
+  }
+  if (t.breakpoints) {
+    w(`export const breakpoints = ${JSON.stringify(t.breakpoints)};`);
+    w();
+  }
+  if (t.focus) {
+    w(`export const focus = ${JSON.stringify(t.focus)};`);
+    w();
+  }
+  return lines.join('\n');
+}
+
+// ============================================================
+// TYPESCRIPT DECLARATIONS (.d.ts)
+// ============================================================
+
+function generateDTS(tokens) {
+  const { meta, brand, tokens: t } = tokens;
+  const lines = [];
+  const w = (line = '') => lines.push(line);
+
+  w(`// IAMJARL Design Tokens v${meta.version} — generated, do not edit`);
+  w();
+  w(`export declare const meta: { readonly name: string; readonly version: string };`);
+  w();
+  w(`export declare const spacing: ${JSON.stringify(t.spacing)};`);
+  w(`export declare const radius: ${JSON.stringify(t.radius)};`);
+  w(`export declare const typography: ${JSON.stringify({
+    family: brand.typography.family,
+    weights: brand.typography.weights,
+    sizes: brand.typography.sizes,
+    lineHeights: brand.typography.lineHeights,
+  })};`);
+  w(`export declare const icons: ${JSON.stringify({
+    library: brand.icons.library,
+    defaultWeight: brand.icons.defaultWeight,
+    weightsAllowed: brand.icons.weightsAllowed,
+    defaultSizes: brand.icons.defaultSizes,
+  })};`);
+  w(`export declare const colors: ${JSON.stringify({
+    static: t.colors.static,
+    shared: t.colors.shared,
+    light: t.colors.modes.light,
+    dark: t.colors.modes.dark,
+  })};`);
+  w();
+  w('export type ColorMode = "light" | "dark";');
+  w('export declare function modeColors(mode: ColorMode): typeof colors.light;');
+  w();
+  if (t.shadows) {
+    w(`export declare const shadows: ${JSON.stringify(t.shadows)};`);
+    w('export declare function shadowCss(name: keyof typeof shadows): string;');
+  }
+  if (t.motion) {
+    w(`export declare const motion: ${JSON.stringify(t.motion)};`);
+    w('export declare function easingCss(name: keyof typeof motion.easing): string;');
+  }
+  if (t.breakpoints) {
+    w(`export declare const breakpoints: ${JSON.stringify(t.breakpoints)};`);
+  }
+  if (t.focus) {
+    w(`export declare const focus: ${JSON.stringify(t.focus)};`);
+  }
+  w();
+  // Type aliases
+  w('export type Spacing = typeof spacing;');
+  w('export type SpacingKey = keyof Spacing;');
+  w('export type Radius = typeof radius;');
+  w('export type RadiusKey = keyof Radius;');
+  w('export type Typography = typeof typography;');
+  w('export type FontSize = keyof Typography["sizes"];');
+  w('export type FontWeight = keyof Typography["weights"];');
+  w('export type LineHeight = keyof Typography["lineHeights"];');
+  w('export type ThemeColors = typeof colors.light;');
+  w('export type StaticColors = typeof colors.static;');
+  w('export type SharedColors = typeof colors.shared;');
+  if (t.shadows) {
+    w('export type Shadows = typeof shadows;');
+    w('export type ShadowKey = keyof Shadows;');
+  }
+  if (t.motion) {
+    w('export type Motion = typeof motion;');
+    w('export type DurationKey = keyof Motion["duration"];');
+    w('export type EasingKey = keyof Motion["easing"];');
+  }
+  if (t.breakpoints) {
+    w('export type Breakpoints = typeof breakpoints;');
+    w('export type BreakpointKey = keyof Breakpoints;');
+  }
+  if (t.focus) {
+    w('export type Focus = typeof focus;');
+  }
+  w();
+  return lines.join('\n');
+}
+
+// ============================================================
 // MAIN
 // ============================================================
 
@@ -677,18 +830,21 @@ function main() {
   console.log(`Building IAMJARL Design Tokens v${tokens.meta.version}...\n`);
 
   // Swift
-  const swiftOut = path.join(ROOT, 'Sources', 'IAMJARLDesignTokens', 'DesignTokens.swift');
-  writeFile(swiftOut, generateSwift(tokens));
+  writeFile(path.join(ROOT, 'Sources', 'IAMJARLDesignTokens', 'DesignTokens.swift'), generateSwift(tokens));
 
   // CSS
-  const cssOut = path.join(ROOT, 'dist', 'css', 'tokens.css');
-  writeFile(cssOut, generateCSS(tokens));
+  writeFile(path.join(ROOT, 'dist', 'css', 'tokens.css'), generateCSS(tokens));
 
-  // TypeScript
-  const tsOut = path.join(ROOT, 'dist', 'ts', 'tokens.ts');
-  writeFile(tsOut, generateTS(tokens));
+  // TypeScript source (for inspection/import in TS-aware bundlers)
+  writeFile(path.join(ROOT, 'dist', 'ts', 'tokens.ts'), generateTS(tokens));
 
-  console.log('\nDone! Generated 3 platform files.');
+  // JavaScript ESM (the actual runtime entry for npm consumers)
+  writeFile(path.join(ROOT, 'dist', 'ts', 'tokens.js'), generateJS(tokens));
+
+  // TypeScript declarations
+  writeFile(path.join(ROOT, 'dist', 'ts', 'tokens.d.ts'), generateDTS(tokens));
+
+  console.log('\nDone! Generated 5 platform files.');
 }
 
 main();

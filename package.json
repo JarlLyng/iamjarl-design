@@ -1,19 +1,29 @@
 {
   "name": "@iamjarl/design-tokens",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "IAMJARL Design System tokens for web and React Native",
-  "main": "dist/ts/tokens.ts",
-  "types": "dist/ts/tokens.ts",
+  "type": "module",
+  "main": "./dist/ts/tokens.js",
+  "types": "./dist/ts/tokens.d.ts",
   "exports": {
-    ".": "./dist/ts/tokens.ts",
-    "./css": "./dist/css/tokens.css"
+    ".": {
+      "types": "./dist/ts/tokens.d.ts",
+      "import": "./dist/ts/tokens.js",
+      "default": "./dist/ts/tokens.js"
+    },
+    "./css": "./dist/css/tokens.css",
+    "./tokens.json": "./tokens.json",
+    "./design.md": "./design.md"
   },
   "files": [
-    "dist/"
+    "dist/",
+    "tokens.json",
+    "design.md"
   ],
   "scripts": {
     "build": "node scripts/build.js",
     "validate": "node scripts/validate.js",
+    "test": "node scripts/test.js",
     "serve": "npx --yes serve . --listen 3000",
     "dev": "npm run build && npm run serve"
   },

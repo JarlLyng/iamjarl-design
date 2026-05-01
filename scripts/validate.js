@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const TOKENS_PATH = path.join(__dirname, '..', 'tokens.json');
 
 let errors = 0;
@@ -32,7 +35,11 @@ function parseHex(hex) {
 function parseRgba(str) {
   const m = str.match(/^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)\s*\)$/);
   if (!m) return null;
-  return { r: Number(m[1]), g: Number(m[2]), b: Number(m[3]), a: Number(m[4]) };
+  const r = Number(m[1]), g = Number(m[2]), b = Number(m[3]), a = Number(m[4]);
+  // Strict bounds: r/g/b must be 0-255, alpha 0-1
+  if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) return null;
+  if (a < 0 || a > 1) return null;
+  return { r, g, b, a };
 }
 
 function parseColor(value) {
@@ -77,8 +84,22 @@ function validateStructure(tokens) {
 
   if (!tokens.meta.updated) {
     fail('meta.updated is missing');
+  } else if (!/^\d{4}-\d{2}-\d{2}$/.test(tokens.meta.updated) || isNaN(Date.parse(tokens.meta.updated))) {
+    fail(`meta.updated "${tokens.meta.updated}" is not a valid ISO date (YYYY-MM-DD)`);
   } else {
     pass(`meta.updated: ${tokens.meta.updated}`);
+  }
+
+  // Version sync between tokens.json and package.json
+  try {
+    const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf-8'));
+    if (pkg.version !== tokens.meta.version) {
+      fail(`version mismatch: tokens.json=${tokens.meta.version}, package.json=${pkg.version}`);
+    } else {
+      pass(`version sync: tokens.json and package.json both at ${pkg.version}`);
+    }
+  } catch (e) {
+    fail(`Could not read package.json: ${e.message}`);
   }
 
   // Tokens
@@ -212,10 +233,8 @@ function validateContrast(tokens) {
     const ratioStr = ratio.toFixed(2);
     if (ratio >= 4.5) {
       pass(`${fg} on ${bg}: ${ratioStr}:1`);
-    } else if (ratio >= 3.0) {
-      console.log(`  ⚠ ${fg} on ${bg}: ${ratioStr}:1 (passes for large text only)`);
     } else {
-      console.log(`  ⚠ ${fg} on ${bg}: ${ratioStr}:1 (below AA — consider adjusting)`);
+      fail(`${fg} on ${bg}: ${ratioStr}:1 — below WCAG AA (4.5:1). Semantic on-color pairs are non-negotiable.`);
     }
   }
 }

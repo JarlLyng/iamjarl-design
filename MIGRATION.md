@@ -4,6 +4,33 @@ Step-by-step instructions for updating consumer projects between versions.
 
 ---
 
+## v0.3.x → v0.4.0
+
+### What changed
+1. **Error color updated**: `#FF3B30` → `#D70015` for WCAG AA compliance with white text.
+2. **`package.json` is now ESM** with proper `.js` + `.d.ts` artifacts. Runtime entry moved from `.ts` to `.js`.
+
+### Who needs to migrate
+- ✅ **SwiftUI projects** — just bump the SPM version. Visual change: error red is slightly darker.
+- ⚠️ **React/Expo projects** — bump version. If you imported from the `.ts` source directly (rare), switch to the package's main export.
+- ✅ **CSS-only projects** — bump version, no other changes.
+
+### Action
+- **SPM**: Xcode → File → Packages → Update to Latest Package Versions
+- **npm**: `npm update @iamjarl/design-tokens` (or update the `from:` version in your manifest)
+- Visually verify destructive UI in light + dark mode — red is slightly deeper.
+
+If you previously imported via:
+```ts
+import { colors } from '@iamjarl/design-tokens/dist/ts/tokens.ts';  // ❌ deep import
+```
+switch to the package main export:
+```ts
+import { colors } from '@iamjarl/design-tokens';  // ✅ uses exports map
+```
+
+---
+
 ## v0.2.x → v0.3.0
 
 **Status: Breaking change for web/CSS consumers only.** SwiftUI and TypeScript imports are unaffected.

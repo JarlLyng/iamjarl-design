@@ -29,12 +29,17 @@ Thanks for your interest! This is primarily a personal design system, but PRs an
 No dependencies required. Scripts use only Node.js built-ins (Node 20+).
 
 ```bash
-# Validate token structure and contrast
+# Validate token structure and contrast (fails on WCAG AA violations)
 node scripts/validate.js
 
 # Generate platform files
 node scripts/build.js
+
+# Run contract tests against generated outputs
+node scripts/test.js
 ```
+
+CI runs all three on every PR plus `swift build` and `npm pack --dry-run`. Generated files in `Sources/` and `dist/` must be in sync with `tokens.json` or PR-CI fails.
 
 ## Code style
 

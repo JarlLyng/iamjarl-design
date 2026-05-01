@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - IAMJARL Design Tokens (SwiftUI)
 //
-// Auto-generated from tokens.json v0.3.0 — do not edit manually.
+// Auto-generated from tokens.json v0.4.0 — do not edit manually.
 // Run: node scripts/build.js
 //
 // Design DNA:
@@ -121,7 +121,7 @@ public enum DesignTokens {
       public static let warning = Color(hex: "#FF6B35")
       public static let onWarning = Color(hex: "#000000")
 
-      public static let error = Color(hex: "#FF3B30")
+      public static let error = Color(hex: "#D70015")
       public static let onError = Color(hex: "#FFFFFF")
     }
 

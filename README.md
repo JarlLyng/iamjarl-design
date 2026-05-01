@@ -12,7 +12,7 @@ It is designed to work equally well for **humans** (design overview) and **AI to
 
 [![Co-created with AI](https://madebyhuman.iamjarl.com/badges/co-created-white.svg)](https://madebyhuman.iamjarl.com)
 
-> **⚠️ Upgrading from v0.2 → v0.3?** All CSS variables are now prefixed with `--ij-` (e.g. `var(--color-primary)` → `var(--ij-color-primary)`). See **[MIGRATION.md](MIGRATION.md)** for a one-line `sed` script to update your project. SwiftUI and TypeScript imports are unaffected.
+> **⚠️ Upgrading?** v0.4 changed the error color and switched the npm package to ESM. v0.3 prefixed all CSS variables with `--ij-`. See **[MIGRATION.md](MIGRATION.md)** for step-by-step upgrade guides.
 
 ---
 
@@ -44,7 +44,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "0.3.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "0.4.0")
 ]
 ```
 
@@ -118,6 +118,7 @@ When updating to a new version, check **[MIGRATION.md](MIGRATION.md)** for break
 
 | From → To | Breaking? | Affects |
 | --- | --- | --- |
+| 0.3.x → 0.4.0 | Yes | Error color (visual) + npm package now ESM |
 | 0.2.x → 0.3.0 | Yes | CSS variables now prefixed with `--ij-` |
 | 0.1.x → 0.2.0 | No | Additive only (new shadow/motion/breakpoint/focus tokens) |
 

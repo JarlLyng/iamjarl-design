@@ -1,0 +1,54 @@
+name: PR CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tokens.json'
+      - 'tokens.schema.json'
+      - 'scripts/**'
+      - 'Sources/**'
+      - 'dist/**'
+      - 'package.json'
+      - 'Package.swift'
+      - '.github/workflows/**'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate tokens
+        run: node scripts/validate.js
+
+      - name: Build platform files
+        run: node scripts/build.js
+
+      - name: Verify generated files are in sync
+        run: |
+          if ! git diff --exit-code Sources/ dist/; then
+            echo "::error::Generated files are out of sync. Run 'node scripts/build.js' locally and commit the changes."
+            exit 1
+          fi
+
+      - name: Run contract tests
+        run: node scripts/test.js
+
+      - name: Verify npm pack contents
+        run: npm pack --dry-run
+
+  swift-build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Swift package
+        run: swift build
