@@ -1,4 +1,4 @@
-# IAMJARL Design System (v0.5.0)
+# IAMJARL Design System (v1.0.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -11,13 +11,23 @@ Use together with `tokens.json` (single source of truth).
 ## The DNA
 ### Color
 - Primary is a bold neon accent:
-  - Light: #A435D2
-  - Dark:  #D0FF00
+  - Light: #A435D2 (hover #8E2BB8, pressed #7A2499)
+  - Dark:  #D0FF00 (hover #B8E000, pressed #A0C400)
+  - `primarySubtle` is a low-alpha tint for selected/active backgrounds.
 - UI uses subtle translucent backgrounds (muted/card) instead of heavy borders.
 - States are consistent across all products:
   - Success: #4CAF50
   - Error:   #D70015
   - Warning: #FF6B35
+
+#### State colors: fills vs. text
+- The shared `success` / `warning` / `error` colors are **fills** — only use them as backgrounds, always paired with their `on*` color (`onSuccess`, etc.).
+- For colored **text/icons on a normal background** (e.g. inline error messages, success labels), use the mode-aware `state.success` / `state.warning` / `state.error` tokens. These are tuned per mode to meet WCAG AA against `background.app`.
+- Never use a raw fill color as text — `success` (#4CAF50) on white is only 2.78:1 and fails AA.
+
+#### Interaction & disabled states
+- Hover/pressed: use `primaryHover` / `primaryPressed` (mode-aware) instead of darkening primary by hand.
+- Disabled elements: use `text.disabled` and `background.disabled`, or apply `opacity.disabled` (0.4) to the whole control. Never invent your own disabled greys.
 
 #### Semantic usage
 - `primary` is an accent color and must always be paired with a semantic on-color.
@@ -48,6 +58,14 @@ Use together with `tokens.json` (single source of truth).
 - Ring width: 2px, offset: 2px
 - Focus ring color should be `primary` (mode-aware)
 - Always preserve keyboard focus — never `outline: none` without replacement
+
+### Z-index (stacking)
+- Use the `zIndex` scale — never magic numbers — so layers stack predictably across products.
+- Order (low → high): `dropdown` (1000), `sticky` (1100), `overlay` (1200), `modal` (1300), `popover` (1400), `toast` (1500), `tooltip` (1600). `base` is 0.
+- Pick the smallest layer that works; values are spaced by 100 so you rarely need anything in between.
+
+### Opacity
+- `opacity.disabled` (0.4) for disabled controls; `opacity.muted` (0.65) for de-emphasized-but-active content.
 
 ### Typography
 - Default UI font: system-ui (platform native)
@@ -119,10 +137,11 @@ Icons should communicate meaning, not decoration. If an icon does not add clarit
 ### UI Recipes (Canonical)
 
 #### Primary Button
-- Background: `primary`
+- Background: `primary` (hover `primaryHover`, pressed `primaryPressed`)
 - Text / Icon: `onPrimary`
 - Radius: `radius.md`
 - Padding: `spacing.md` (vertical) / `spacing.xl` (horizontal)
+- Disabled: `background.disabled` bg + `text.disabled`, or `opacity.disabled` on the whole button
 
 #### Secondary Button
 - Background: `background.card`

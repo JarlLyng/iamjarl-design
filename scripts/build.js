@@ -180,6 +180,28 @@ function generateSwift(tokens) {
     w();
   }
 
+  // Z-index
+  if (t.zIndex) {
+    w('  // MARK: Z-Index');
+    w('  public enum ZIndex {');
+    for (const [key, val] of Object.entries(t.zIndex)) {
+      w(`    public static let ${swiftName(key)}: Double = ${val}`);
+    }
+    w('  }');
+    w();
+  }
+
+  // Opacity
+  if (t.opacity) {
+    w('  // MARK: Opacity');
+    w('  public enum Opacity {');
+    for (const [key, val] of Object.entries(t.opacity)) {
+      w(`    public static let ${swiftName(key)}: Double = ${val}`);
+    }
+    w('  }');
+    w();
+  }
+
   // Color Tokens
   w('  // MARK: Color Tokens');
   w('  public enum ColorToken {');
@@ -218,16 +240,21 @@ function generateSwift(tokens) {
 
     w(`    // Mode-aware colors (${label})`);
     w(`    public enum ${label} {`);
-    w(`      public static let primary = ${swiftColorInit(m.primary)}`);
-    w(`      public static let onPrimary = ${swiftColorInit(m.onPrimary)}`);
+    // Scalar color props at the mode root (primary, onPrimary, primaryHover, ...)
+    for (const [k, v] of Object.entries(m)) {
+      if (typeof v === 'string') {
+        w(`      public static let ${swiftName(k)} = ${swiftColorInit(v)}`);
+      }
+    }
     w();
 
-    // Nested groups: text, background, surface, border
+    // Nested groups: text, background, surface, border, state
     const groups = [
       { key: 'text', label: 'Text' },
       { key: 'background', label: 'Background' },
       { key: 'surface', label: 'Surface' },
       { key: 'border', label: 'Border' },
+      { key: 'state', label: 'State' },
     ];
 
     for (const group of groups) {
@@ -278,14 +305,16 @@ function generateSwift(tokens) {
   w('      }');
   w('    }');
 
-  w('    public static func primary(_ scheme: ColorScheme) -> Color {');
-  w('      DesignTokens.color(light: ColorToken.Light.primary, dark: ColorToken.Dark.primary, scheme: scheme)');
-  w('    }');
+  for (const prop of ['primary', 'primaryHover', 'primaryPressed', 'primarySubtle']) {
+    w(`    public static func ${prop}(_ scheme: ColorScheme) -> Color {`);
+    w(`      DesignTokens.color(light: ColorToken.Light.${prop}, dark: ColorToken.Dark.${prop}, scheme: scheme)`);
+    w('    }');
+  }
   w();
 
   // Common.Text
   w('    public enum Text {');
-  for (const prop of ['primary', 'secondary', 'tertiary', 'inverse']) {
+  for (const prop of ['primary', 'secondary', 'tertiary', 'disabled', 'inverse']) {
     w(`      public static func ${prop}(_ scheme: ColorScheme) -> Color {`);
     w(`        DesignTokens.color(light: ColorToken.Light.Text.${prop}, dark: ColorToken.Dark.Text.${prop}, scheme: scheme)`);
     w('      }');
@@ -295,7 +324,7 @@ function generateSwift(tokens) {
 
   // Common.Background
   w('    public enum Background {');
-  for (const prop of ['app', 'muted', 'card']) {
+  for (const prop of ['app', 'muted', 'card', 'disabled']) {
     w(`      public static func ${prop}(_ scheme: ColorScheme) -> Color {`);
     w(`        DesignTokens.color(light: ColorToken.Light.Background.${prop}, dark: ColorToken.Dark.Background.${prop}, scheme: scheme)`);
     w('      }');
@@ -309,6 +338,16 @@ function generateSwift(tokens) {
     const escaped = swiftName(prop);
     w(`      public static func ${escaped}(_ scheme: ColorScheme) -> Color {`);
     w(`        DesignTokens.color(light: ColorToken.Light.Border.${prop}, dark: ColorToken.Dark.Border.${prop}, scheme: scheme)`);
+    w('      }');
+  }
+  w('    }');
+  w();
+
+  // Common.State — mode-aware state colors safe for use as foreground/text
+  w('    public enum State {');
+  for (const prop of ['success', 'warning', 'error']) {
+    w(`      public static func ${prop}(_ scheme: ColorScheme) -> Color {`);
+    w(`        DesignTokens.color(light: ColorToken.Light.State.${prop}, dark: ColorToken.Dark.State.${prop}, scheme: scheme)`);
     w('      }');
   }
   w('    }');
@@ -464,6 +503,24 @@ function generateCSS(tokens, scope = ':root') {
     w();
   }
 
+  // Z-index
+  if (t.zIndex) {
+    w('  /* Z-index */');
+    for (const [key, val] of Object.entries(t.zIndex)) {
+      w(`  --ij-z-${camelToKebab(key)}: ${val};`);
+    }
+    w();
+  }
+
+  // Opacity
+  if (t.opacity) {
+    w('  /* Opacity */');
+    for (const [key, val] of Object.entries(t.opacity)) {
+      w(`  --ij-opacity-${camelToKebab(key)}: ${val};`);
+    }
+    w();
+  }
+
   // Static colors
   w('  /* Static colors */');
   for (const [key, val] of Object.entries(t.colors.static)) {
@@ -479,24 +536,10 @@ function generateCSS(tokens, scope = ':root') {
   w();
 
   // Light mode colors (default)
-  w('  /* Mode colors (light default) */');
-  function flattenColors(obj, prefix) {
-    for (const [key, val] of Object.entries(obj)) {
-      if (typeof val === 'object') {
-        flattenColors(val, `${prefix}-${camelToKebab(key)}`);
-      } else {
-        w(`  --ij-color-${prefix}-${camelToKebab(key)}: ${val};`);
-      }
-    }
-  }
-  // Top-level mode colors
   const light = t.colors.modes.light;
-  w(`  --ij-color-primary: ${light.primary};`);
-  w(`  --ij-color-on-primary: ${light.onPrimary};`);
-  flattenColors(light.text, 'text');
-  flattenColors(light.background, 'bg');
-  flattenColors(light.surface, 'surface');
-  flattenColors(light.border, 'border');
+  const dark = t.colors.modes.dark;
+  w('  /* Mode colors (light default) */');
+  for (const line of modeColorLines(light, '  ')) w(line);
 
   w('}');
   w();
@@ -504,22 +547,7 @@ function generateCSS(tokens, scope = ':root') {
   // Dark mode
   w('@media (prefers-color-scheme: dark) {');
   w(`  ${scope} {`);
-  const dark = t.colors.modes.dark;
-  w(`    --ij-color-primary: ${dark.primary};`);
-  w(`    --ij-color-on-primary: ${dark.onPrimary};`);
-  function flattenColorsDark(obj, prefix) {
-    for (const [key, val] of Object.entries(obj)) {
-      if (typeof val === 'object') {
-        flattenColorsDark(val, `${prefix}-${camelToKebab(key)}`);
-      } else {
-        w(`    --ij-color-${prefix}-${camelToKebab(key)}: ${val};`);
-      }
-    }
-  }
-  flattenColorsDark(dark.text, 'text');
-  flattenColorsDark(dark.background, 'bg');
-  flattenColorsDark(dark.surface, 'surface');
-  flattenColorsDark(dark.border, 'border');
+  for (const line of modeColorLines(dark, '    ')) w(line);
   w('  }');
   w('}');
   w();
@@ -527,35 +555,39 @@ function generateCSS(tokens, scope = ':root') {
   // Explicit class overrides
   w('/* Explicit class overrides for manual mode switching */');
   w('.light {');
-  w(`  --ij-color-primary: ${light.primary};`);
-  w(`  --ij-color-on-primary: ${light.onPrimary};`);
-  flattenColorsClass(lines, light, '  ');
+  for (const line of modeColorLines(light, '  ')) w(line);
   w('}');
   w();
   w('.dark {');
-  w(`  --ij-color-primary: ${dark.primary};`);
-  w(`  --ij-color-on-primary: ${dark.onPrimary};`);
-  flattenColorsClass(lines, dark, '  ');
+  for (const line of modeColorLines(dark, '  ')) w(line);
   w('}');
   w();
 
   return lines.join('\n');
 }
 
-function flattenColorsClass(lines, mode, indent) {
+// Emit CSS custom properties for a single color mode. Scalar props become
+// --ij-color-<key>; nested groups are flattened (background → "bg").
+function modeColorLines(mode, indent) {
+  const out = [];
+  const groupPrefix = { background: 'bg' };
   function flatten(obj, prefix) {
     for (const [key, val] of Object.entries(obj)) {
-      if (typeof val === 'object') {
+      if (typeof val === 'object' && val !== null) {
         flatten(val, `${prefix}-${camelToKebab(key)}`);
       } else {
-        lines.push(`${indent}--ij-color-${prefix}-${camelToKebab(key)}: ${val};`);
+        out.push(`${indent}--ij-color-${prefix}-${camelToKebab(key)}: ${val};`);
       }
     }
   }
-  flatten(mode.text, 'text');
-  flatten(mode.background, 'bg');
-  flatten(mode.surface, 'surface');
-  flatten(mode.border, 'border');
+  for (const [key, val] of Object.entries(mode)) {
+    if (typeof val === 'object' && val !== null) {
+      flatten(val, groupPrefix[key] || camelToKebab(key));
+    } else {
+      out.push(`${indent}--ij-color-${camelToKebab(key)}: ${val};`);
+    }
+  }
+  return out;
 }
 
 // ============================================================
@@ -641,6 +673,18 @@ function generateTS(tokens) {
     w();
   }
 
+  // Z-index
+  if (t.zIndex) {
+    w(`export const zIndex = ${JSON.stringify(t.zIndex)} as const;`);
+    w();
+  }
+
+  // Opacity
+  if (t.opacity) {
+    w(`export const opacity = ${JSON.stringify(t.opacity)} as const;`);
+    w();
+  }
+
   // Named type aliases for ergonomic consumer use
   w('// Type aliases');
   w('export type Spacing = typeof spacing;');
@@ -669,6 +713,14 @@ function generateTS(tokens) {
   }
   if (t.focus) {
     w('export type Focus = typeof focus;');
+  }
+  if (t.zIndex) {
+    w('export type ZIndex = typeof zIndex;');
+    w('export type ZIndexKey = keyof ZIndex;');
+  }
+  if (t.opacity) {
+    w('export type Opacity = typeof opacity;');
+    w('export type OpacityKey = keyof Opacity;');
   }
   w();
 
@@ -738,6 +790,14 @@ function generateJS(tokens) {
     w(`export const focus = ${JSON.stringify(t.focus)};`);
     w();
   }
+  if (t.zIndex) {
+    w(`export const zIndex = ${JSON.stringify(t.zIndex)};`);
+    w();
+  }
+  if (t.opacity) {
+    w(`export const opacity = ${JSON.stringify(t.opacity)};`);
+    w();
+  }
   return lines.join('\n');
 }
 
@@ -792,6 +852,12 @@ function generateDTS(tokens) {
   if (t.focus) {
     w(`export declare const focus: ${JSON.stringify(t.focus)};`);
   }
+  if (t.zIndex) {
+    w(`export declare const zIndex: ${JSON.stringify(t.zIndex)};`);
+  }
+  if (t.opacity) {
+    w(`export declare const opacity: ${JSON.stringify(t.opacity)};`);
+  }
   w();
   // Type aliases
   w('export type Spacing = typeof spacing;');
@@ -820,6 +886,14 @@ function generateDTS(tokens) {
   }
   if (t.focus) {
     w('export type Focus = typeof focus;');
+  }
+  if (t.zIndex) {
+    w('export type ZIndex = typeof zIndex;');
+    w('export type ZIndexKey = keyof ZIndex;');
+  }
+  if (t.opacity) {
+    w('export type Opacity = typeof opacity;');
+    w('export type OpacityKey = keyof Opacity;');
   }
   w();
   return lines.join('\n');

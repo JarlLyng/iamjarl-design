@@ -17,7 +17,7 @@ It is designed to work equally well for **humans** (design overview) and **AI to
 ---
 
 ## What's inside
-- `tokens.json` — machine-readable design tokens (colors, spacing, radius, typography, icons)
+- `tokens.json` — machine-readable design tokens (colors incl. interaction/disabled/state-text, spacing, radius, typography, icons, shadows, motion, breakpoints, focus, z-index, opacity)
 - `design.md` — rules, principles and non-negotiables (Cursor-friendly)
 - `index.html` — human-friendly viewer that renders tokens visually
 - `scripts/build.js` — generates platform-specific token files from `tokens.json`
@@ -44,7 +44,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "0.5.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.0.0")
 ]
 ```
 
@@ -191,6 +191,7 @@ When updating to a new version, check **[MIGRATION.md](MIGRATION.md)** for break
 
 | From → To | Breaking? | Affects |
 | --- | --- | --- |
+| 0.5.x → 1.0.0 | Yes | `typography.lineHeights` keys renamed (`tight/normal/relaxed/…` → `xs/sm/base/lg/xl/xxl`). Otherwise additive: state-text colors, primary hover/pressed/subtle, disabled tokens, z-index, opacity |
 | 0.4.x → 0.5.0 | No | Additive only (Chrome extension support, popup breakpoint, shadow CSS) |
 | 0.3.x → 0.4.0 | Yes | Error color (visual) + npm package now ESM |
 | 0.2.x → 0.3.0 | Yes | CSS variables now prefixed with `--ij-` |

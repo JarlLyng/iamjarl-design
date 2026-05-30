@@ -1,6 +1,6 @@
-// IAMJARL Design Tokens v0.5.0 — generated, do not edit
+// IAMJARL Design Tokens v1.0.0 — generated, do not edit
 
-export const meta = {"name":"IAMJARL Design System","version":"0.5.0"} as const;
+export const meta = {"name":"IAMJARL Design System","version":"1.0.0"} as const;
 
 export const spacing = {"xs":4,"sm":8,"md":12,"lg":16,"xl":20,"xxl":24,"xxxl":32} as const;
 
@@ -25,11 +25,12 @@ export const typography = {
     "xxl": 36
   },
   "lineHeights": {
-    "tight": 20,
-    "normal": 24,
-    "relaxed": 28,
-    "xxl": 43.2,
-    "sm": 18
+    "xs": 16,
+    "sm": 20,
+    "base": 24,
+    "lg": 28,
+    "xl": 32,
+    "xxl": 44
   }
 } as const;
 
@@ -58,16 +59,21 @@ export const colors = {
   light: {
       "primary": "#A435D2",
       "onPrimary": "#FFFFFF",
+      "primaryHover": "#8E2BB8",
+      "primaryPressed": "#7A2499",
+      "primarySubtle": "rgba(164, 53, 210, 0.12)",
       "text": {
           "primary": "#000000",
           "secondary": "rgba(0, 0, 0, 0.70)",
           "tertiary": "rgba(0, 0, 0, 0.55)",
+          "disabled": "rgba(0, 0, 0, 0.35)",
           "inverse": "#FFFFFF"
       },
       "background": {
           "app": "#FFFFFF",
           "muted": "rgba(0, 0, 0, 0.04)",
-          "card": "rgba(0, 0, 0, 0.04)"
+          "card": "rgba(0, 0, 0, 0.04)",
+          "disabled": "rgba(0, 0, 0, 0.06)"
       },
       "surface": {
           "default": "#FFFFFF",
@@ -76,21 +82,31 @@ export const colors = {
       "border": {
           "subtle": "rgba(0, 0, 0, 0.10)",
           "default": "rgba(0, 0, 0, 0.16)"
+      },
+      "state": {
+          "success": "#2E7D32",
+          "warning": "#C2410C",
+          "error": "#D70015"
       }
   },
   dark: {
       "primary": "#D0FF00",
       "onPrimary": "#000000",
+      "primaryHover": "#B8E000",
+      "primaryPressed": "#A0C400",
+      "primarySubtle": "rgba(208, 255, 0, 0.15)",
       "text": {
           "primary": "#FFFFFF",
           "secondary": "rgba(255, 255, 255, 0.75)",
           "tertiary": "rgba(255, 255, 255, 0.60)",
+          "disabled": "rgba(255, 255, 255, 0.35)",
           "inverse": "#000000"
       },
       "background": {
           "app": "#000000",
           "muted": "rgba(255, 255, 255, 0.05)",
-          "card": "rgba(255, 255, 255, 0.05)"
+          "card": "rgba(255, 255, 255, 0.05)",
+          "disabled": "rgba(255, 255, 255, 0.07)"
       },
       "surface": {
           "default": "#000000",
@@ -99,6 +115,11 @@ export const colors = {
       "border": {
           "subtle": "rgba(255, 255, 255, 0.12)",
           "default": "rgba(255, 255, 255, 0.18)"
+      },
+      "state": {
+          "success": "#4CAF50",
+          "warning": "#FF6B35",
+          "error": "#FF453A"
       }
   },
 } as const;
@@ -168,6 +189,10 @@ export const breakpoints = {"popup":320,"sm":640,"md":768,"lg":1024,"xl":1280,"x
 
 export const focus = {"width":2,"offset":2} as const;
 
+export const zIndex = {"base":0,"dropdown":1000,"sticky":1100,"overlay":1200,"modal":1300,"popover":1400,"toast":1500,"tooltip":1600} as const;
+
+export const opacity = {"disabled":0.4,"muted":0.65} as const;
+
 // Type aliases
 export type Spacing = typeof spacing;
 export type SpacingKey = keyof Spacing;
@@ -188,3 +213,7 @@ export type EasingKey = keyof Motion["easing"];
 export type Breakpoints = typeof breakpoints;
 export type BreakpointKey = keyof Breakpoints;
 export type Focus = typeof focus;
+export type ZIndex = typeof zIndex;
+export type ZIndexKey = keyof ZIndex;
+export type Opacity = typeof opacity;
+export type OpacityKey = keyof Opacity;

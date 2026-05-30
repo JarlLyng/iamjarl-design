@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - IAMJARL Design Tokens (SwiftUI)
 //
-// Auto-generated from tokens.json v0.5.0 — do not edit manually.
+// Auto-generated from tokens.json v1.0.0 — do not edit manually.
 // Run: node scripts/build.js
 //
 // Design DNA:
@@ -46,11 +46,12 @@ public enum DesignTokens {
     }
 
     public enum LineHeight {
-      public static let tight: CGFloat = 20
-      public static let normal: CGFloat = 24
-      public static let relaxed: CGFloat = 28
-      public static let xxl: CGFloat = 43.2
-      public static let sm: CGFloat = 18
+      public static let xs: CGFloat = 16
+      public static let sm: CGFloat = 20
+      public static let base: CGFloat = 24
+      public static let lg: CGFloat = 28
+      public static let xl: CGFloat = 32
+      public static let xxl: CGFloat = 44
     }
 
     public enum Weight {
@@ -107,6 +108,24 @@ public enum DesignTokens {
     public static let offset: CGFloat = 2
   }
 
+  // MARK: Z-Index
+  public enum ZIndex {
+    public static let base: Double = 0
+    public static let dropdown: Double = 1000
+    public static let sticky: Double = 1100
+    public static let overlay: Double = 1200
+    public static let modal: Double = 1300
+    public static let popover: Double = 1400
+    public static let toast: Double = 1500
+    public static let tooltip: Double = 1600
+  }
+
+  // MARK: Opacity
+  public enum Opacity {
+    public static let disabled: Double = 0.4
+    public static let muted: Double = 0.65
+  }
+
   // MARK: Color Tokens
   public enum ColorToken {
 
@@ -130,11 +149,15 @@ public enum DesignTokens {
     public enum Light {
       public static let primary = Color(hex: "#A435D2")
       public static let onPrimary = Color(hex: "#FFFFFF")
+      public static let primaryHover = Color(hex: "#8E2BB8")
+      public static let primaryPressed = Color(hex: "#7A2499")
+      public static let primarySubtle = Color(rgba: "rgba(164, 53, 210, 0.12)")
 
       public enum Text {
         public static let primary = Color(hex: "#000000")
         public static let secondary = Color(rgba: "rgba(0, 0, 0, 0.70)")
         public static let tertiary = Color(rgba: "rgba(0, 0, 0, 0.55)")
+        public static let disabled = Color(rgba: "rgba(0, 0, 0, 0.35)")
         public static let inverse = Color(hex: "#FFFFFF")
       }
 
@@ -142,6 +165,7 @@ public enum DesignTokens {
         public static let app = Color(hex: "#FFFFFF")
         public static let muted = Color(rgba: "rgba(0, 0, 0, 0.04)")
         public static let card = Color(rgba: "rgba(0, 0, 0, 0.04)")
+        public static let disabled = Color(rgba: "rgba(0, 0, 0, 0.06)")
       }
 
       public enum Surface {
@@ -153,17 +177,27 @@ public enum DesignTokens {
         public static let subtle = Color(rgba: "rgba(0, 0, 0, 0.10)")
         public static let `default` = Color(rgba: "rgba(0, 0, 0, 0.16)")
       }
+
+      public enum State {
+        public static let success = Color(hex: "#2E7D32")
+        public static let warning = Color(hex: "#C2410C")
+        public static let error = Color(hex: "#D70015")
+      }
     }
 
     // Mode-aware colors (Dark)
     public enum Dark {
       public static let primary = Color(hex: "#D0FF00")
       public static let onPrimary = Color(hex: "#000000")
+      public static let primaryHover = Color(hex: "#B8E000")
+      public static let primaryPressed = Color(hex: "#A0C400")
+      public static let primarySubtle = Color(rgba: "rgba(208, 255, 0, 0.15)")
 
       public enum Text {
         public static let primary = Color(hex: "#FFFFFF")
         public static let secondary = Color(rgba: "rgba(255, 255, 255, 0.75)")
         public static let tertiary = Color(rgba: "rgba(255, 255, 255, 0.60)")
+        public static let disabled = Color(rgba: "rgba(255, 255, 255, 0.35)")
         public static let inverse = Color(hex: "#000000")
       }
 
@@ -171,6 +205,7 @@ public enum DesignTokens {
         public static let app = Color(hex: "#000000")
         public static let muted = Color(rgba: "rgba(255, 255, 255, 0.05)")
         public static let card = Color(rgba: "rgba(255, 255, 255, 0.05)")
+        public static let disabled = Color(rgba: "rgba(255, 255, 255, 0.07)")
       }
 
       public enum Surface {
@@ -181,6 +216,12 @@ public enum DesignTokens {
       public enum Border {
         public static let subtle = Color(rgba: "rgba(255, 255, 255, 0.12)")
         public static let `default` = Color(rgba: "rgba(255, 255, 255, 0.18)")
+      }
+
+      public enum State {
+        public static let success = Color(hex: "#4CAF50")
+        public static let warning = Color(hex: "#FF6B35")
+        public static let error = Color(hex: "#FF453A")
       }
     }
   }
@@ -211,6 +252,15 @@ public enum DesignTokens {
     public static func primary(_ scheme: ColorScheme) -> Color {
       DesignTokens.color(light: ColorToken.Light.primary, dark: ColorToken.Dark.primary, scheme: scheme)
     }
+    public static func primaryHover(_ scheme: ColorScheme) -> Color {
+      DesignTokens.color(light: ColorToken.Light.primaryHover, dark: ColorToken.Dark.primaryHover, scheme: scheme)
+    }
+    public static func primaryPressed(_ scheme: ColorScheme) -> Color {
+      DesignTokens.color(light: ColorToken.Light.primaryPressed, dark: ColorToken.Dark.primaryPressed, scheme: scheme)
+    }
+    public static func primarySubtle(_ scheme: ColorScheme) -> Color {
+      DesignTokens.color(light: ColorToken.Light.primarySubtle, dark: ColorToken.Dark.primarySubtle, scheme: scheme)
+    }
 
     public enum Text {
       public static func primary(_ scheme: ColorScheme) -> Color {
@@ -221,6 +271,9 @@ public enum DesignTokens {
       }
       public static func tertiary(_ scheme: ColorScheme) -> Color {
         DesignTokens.color(light: ColorToken.Light.Text.tertiary, dark: ColorToken.Dark.Text.tertiary, scheme: scheme)
+      }
+      public static func disabled(_ scheme: ColorScheme) -> Color {
+        DesignTokens.color(light: ColorToken.Light.Text.disabled, dark: ColorToken.Dark.Text.disabled, scheme: scheme)
       }
       public static func inverse(_ scheme: ColorScheme) -> Color {
         DesignTokens.color(light: ColorToken.Light.Text.inverse, dark: ColorToken.Dark.Text.inverse, scheme: scheme)
@@ -237,6 +290,9 @@ public enum DesignTokens {
       public static func card(_ scheme: ColorScheme) -> Color {
         DesignTokens.color(light: ColorToken.Light.Background.card, dark: ColorToken.Dark.Background.card, scheme: scheme)
       }
+      public static func disabled(_ scheme: ColorScheme) -> Color {
+        DesignTokens.color(light: ColorToken.Light.Background.disabled, dark: ColorToken.Dark.Background.disabled, scheme: scheme)
+      }
     }
 
     public enum Border {
@@ -245,6 +301,18 @@ public enum DesignTokens {
       }
       public static func `default`(_ scheme: ColorScheme) -> Color {
         DesignTokens.color(light: ColorToken.Light.Border.default, dark: ColorToken.Dark.Border.default, scheme: scheme)
+      }
+    }
+
+    public enum State {
+      public static func success(_ scheme: ColorScheme) -> Color {
+        DesignTokens.color(light: ColorToken.Light.State.success, dark: ColorToken.Dark.State.success, scheme: scheme)
+      }
+      public static func warning(_ scheme: ColorScheme) -> Color {
+        DesignTokens.color(light: ColorToken.Light.State.warning, dark: ColorToken.Dark.State.warning, scheme: scheme)
+      }
+      public static func error(_ scheme: ColorScheme) -> Color {
+        DesignTokens.color(light: ColorToken.Light.State.error, dark: ColorToken.Dark.State.error, scheme: scheme)
       }
     }
   }

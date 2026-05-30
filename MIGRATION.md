@@ -4,6 +4,28 @@ Step-by-step instructions for updating consumer projects between versions.
 
 ---
 
+## v0.5.x → v1.0.0
+
+### What changed
+1. **`typography.lineHeights` keys renamed** (BREAKING): `tight/normal/relaxed/xxl/sm` → `xs/sm/base/lg/xl/xxl`, now paired 1:1 with `typography.sizes`. Note `sm` still exists but its value changed (18 → 20).
+2. **Additive — no migration needed**: mode-aware `state.{success,warning,error}` text colors, `primaryHover`/`primaryPressed`/`primarySubtle`, `text.disabled` + `background.disabled`, the `zIndex` scale, and the `opacity` scale.
+
+### Who needs to migrate
+- ⚠️ **Any project referencing line-height tokens by name** (`lineHeights.tight`, `.relaxed`, etc.) — update to the new keys. If you only use sizes/weights, no change.
+- ✅ Everything else — bump the version; all other changes are additive.
+
+### Action
+- Search your codebase for `lineHeight`/`LineHeight` references to the old keys (`tight`, `normal`, `relaxed`) and map them: `tight→xs` (16), `normal→base` (24), `relaxed→lg` (28). Pick the key that matches the font size you're pairing it with.
+- **SPM**: Xcode → File → Packages → Update to Latest Package Versions
+- **npm**: `npm update @iamjarl/design-tokens`
+
+### New capabilities worth adopting
+- Replace any hand-rolled hover/pressed colors with `primaryHover`/`primaryPressed`.
+- Replace colored validation text using raw `error`/`success` fills with the mode-aware `state.*` tokens (the old usage failed WCAG AA).
+- Replace magic z-index numbers with the `zIndex` scale.
+
+---
+
 ## v0.3.x → v0.4.0
 
 ### What changed
