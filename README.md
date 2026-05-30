@@ -12,7 +12,7 @@ It is designed to work equally well for **humans** (design overview) and **AI to
 
 [![Co-created with AI](https://madebyhuman.iamjarl.com/badges/co-created-white.svg)](https://madebyhuman.iamjarl.com)
 
-> **⚠️ Upgrading?** v0.4 changed the error color and switched the npm package to ESM. v0.3 prefixed all CSS variables with `--ij-`. See **[MIGRATION.md](MIGRATION.md)** for step-by-step upgrade guides.
+> **⚠️ Upgrading?** v1.0 renamed the `typography.lineHeights` keys (`tight/normal/relaxed/…` → `xs/sm/base/lg/xl/xxl`) — everything else in 1.0 is additive. Earlier: v0.4 changed the error color and switched the npm package to ESM; v0.3 prefixed all CSS variables with `--ij-`. See **[MIGRATION.md](MIGRATION.md)** for step-by-step upgrade guides.
 
 ---
 
@@ -82,6 +82,15 @@ CSS custom properties:
   border-radius: var(--ij-radius-md);
   padding: var(--ij-spacing-md) var(--ij-spacing-xl);
 }
+.button:hover  { background: var(--ij-color-primary-hover); }
+.button:active { background: var(--ij-color-primary-pressed); }
+.button:disabled {
+  background: var(--ij-color-bg-disabled);
+  color: var(--ij-color-text-disabled);
+}
+
+/* Inline validation text uses the AA-safe state colors, not the fills */
+.error-text { color: var(--ij-color-state-error); }
 ```
 
 TypeScript imports:
@@ -188,6 +197,44 @@ chrome.action.setBadgeBackgroundColor({ color: colors.light.primary });
 
 ---
 
+## Token reference & naming
+
+The **[live viewer](https://jarllyng.github.io/iamjarl-design/)** and [`tokens.json`](tokens.json) are the canonical, always-current list of every token. The rules below let you derive a CSS variable or Swift accessor name without looking it up.
+
+### CSS variable naming
+Every variable is prefixed `--ij-` and the token path is lower-kebab-cased:
+
+| Token (in `tokens.json`) | CSS variable |
+| --- | --- |
+| `spacing.md` | `--ij-spacing-md` |
+| `radius.lg` | `--ij-radius-lg` |
+| `colors.modes.*.primary` | `--ij-color-primary` |
+| `colors.modes.*.onPrimary` | `--ij-color-on-primary` |
+| `colors.modes.*.primaryHover` | `--ij-color-primary-hover` |
+| `colors.modes.*.text.secondary` | `--ij-color-text-secondary` |
+| `colors.modes.*.text.disabled` | `--ij-color-text-disabled` |
+| `colors.modes.*.background.card` | `--ij-color-bg-card` ⚠️ `background` → `bg` |
+| `colors.modes.*.state.error` | `--ij-color-state-error` (text-safe; AA on `background.app`) |
+| `colors.shared.error` | `--ij-color-error` (fill; pair with `--ij-color-on-error`) |
+| `shadows.md` | `--ij-shadow-md` |
+| `motion.duration.normal` | `--ij-duration-normal` |
+| `motion.easing.standard` | `--ij-easing-standard` |
+| `breakpoints.md` | `--ij-breakpoint-md` |
+| `focus.width` | `--ij-focus-width` |
+| `zIndex.modal` | `--ij-z-modal` |
+| `opacity.disabled` | `--ij-opacity-disabled` |
+
+Rule: `--ij-` + group + kebab(key). The only non-obvious mapping is **`background` → `bg`**. Mode colors (`primary`, `text.*`, `background.*`, `surface.*`, `border.*`, `state.*`) switch automatically via `prefers-color-scheme`, or manually with a `.light` / `.dark` class on a parent.
+
+### State colors: fill vs. text
+- `--ij-color-{success,warning,error}` are **fills** — use as backgrounds, paired with `--ij-color-on-*`.
+- `--ij-color-state-{success,warning,error}` are **text/foreground** colors, tuned per mode to meet WCAG AA on `--ij-color-bg-app`. Never use a raw fill color as text.
+
+### Swift accessors
+Mode-aware colors take the `ColorScheme`: `DesignTokens.Common.primary(scheme)`, `.Text.disabled(scheme)`, `.State.error(scheme)`. Non-color scales are static: `DesignTokens.Spacing.md`, `.Radius.lg`, `.ZIndex.modal`, `.Opacity.disabled`. See [CLAUDE.md](CLAUDE.md) for the full accessor list.
+
+---
+
 ## Upgrading
 
 When updating to a new version, check **[MIGRATION.md](MIGRATION.md)** for breaking changes and step-by-step instructions.
@@ -240,7 +287,7 @@ Task:
 
 ### 1) Make the change
 - [ ] Update `tokens.json` (preferred) or `design.md` (rules)
-- [ ] Bump `meta.version` in `tokens.json` (patch bump is fine)
+- [ ] Bump `meta.version` in `tokens.json` per [SemVer](https://semver.org/) — see [CONTRIBUTING.md](CONTRIBUTING.md) (patch = value tweak, minor = new token, major = rename/removal). Keep it in sync with `package.json`.
 - [ ] Update `meta.updated` date in `tokens.json`
 
 ### 2) Verify locally
