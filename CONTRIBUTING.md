@@ -12,9 +12,9 @@ Thanks for your interest! This is primarily a personal design system, but PRs an
 1. Fork the repo
 2. Edit `tokens.json` (never edit generated files in `Sources/` or `dist/` directly — they're rebuilt by CI)
 3. Bump `meta.version` in `tokens.json` following [SemVer](https://semver.org/):
-   - **Patch** (0.0.x) — color tweaks, adding optional tokens
-   - **Minor** (0.x.0) — new token categories
-   - **Major** (x.0.0) — breaking changes to token structure
+   - **Patch** (x.x.0 → x.x.1) — value tweaks to existing tokens (e.g. a color adjustment); no new or renamed keys
+   - **Minor** (x.0 → x.1) — new tokens or token categories, added without breaking existing keys
+   - **Major** (1.0 → 2.0) — breaking changes: renamed/removed keys or structural changes
 4. Update `meta.updated` date
 5. Run locally to verify:
    ```bash

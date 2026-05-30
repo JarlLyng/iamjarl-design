@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "IAMJARL Design System tokens for web and React Native",
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "main": "./dist/ts/tokens.js",
   "types": "./dist/ts/tokens.d.ts",
   "exports": {

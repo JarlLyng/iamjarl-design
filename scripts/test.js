@@ -5,6 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseHex, parseRgba, parseColor, contrastRatio } from './color.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -155,6 +156,40 @@ check('main points to .js', pkg.main?.endsWith('.js'));
 check('types points to .d.ts', pkg.types?.endsWith('.d.ts'));
 check('exports["."] has types/import', pkg.exports?.['.']?.types && pkg.exports['.'].import);
 check('exports["./css"] is set', pkg.exports?.['./css']);
+
+// --- Color math (unit tests for scripts/color.js) ---
+// This is the validator's safety line; if the contrast math regresses,
+// inaccessible token pairs could ship. Test it against known values.
+console.log('\nColor math (unit):');
+
+// parseHex
+const red = parseHex('#FF0000');
+check('parseHex #FF0000', red && red.r === 255 && red.g === 0 && red.b === 0 && red.a === 1);
+const argb = parseHex('#80FFFFFF');
+check('parseHex 8-digit alpha', argb && Math.abs(argb.a - 0x80 / 255) < 1e-9 && argb.r === 255);
+check('parseHex rejects 3-digit', parseHex('#FFF') === null);
+check('parseHex rejects non-hex', parseHex('#GGGGGG') === null);
+
+// parseRgba
+const rgba = parseRgba('rgba(0, 0, 0, 0.5)');
+check('parseRgba alpha', rgba && rgba.r === 0 && rgba.a === 0.5);
+check('parseRgba rejects out-of-range channel', parseRgba('rgba(300, 0, 0, 1)') === null);
+check('parseRgba rejects alpha > 1', parseRgba('rgba(0, 0, 0, 2)') === null);
+
+// parseColor dispatch
+check('parseColor handles hex', parseColor('#000000') !== null);
+check('parseColor handles rgba', parseColor('rgba(0, 0, 0, 1)') !== null);
+check('parseColor rejects garbage', parseColor('blue') === null);
+check('parseColor rejects non-string', parseColor(123) === null);
+
+// contrastRatio — known WCAG values
+const white = parseColor('#FFFFFF'), black = parseColor('#000000');
+check('contrast black/white === 21', Math.abs(contrastRatio(white, black) - 21) < 0.01);
+check('contrast identical === 1', Math.abs(contrastRatio(white, white) - 1) < 1e-9);
+check('contrast is symmetric', Math.abs(contrastRatio(white, black) - contrastRatio(black, white)) < 1e-9);
+// error #D70015 on white should match the validator's reported 5.38:1
+const err = parseColor('#D70015');
+check('contrast #D70015 on white ≈ 5.38', Math.abs(contrastRatio(err, white) - 5.38) < 0.05);
 
 console.log();
 if (failed > 0) {
