@@ -26,7 +26,10 @@ It is designed to work equally well for **humans** (design overview) and **AI to
 ### Generated outputs
 - `Sources/IAMJARLDesignTokens/DesignTokens.swift` — Swift (SPM package)
 - `dist/css/tokens.css` — CSS custom properties (light + dark mode)
-- `dist/ts/tokens.ts` — TypeScript module (React + Expo)
+- `dist/css/tokens.shadow.css` — same variables scoped to `:host` (Shadow DOM / content scripts)
+- `dist/ts/tokens.js` — ESM runtime (npm main entry)
+- `dist/ts/tokens.d.ts` — TypeScript declarations
+- `dist/ts/tokens.ts` — TypeScript source (for inspection / TS-aware bundlers)
 
 ---
 
