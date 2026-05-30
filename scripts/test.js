@@ -39,7 +39,11 @@ const swiftAPI = [
   'public enum Motion',
   'public enum Breakpoint',
   'public enum Focus',
+  'public enum ZIndex',
+  'public enum Opacity',
   'public enum Common',
+  'public static func primaryHover(_ scheme: ColorScheme)',
+  'public enum State {',
   'public static func primary(_ scheme: ColorScheme)',
   'public extension Color',
   'init(hex: String)',
@@ -59,6 +63,10 @@ const cssVars = [
   '--ij-color-bg-app',
   '--ij-color-success',
   '--ij-color-error',
+  '--ij-color-state-success',
+  '--ij-color-primary-hover',
+  '--ij-color-text-disabled',
+  '--ij-color-bg-disabled',
   '--ij-spacing-md',
   '--ij-radius-lg',
   '--ij-font-size-base',
@@ -67,6 +75,8 @@ const cssVars = [
   '--ij-easing-standard',
   '--ij-breakpoint-md',
   '--ij-focus-width',
+  '--ij-z-modal',
+  '--ij-opacity-disabled',
 ];
 for (const v of cssVars) {
   check(`CSS contains "${v}"`, css.includes(v));
@@ -102,6 +112,10 @@ const dtsExports = [
   'export type SpacingKey',
   'export type ShadowKey',
   'export type BreakpointKey',
+  'export declare const zIndex',
+  'export declare const opacity',
+  'export type ZIndexKey',
+  'export type OpacityKey',
 ];
 for (const sig of dtsExports) {
   check(`.d.ts has "${sig}"`, dts.includes(sig));
@@ -119,6 +133,10 @@ check('exports motion.duration', typeof mod.motion?.duration?.normal === 'number
 check('exports motion.easing', Array.isArray(mod.motion?.easing?.standard));
 check('exports breakpoints', typeof mod.breakpoints === 'object');
 check('exports focus', typeof mod.focus === 'object');
+check('exports zIndex', typeof mod.zIndex === 'object' && typeof mod.zIndex.modal === 'number');
+check('exports opacity', typeof mod.opacity === 'object' && typeof mod.opacity.disabled === 'number');
+check('exports colors.light.state', typeof mod.colors?.light?.state?.success === 'string');
+check('exports colors.light.primaryHover', typeof mod.colors?.light?.primaryHover === 'string');
 check('shadowCss returns string', typeof mod.shadowCss('md') === 'string');
 check('easingCss returns cubic-bezier', mod.easingCss('standard').startsWith('cubic-bezier'));
 check('modeColors(light) === colors.light', mod.modeColors('light') === mod.colors.light);

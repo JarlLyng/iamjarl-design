@@ -152,6 +152,14 @@
         "focus": {
           "type": "object",
           "additionalProperties": { "type": "number", "minimum": 0 }
+        },
+        "zIndex": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        },
+        "opacity": {
+          "type": "object",
+          "additionalProperties": { "type": "number", "minimum": 0, "maximum": 1 }
         }
       }
     },
@@ -171,27 +179,42 @@
     },
     "colorMode": {
       "type": "object",
-      "required": ["primary", "onPrimary", "text", "background", "surface", "border"],
+      "required": ["primary", "onPrimary", "primaryHover", "primaryPressed", "primarySubtle", "text", "background", "surface", "border", "state"],
       "properties": {
         "primary": { "$ref": "#/$defs/color" },
         "onPrimary": { "$ref": "#/$defs/color" },
+        "primaryHover": { "$ref": "#/$defs/color" },
+        "primaryPressed": { "$ref": "#/$defs/color" },
+        "primarySubtle": { "$ref": "#/$defs/color" },
         "text": {
           "type": "object",
-          "required": ["primary", "secondary", "tertiary", "inverse"],
+          "required": ["primary", "secondary", "tertiary", "disabled", "inverse"],
           "properties": {
             "primary": { "$ref": "#/$defs/color" },
             "secondary": { "$ref": "#/$defs/color" },
             "tertiary": { "$ref": "#/$defs/color" },
+            "disabled": { "$ref": "#/$defs/color" },
             "inverse": { "$ref": "#/$defs/color" }
           }
         },
         "background": {
           "type": "object",
-          "required": ["app", "muted", "card"],
+          "required": ["app", "muted", "card", "disabled"],
           "properties": {
             "app": { "$ref": "#/$defs/color" },
             "muted": { "$ref": "#/$defs/color" },
-            "card": { "$ref": "#/$defs/color" }
+            "card": { "$ref": "#/$defs/color" },
+            "disabled": { "$ref": "#/$defs/color" }
+          }
+        },
+        "state": {
+          "type": "object",
+          "required": ["success", "warning", "error"],
+          "description": "Mode-aware state colors safe for use as foreground/text on background.app (WCAG AA).",
+          "properties": {
+            "success": { "$ref": "#/$defs/color" },
+            "warning": { "$ref": "#/$defs/color" },
+            "error": { "$ref": "#/$defs/color" }
           }
         },
         "surface": {

@@ -166,6 +166,27 @@ function validateStructure(tokens) {
     else pass(`focus: ${Object.keys(tokens.tokens.focus).length} values`);
   }
 
+  // Z-index (optional) — non-negative numbers, strictly ascending by value
+  if (tokens.tokens.zIndex) {
+    const entries = Object.entries(tokens.tokens.zIndex);
+    const invalid = entries.filter(([, v]) => typeof v !== 'number' || v < 0);
+    if (invalid.length) {
+      fail(`Invalid zIndex values: ${invalid.map(([k]) => k).join(', ')}`);
+    } else {
+      const vals = entries.map(([, v]) => v);
+      const ascending = vals.every((v, i) => i === 0 || v > vals[i - 1]);
+      if (!ascending) fail('zIndex values must be strictly ascending in declaration order');
+      else pass(`zIndex: ${entries.length} layers`);
+    }
+  }
+
+  // Opacity (optional) — numbers in [0, 1]
+  if (tokens.tokens.opacity) {
+    const invalid = Object.entries(tokens.tokens.opacity).filter(([, v]) => typeof v !== 'number' || v < 0 || v > 1);
+    if (invalid.length) fail(`Invalid opacity values (must be 0–1): ${invalid.map(([k]) => k).join(', ')}`);
+    else pass(`opacity: ${Object.keys(tokens.tokens.opacity).length} values`);
+  }
+
   // Colors structure
   const colors = tokens.tokens.colors;
   if (!colors) {
@@ -220,6 +241,19 @@ function validateContrast(tokens) {
   for (const mode of ['light', 'dark']) {
     const m = tokens.tokens.colors.modes[mode];
     pairs.push({ fg: `${mode}.onPrimary`, bg: `${mode}.primary`, fgVal: m.onPrimary, bgVal: m.primary });
+
+    // State colors used as foreground/text must pass AA against the app background.
+    // (The shared state colors are fills; these mode-aware variants are for text.)
+    if (m.state) {
+      for (const key of ['success', 'warning', 'error']) {
+        pairs.push({
+          fg: `${mode}.state.${key}`,
+          bg: `${mode}.background.app`,
+          fgVal: m.state[key],
+          bgVal: m.background.app,
+        });
+      }
+    }
   }
 
   for (const { fg, bg, fgVal, bgVal } of pairs) {

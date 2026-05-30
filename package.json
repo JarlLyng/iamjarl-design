@@ -1,6 +1,6 @@
 {
   "name": "@iamjarl/design-tokens",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "description": "IAMJARL Design System tokens for web and React Native",
   "type": "module",
   "main": "./dist/ts/tokens.js",

@@ -19,14 +19,24 @@ import IAMJARLDesignTokens
 
 // Mode-aware colors (pass @Environment(\.colorScheme) var scheme)
 DesignTokens.Common.primary(scheme)
+DesignTokens.Common.primaryHover(scheme)     // also primaryPressed, primarySubtle
 DesignTokens.Common.Text.primary(scheme)
+DesignTokens.Common.Text.disabled(scheme)
 DesignTokens.Common.Background.app(scheme)
+DesignTokens.Common.Background.disabled(scheme)
 DesignTokens.Common.Border.subtle(scheme)
 DesignTokens.Common.OnPrimary.text(scheme)
 
-// State colors (not mode-dependent)
+// State colors as TEXT/foreground (mode-aware, WCAG AA on background.app)
+DesignTokens.Common.State.error(scheme)      // also success, warning
+
+// State colors as FILLS (not mode-dependent; always pair with on* color)
 DesignTokens.ColorToken.State.success
 DesignTokens.ColorToken.State.error
+
+// Stacking & opacity
+DesignTokens.ZIndex.modal       // 1300
+DesignTokens.Opacity.disabled   // 0.4
 
 // Layout
 DesignTokens.Spacing.md   // 12pt
@@ -60,7 +70,7 @@ CSS custom properties (auto light/dark via `prefers-color-scheme`):
 ```css
 @import '@iamjarl/design-tokens/css';
 ```
-All CSS variables are prefixed with `--ij-` to avoid collisions. Use `var(--ij-color-primary)`, `var(--ij-spacing-md)`, `var(--ij-radius-lg)`, `var(--ij-shadow-md)`, `var(--ij-duration-normal)`, `var(--ij-easing-standard)`, `var(--ij-focus-width)`, etc.
+All CSS variables are prefixed with `--ij-` to avoid collisions. Use `var(--ij-color-primary)`, `var(--ij-color-primary-hover)`, `var(--ij-color-state-error)` (state text), `var(--ij-color-text-disabled)`, `var(--ij-spacing-md)`, `var(--ij-radius-lg)`, `var(--ij-shadow-md)`, `var(--ij-duration-normal)`, `var(--ij-easing-standard)`, `var(--ij-focus-width)`, `var(--ij-z-modal)`, `var(--ij-opacity-disabled)`, etc.
 
 For manual mode switching, add class `.light` or `.dark` to a parent element.
 
@@ -70,7 +80,8 @@ import {
   colors, spacing, radius, typography,
   shadows, shadowCss,
   motion, easingCss,
-  breakpoints, focus
+  breakpoints, focus,
+  zIndex, opacity
 } from '@iamjarl/design-tokens';
 ```
 
@@ -102,11 +113,15 @@ const theme = colors[scheme]; // theme.primary, theme.text.primary, etc.
 4. Use `error` (not `primary`) for destructive actions
 5. Use Phosphor icons, default weight `regular`, sizes 20 (inline) or 24 (primary actions)
 6. Keep corner radius consistent — use `radius.sm/md/lg` only
+7. State colors: shared `success/warning/error` are **fills** (pair with `on*`). For colored **text** on a normal background use the mode-aware `state.*` tokens — never a raw fill color as text.
+8. Don't hand-roll hover/pressed/disabled — use `primaryHover`/`primaryPressed`, `text.disabled`/`background.disabled`, or `opacity.disabled`.
+9. Stacking: use the `zIndex` scale (`modal`, `popover`, `toast`, …), never magic numbers.
 
 ## UI recipes
-- **Primary button**: bg=`primary`, text=`onPrimary`, radius=`md`, padding=`spacing.md`/`spacing.xl`
+- **Primary button**: bg=`primary` (hover `primaryHover`, pressed `primaryPressed`), text=`onPrimary`, radius=`md`, padding=`spacing.md`/`spacing.xl`; disabled=`background.disabled`+`text.disabled`
 - **Secondary button**: bg=`background.card`, border=`border.subtle`, text=`text.primary`
 - **Destructive button**: bg=`error`, text=`onError`
+- **Inline validation text**: color=`state.error` / `state.success` / `state.warning` (mode-aware)
 - **Cards**: bg=`background.card`, border=`border.subtle`, radius=`lg`
 
 ## Updating the design system
