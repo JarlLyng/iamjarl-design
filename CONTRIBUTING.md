@@ -21,12 +21,14 @@ Thanks for your interest! This is primarily a personal design system, but PRs an
    node scripts/validate.js   # checks structure + WCAG contrast
    node scripts/build.js      # regenerates platform files
    ```
-6. Update `CHANGELOG.md` with your change
+6. Update `CHANGELOG.md` with your change — add both a `## [x.y.z]` section and the matching `[x.y.z]: <release url>` link reference at the bottom
 7. Open a PR
+
+The version has to be written in four places and `scripts/validate.js` fails if they disagree: `meta.version` in `tokens.json`, `version` in `package.json`, the `CHANGELOG.md` entry, and the `(vX.Y.Z)` marker in the `design.md` heading. Run it before pushing.
 
 ## Development
 
-No dependencies required. Scripts use only Node.js built-ins (Node 20+).
+No dependencies required. Scripts use only Node.js built-ins (Node 22+ — see `.nvmrc`).
 
 ```bash
 # Validate token structure and contrast (fails on WCAG AA violations)

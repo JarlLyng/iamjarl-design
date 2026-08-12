@@ -1,6 +1,6 @@
-// IAMJARL Design Tokens v1.0.0 — generated, do not edit
+// IAMJARL Design Tokens v1.2.0 — generated, do not edit
 
-export const meta = {"name":"IAMJARL Design System","version":"1.0.0"};
+export const meta = {"name":"IAMJARL Design System","version":"1.2.0"};
 
 export const spacing = {"xs":4,"sm":8,"md":12,"lg":16,"xl":20,"xxl":24,"xxxl":32};
 
