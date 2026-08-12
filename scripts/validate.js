@@ -42,17 +42,7 @@ function validateStructure(tokens) {
     pass(`meta.updated: ${tokens.meta.updated}`);
   }
 
-  // Version sync between tokens.json and package.json
-  try {
-    const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf-8'));
-    if (pkg.version !== tokens.meta.version) {
-      fail(`version mismatch: tokens.json=${tokens.meta.version}, package.json=${pkg.version}`);
-    } else {
-      pass(`version sync: tokens.json and package.json both at ${pkg.version}`);
-    }
-  } catch (e) {
-    fail(`Could not read package.json: ${e.message}`);
-  }
+  validateVersionCoherence(tokens.meta.version);
 
   // Tokens
   if (!tokens.tokens) {
@@ -175,6 +165,51 @@ function validateStructure(tokens) {
   }
   if (invalidColors === 0) {
     pass(`All ${allColors.length} color values are valid hex or rgba`);
+  }
+}
+
+// Every place the version is written down must agree with tokens.json.
+// v1.1.0 shipped as a tag with meta.version still at 1.0.0 and no changelog
+// entry — these checks make that state impossible to commit.
+function validateVersionCoherence(version) {
+  const read = name => fs.readFileSync(path.join(__dirname, '..', name), 'utf-8');
+
+  try {
+    const pkg = JSON.parse(read('package.json'));
+    if (pkg.version !== version) {
+      fail(`version mismatch: tokens.json=${version}, package.json=${pkg.version}`);
+    } else {
+      pass(`version sync: tokens.json and package.json both at ${version}`);
+    }
+  } catch (e) {
+    fail(`Could not read package.json: ${e.message}`);
+  }
+
+  try {
+    const changelog = read('CHANGELOG.md');
+    if (!changelog.includes(`## [${version}]`)) {
+      fail(`CHANGELOG.md has no "## [${version}]" entry — every release needs one`);
+    } else if (!new RegExp(`^\\[${version.replace(/\./g, '\\.')}\\]:`, 'm').test(changelog)) {
+      fail(`CHANGELOG.md is missing the "[${version}]: <release url>" link reference`);
+    } else {
+      pass(`CHANGELOG.md documents ${version}`);
+    }
+  } catch (e) {
+    fail(`Could not read CHANGELOG.md: ${e.message}`);
+  }
+
+  try {
+    const heading = read('design.md').split('\n', 1)[0];
+    const found = heading.match(/\(v(\d+\.\d+\.\d+)\)/);
+    if (!found) {
+      fail('design.md heading is missing a "(vX.Y.Z)" version marker');
+    } else if (found[1] !== version) {
+      fail(`design.md heading says v${found[1]}, tokens.json says ${version}`);
+    } else {
+      pass(`design.md heading matches ${version}`);
+    }
+  } catch (e) {
+    fail(`Could not read design.md: ${e.message}`);
   }
 }
 

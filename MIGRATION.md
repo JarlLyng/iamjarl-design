@@ -4,6 +4,26 @@ Step-by-step instructions for updating consumer projects between versions.
 
 ---
 
+## v1.0.x / v1.1.x → v1.2.0
+
+### What changed
+Nothing in the tokens. Every generated file is identical apart from the version stamp, so there is no visual or API change on any platform.
+
+1. **v1.1.0** lowered the SwiftUI macOS deployment floor from 13 to 11.
+2. **v1.2.0** is repo maintenance: Node floor raised from 20 (end-of-life) to 22, version-coherence validation, and the CI trigger fix that let 1.1.0 ship untagged.
+
+### Who needs to migrate
+- ✅ **Everyone** — bump the version and you're done. No code changes.
+- ⚠️ **Only if you build this repo** (not if you consume it): local Node must be 22+. `nvm use` picks up the pinned 24 from `.nvmrc`.
+
+### Action
+- **SPM**: Xcode → File → Packages → Update to Latest Package Versions
+- **npm**: `npm update @iamjarl/design-tokens`
+
+> If you were pinned to `1.0.0` because `package.json` said that was the latest: it wasn't. `v1.1.0` was tagged with the version files left at `1.0.0`. That's fixed as of 1.2.0.
+
+---
+
 ## v0.5.x → v1.0.0
 
 ### What changed

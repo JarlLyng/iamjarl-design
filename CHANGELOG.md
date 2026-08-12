@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] — 2026-08-13
+
+Maintenance release. No token values changed — every generated output is byte-identical to 1.1.0 apart from the version stamp.
+
+### Changed
+- **Node floor raised from 20 to 22** (`engines`, `.nvmrc`, both workflows). Node 20 reached end-of-life in April 2026. PR-CI now runs the Node matrix `[22, 24]` so the declared floor is actually tested, and `.nvmrc` pins the recommended 24.
+- `actions/checkout` and `actions/setup-node` bumped to v7.
+- `CLAUDE.md` is now a symlink to `AGENTS.md`. The two files had been byte-identical duplicates, which is a guarantee of eventual drift; there is now one file to edit.
+
+### Fixed
+- **Version coherence.** 1.1.0 shipped as a git tag while `tokens.json` `meta.version` and `package.json` both still read `1.0.0`, so anything reading the version programmatically got the wrong answer. Both now track the tag, and `1.1.0` is documented below.
+- `build-tokens.yml` only triggered on `tokens.json` changes, so the `Package.swift`-only 1.1.0 release was never validated, regenerated or tagged by CI — the tag was created by hand. The workflow now also watches `package.json`, `Package.swift`, `design.md` and `scripts/**`, and tagging remains a no-op when the tag already exists.
+- `scripts/validate.js` now hard-fails unless `tokens.json`, `package.json`, the `CHANGELOG.md` entry (heading **and** link reference) and the `design.md` heading all agree on the version. This is the check that would have caught the 1.1.0 drift at commit time.
+- `CHANGELOG.md` was missing release link references for every 1.x version.
+
+## [1.1.0] — 2026-06-24
+
+Documented retroactively — this version was tagged without a changelog entry or a version bump in `tokens.json`/`package.json`. See the 1.2.0 *Fixed* notes above.
+
+### Changed
+- **Lowered the SwiftUI macOS deployment floor from 13 to 11**, so the package can be consumed by apps still supporting macOS Big Sur. No token values changed.
+
 ## [1.0.0] — 2026-05-31
 
 First stable release. New token groups for interaction states, disabled UI, stacking, and accessible state text.
@@ -114,6 +136,9 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.2.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.2.0
+[1.1.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.1.0
+[1.0.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.0.0
 [0.5.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v0.5.0
 [0.4.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v0.4.0
 [0.3.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v0.3.0
