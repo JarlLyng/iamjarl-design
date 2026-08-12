@@ -51,6 +51,7 @@ jobs:
       - name: Tag version if bumped
         run: |
           VERSION=$(node -e "console.log(JSON.parse(require('node:fs').readFileSync('./tokens.json','utf8')).meta.version)")
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
           if ! git rev-parse "v${VERSION}" >/dev/null 2>&1; then
             git tag "v${VERSION}"
             git push origin "v${VERSION}"
@@ -58,3 +59,22 @@ jobs:
           else
             echo "Tag v${VERSION} already exists, skipping"
           fi
+
+      # A tag alone leaves GitHub's "Latest release" pointing at whatever was
+      # last released by hand — v0.5.0 held that label for three releases.
+      # Every tag gets a Release, with notes read from the changelog.
+      - name: Create GitHub Release if missing
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "v${VERSION}" >/dev/null 2>&1; then
+            echo "Release v${VERSION} already exists, skipping"
+            exit 0
+          fi
+          node scripts/release-notes.js "${VERSION}" > /tmp/release-notes.md
+          gh release create "v${VERSION}" \
+            --title "v${VERSION}" \
+            --notes-file /tmp/release-notes.md \
+            --verify-tag \
+            --latest
+          echo "Released v${VERSION}"
