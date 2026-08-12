@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] — 2026-08-13
+
+No token changes. Closes the last place the version could drift.
+
+### Fixed
+- **Every tag now gets a GitHub Release.** `build-tokens.yml` created git tags but never Release objects, so GitHub's "Latest release" label sat on **v0.5.0 through three subsequent releases** — the repo's own front page advertised a version three releases behind, while the README badge (which reads tags) correctly showed 1.2.0. Releases for 1.0.0, 1.1.0 and 1.2.0 have been backfilled, and the workflow now creates one alongside each tag, idempotently.
+
+### Added
+- `scripts/release-notes.js` — prints a version's `CHANGELOG.md` section, used as the release body so the notes have exactly one source. Contract tests cover extraction, boundary handling, and the unknown-version case.
+
 ## [1.2.0] — 2026-08-13
 
 Maintenance release. No token values changed — every generated output is byte-identical to 1.1.0 apart from the version stamp.
@@ -22,7 +32,7 @@ Maintenance release. No token values changed — every generated output is byte-
 
 ## [1.1.0] — 2026-06-24
 
-Documented retroactively — this version was tagged without a changelog entry or a version bump in `tokens.json`/`package.json`. See the 1.2.0 *Fixed* notes above.
+Documented retroactively — this version was tagged without a changelog entry or a version bump in `tokens.json`/`package.json`. See the 1.2.0 *Fixed* notes for how that happened and what stops it recurring.
 
 ### Changed
 - **Lowered the SwiftUI macOS deployment floor from 13 to 11**, so the package can be consumed by apps still supporting macOS Big Sur. No token values changed.
@@ -136,6 +146,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.2.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.2.1
 [1.2.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.2.0
 [1.1.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.1.0
 [1.0.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.0.0

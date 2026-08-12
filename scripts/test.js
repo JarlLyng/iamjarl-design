@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseHex, parseRgba, parseColor, contrastRatio } from './color.js';
+import { extractNotes } from './release-notes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -190,6 +191,16 @@ check('contrast is symmetric', Math.abs(contrastRatio(white, black) - contrastRa
 // error #D70015 on white should match the validator's reported 5.38:1
 const err = parseColor('#D70015');
 check('contrast #D70015 on white ≈ 5.38', Math.abs(contrastRatio(err, white) - 5.38) < 0.05);
+
+// --- Release notes (feeds the GitHub Release step in build-tokens.yml) ---
+
+console.log('\nRelease notes:');
+const changelog = read('CHANGELOG.md');
+const notes = extractNotes(changelog, tokens.meta.version);
+check(`release notes exist for ${tokens.meta.version}`, typeof notes === 'string' && notes.length > 0);
+check('release notes exclude the next heading', !String(notes).includes('## ['));
+check('release notes exclude link references', !/^\[\d+\.\d+\.\d+\]:/m.test(String(notes)));
+check('unknown version yields no notes', extractNotes(changelog, '9.9.9') === null);
 
 console.log();
 if (failed > 0) {

@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.2.0)
+# IAMJARL Design System (v1.2.1)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
