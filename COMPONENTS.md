@@ -37,16 +37,38 @@ structure. **They do not share tokens.** Read against the five sites:
 | TonVault | vendored copy, **v1.0.0** | yes | inside a prose sentence |
 | BotLens | vendored copy, **v0.5.0** | yes | **no cross-link section at all** |
 
-Two sites carry vendored snapshots of `tokens.css`, two and three releases behind v1.2.1. Two use no
-tokens at all. Echolume declares 23 variables **inside the `--ij-` namespace** using names this repo
-does not define, so `--ij-color-bg` where the real token is `--ij-color-bg-app`, `--ij-space-md`
-where it is `--ij-spacing-md`; only two of its 23 names collide with real ones. BotLens on v0.5.0
-predates the entire v1.0 layer, so it has no `state.*` text colours, no `primaryHover` or
-`primaryPressed`, no disabled tokens, no z-index scale, and still uses the pre-rename `lineHeights`
-keys.
+Two sites carry vendored snapshots of `tokens.css`, three and four releases behind v1.2.1. Two use
+no tokens at all. Echolume declares 23 variables **inside the `--ij-` namespace** using names this
+repo does not define, so `--ij-color-bg` where the real token is `--ij-color-bg-app`, `--ij-space-md`
+where it is `--ij-spacing-md`. BotLens on v0.5.0 predates the entire v1.0 layer, so it has no
+`state.*` text colours, no `primaryHover` or `primaryPressed`, no disabled tokens, no z-index scale,
+and still uses the pre-rename `lineHeights` keys.
 
 This matters directly for theming. A component reading `var(--ij-color-bg-card)` resolves to
 **nothing** on three of the five sites.
+
+### Echolume is not a rename job
+
+Six of Echolume's 23 names are not invented at all — they are **real tokens, redefined with
+different values**:
+
+| Token | Echolume | Design system (light) |
+|---|---|---|
+| `--ij-color-primary` | `#d0ff00` | `#A435D2` |
+| `--ij-color-text-tertiary` | `rgba(255, 255, 255, …)` | `rgba(0, 0, 0, 0.55)` |
+| `--ij-radius-md` | `16px` | `12px` (the system's `lg`) |
+| `--ij-duration-fast` | `0.2s` | `150ms` |
+| `--ij-shadow-md` | `0 8px 24px` | `0 4px 8px` |
+| `--ij-radius-sm` | `8px` | `8px` (the only match) |
+
+Two consequences. First, both files declare on `:root` at equal specificity, so which one wins is
+decided by **stylesheet load order** — a bug that can look correct locally and break on a deploy
+that reorders them.
+
+Second, and larger: those overrides are **dark-mode values used as fixed constants**. `#d0ff00` is
+the system's dark primary, and the text colour is white-based. Echolume is a permanently dark site.
+So adopting tokens there is not a rename in passing — it is a decision about whether the site
+becomes mode-aware at all. Step one has to treat Echolume as that decision, not as cleanup.
 
 ## Step zero is not a component
 
@@ -121,9 +143,21 @@ per-site by nature.
 The footer is semantically identical on all five: tagline, own links, cross-links to the other
 apps, copyright. It is also low-value and low-risk, which is the point of a pilot.
 
-The footer has a live defect that a component fixes structurally: **not one of the five sites links
-to the two newest apps**, and each lists a different arbitrary subset of the others. One of them
-even links a side project that is not part of the portfolio at all.
+The footer has a live defect that a component fixes structurally. Counting inbound cross-links from
+the five sites:
+
+| Linked app | Inbound links |
+|---|---|
+| Made by Human | 5 |
+| Anvil Workout, TrimrPix, Wean Nicotine, It's mono yo!, It's 404 yo! | 2 each |
+| **Get to the Movie!** — not in the portfolio | **2** |
+| Walkful, WODrounds | 1 each |
+| **Echolume, TonVault, BotLens, PageLens** | **0** |
+
+Four apps get nothing, including Echolume and a live PageLens site, while a project outside the
+portfolio is linked from two sites. TonVault shows the mechanism: it names Echolume in a prose
+sentence **with no href**, so both ends score zero. Hand-written cross-links don't just drift — they
+quietly stop being links.
 
 That carries a design consequence. The footer's app list must come from **data in this repo**, not
 from per-site markup, or the duplication has only moved house. Proposed: an `apps.json` with a flag
