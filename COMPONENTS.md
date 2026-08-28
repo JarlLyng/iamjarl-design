@@ -160,11 +160,93 @@ sentence **with no href**, so both ends score zero. Hand-written cross-links don
 quietly stop being links.
 
 That carries a design consequence. The footer's app list must come from **data in this repo**, not
-from per-site markup, or the duplication has only moved house. Proposed: an `apps.json` with a flag
-separating *gets the component* from *appears in the list*, since some sites link products that
-belong in the list without being component consumers. One edit here, five footers update.
+from per-site markup, or the duplication has only moved house.
 
-Nav follows once the footer has held in production on at least two sites.
+### The content varies, and that is the point
+
+A component shares **structure**, not content. Layout, spacing, type, mobile collapse, focus
+handling and token-driven colour are identical everywhere; the app name, the links and the CTA are
+per site. That split is the normal division of labour in a component, not a complication.
+
+It is worth being precise about why this argues *for* a component rather than against one. If every
+footer showed the same links, copy-paste would very nearly do. It is because the links vary **by
+rule** that they should be computed rather than written out nine times.
+
+The rule is relevance: cross-promotion works between apps whose audiences overlap. So a site
+declares only who it is —
+
+```html
+<ij-footer app="wodrounds"></ij-footer>
+```
+
+— and the component resolves the rest from the registry: WODrounds gets the other training apps,
+TonVault gets the other audio apps. Different content, one component, nothing to maintain per site.
+
+### `apps.json`
+
+```jsonc
+{
+  "clusters": {
+    "training": "Training, movement and health",
+    "audio":    "Audio and music production",
+    "web":      "Browser and web-page tools"
+  },
+  "apps": [
+    {
+      "id": "wodrounds",
+      "name": "WODrounds",
+      "url": "https://wodrounds.iamjarl.com",
+      "cluster": "training",
+      "listed": true,     // may appear in other footers
+      "consumes": true,   // renders <ij-footer> itself
+      "pinned": false     // shown regardless of cluster
+    }
+  ]
+}
+```
+
+Three flags, each earning its place against something real in the current footers:
+
+- **`listed`** — appears in other sites' footers. Separate from `consumes`, because a site can
+  belong in the list without rendering the component, and because anything not in the registry stops
+  being linked by accident. Today a project that is not part of the portfolio is linked from two
+  sites while four portfolio apps are linked from none.
+- **`consumes`** — renders the component. Lets the rollout go one site at a time.
+- **`pinned`** — shown in every footer regardless of cluster, for the portfolio-wide links that are
+  a statement rather than a cross-sell.
+
+Two edge cases the current data forces:
+
+**Thin clusters.** The web-tools cluster has two members, so one of them would see a single sibling.
+Rule: if a cluster yields fewer than three, top up from the rest of the registry, newest first. New
+apps need the exposure most and are exactly what hand-written footers forget.
+
+**Ordering.** Leave it to the registry, not to each site, or the footers drift again in a subtler
+way. Cluster siblings first, then the top-up, then pinned links.
+
+### Graceful degradation
+
+A component loaded from a CDN is a dependency: if the script fails, the footer disappears. Custom
+elements render their own children until they upgrade, so the fallback is free —
+
+```html
+<ij-footer app="wodrounds">
+  <!-- shown if the script never loads -->
+  <p>© 2026 WODrounds · <a href="/privacy.html">Privacy</a></p>
+</ij-footer>
+```
+
+Worst case is a plainer footer, not a missing one. Every consuming site should ship this.
+
+### Nav
+
+Nav is as tokenisable as the footer: wordmark, links, CTA — three slots, and the CTA pointing at a
+different store per site is an argument for a prop, not against the component. An earlier draft of
+this document used that difference as a reason to defer nav, which overstated it.
+
+The real reason to start with the footer is duller: it sits below the fold, so a mistake there is
+cheap, and it is the one already asked for. Nav follows once the footer has held in production on at
+least two sites.
 
 ## Decisions, now resolved
 
