@@ -126,8 +126,14 @@ Custom properties inherit *through* the shadow boundary, so a component reading
 `var(--ij-color-primary)` picks up the host's value for free, which is exactly what we want. But
 `tokens.shadow.css` declares `:host { --ij-color-*: ... }`, and a declaration on `:host` beats an
 inherited value. The component would override whatever mode the site had chosen and follow the OS
-instead. Concretely: Walkful pins light mode with a class, and the component would render dark on a
-light page, which is the fork this whole proposal exists to avoid.
+instead.
+
+An earlier draft claimed Walkful pins light mode with a class and would therefore render dark on a
+light page. **That was wrong** — checked against all seven sites, none pins a mode: every one follows
+`prefers-color-scheme`, and the only `classList` toggles are tabs and carousels. The example was
+invented; the mechanism is not. `:host` beating inheritance is verified against a test page, and the
+day a site does pin a mode — a manual theme switch is the likely reason — importing
+`tokens.shadow.css` would silently override it.
 
 `tokens.shadow.css` was built for the opposite need, a content script that wants isolation *from* a
 hostile host page. Keep it for the Chrome extension case.
