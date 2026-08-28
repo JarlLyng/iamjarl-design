@@ -213,11 +213,25 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
   <a slot="links" href="/privacy">Privacy</a>
   <a slot="links" href="/support">Support</a>
 
+  <!-- Copyright, legal disclaimers, attribution -->
+  <p slot="fineprint">&copy; 2026 IAMJARL. Not affiliated with Elektron.</p>
+
   <!-- No slot attribute: shown only until the component upgrades, so this is
        what a visitor sees if the script never loads. Always include one. -->
   <p>&copy; 2026 TonVault · <a href="/privacy">Privacy</a></p>
 </ij-footer>
 ```
+
+| Attribute | |
+| --- | --- |
+| `app` | **Required.** An `id` from `apps.json` |
+| `tagline` | Optional line above the links |
+| `layout` | `stacked` (default, the WODrounds shape) or `columns` (the Wean Nicotine shape) |
+| `links-label` | Heading above your own links; defaults to the app's name |
+
+Two slots, because a footer carries two kinds of per-site content. `links` holds your own
+navigation; `fineprint` holds the colophon — copyright, legal text, attribution. **Put legal text in
+`fineprint`, not loose in the tag** — unslotted content is hidden once the component upgrades.
 
 **Pin the tag.** A version-pinned jsDelivr URL is immutable and supports SRI. Serving always-latest
 means one bad commit reaches every site at once.
