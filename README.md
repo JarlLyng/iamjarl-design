@@ -19,6 +19,7 @@ It is designed to work equally well for **humans** (design overview) and **AI to
 ## What's inside
 - `tokens.json` — machine-readable design tokens (colors incl. interaction/disabled/state-text, spacing, radius, typography, icons, shadows, motion, breakpoints, focus, z-index, opacity)
 - `design.md` — rules, principles and non-negotiables (Cursor-friendly)
+- `COMPONENTS.md` — proposal for a components layer (web components); not yet implemented
 - `index.html` — human-friendly viewer that renders tokens visually
 - `scripts/build.js` — generates platform-specific token files from `tokens.json`
 - `scripts/validate.js` — validates token structure and contrast ratios

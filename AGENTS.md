@@ -5,6 +5,7 @@ This repo is a shared design system. All IAMJARL apps and websites MUST use thes
 ## Source files
 - `tokens.json` — single source of truth for all design tokens
 - `design.md` — design rules, UI recipes, and non-negotiables
+- `COMPONENTS.md` — proposal for a components layer; read before adding any component
 
 ## Install as a dependency
 
