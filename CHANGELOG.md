@@ -15,6 +15,11 @@ Two token families the marketing sites had each invented for themselves. Additiv
 
 ### Fixed
 - The `.d.ts` generator emitted `export type X = typeof x` for numeric token families without emitting `export declare const x`, so a strict TypeScript consumer could not compile against them. Found while adding `container`; the same shape would have broken any future numeric family.
+- **`--ij-color-primary-rgb` could go missing from one mode without any warning.** The triplet is parsed from `primary` as hex, and a non-hex primary was skipped silently — so an `rgba()` primary (a legal value; `primarySubtle` already is one) would ship the variable in dark mode and omit it in light, breaking a consumer's `rgba(var(--ij-color-primary-rgb), …)` in one mode only. `validate.js` now requires `primary` to be hex in both modes, the CSS generator throws instead of skipping, and a contract test asserts the variable appears in all four mode blocks.
+
+### Internal
+- `validate.js` checks `container` values are positive and strictly ascending, matching how `zIndex` is enforced.
+- Contract tests cover `container` across all four outputs (Swift enum, CSS variables, `.d.ts` const, JS runtime) and assert the container scale is ascending in the generated CSS.
 
 ## [1.2.1] — 2026-08-13
 

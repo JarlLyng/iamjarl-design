@@ -594,10 +594,15 @@ function modeColorLines(mode, indent) {
   // The primary as a raw "r, g, b" triplet, so a consumer can compose
   // rgba(var(--ij-color-primary-rgb), 0.3) for tints and glows. CSS cannot derive
   // this from a hex custom property, which is why two sites had hand-written it.
-  if (typeof mode.primary === 'string' && mode.primary.startsWith('#')) {
-    const { r, g, b } = parseHex(mode.primary);
-    out.push(`${indent}--ij-color-primary-rgb: ${r}, ${g}, ${b};`);
+  // validate.js requires primary to be hex, so this should never throw. Fail
+  // loudly rather than silently omitting the variable from one mode only.
+  const rgb = typeof mode.primary === 'string' ? parseHex(mode.primary) : null;
+  if (!rgb) {
+    throw new Error(
+      `Cannot derive --ij-color-primary-rgb: primary is "${mode.primary}", which is not a 6- or 8-digit hex color. Run scripts/validate.js.`
+    );
   }
+  out.push(`${indent}--ij-color-primary-rgb: ${rgb.r}, ${rgb.g}, ${rgb.b};`);
   const groupPrefix = { background: 'bg' };
   function flatten(obj, prefix) {
     for (const [key, val] of Object.entries(obj)) {
@@ -689,11 +694,13 @@ function generateTS(tokens) {
     w();
   }
 
-  // Breakpoints
+  // Container widths
   if (t.container) {
     w(`export const container = ${JSON.stringify(t.container)} as const;`);
     w();
   }
+
+  // Breakpoints
   if (t.breakpoints) {
     w(`export const breakpoints = ${JSON.stringify(t.breakpoints)} as const;`);
     w();

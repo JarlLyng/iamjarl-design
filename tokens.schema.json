@@ -2,30 +2,18 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://jarllyng.github.io/iamjarl-design/tokens.schema.json",
   "title": "IAMJARL Design Tokens",
-  "description": "Schema for tokens.json \u2014 single source of truth for the IAMJARL design system",
+  "description": "Schema for tokens.json — single source of truth for the IAMJARL design system",
   "type": "object",
-  "required": [
-    "meta",
-    "brand",
-    "tokens"
-  ],
+  "required": ["meta", "brand", "tokens"],
   "additionalProperties": false,
   "properties": {
-    "$schema": {
-      "type": "string"
-    },
+    "$schema": { "type": "string" },
     "meta": {
       "type": "object",
-      "required": [
-        "name",
-        "version",
-        "updated"
-      ],
+      "required": ["name", "version", "updated"],
       "additionalProperties": false,
       "properties": {
-        "name": {
-          "type": "string"
-        },
+        "name": { "type": "string" },
         "version": {
           "type": "string",
           "pattern": "^\\d+\\.\\d+\\.\\d+$",
@@ -36,96 +24,47 @@
           "format": "date",
           "description": "ISO date (YYYY-MM-DD) of last update"
         },
-        "source": {
-          "type": "string"
-        }
+        "source": { "type": "string" }
       }
     },
     "brand": {
       "type": "object",
-      "required": [
-        "name",
-        "icons",
-        "typography"
-      ],
+      "required": ["name", "icons", "typography"],
       "properties": {
-        "name": {
-          "type": "string"
-        },
+        "name": { "type": "string" },
         "icons": {
           "type": "object",
-          "required": [
-            "library",
-            "defaultWeight",
-            "weightsAllowed",
-            "defaultSizes"
-          ],
+          "required": ["library", "defaultWeight", "weightsAllowed", "defaultSizes"],
           "properties": {
-            "library": {
-              "type": "string"
-            },
-            "defaultWeight": {
-              "type": "string"
-            },
-            "weightsAllowed": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "defaultSizes": {
-              "type": "array",
-              "items": {
-                "type": "number"
-              }
-            }
+            "library": { "type": "string" },
+            "defaultWeight": { "type": "string" },
+            "weightsAllowed": { "type": "array", "items": { "type": "string" } },
+            "defaultSizes": { "type": "array", "items": { "type": "number" } }
           }
         },
         "typography": {
           "type": "object",
-          "required": [
-            "family",
-            "weights",
-            "sizes",
-            "lineHeights"
-          ],
+          "required": ["family", "weights", "sizes", "lineHeights"],
           "properties": {
             "family": {
               "type": "object",
-              "required": [
-                "ui",
-                "mono"
-              ],
+              "required": ["ui", "mono"],
               "properties": {
-                "ui": {
-                  "type": "string"
-                },
-                "mono": {
-                  "type": "string"
-                }
+                "ui": { "type": "string" },
+                "mono": { "type": "string" }
               }
             },
             "weights": {
               "type": "object",
-              "additionalProperties": {
-                "type": "integer",
-                "minimum": 100,
-                "maximum": 900
-              }
+              "additionalProperties": { "type": "integer", "minimum": 100, "maximum": 900 }
             },
             "sizes": {
               "type": "object",
-              "additionalProperties": {
-                "type": "number",
-                "minimum": 0
-              }
+              "additionalProperties": { "type": "number", "minimum": 0 }
             },
             "lineHeights": {
               "type": "object",
-              "additionalProperties": {
-                "type": "number",
-                "minimum": 0
-              }
+              "additionalProperties": { "type": "number", "minimum": 0 }
             }
           }
         }
@@ -133,84 +72,42 @@
     },
     "tokens": {
       "type": "object",
-      "required": [
-        "radius",
-        "spacing",
-        "colors"
-      ],
+      "required": ["radius", "spacing", "colors"],
       "properties": {
         "radius": {
           "type": "object",
-          "additionalProperties": {
-            "type": "number",
-            "minimum": 0
-          }
+          "additionalProperties": { "type": "number", "minimum": 0 }
         },
         "spacing": {
           "type": "object",
-          "additionalProperties": {
-            "type": "number",
-            "minimum": 0
-          }
+          "additionalProperties": { "type": "number", "minimum": 0 }
         },
         "colors": {
           "type": "object",
-          "required": [
-            "static",
-            "shared",
-            "modes"
-          ],
+          "required": ["static", "shared", "modes"],
           "properties": {
             "static": {
               "type": "object",
-              "additionalProperties": {
-                "$ref": "#/$defs/color"
-              }
+              "additionalProperties": { "$ref": "#/$defs/color" }
             },
             "shared": {
               "type": "object",
-              "required": [
-                "success",
-                "onSuccess",
-                "warning",
-                "onWarning",
-                "error",
-                "onError"
-              ],
+              "required": ["success", "onSuccess", "warning", "onWarning", "error", "onError"],
               "properties": {
-                "success": {
-                  "$ref": "#/$defs/color"
-                },
-                "onSuccess": {
-                  "$ref": "#/$defs/color"
-                },
-                "warning": {
-                  "$ref": "#/$defs/color"
-                },
-                "onWarning": {
-                  "$ref": "#/$defs/color"
-                },
-                "error": {
-                  "$ref": "#/$defs/color"
-                },
-                "onError": {
-                  "$ref": "#/$defs/color"
-                }
+                "success": { "$ref": "#/$defs/color" },
+                "onSuccess": { "$ref": "#/$defs/color" },
+                "warning": { "$ref": "#/$defs/color" },
+                "onWarning": { "$ref": "#/$defs/color" },
+                "error": { "$ref": "#/$defs/color" },
+                "onError": { "$ref": "#/$defs/color" }
               }
             },
             "modes": {
               "type": "object",
-              "required": [
-                "light",
-                "dark"
-              ],
+              "required": ["light", "dark"],
               "properties": {
-                "light": {
-                  "$ref": "#/$defs/colorMode"
-                },
-                "dark": {
-                  "$ref": "#/$defs/colorMode"
-                }
+                "light": { "$ref": "#/$defs/colorMode" },
+                "dark": { "$ref": "#/$defs/colorMode" }
               }
             }
           }
@@ -219,52 +116,28 @@
           "type": "object",
           "additionalProperties": {
             "type": "object",
-            "required": [
-              "x",
-              "y",
-              "blur",
-              "opacity"
-            ],
+            "required": ["x", "y", "blur", "opacity"],
             "properties": {
-              "x": {
-                "type": "number"
-              },
-              "y": {
-                "type": "number"
-              },
-              "blur": {
-                "type": "number",
-                "minimum": 0
-              },
-              "opacity": {
-                "type": "number",
-                "minimum": 0,
-                "maximum": 1
-              }
+              "x": { "type": "number" },
+              "y": { "type": "number" },
+              "blur": { "type": "number", "minimum": 0 },
+              "opacity": { "type": "number", "minimum": 0, "maximum": 1 }
             }
           }
         },
         "motion": {
           "type": "object",
-          "required": [
-            "duration",
-            "easing"
-          ],
+          "required": ["duration", "easing"],
           "properties": {
             "duration": {
               "type": "object",
-              "additionalProperties": {
-                "type": "number",
-                "minimum": 0
-              }
+              "additionalProperties": { "type": "number", "minimum": 0 }
             },
             "easing": {
               "type": "object",
               "additionalProperties": {
                 "type": "array",
-                "items": {
-                  "type": "number"
-                },
+                "items": { "type": "number" },
                 "minItems": 4,
                 "maxItems": 4,
                 "description": "Cubic-bezier control points [x1, y1, x2, y2]"
@@ -272,41 +145,26 @@
             }
           }
         },
-        "breakpoints": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "number",
-            "minimum": 0
-          }
-        },
-        "focus": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "number",
-            "minimum": 0
-          }
-        },
-        "zIndex": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "integer",
-            "minimum": 0
-          }
-        },
-        "opacity": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1
-          }
-        },
         "container": {
           "type": "object",
           "description": "Content max-widths. Distinct from breakpoints: a breakpoint is where layout changes, a container is how wide content is allowed to get.",
-          "additionalProperties": {
-            "type": "number"
-          }
+          "additionalProperties": { "type": "number", "minimum": 0 }
+        },
+        "breakpoints": {
+          "type": "object",
+          "additionalProperties": { "type": "number", "minimum": 0 }
+        },
+        "focus": {
+          "type": "object",
+          "additionalProperties": { "type": "number", "minimum": 0 }
+        },
+        "zIndex": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        },
+        "opacity": {
+          "type": "object",
+          "additionalProperties": { "type": "number", "minimum": 0, "maximum": 1 }
         }
       }
     },
@@ -314,9 +172,7 @@
       "type": "object",
       "additionalProperties": {
         "type": "array",
-        "items": {
-          "type": "string"
-        }
+        "items": { "type": "string" }
       }
     }
   },
@@ -328,132 +184,58 @@
     },
     "colorMode": {
       "type": "object",
-      "required": [
-        "primary",
-        "onPrimary",
-        "primaryHover",
-        "primaryPressed",
-        "primarySubtle",
-        "text",
-        "background",
-        "surface",
-        "border",
-        "state"
-      ],
+      "required": ["primary", "onPrimary", "primaryHover", "primaryPressed", "primarySubtle", "text", "background", "surface", "border", "state"],
       "properties": {
-        "primary": {
-          "$ref": "#/$defs/color"
-        },
-        "onPrimary": {
-          "$ref": "#/$defs/color"
-        },
-        "primaryHover": {
-          "$ref": "#/$defs/color"
-        },
-        "primaryPressed": {
-          "$ref": "#/$defs/color"
-        },
-        "primarySubtle": {
-          "$ref": "#/$defs/color"
-        },
+        "primary": { "$ref": "#/$defs/color" },
+        "onPrimary": { "$ref": "#/$defs/color" },
+        "primaryHover": { "$ref": "#/$defs/color" },
+        "primaryPressed": { "$ref": "#/$defs/color" },
+        "primarySubtle": { "$ref": "#/$defs/color" },
         "text": {
           "type": "object",
-          "required": [
-            "primary",
-            "secondary",
-            "tertiary",
-            "disabled",
-            "inverse"
-          ],
+          "required": ["primary", "secondary", "tertiary", "disabled", "inverse"],
           "properties": {
-            "primary": {
-              "$ref": "#/$defs/color"
-            },
-            "secondary": {
-              "$ref": "#/$defs/color"
-            },
-            "tertiary": {
-              "$ref": "#/$defs/color"
-            },
-            "disabled": {
-              "$ref": "#/$defs/color"
-            },
-            "inverse": {
-              "$ref": "#/$defs/color"
-            }
+            "primary": { "$ref": "#/$defs/color" },
+            "secondary": { "$ref": "#/$defs/color" },
+            "tertiary": { "$ref": "#/$defs/color" },
+            "disabled": { "$ref": "#/$defs/color" },
+            "inverse": { "$ref": "#/$defs/color" }
           }
         },
         "background": {
           "type": "object",
-          "required": [
-            "app",
-            "muted",
-            "card",
-            "disabled"
-          ],
+          "required": ["app", "muted", "card", "disabled"],
           "properties": {
-            "app": {
-              "$ref": "#/$defs/color"
-            },
-            "muted": {
-              "$ref": "#/$defs/color"
-            },
-            "card": {
-              "$ref": "#/$defs/color"
-            },
-            "disabled": {
-              "$ref": "#/$defs/color"
-            }
+            "app": { "$ref": "#/$defs/color" },
+            "muted": { "$ref": "#/$defs/color" },
+            "card": { "$ref": "#/$defs/color" },
+            "disabled": { "$ref": "#/$defs/color" }
           }
         },
         "state": {
           "type": "object",
-          "required": [
-            "success",
-            "warning",
-            "error"
-          ],
+          "required": ["success", "warning", "error"],
           "description": "Mode-aware state colors safe for use as foreground/text on background.app (WCAG AA).",
           "properties": {
-            "success": {
-              "$ref": "#/$defs/color"
-            },
-            "warning": {
-              "$ref": "#/$defs/color"
-            },
-            "error": {
-              "$ref": "#/$defs/color"
-            }
+            "success": { "$ref": "#/$defs/color" },
+            "warning": { "$ref": "#/$defs/color" },
+            "error": { "$ref": "#/$defs/color" }
           }
         },
         "surface": {
           "type": "object",
-          "required": [
-            "default",
-            "raised"
-          ],
+          "required": ["default", "raised"],
           "properties": {
-            "default": {
-              "$ref": "#/$defs/color"
-            },
-            "raised": {
-              "$ref": "#/$defs/color"
-            }
+            "default": { "$ref": "#/$defs/color" },
+            "raised": { "$ref": "#/$defs/color" }
           }
         },
         "border": {
           "type": "object",
-          "required": [
-            "subtle",
-            "default"
-          ],
+          "required": ["subtle", "default"],
           "properties": {
-            "subtle": {
-              "$ref": "#/$defs/color"
-            },
-            "default": {
-              "$ref": "#/$defs/color"
-            }
+            "subtle": { "$ref": "#/$defs/color" },
+            "default": { "$ref": "#/$defs/color" }
           }
         }
       }
