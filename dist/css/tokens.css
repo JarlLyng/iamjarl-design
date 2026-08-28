@@ -1,4 +1,4 @@
-/* IAMJARL Design Tokens v1.2.1 — generated, do not edit */
+/* IAMJARL Design Tokens v1.3.0 — generated, do not edit */
 
 :root {
   /* Spacing */
@@ -59,6 +59,12 @@
   --ij-breakpoint-xl: 1280px;
   --ij-breakpoint-xxl: 1536px;
 
+  /* Container max-widths */
+  --ij-container-sm: 680px;
+  --ij-container-md: 900px;
+  --ij-container-lg: 1080px;
+  --ij-container-xl: 1400px;
+
   /* Focus ring */
   --ij-focus-width: 2px;
   --ij-focus-offset: 2px;
@@ -90,6 +96,7 @@
   --ij-color-on-error: #FFFFFF;
 
   /* Mode colors (light default) */
+  --ij-color-primary-rgb: 164, 53, 210;
   --ij-color-primary: #A435D2;
   --ij-color-on-primary: #FFFFFF;
   --ij-color-primary-hover: #8E2BB8;
@@ -115,6 +122,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --ij-color-primary-rgb: 208, 255, 0;
     --ij-color-primary: #D0FF00;
     --ij-color-on-primary: #000000;
     --ij-color-primary-hover: #B8E000;
@@ -141,6 +149,7 @@
 
 /* Explicit class overrides for manual mode switching */
 .light {
+  --ij-color-primary-rgb: 164, 53, 210;
   --ij-color-primary: #A435D2;
   --ij-color-on-primary: #FFFFFF;
   --ij-color-primary-hover: #8E2BB8;
@@ -165,6 +174,7 @@
 }
 
 .dark {
+  --ij-color-primary-rgb: 208, 255, 0;
   --ij-color-primary: #D0FF00;
   --ij-color-on-primary: #000000;
   --ij-color-primary-hover: #B8E000;
