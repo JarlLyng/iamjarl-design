@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] — 2026-08-29
+
+`<ij-footer>` reshaped against the two footers in the portfolio that already read well — WODrounds and Wean Nicotine — before the first consumer ships it.
+
+### Fixed
+- **A site would have lost its fine print on upgrade.** Unslotted light DOM is hidden once a shadow root attaches, and the first draft offered nowhere to put a copyright line, legal disclaimer or attribution. TonVault's Elektron disclaimer would have silently disappeared. There is now a `fineprint` slot, and both reference footers confirm the region belongs there.
+
+### Changed
+- **Labels are sentence case at normal weight.** The uppercase, letter-spaced, semibold heading did not match either reference footer; both use plain sentence case and lean on opacity instead.
+- **Cross-links render as one group.** `Made by Human` and `All projects` sit with the apps rather than on a row of their own, as both reference footers have them.
+- **Links no longer carry a platform suffix.** `(Mac)` after every name turned a scannable list into noise, and neither reference footer annotates its links.
+
+### Added
+- `layout="columns"` — the Wean Nicotine shape: a grid of groups with links stacked under each heading, collapsing to one column under 480px. Default stays `stacked`, the WODrounds shape.
+- `links-label` to override the heading above the site's own links, which otherwise uses the app's name from the registry.
+
 ## [1.4.0] — 2026-08-29
 
 The first component. `<ij-footer>` renders a site's footer cross-links from a registry in this repo, so a new app is added once here rather than in every site's footer by hand.
@@ -179,6 +195,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.5.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.5.0
 [1.4.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.4.0
 [1.3.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.3.0
 [1.2.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.2.1

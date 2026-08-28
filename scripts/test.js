@@ -274,6 +274,17 @@ check('reads host tokens through fallbacks, not redeclaration',
   /var\(--ij-color-text-secondary, /.test(comp) && !/^\s*--ij-[a-z-]+:/m.test(comp));
 check('stamped with the current version', comp.includes(`v${tokens.meta.version}`));
 
+// Regressions the redesign fixed. Each maps to something both reference
+// footers in the portfolio do, or to a bug the first draft shipped.
+check('has a fineprint slot', comp.includes('name="fineprint"'),
+  'without it a site loses its legal text on upgrade');
+check('cross-links render as one group, not two rows',
+  comp.includes('[...siblings, ...topUp, ...always]'));
+check('labels are sentence case, not shouted',
+  !/text-transform:\s*uppercase/.test(comp) && !/letter-spacing:\s*0\.05em/.test(comp));
+check('links carry no platform suffix', !comp.includes('class="platform"'));
+check('supports the columns layout', comp.includes('[layout="columns"]'));
+
 console.log();
 if (failed > 0) {
   console.error(`❌ ${failed} test(s) failed.`);

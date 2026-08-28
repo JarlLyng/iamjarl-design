@@ -21,6 +21,12 @@ cd /tmp/ijf && python3 -m http.server 8777
 | 6 | Unslotted children with a valid `app` | Hidden after upgrade; `slot="links"` children rendered |
 | 7 | Tab through the footer | Focus ring visible on every link |
 | 8 | Narrow the viewport below 480px | Links wrap, no horizontal scroll |
+| 9 | `slot="fineprint"` content | Rendered below the links, dimmed |
+| 10 | `layout="columns"` | Grid of groups; collapses to one column under 480px |
 
-Check 5 is the one that has already caught a real bug: attaching the shadow root before validating
+Checks 5 and 9 are the ones that have already caught real bugs. Check 9 exists because the first
+draft had no `fineprint` slot at all, so a consuming site's legal text would have vanished on
+upgrade — found by comparing against the footers already in the portfolio rather than by testing.
+
+Check 5: attaching the shadow root before validating
 the `app` attribute hides the fallback exactly when it is needed. Do not skip it.

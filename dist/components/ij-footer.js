@@ -1,4 +1,4 @@
-// IAMJARL <ij-footer> v1.4.0 — generated, do not edit
+// IAMJARL <ij-footer> v1.5.0 — generated, do not edit
 // Sources: components/select-links.js, components/ij-footer.js, apps.json
 
 const REGISTRY = {
@@ -261,7 +261,7 @@ function selectLinks(registry, siteId, options = {}) {
   return { self, siblings, topUp, always, links: [...siblings, ...topUp, ...always] };
 }
 
-// <ij-footer app="tonvault" tagline="…">
+// <ij-footer app="tonvault" tagline="…" layout="stacked|columns">
 //
 // Renders a site's footer with cross-links to the rest of the portfolio,
 // grouped by category so a visitor is offered what they would plausibly want.
@@ -269,12 +269,22 @@ function selectLinks(registry, siteId, options = {}) {
 //   <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
 //     <a slot="links" href="/privacy">Privacy</a>
 //     <a slot="links" href="/support">Support</a>
+//     <p slot="fineprint">© 2026 IAMJARL. Not affiliated with Elektron.</p>
 //     <p>© 2026 TonVault</p>   <!-- unslotted: the pre-upgrade fallback -->
 //   </ij-footer>
 //
-// Anything without slot="links" is deliberately not rendered. Custom elements
-// show their own children until they upgrade, so that content is what a visitor
-// sees if this script never loads — a plainer footer rather than none.
+// Two slots, because a footer has two kinds of per-site content: the site's own
+// links, and the colophon — copyright, legal disclaimers, attribution. Both
+// reference footers in the portfolio have that second region, and without a slot
+// for it a consuming site would silently lose its legal text on upgrade.
+//
+// Anything in neither slot is deliberately not rendered. Custom elements show
+// their own children until they upgrade, so that content is what a visitor sees
+// if this script never loads — a plainer footer rather than none.
+//
+// layout="stacked" (default) is the WODrounds shape: groups above one another,
+// links flowing inline. layout="columns" is the Wean Nicotine shape: a grid of
+// groups with links stacked under each heading.
 
 
 const STYLE = `
@@ -287,7 +297,8 @@ const STYLE = `
   --_link:    var(--ij-color-text-secondary, rgba(0, 0, 0, 0.70));
   --_hover:   var(--ij-color-primary,        #A435D2);
   --_border:  var(--ij-color-border-subtle,  rgba(0, 0, 0, 0.10));
-  --_gap:     var(--ij-spacing-md,  12px);
+  --_gap:     var(--ij-spacing-sm,   8px);
+  --_gap-md:  var(--ij-spacing-lg,  16px);
   --_gap-lg:  var(--ij-spacing-xxl, 24px);
   --_size:    var(--ij-font-size-sm, 14px);
   --_focus:   var(--ij-focus-width,  2px);
@@ -312,17 +323,28 @@ const STYLE = `
 }
 
 .footer { border-top: 1px solid var(--_border); padding-top: var(--_gap-lg); }
-.tagline { color: var(--_heading); margin: 0 0 var(--_gap); }
-.row { display: flex; flex-wrap: wrap; gap: var(--_gap) var(--_gap-lg); margin: 0 0 var(--_gap-lg); }
+.tagline { color: var(--_heading); margin: 0 0 var(--_gap-lg); }
 
-.group-label {
-  font-size: var(--ij-font-size-xs, 12px);
-  font-weight: var(--ij-font-weight-semibold, 600);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+/* A quiet label, not a shouted one. Both reference footers in the portfolio use
+   sentence case at normal weight — no uppercase, no letter-spacing. */
+.label {
+  color: var(--_heading);
   opacity: var(--ij-opacity-muted, 0.65);
   margin: 0 0 var(--_gap);
 }
+
+.groups { display: grid; gap: var(--_gap-lg); margin-bottom: var(--_gap-lg); }
+.links { display: flex; flex-wrap: wrap; gap: var(--_gap) var(--_gap-md); }
+
+/* Wean Nicotine's shape: a grid of groups, links stacked under each heading. */
+:host([layout="columns"]) .groups {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--_gap-lg) var(--_gap-lg);
+}
+:host([layout="columns"]) .links { flex-direction: column; gap: var(--_gap); }
+
+.fineprint { opacity: var(--ij-opacity-muted, 0.65); }
+.fineprint ::slotted(*) { margin: 0; }
 
 a, ::slotted(a) {
   color: var(--_link);
@@ -335,21 +357,21 @@ a:focus-visible, ::slotted(a:focus-visible) {
   outline-offset: var(--_offset);
   border-radius: var(--ij-radius-sm, 8px);
 }
-.platform { opacity: var(--ij-opacity-muted, 0.65); }
 
-@media (max-width: 480px) { .row { gap: var(--_gap); } }
+@media (max-width: 480px) {
+  :host([layout="columns"]) .groups { grid-template-columns: 1fr; }
+}
 `;
 
 const escape = s => String(s).replace(/[&<>"]/g, c =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-const linkHtml = app =>
-  `<a href="${escape(app.url)}">${escape(app.name)}` +
-  (app.platform ? ` <span class="platform">(${escape(app.platform)})</span>` : '') +
-  `</a>`;
+// Name only. Neither reference footer annotates links with a platform, and the
+// suffix turned a scannable list into noise.
+const linkHtml = app => `<a href="${escape(app.url)}">${escape(app.name)}</a>`;
 
 class IjFooter extends HTMLElement {
-  static observedAttributes = ['app', 'tagline'];
+  static observedAttributes = ['app', 'tagline', 'layout', 'links-label'];
 
   connectedCallback() {
     this.render();
@@ -374,20 +396,28 @@ class IjFooter extends HTMLElement {
 
     if (!this.shadowRoot) this.attachShadow({ mode: 'open' });
 
-    const { siblings, topUp, always } = selection;
-    const related = [...siblings, ...topUp];
+    const { self, siblings, topUp, always } = selection;
+    // One group, not two rows. Made by Human and All projects belong with the
+    // apps, the way both reference footers have them.
+    const related = [...siblings, ...topUp, ...always];
     const tagline = this.getAttribute('tagline');
+    const ownLabel = this.getAttribute('links-label') ?? self.name;
 
     this.shadowRoot.innerHTML = `
       <style>${STYLE}</style>
       <footer class="footer">
         ${tagline ? `<p class="tagline">${escape(tagline)}</p>` : ''}
-        <div class="row"><slot name="links"></slot></div>
-        <nav aria-labelledby="more">
-          <p class="group-label" id="more">More from IAMJARL</p>
-          <div class="row">${related.map(linkHtml).join('')}</div>
-          <div class="row">${always.map(linkHtml).join('')}</div>
-        </nav>
+        <div class="groups">
+          <div class="group">
+            <p class="label">${escape(ownLabel)}</p>
+            <div class="links"><slot name="links"></slot></div>
+          </div>
+          <nav class="group" aria-labelledby="more">
+            <p class="label" id="more">More from IAMJARL</p>
+            <div class="links">${related.map(linkHtml).join('')}</div>
+          </nav>
+        </div>
+        <div class="fineprint"><slot name="fineprint"></slot></div>
       </footer>`;
   }
 }
