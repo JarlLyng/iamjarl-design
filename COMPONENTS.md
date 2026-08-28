@@ -225,8 +225,9 @@ Three flags, each earning its place against something real in the current footer
   being linked by accident. Today a project that is not part of the portfolio is linked from two
   sites while four portfolio apps are linked from none.
 - **`consumes`** — renders the component. Lets the rollout go one site at a time.
-- **`pinned`** — shown in every footer regardless of cluster, for the portfolio-wide links that are
-  a statement rather than a cross-sell.
+- **`always`** — shown in every footer regardless of cluster, for the portfolio-wide links that are
+  a statement rather than a cross-sell. (`COMPONENTS.md` proposed calling this `pinned`; the shipped
+  field is `always`.)
 
 Two edge cases the current data forces:
 
@@ -235,7 +236,29 @@ Rule: if a cluster yields fewer than three, top up from the rest of the registry
 apps need the exposure most and are exactly what hand-written footers forget.
 
 **Ordering.** Leave it to the registry, not to each site, or the footers drift again in a subtler
-way. Cluster siblings first, then the top-up, then pinned links.
+way. Cluster siblings first, then the top-up, then the always-links.
+
+### Attribution: the component carries it, the site does not
+
+Every site in the portfolio links `madebyhuman.iamjarl.com` from its fine print, usually worded
+**"Co-created with AI"**, and the component adds `Made by Human` as an always-link. Adopting the
+component therefore produces the same destination twice under two labels, on every site — a
+question nine sites would otherwise answer nine different ways.
+
+**Decision: the site drops its own badge link, and the component carries the attribution.**
+
+The reason is the same one behind the registry itself. A badge maintained per site is a hand-kept
+link, and hand-kept links drift — that is the problem this component exists to remove. Carrying it
+in `apps.json` means the wording, the destination and its position are consistent everywhere and
+change in one place.
+
+The cost is real and worth naming: the visual "Co-created with AI" badge gives way to a plain text
+link in a list. If a site has a deliberate reason to keep the badge as a graphic — a launch page, a
+manifesto — keep it and accept the duplicate there rather than reopening this for the whole
+portfolio.
+
+So when adopting the component, remove the `madebyhuman` link from the fine print. Everything else
+in the fine print — copyright, legal disclaimers, anything specific to that product — stays.
 
 ### Graceful degradation
 
