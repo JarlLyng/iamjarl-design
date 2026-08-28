@@ -7,6 +7,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseHex, parseRgba, parseColor, contrastRatio } from './color.js';
 import { extractNotes } from './release-notes.js';
+import { selectLinks } from '../components/select-links.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -218,6 +219,60 @@ check(`release notes exist for ${tokens.meta.version}`, typeof notes === 'string
 check('release notes exclude the next heading', !String(notes).includes('## ['));
 check('release notes exclude link references', !/^\[\d+\.\d+\.\d+\]:/m.test(String(notes)));
 check('unknown version yields no notes', extractNotes(changelog, '9.9.9') === null);
+
+// --- Component: link selection (pure logic, no DOM) ---
+//
+// The custom element is a rendering shell over selectLinks(), so the decisions
+// live here and are testable without a browser. See COMPONENTS.md for what this
+// deliberately does NOT cover and the manual check that compensates.
+
+console.log('\nComponent link selection:');
+const registry = JSON.parse(read('apps.json'));
+const ids = sel => sel.links.map(a => a.id);
+
+const tonvault = selectLinks(registry, 'tonvault');
+check('never links to itself', !ids(tonvault).includes('tonvault'));
+check('groups by category', tonvault.siblings.every(a => a.category === 'music'));
+check('a full cluster needs no top-up', tonvault.topUp.length === 0);
+check('always-links appear', tonvault.always.map(a => a.id).join() === 'made-by-human,iamjarl');
+check('always-links come last', ids(tonvault).slice(-2).join() === 'made-by-human,iamjarl');
+check('side projects excluded by default', !ids(tonvault).includes('beertuner'));
+check('TonVault now links Echolume', ids(tonvault).includes('echolume'), 'the gap the pilot fixes');
+
+// A two-member category would otherwise render one link and test nothing.
+const trimrpix = selectLinks(registry, 'trimrpix');
+check('a thin cluster is topped up', trimrpix.topUp.length > 0);
+check('top-up reaches the minimum', trimrpix.siblings.length + trimrpix.topUp.length >= 3);
+check('top-up never repeats a sibling',
+  new Set(ids(trimrpix)).size === ids(trimrpix).length);
+check('top-up takes the newest first', trimrpix.topUp[0].id === 'tonvault');
+
+check('side projects can be opted in',
+  selectLinks(registry, 'tonvault', { include: ['shipped', 'side-project'] })
+    .links.some(a => a.id === 'beertuner'));
+check('an unknown id throws rather than rendering nothing', (() => {
+  try { selectLinks(registry, 'nope'); return false; } catch { return true; }
+})());
+check('every app id resolves', registry.apps.every(a => {
+  try { selectLinks(registry, a.id); return true; } catch { return false; }
+}));
+
+// --- Component: built artifact ---
+console.log('\nComponent build:');
+const comp = read('dist/components/ij-footer.js');
+check('is self-contained (no imports to resolve)', !/^import /m.test(comp));
+check('exports nothing (side-effect module)', !/^export /m.test(comp));
+check('registry is inlined', comp.includes('const REGISTRY = {'));
+check('defines the element', comp.includes("customElements.define('ij-footer'"));
+check('guards against double definition', comp.includes("customElements.get('ij-footer')"));
+// tokens.shadow.css declares :host { --ij-*: ... }, which would beat the host
+// page's inherited values and override the site's chosen mode. The component
+// must inherit, never redeclare — so it pulls in no stylesheet at all.
+check('pulls in no external stylesheet', !/@import/.test(comp));
+check('adopts no stylesheet object', !comp.includes('adoptedStyleSheets'));
+check('reads host tokens through fallbacks, not redeclaration',
+  /var\(--ij-color-text-secondary, /.test(comp) && !/^\s*--ij-[a-z-]+:/m.test(comp));
+check('stamped with the current version', comp.includes(`v${tokens.meta.version}`));
 
 console.log();
 if (failed > 0) {

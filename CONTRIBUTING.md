@@ -11,6 +11,7 @@ Thanks for your interest! This is primarily a personal design system, but PRs an
 
 1. Fork the repo
 2. Edit `tokens.json` (never edit generated files in `Sources/` or `dist/` directly — they're rebuilt by CI)
+   - Adding or changing an app in the footer? Edit `apps.json`, not a site's markup. `dist/components/` is generated from it.
 3. Bump `meta.version` in `tokens.json` following [SemVer](https://semver.org/):
    - **Patch** (x.x.0 → x.x.1) — value tweaks to existing tokens (e.g. a color adjustment); no new or renamed keys
    - **Minor** (x.0 → x.1) — new tokens or token categories, added without breaking existing keys

@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] — 2026-08-29
+
+The first component. `<ij-footer>` renders a site's footer cross-links from a registry in this repo, so a new app is added once here rather than in every site's footer by hand.
+
+### Added
+- **`apps.json`** — the canonical product registry: id, name, url, platform, category, status. Grouped by audience so a site links what its own visitor would want (a training app links the training apps), per #6. Two flags keep the data honest about intent: `always` for the portfolio-wide links that belong in every footer, and `consumes` for which sites actually render the component, so a rollout can go one site at a time. A `status` field carries side projects alongside shipped products without deciding yet whether they appear — the render rule filters, the data stays complete.
+- **`<ij-footer>`** at `dist/components/ij-footer.js`, exported as `@iamjarl/design-tokens/components`. Ships as one self-contained ESM file with the registry inlined: one script tag, no module resolution, no runtime fetch that could fail or hit CORS.
+- **`scripts/validate.js` gates the registry** — unique ids, https urls, known status, every app either in a declared category or marked `always` (never neither, which would silently drop it from every footer), and at least one consumer.
+
+### Notes for consumers
+The component **inherits** the host's tokens rather than declaring its own, through two-tier variables with fallbacks. A site with a token layer gets its own theme, including a pinned `.light` or `.dark`; a site without one gets the system's values. It deliberately does not load `tokens.shadow.css` — those `:host` declarations would beat the page's and override the site's chosen mode.
+
+Anything inside the tag without `slot="links"` is not rendered, which makes it the pre-upgrade fallback: if the script never loads, a visitor sees that plain HTML instead of nothing.
+
+### Fixed
+- Cross-links have drifted apart across the sites. TonVault did not link Echolume despite sharing an audience; the registry closes that on the pilot's first render.
+
 ## [1.3.0] — 2026-08-28
 
 Two token families the marketing sites had each invented for themselves. Additive; no existing key changes.
@@ -162,6 +179,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.4.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.4.0
 [1.3.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.3.0
 [1.2.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.2.1
 [1.2.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.2.0

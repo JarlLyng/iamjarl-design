@@ -952,6 +952,39 @@ function generateDTS(tokens) {
 }
 
 // ============================================================
+// COMPONENTS
+// ============================================================
+
+// The component ships as ONE self-contained ESM file with the registry baked
+// in: a single script tag, no module resolution on the CDN, and no runtime
+// fetch of apps.json that could fail or hit CORS. Sources stay separate files
+// so the pure logic can be tested without a DOM.
+function generateComponent(tokens) {
+  const registry = JSON.parse(fs.readFileSync(path.join(ROOT, 'apps.json'), 'utf-8'));
+  const src = name => fs.readFileSync(path.join(ROOT, 'components', name), 'utf-8');
+
+  // Inline the modules: drop their local imports, keep everything else.
+  const inline = code =>
+    code
+      .split('\n')
+      .filter(line => !/^import .* from '\.\/.*';$/.test(line))
+      .join('\n')
+      .replace(/^export (const|function|class) /gm, '$1 ');
+
+  return [
+    `// IAMJARL <ij-footer> v${tokens.meta.version} — generated, do not edit`,
+    `// Sources: components/select-links.js, components/ij-footer.js, apps.json`,
+    '',
+    `const REGISTRY = ${JSON.stringify(registry, null, 2)};`,
+    '',
+    inline(src('select-links.js')).trim(),
+    '',
+    inline(src('ij-footer.js')).trim(),
+    '',
+  ].join('\n');
+}
+
+// ============================================================
 // MAIN
 // ============================================================
 
@@ -977,7 +1010,10 @@ function main() {
   // TypeScript declarations
   writeFile(path.join(ROOT, 'dist', 'ts', 'tokens.d.ts'), generateDTS(tokens));
 
-  console.log('\nDone! Generated 6 platform files.');
+  // Web component (single self-contained file, registry inlined)
+  writeFile(path.join(ROOT, 'dist', 'components', 'ij-footer.js'), generateComponent(tokens));
+
+  console.log('\nDone! Generated 7 platform files.');
 }
 
 main();

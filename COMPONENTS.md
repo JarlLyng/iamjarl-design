@@ -3,9 +3,10 @@
 This repo ships design **tokens** today. This document proposes adding a **components** layer, and
 records the reasoning so the decision is reviewable rather than implied by a commit.
 
-Status: **proposal, nothing implemented yet.** Written 2026-08-12, revised 2026-08-13 after an audit
-of five of the marketing sites overturned one of its premises. The audit is in the PR
-discussion; its findings are folded in below.
+Status: **`<ij-footer>` shipped in 1.4.0**, with TonVault as the first and only consumer. The rest
+of this document is the reasoning that led there, kept because the decisions are still live.
+Written 2026-08-12, revised 2026-08-13 after an audit of five of the marketing sites overturned one
+of its premises, and 2026-08-29 when the footer was built.
 
 ## Why
 
@@ -288,6 +289,33 @@ Worth deciding on purpose now rather than discovering it half-built.
 **Asymmetry.** Components are web-only and unusable from the SwiftUI apps, so this repo becomes
 asymmetric by design: tokens for every platform, components for web. That is fine, but it has to be
 written down, because a Swift consumer should not have to work it out.
+
+## Testing: what CI covers, and what it does not
+
+Decided when the footer was built rather than left to settle later, because the honest answer
+constrains the design.
+
+The repo's quality rests on hard-failing checks with **no dependencies**. A component brings DOM,
+shadow roots, focus and keyboard behaviour, none of which that harness can reach. Rather than break
+the zero-dependency promise for a single component, the decisions were moved out of the DOM:
+
+**`components/select-links.js` is pure** — no DOM, no fetch, no globals. Every rule with a judgement
+in it lives there (exclude self, group by category, top up a thin cluster, always-links last, filter
+by status) and is covered by contract tests in the existing harness. The custom element is a
+rendering shell over it.
+
+`validate.js` gates `apps.json` the way it gates the tokens, and contract tests assert the built
+artifact is self-contained, inlines the registry, defines the element once, and pulls in no
+stylesheet.
+
+**What this does not cover:** shadow-DOM rendering, slot behaviour, focus order, and the
+pre-upgrade fallback. Those need a browser. Until one is worth adding, they are checked by hand
+against `components/TESTING.md` before a release that touches the component. That checklist found a
+real bug on its first run — attaching a shadow root before validating the `app` attribute hid the
+fallback content precisely when an unknown id made it necessary.
+
+This is a real gap, stated plainly rather than implied by silence. If the component layer grows past
+one or two elements, a browser test runner earns its dependency and this section should be revisited.
 
 ## Non-negotiables that already apply
 

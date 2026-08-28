@@ -1,0 +1,35 @@
+{
+  "$comment": "Canonical list of IAMJARL products. Consumed by <ij-footer> to build cross-links, so a new app is added here once rather than in every site's footer. New entries are APPENDED — the top-up rule reads this list from the end to favour the newest.",
+  "meta": {
+    "updated": "2026-08-29"
+  },
+  "categories": {
+    "fitness": "Training, movement and health",
+    "music": "Audio and music production",
+    "web-tools": "Browser and web-page tools",
+    "images": "Images and screenshots",
+    "play": "Play and art"
+  },
+  "apps": [
+    { "id": "its-mono-yo", "name": "It's mono, yo!", "url": "https://itsmonoyo.iamjarl.com", "platform": "Mac", "category": "music", "status": "shipped", "listed": true, "consumes": false },
+    { "id": "trimrpix", "name": "TrimrPix", "url": "https://trimrpix.iamjarl.com", "platform": "Mac", "category": "images", "status": "shipped", "listed": true, "consumes": false },
+    { "id": "anvil-workout", "name": "Anvil Workout", "url": "https://anvilworkout.iamjarl.com", "platform": "iPhone, iPad, Watch", "category": "fitness", "status": "shipped", "listed": true, "consumes": false },
+    { "id": "wodrounds", "name": "WODrounds", "url": "https://wodrounds.iamjarl.com", "platform": "iPhone, iPad, Watch, Mac, TV", "category": "fitness", "status": "shipped", "listed": true, "consumes": false },
+    { "id": "wean-nicotine", "name": "Wean Nicotine", "url": "https://weannicotine.iamjarl.com", "platform": "iPhone", "category": "fitness", "status": "shipped", "listed": true, "consumes": false },
+    { "id": "its-404-yo", "name": "It's 404, yo!", "url": "https://its404yo.iamjarl.com", "platform": "Mac", "category": "music", "status": "shipped", "listed": true, "consumes": false },
+    { "id": "made-by-human", "name": "Made by Human", "url": "https://madebyhuman.iamjarl.com", "platform": "Web", "category": null, "status": "shipped", "listed": true, "consumes": false, "always": true },
+    { "id": "iamjarl", "name": "All projects", "url": "https://iamjarl.com", "platform": "Web", "category": null, "status": "shipped", "listed": true, "consumes": false, "always": true },
+    { "id": "echolume", "name": "Echolume", "url": "https://echolume.iamjarl.com", "platform": "Mac", "category": "music", "status": "shipped", "listed": true, "consumes": false },
+    { "id": "botlens", "name": "BotLens", "url": "https://botlens.iamjarl.com", "platform": "Chrome", "category": "web-tools", "status": "shipped", "listed": true, "consumes": false },
+    { "id": "pagelens", "name": "PageLens", "url": "https://pagelens.iamjarl.com", "platform": "Chrome", "category": "web-tools", "status": "shipped", "listed": true, "consumes": false },
+    { "id": "walkful", "name": "Walkful", "url": "https://walkful.iamjarl.com", "platform": "iPhone", "category": "fitness", "status": "shipped", "listed": true, "consumes": false },
+    { "id": "trimrpix-ios", "name": "TrimrPix for iOS", "url": "https://trimrpixforios.iamjarl.com", "platform": "iPhone", "category": "images", "status": "shipped", "listed": true, "consumes": false },
+    { "id": "tonvault", "name": "TonVault", "url": "https://tonvault.iamjarl.com", "platform": "Mac", "category": "music", "status": "shipped", "listed": true, "consumes": true },
+
+    { "id": "beertuner", "name": "BeerTuner", "url": "https://beertuner.iamjarl.com", "platform": "Web", "category": "music", "status": "side-project", "listed": true, "consumes": false },
+    { "id": "emotionwave", "name": "EmotionWave", "url": "https://emotionwave.iamjarl.com", "platform": "Web", "category": "music", "status": "side-project", "listed": true, "consumes": false },
+    { "id": "get-to-the-movie", "name": "Get to the Movie!", "url": "https://gettothemovie.iamjarl.com", "platform": "Web", "category": "web-tools", "status": "side-project", "listed": true, "consumes": false },
+    { "id": "little-rocket", "name": "Little Rocket", "url": "https://littlerocket.iamjarl.com", "platform": "Web", "category": "play", "status": "side-project", "listed": true, "consumes": false },
+    { "id": "beef", "name": "Beef", "url": "https://beef.iamjarl.com", "platform": "Web", "category": "fitness", "status": "side-project", "listed": true, "consumes": false }
+  ]
+}

@@ -8,6 +8,8 @@ on:
     # 1.1.0 release was never validated, regenerated or tagged here.
     paths:
       - 'tokens.json'
+      - 'apps.json'
+      - 'components/**'
       - 'package.json'
       - 'Package.swift'
       - 'design.md'
