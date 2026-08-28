@@ -1,6 +1,6 @@
-// IAMJARL Design Tokens v1.5.0 — generated, do not edit
+// IAMJARL Design Tokens v1.6.0 — generated, do not edit
 
-export const meta = {"name":"IAMJARL Design System","version":"1.5.0"} as const;
+export const meta = {"name":"IAMJARL Design System","version":"1.6.0"} as const;
 
 export const spacing = {"xs":4,"sm":8,"md":12,"lg":16,"xl":20,"xxl":24,"xxxl":32} as const;
 
@@ -87,6 +87,10 @@ export const colors = {
           "success": "#2E7D32",
           "warning": "#C2410C",
           "error": "#D70015"
+      },
+      "gradients": {
+          "primary": "linear-gradient(135deg, #A435D2, #E0529C)",
+          "brand": "linear-gradient(135deg, #D0FF00, #A435D2)"
       }
   },
   dark: {
@@ -120,6 +124,10 @@ export const colors = {
           "success": "#4CAF50",
           "warning": "#FF6B35",
           "error": "#FF453A"
+      },
+      "gradients": {
+          "primary": "linear-gradient(135deg, #D0FF00, #5DE0A6, #37B6E9)",
+          "brand": "linear-gradient(135deg, #A435D2, #D0FF00)"
       }
   },
 } as const;

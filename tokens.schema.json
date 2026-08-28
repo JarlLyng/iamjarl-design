@@ -212,6 +212,11 @@
             "disabled": { "$ref": "#/$defs/color" }
           }
         },
+        "gradients": {
+          "type": "object",
+          "description": "CSS gradient values, mode-aware. Each must begin at a color the system already names; later stops may be literals belonging to that gradient rather than to the palette.",
+          "additionalProperties": { "type": "string", "pattern": "-gradient\\(" }
+        },
         "state": {
           "type": "object",
           "required": ["success", "warning", "error"],

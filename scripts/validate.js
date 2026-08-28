@@ -180,8 +180,47 @@ function validateStructure(tokens) {
     }
   }
 
+  // Gradients (optional) — CSS value strings, and each must begin at a color the
+  // system already names. That constraint is what keeps a gradient's second stop
+  // an implementation detail rather than an unnamed color leaking into general
+  // use. See COMPONENTS.md and design.md.
+  const systemColors = new Set(
+    [
+      ...Object.values(colors.static ?? {}),
+      ...Object.values(colors.shared ?? {}),
+      colors.modes.light.primary,
+      colors.modes.dark.primary,
+    ].map(c => String(c).toUpperCase())
+  );
+
+  for (const mode of ['light', 'dark']) {
+    const gradients = colors.modes[mode].gradients;
+    if (!gradients) continue;
+    let bad = 0;
+    for (const [key, val] of Object.entries(gradients)) {
+      if (typeof val !== 'string' || !/-gradient\(/.test(val)) {
+        fail(`${mode}.gradients.${key} is not a CSS gradient value`);
+        bad++;
+        continue;
+      }
+      const first = (val.match(/#[0-9a-fA-F]{6}/) || [])[0];
+      if (!first) {
+        fail(`${mode}.gradients.${key} has no hex color stop`);
+        bad++;
+      } else if (!systemColors.has(first.toUpperCase())) {
+        fail(
+          `${mode}.gradients.${key} starts at ${first}, which is not a system color. ` +
+            `A gradient must begin at a named token; later stops may be literals.`
+        );
+        bad++;
+      }
+    }
+    if (!bad) pass(`${mode}.gradients: ${Object.keys(gradients).length}, each starting at a system color`);
+  }
+
   // Validate all color values
-  const allColors = getAllColorValues(colors);
+  // Gradients are CSS value strings, not colors, and are checked above.
+  const allColors = getAllColorValues(colors).filter(c => !c.path.includes('.gradients.'));
   let invalidColors = 0;
   for (const { path: p, value } of allColors) {
     if (!parseColor(value)) {
