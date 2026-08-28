@@ -286,6 +286,63 @@ function validateContrast(tokens) {
   }
 }
 
+// apps.json feeds <ij-footer>'s cross-links. A bad entry here ships a broken or
+// missing link on every consuming site, so it is gated like the tokens are.
+function validateApps() {
+  console.log('\nApp registry (apps.json):');
+
+  let registry;
+  try {
+    registry = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'apps.json'), 'utf-8'));
+  } catch (e) {
+    fail(`Could not read apps.json: ${e.message}`);
+    return;
+  }
+
+  const apps = registry.apps;
+  if (!Array.isArray(apps) || apps.length === 0) {
+    fail('apps.json has no apps array');
+    return;
+  }
+
+  const categories = Object.keys(registry.categories ?? {});
+  if (!categories.length) fail('apps.json has no categories');
+
+  const ids = new Set();
+  const problems = [];
+  for (const a of apps) {
+    if (!a.id || !/^[a-z0-9-]+$/.test(a.id)) problems.push(`bad id "${a.id}"`);
+    else if (ids.has(a.id)) problems.push(`duplicate id "${a.id}"`);
+    else ids.add(a.id);
+
+    if (!a.name) problems.push(`${a.id}: missing name`);
+    if (!/^https:\/\/[^\s"']+$/.test(a.url ?? '')) problems.push(`${a.id}: url must be https`);
+    if (!['shipped', 'side-project'].includes(a.status)) problems.push(`${a.id}: unknown status "${a.status}"`);
+
+    // An app is either in a known category or marked always — never neither,
+    // or it can never be selected and silently disappears from every footer.
+    if (a.always === true) {
+      if (a.category) problems.push(`${a.id}: always-links must not also have a category`);
+    } else if (!categories.includes(a.category)) {
+      problems.push(`${a.id}: category "${a.category}" is not declared in categories`);
+    }
+  }
+
+  if (problems.length) {
+    for (const p of problems) fail(p);
+  } else {
+    pass(`${apps.length} apps, ${categories.length} categories, ids unique`);
+  }
+
+  const always = apps.filter(a => a.always === true);
+  if (!always.length) fail('no always-links — every footer would lack a portfolio link');
+  else pass(`${always.length} always-links: ${always.map(a => a.name).join(', ')}`);
+
+  const consumers = apps.filter(a => a.consumes === true);
+  if (!consumers.length) fail('no app has consumes:true — nothing renders the component');
+  else pass(`${consumers.length} component consumer(s): ${consumers.map(a => a.name).join(', ')}`);
+}
+
 // --- Helpers ---
 
 function getDeepKeys(obj, prefix = '') {
@@ -331,6 +388,7 @@ function main() {
 
   validateStructure(tokens);
   validateContrast(tokens);
+  validateApps();
 
   console.log();
   if (errors > 0) {

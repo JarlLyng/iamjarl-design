@@ -19,7 +19,8 @@ It is designed to work equally well for **humans** (design overview) and **AI to
 ## What's inside
 - `tokens.json` — machine-readable design tokens (colors incl. interaction/disabled/state-text, spacing, radius, typography, icons, shadows, motion, breakpoints, focus, z-index, opacity)
 - `design.md` — rules, principles and non-negotiables (Cursor-friendly)
-- `COMPONENTS.md` — proposal for a components layer (web components); not yet implemented
+- `COMPONENTS.md` — the components layer: reasoning, scope and testing policy
+- `apps.json` — canonical product registry, consumed by `<ij-footer>` for cross-links
 - `index.html` — human-friendly viewer that renders tokens visually
 - `scripts/build.js` — generates platform-specific token files from `tokens.json`
 - `scripts/validate.js` — validates token structure and contrast ratios
@@ -31,6 +32,7 @@ It is designed to work equally well for **humans** (design overview) and **AI to
 - `dist/ts/tokens.js` — ESM runtime (npm main entry)
 - `dist/ts/tokens.d.ts` — TypeScript declarations
 - `dist/ts/tokens.ts` — TypeScript source (for inspection / TS-aware bundlers)
+- `dist/components/ij-footer.js` — `<ij-footer>` web component, registry inlined
 
 ---
 
@@ -48,7 +50,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.2.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.4.0")
 ]
 ```
 
@@ -195,6 +197,48 @@ shadow.appendChild(style);
 import { colors } from '@iamjarl/design-tokens';
 chrome.action.setBadgeBackgroundColor({ color: colors.light.primary });
 ```
+
+---
+
+## Web component: `<ij-footer>`
+
+A shared footer that builds its cross-links from [`apps.json`](apps.json), so adding an app updates
+every site instead of nine hand-kept lists. Works in any page — no build step, no framework.
+
+```html
+<script type="module"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.4.0/dist/components/ij-footer.js"></script>
+
+<ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
+  <a slot="links" href="/privacy">Privacy</a>
+  <a slot="links" href="/support">Support</a>
+
+  <!-- No slot attribute: shown only until the component upgrades, so this is
+       what a visitor sees if the script never loads. Always include one. -->
+  <p>&copy; 2026 TonVault · <a href="/privacy">Privacy</a></p>
+</ij-footer>
+```
+
+**Pin the tag.** A version-pinned jsDelivr URL is immutable and supports SRI. Serving always-latest
+means one bad commit reaches every site at once.
+
+`app` must match an `id` in `apps.json`. Links are grouped by that app's category, so a training app
+links the other training apps; `Made by Human` and `All projects` appear everywhere. A category with
+fewer than three members is topped up with the newest apps, and a site never links to itself.
+
+### Theming
+
+The component **inherits** your tokens — it declares none of its own. Import `dist/css/tokens.css`
+on the page and the footer follows it, including a pinned `.light` or `.dark` class. Without a token
+layer it falls back to the system's own values and follows `prefers-color-scheme`.
+
+Do **not** feed it `tokens.shadow.css`: those `:host` declarations would beat the page's and override
+the mode your site chose.
+
+### Adding an app
+
+Edit [`apps.json`](apps.json), run `node scripts/validate.js && node scripts/build.js`, and open a
+PR. Every consuming site picks it up on its next version bump.
 
 ---
 
