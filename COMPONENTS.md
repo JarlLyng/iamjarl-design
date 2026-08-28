@@ -4,7 +4,7 @@ This repo ships design **tokens** today. This document proposes adding a **compo
 records the reasoning so the decision is reviewable rather than implied by a commit.
 
 Status: **proposal, nothing implemented yet.** Written 2026-08-12, revised 2026-08-13 after an audit
-of the five in-scope marketing sites overturned one of its premises. The audit is in the PR
+of five of the marketing sites overturned one of its premises. The audit is in the PR
 discussion; its findings are folded in below.
 
 ## Why
@@ -23,6 +23,18 @@ The intended split, decided at portfolio level:
 
 The sites should not look identical. They serve different audiences and that difference is
 deliberate. They should be identical only where nothing but craft is at stake.
+
+### Two scopes, two counts
+
+The numbers below differ on purpose, and the two layers are not scoped the same way.
+
+- **Tokens belong on every site — all nine.** There is no reason for a concept site to hold a
+  different set of colours or spacing than an app site.
+- **Components belong on the app marketing sites**, the ones that sell an app. The concept sites
+  are deliberately excluded: their whole point is that they look like themselves.
+
+Where this document says *five*, it is reporting the audit, which read five sites. That is a fact
+about the evidence, not a statement of scope.
 
 ## The premise that had to be corrected
 
@@ -72,10 +84,10 @@ becomes mode-aware at all. Step one has to treat Echolume as that decision, not 
 
 ## Step zero is not a component
 
-Get all five sites onto **one pinned, current `tokens.css`** first, and clean up the counterfeit
+Get **all nine sites** onto **one pinned, current `tokens.css`** first, and clean up the counterfeit
 namespace in the same pass. This is not a detour. It is a prerequisite for any component to theme
 correctly, it is cheap, and it tests the exact distribution mechanism this proposal is least sure
-about, a pinned CDN URL, on something with near-zero rendering risk. Once the five share one token
+about, a pinned CDN URL, on something with near-zero rendering risk. Once they share one token
 layer through one URL, a component rides a mechanism that has already proven itself.
 
 ## Distribution: web components, from a pinned tag
@@ -170,7 +182,7 @@ per site. That split is the normal division of labour in a component, not a comp
 
 It is worth being precise about why this argues *for* a component rather than against one. If every
 footer showed the same links, copy-paste would very nearly do. It is because the links vary **by
-rule** that they should be computed rather than written out nine times.
+rule** that they should be computed rather than written out once per site.
 
 The rule is relevance: cross-promotion works between apps whose audiences overlap. So a site
 declares only who it is —
@@ -285,7 +297,7 @@ breaks one of those is a bug, not a variant.
 
 ## Suggested order
 
-1. One pinned, current `tokens.css` on all five sites; clean up the counterfeit namespace at the
+1. One pinned, current `tokens.css` on all nine sites; clean up the counterfeit namespace at the
    same time.
 2. `apps.json`, the canonical app registry.
 3. `<ij-footer>` reading `apps.json`, rolled out to one site first.
