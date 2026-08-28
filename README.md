@@ -50,7 +50,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.4.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.6.0")
 ]
 ```
 
@@ -275,6 +275,7 @@ Every variable is prefixed `--ij-` and the token path is lower-kebab-cased:
 | `colors.modes.*.background.card` | `--ij-color-bg-card` ⚠️ `background` → `bg` |
 | `colors.modes.*.state.error` | `--ij-color-state-error` (text-safe; AA on `background.app`) |
 | `colors.shared.error` | `--ij-color-error` (fill; pair with `--ij-color-on-error`) |
+| `colors.modes.*.gradients.primary` | `--ij-gradient-primary` ⚠️ not `--ij-color-gradients-*` |
 | `shadows.md` | `--ij-shadow-md` |
 | `motion.duration.normal` | `--ij-duration-normal` |
 | `motion.easing.standard` | `--ij-easing-standard` |
@@ -283,7 +284,15 @@ Every variable is prefixed `--ij-` and the token path is lower-kebab-cased:
 | `zIndex.modal` | `--ij-z-modal` |
 | `opacity.disabled` | `--ij-opacity-disabled` |
 
-Rule: `--ij-` + group + kebab(key). The only non-obvious mapping is **`background` → `bg`**. Mode colors (`primary`, `text.*`, `background.*`, `surface.*`, `border.*`, `state.*`) switch automatically via `prefers-color-scheme`, or manually with a `.light` / `.dark` class on a parent.
+Rule: `--ij-` + group + kebab(key). Two non-obvious mappings: **`background` → `bg`**, and **gradients get their own `--ij-gradient-*` namespace** rather than being flattened under `--ij-color-`. Mode colors (`primary`, `text.*`, `background.*`, `surface.*`, `border.*`, `state.*`) switch automatically via `prefers-color-scheme`, or manually with a `.light` / `.dark` class on a parent.
+
+### Gradients and tints
+- `--ij-gradient-primary` / `--ij-gradient-brand` are mode-aware CSS gradient values. Web only — they have no SwiftUI equivalent.
+- For a tint, glow or translucent border, use `color-mix()` against an existing token rather than a hardcoded `rgba()`:
+  ```css
+  background: color-mix(in srgb, var(--ij-color-primary) 30%, transparent);
+  ```
+- `--ij-color-primary-rgb` is **deprecated** since 1.6.0 (removal in 2.0.0). It only covered `primary`; `color-mix()` works on every color token.
 
 ### State colors: fill vs. text
 - `--ij-color-{success,warning,error}` are **fills** — use as backgrounds, paired with `--ij-color-on-*`.

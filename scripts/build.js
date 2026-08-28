@@ -260,7 +260,9 @@ function generateSwift(tokens) {
     }
     w();
 
-    // Nested groups: text, background, surface, border, state
+    // Nested groups: text, background, surface, border, state.
+    // gradients is deliberately absent — a CSS gradient string has no SwiftUI
+    // equivalent, and the apps do not use them. Do not add it here.
     const groups = [
       { key: 'text', label: 'Text' },
       { key: 'background', label: 'Background' },
@@ -591,9 +593,10 @@ function generateCSS(tokens, scope = ':root') {
 // --ij-color-<key>; nested groups are flattened (background → "bg").
 function modeColorLines(mode, indent) {
   const out = [];
-  // The primary as a raw "r, g, b" triplet, so a consumer can compose
-  // rgba(var(--ij-color-primary-rgb), 0.3) for tints and glows. CSS cannot derive
-  // this from a hex custom property, which is why two sites had hand-written it.
+  // DEPRECATED since 1.6.0, removal in 2.0.0. Use
+  //   color-mix(in srgb, var(--ij-color-primary) 30%, transparent)
+  // which works on every color token instead of only this one. Still emitted so
+  // 1.3-1.5 consumers keep working; see design.md.
   // validate.js requires primary to be hex, so this should never throw. Fail
   // loudly rather than silently omitting the variable from one mode only.
   const rgb = typeof mode.primary === 'string' ? parseHex(mode.primary) : null;
@@ -602,7 +605,13 @@ function modeColorLines(mode, indent) {
       `Cannot derive --ij-color-primary-rgb: primary is "${mode.primary}", which is not a 6- or 8-digit hex color. Run scripts/validate.js.`
     );
   }
-  out.push(`${indent}--ij-color-primary-rgb: ${rgb.r}, ${rgb.g}, ${rgb.b};`);
+  out.push(`${indent}--ij-color-primary-rgb: ${rgb.r}, ${rgb.g}, ${rgb.b}; /* deprecated, use color-mix() */`);
+  // Gradients are values, not colors, so they get their own --ij-gradient-*
+  // namespace rather than being flattened into --ij-color-gradients-*.
+  for (const [key, val] of Object.entries(mode.gradients ?? {})) {
+    out.push(`${indent}--ij-gradient-${camelToKebab(key)}: ${val};`);
+  }
+
   const groupPrefix = { background: 'bg' };
   function flatten(obj, prefix) {
     for (const [key, val] of Object.entries(obj)) {
@@ -614,6 +623,7 @@ function modeColorLines(mode, indent) {
     }
   }
   for (const [key, val] of Object.entries(mode)) {
+    if (key === 'gradients') continue;
     if (typeof val === 'object' && val !== null) {
       flatten(val, groupPrefix[key] || camelToKebab(key));
     } else {

@@ -91,6 +91,25 @@ check('CSS has .light class override', /\.light\s*\{/.test(css));
 check('CSS has .dark class override', /\.dark\s*\{/.test(css));
 check('CSS has popup breakpoint', css.includes('--ij-breakpoint-popup'));
 
+// Gradients — web only, own namespace, and each must start at a system color.
+check('CSS emits gradients in every mode block',
+  (css.match(/--ij-gradient-primary:/g) || []).length === 4);
+check('gradients use --ij-gradient-*, not --ij-color-gradients-*',
+  css.includes('--ij-gradient-brand:') && !css.includes('--ij-color-gradients'));
+check('every gradient starts at a system color', (() => {
+  const tk = JSON.parse(read('tokens.json')).tokens.colors;
+  const sys = new Set([tk.modes.light.primary, tk.modes.dark.primary,
+    ...Object.values(tk.shared), ...Object.values(tk.static)].map(c => c.toUpperCase()));
+  return ['light', 'dark'].every(m => Object.values(tk.modes[m].gradients)
+    .every(g => sys.has((g.match(/#[0-9a-fA-F]{6}/) || [''])[0].toUpperCase())));
+})());
+check('Swift does not emit gradients', !/gradient/i.test(swift),
+  'a CSS gradient string has no SwiftUI equivalent');
+check('primary-rgb is marked deprecated, not silently kept',
+  css.includes('--ij-color-primary-rgb') && /primary-rgb:[^;]*;\s*\/\* deprecated/.test(css));
+check('design.md documents color-mix as the replacement',
+  read('design.md').includes('color-mix(in srgb'));
+
 // --ij-color-primary-rgb is derived from each mode's primary. It must appear in
 // all four mode blocks — a silent miss in one mode is the bug this guards.
 const rgbCount = (css.match(/--ij-color-primary-rgb:/g) || []).length;

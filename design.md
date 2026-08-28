@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.5.0)
+# IAMJARL Design System (v1.6.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -37,6 +37,29 @@ Use together with `tokens.json` (single source of truth).
   - `success` → use `onSuccess`
   - `warning` → use `onWarning`
   - `error` → use `onError`
+
+### Gradients (web only)
+- Two per mode: `gradient.primary` (the accent extended into a second stop) and `gradient.brand` (the two accents against each other, reversed per mode).
+- **A gradient must begin at a color the system names.** Later stops are part of that gradient's identity, not colors the system endorses for general use — the validator enforces the first stop and leaves the rest alone.
+- Use `var(--ij-gradient-primary)` rather than rebuilding a gradient by hand. Both were derived from what the sites had each invented separately.
+- Not available in SwiftUI. A CSS gradient string has no Swift equivalent and the apps do not use them.
+
+### Tints, glows and translucency
+Use `color-mix()` against an existing token. It works on every color, needs nothing generated, and keeps the source color visible in the code:
+
+```css
+/* a 30% tint of the accent */
+background: color-mix(in srgb, var(--ij-color-primary) 30%, transparent);
+
+/* a soft hero glow, built from the accent rather than a hardcoded rgba */
+background: radial-gradient(ellipse 80% 60% at 50% -10%,
+              color-mix(in srgb, var(--ij-color-primary) 12%, transparent), transparent 60%);
+
+/* the same trick works for state colors, which a triplet never covered */
+border-color: color-mix(in srgb, var(--ij-color-error) 40%, transparent);
+```
+
+> **Deprecated:** `--ij-color-primary-rgb` (added 1.3.0, deprecated 1.6.0, removed in 2.0.0). It only ever existed for `primary`, so every other color would have needed its own triplet. `color-mix()` generalises; the triplet did not. It is still emitted, so 1.3–1.5 consumers keep working — but do not adopt it in new code.
 
 ### Shadows
 - Three elevation levels: `sm` (subtle), `md` (default), `lg` (modals/popovers)

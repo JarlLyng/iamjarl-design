@@ -1,4 +1,4 @@
-/* IAMJARL Design Tokens v1.5.0 — generated, do not edit */
+/* IAMJARL Design Tokens v1.6.0 — generated, do not edit */
 /* Shadow DOM variant: variables scoped to :host for content scripts */
 
 :host {
@@ -97,7 +97,9 @@
   --ij-color-on-error: #FFFFFF;
 
   /* Mode colors (light default) */
-  --ij-color-primary-rgb: 164, 53, 210;
+  --ij-color-primary-rgb: 164, 53, 210; /* deprecated, use color-mix() */
+  --ij-gradient-primary: linear-gradient(135deg, #A435D2, #E0529C);
+  --ij-gradient-brand: linear-gradient(135deg, #D0FF00, #A435D2);
   --ij-color-primary: #A435D2;
   --ij-color-on-primary: #FFFFFF;
   --ij-color-primary-hover: #8E2BB8;
@@ -123,7 +125,9 @@
 
 @media (prefers-color-scheme: dark) {
   :host {
-    --ij-color-primary-rgb: 208, 255, 0;
+    --ij-color-primary-rgb: 208, 255, 0; /* deprecated, use color-mix() */
+    --ij-gradient-primary: linear-gradient(135deg, #D0FF00, #5DE0A6, #37B6E9);
+    --ij-gradient-brand: linear-gradient(135deg, #A435D2, #D0FF00);
     --ij-color-primary: #D0FF00;
     --ij-color-on-primary: #000000;
     --ij-color-primary-hover: #B8E000;
@@ -150,7 +154,9 @@
 
 /* Explicit class overrides for manual mode switching */
 .light {
-  --ij-color-primary-rgb: 164, 53, 210;
+  --ij-color-primary-rgb: 164, 53, 210; /* deprecated, use color-mix() */
+  --ij-gradient-primary: linear-gradient(135deg, #A435D2, #E0529C);
+  --ij-gradient-brand: linear-gradient(135deg, #D0FF00, #A435D2);
   --ij-color-primary: #A435D2;
   --ij-color-on-primary: #FFFFFF;
   --ij-color-primary-hover: #8E2BB8;
@@ -175,7 +181,9 @@
 }
 
 .dark {
-  --ij-color-primary-rgb: 208, 255, 0;
+  --ij-color-primary-rgb: 208, 255, 0; /* deprecated, use color-mix() */
+  --ij-gradient-primary: linear-gradient(135deg, #D0FF00, #5DE0A6, #37B6E9);
+  --ij-gradient-brand: linear-gradient(135deg, #A435D2, #D0FF00);
   --ij-color-primary: #D0FF00;
   --ij-color-on-primary: #000000;
   --ij-color-primary-hover: #B8E000;

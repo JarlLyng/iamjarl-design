@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] — 2026-08-29
+
+Gradients, and the answer to whether `--ij-color-primary-rgb` should have shipped. Closes the questions in #15 and unblocks the TrimrPix and Walkful token migrations.
+
+### Added
+- **`gradients` per mode** — `gradient.primary` (the accent extended into a second stop) and `gradient.brand` (the two accents against each other, reversed per mode), emitted as `--ij-gradient-*`. Derived from what the sites had each invented: everything in production was already `135deg`, two or three stops, and mode-aware.
+- **The rule that makes them safe:** a gradient must begin at a color the system already names. The second stop then belongs to that gradient rather than becoming an unnamed color loose in the palette — the same reasoning that lets `primarySubtle` hold a literal `rgba()`. `validate.js` enforces the first stop and leaves later stops alone.
+
+### Deprecated
+- **`--ij-color-primary-rgb`** (added 1.3.0, removal in 2.0.0). It existed because CSS cannot build `rgba()` from a hex custom property — but it only ever covered `primary`, so `error`, `success` and every future color would each have needed their own triplet. `color-mix(in srgb, var(--ij-color-primary) 30%, transparent)` does the same job on every color token and generates nothing. Still emitted, marked deprecated in the CSS, so 1.3–1.5 consumers keep working. `design.md` now documents `color-mix()` as the idiom, including the hero-glow recipe that had been a candidate for its own token.
+
+### Notes
+- Gradients are **web only**. A CSS gradient string has no SwiftUI equivalent and the apps do not use them; the Swift generator skips them by an explicit list rather than by accident.
+- Naming: gradients live under `colors.modes.*` in `tokens.json` but emit as `--ij-gradient-*`, not `--ij-color-gradients-*`. That is the second documented exception to the naming rule, alongside `background` → `bg`.
+- **TrimrPix's gradient is not accommodated here.** Its purple is `#CE63FF`, which was this system's own light primary until 0.1.4 replaced it for contrast — so it is drift, not a second purple. Corrected to `#A435D2`, its gradient is `gradient.brand` exactly. That correction belongs to TrimrPix as a proposal, not to this repo as a fix.
+
 ## [1.5.0] — 2026-08-29
 
 `<ij-footer>` reshaped against the two footers in the portfolio that already read well — WODrounds and Wean Nicotine — before the first consumer ships it.
@@ -195,6 +211,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.6.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.6.0
 [1.5.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.5.0
 [1.4.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.4.0
 [1.3.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.3.0
