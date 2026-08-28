@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - IAMJARL Design Tokens (SwiftUI)
 //
-// Auto-generated from tokens.json v1.2.1 — do not edit manually.
+// Auto-generated from tokens.json v1.3.0 — do not edit manually.
 // Run: node scripts/build.js
 //
 // Design DNA:
@@ -90,6 +90,14 @@ public enum DesignTokens {
         Animation.timingCurve(0.2, 0, 0, 1, duration: duration)
       }
     }
+  }
+
+  // MARK: Container widths
+  public enum Container {
+    public static let sm: CGFloat = 680
+    public static let md: CGFloat = 900
+    public static let lg: CGFloat = 1080
+    public static let xl: CGFloat = 1400
   }
 
   // MARK: Breakpoints

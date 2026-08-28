@@ -1,6 +1,6 @@
-// IAMJARL Design Tokens v1.2.1 — generated, do not edit
+// IAMJARL Design Tokens v1.3.0 — generated, do not edit
 
-export const meta = {"name":"IAMJARL Design System","version":"1.2.1"};
+export const meta = {"name":"IAMJARL Design System","version":"1.3.0"};
 
 export const spacing = {"xs":4,"sm":8,"md":12,"lg":16,"xl":20,"xxl":24,"xxxl":32};
 
@@ -24,6 +24,8 @@ export const motion = {"duration":{"fast":150,"normal":250,"slow":400},"easing":
 export function easingCss(name) {
   return `cubic-bezier(${motion.easing[name].join(", ")})`;
 }
+
+export const container = {"sm":680,"md":900,"lg":1080,"xl":1400};
 
 export const breakpoints = {"popup":320,"sm":640,"md":768,"lg":1024,"xl":1280,"xxl":1536};
 

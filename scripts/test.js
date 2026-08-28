@@ -39,6 +39,7 @@ const swiftAPI = [
   'public enum ColorToken',
   'public enum Shadow',
   'public enum Motion',
+  'public enum Container',
   'public enum Breakpoint',
   'public enum Focus',
   'public enum ZIndex',
@@ -75,6 +76,7 @@ const cssVars = [
   '--ij-shadow-md',
   '--ij-duration-normal',
   '--ij-easing-standard',
+  '--ij-container-lg',
   '--ij-breakpoint-md',
   '--ij-focus-width',
   '--ij-z-modal',
@@ -87,6 +89,19 @@ check('CSS has dark-mode media query', css.includes('@media (prefers-color-schem
 check('CSS has .light class override', /\.light\s*\{/.test(css));
 check('CSS has .dark class override', /\.dark\s*\{/.test(css));
 check('CSS has popup breakpoint', css.includes('--ij-breakpoint-popup'));
+
+// --ij-color-primary-rgb is derived from each mode's primary. It must appear in
+// all four mode blocks — a silent miss in one mode is the bug this guards.
+const rgbCount = (css.match(/--ij-color-primary-rgb:/g) || []).length;
+check('CSS emits primary-rgb in all four mode blocks', rgbCount === 4, `found ${rgbCount}`);
+check('CSS primary-rgb is a bare r, g, b triplet', /--ij-color-primary-rgb: \d+, \d+, \d+;/.test(css));
+check('CSS container widths are ascending', (() => {
+  const v = ['sm', 'md', 'lg', 'xl'].map(k => {
+    const m = css.match(new RegExp(`--ij-container-${k}: (\\d+)px`));
+    return m ? Number(m[1]) : NaN;
+  });
+  return v.every((n, i) => Number.isFinite(n) && (i === 0 || n > v[i - 1]));
+})());
 
 // --- Shadow DOM CSS (for Chrome extension content scripts) ---
 console.log('\nShadow DOM CSS:');
@@ -107,6 +122,7 @@ const dtsExports = [
   'export declare const colors',
   'export declare const shadows',
   'export declare const motion',
+  'export declare const container',
   'export declare const breakpoints',
   'export declare const focus',
   'export type ColorMode',
@@ -133,6 +149,7 @@ check('exports colors.dark', typeof mod.colors?.dark?.primary === 'string');
 check('exports shadows', typeof mod.shadows?.md === 'object');
 check('exports motion.duration', typeof mod.motion?.duration?.normal === 'number');
 check('exports motion.easing', Array.isArray(mod.motion?.easing?.standard));
+check('exports container', typeof mod.container === 'object' && typeof mod.container.lg === 'number');
 check('exports breakpoints', typeof mod.breakpoints === 'object');
 check('exports focus', typeof mod.focus === 'object');
 check('exports zIndex', typeof mod.zIndex === 'object' && typeof mod.zIndex.modal === 'number');

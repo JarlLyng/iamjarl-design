@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] — 2026-08-28
+
+Two token families the marketing sites had each invented for themselves. Additive; no existing key changes.
+
+### Added
+- **`container` — content max-widths** (`sm: 680`, `md: 900`, `lg: 1080`, `xl: 1400`), emitted as `--ij-container-*`, `Container` in Swift, and `container` in TS. Derived from what the sites already ship rather than invented: six of them had their own content-width variable, and four had independently landed within 6% of each other (1040, 1080, 1088, 1100). Distinct from `breakpoints`, which say where layout changes rather than how wide content may get.
+- **`--ij-color-primary-rgb`** — the mode-aware primary as a raw `r, g, b` triplet, so consumers can compose `rgba(var(--ij-color-primary-rgb), 0.3)` for tints, glows and borders. CSS cannot derive this from a hex custom property, which is why two sites had hand-written it; both had computed exactly the values this now generates.
+
+### Fixed
+- The `.d.ts` generator emitted `export type X = typeof x` for numeric token families without emitting `export declare const x`, so a strict TypeScript consumer could not compile against them. Found while adding `container`; the same shape would have broken any future numeric family.
+- **`--ij-color-primary-rgb` could go missing from one mode without any warning.** The triplet is parsed from `primary` as hex, and a non-hex primary was skipped silently — so an `rgba()` primary (a legal value; `primarySubtle` already is one) would ship the variable in dark mode and omit it in light, breaking a consumer's `rgba(var(--ij-color-primary-rgb), …)` in one mode only. `validate.js` now requires `primary` to be hex in both modes, the CSS generator throws instead of skipping, and a contract test asserts the variable appears in all four mode blocks.
+
+### Internal
+- `validate.js` checks `container` values are positive and strictly ascending, matching how `zIndex` is enforced.
+- Contract tests cover `container` across all four outputs (Swift enum, CSS variables, `.d.ts` const, JS runtime) and assert the container scale is ascending in the generated CSS.
+
 ## [1.2.1] — 2026-08-13
 
 No token changes. Closes the last place the version could drift.
@@ -146,6 +162,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.3.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.3.0
 [1.2.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.2.1
 [1.2.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.2.0
 [1.1.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.1.0

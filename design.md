@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.2.1)
+# IAMJARL Design System (v1.3.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -53,6 +53,11 @@ Use together with `tokens.json` (single source of truth).
 ### Breakpoints (web only)
 - `popup: 320` (Chrome extension popups), `sm: 640`, `md: 768`, `lg: 1024`, `xl: 1280`, `xxl: 1536`
 - Mobile-first approach: default styles target smallest, media queries add larger
+
+### Container widths (web only)
+- `sm: 680` (prose, forms), `md: 900` (text column), `lg: 1080` (default page content), `xl: 1400` (wide/full-bleed sections)
+- **Distinct from breakpoints.** A breakpoint is where the layout changes; a container is how wide content is allowed to get. A page can use one container across every breakpoint.
+- Pair with a viewport clamp so narrow screens still get a gutter: `width: min(92vw, var(--ij-container-lg))`
 
 ### Focus
 - Ring width: 2px, offset: 2px

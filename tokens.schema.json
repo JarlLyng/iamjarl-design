@@ -145,6 +145,11 @@
             }
           }
         },
+        "container": {
+          "type": "object",
+          "description": "Content max-widths. Distinct from breakpoints: a breakpoint is where layout changes, a container is how wide content is allowed to get.",
+          "additionalProperties": { "type": "number", "minimum": 0 }
+        },
         "breakpoints": {
           "type": "object",
           "additionalProperties": { "type": "number", "minimum": 0 }

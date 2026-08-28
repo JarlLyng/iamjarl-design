@@ -129,6 +129,20 @@ function validateStructure(tokens) {
     else pass(`opacity: ${Object.keys(tokens.tokens.opacity).length} values`);
   }
 
+  // Container widths (optional) — positive numbers, strictly ascending by value
+  if (tokens.tokens.container) {
+    const entries = Object.entries(tokens.tokens.container);
+    const invalid = entries.filter(([, v]) => typeof v !== 'number' || v <= 0);
+    if (invalid.length) {
+      fail(`Invalid container values: ${invalid.map(([k]) => k).join(', ')}`);
+    } else {
+      const vals = entries.map(([, v]) => v);
+      const ascending = vals.every((v, i) => i === 0 || v > vals[i - 1]);
+      if (!ascending) fail('container values must be strictly ascending in declaration order');
+      else pass(`container: ${entries.length} widths`);
+    }
+  }
+
   // Colors structure
   const colors = tokens.tokens.colors;
   if (!colors) {
@@ -152,6 +166,18 @@ function validateStructure(tokens) {
     const onlyDark = darkKeys.filter(k => !lightKeys.includes(k));
     if (onlyLight.length) fail(`Keys only in light: ${onlyLight.join(', ')}`);
     if (onlyDark.length) fail(`Keys only in dark: ${onlyDark.join(', ')}`);
+  }
+
+  // The CSS build derives --ij-color-primary-rgb from each mode's primary by
+  // parsing it as hex. A non-hex primary is silently skipped there, so one mode
+  // would ship the variable and the other would not. Require hex instead.
+  for (const mode of ['light', 'dark']) {
+    const primary = colors.modes[mode]?.primary;
+    if (typeof primary !== 'string' || !/^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/.test(primary)) {
+      fail(`${mode}.primary must be a 6- or 8-digit hex color (got "${primary}") — --ij-color-primary-rgb is derived from it`);
+    } else {
+      pass(`${mode}.primary is hex, so --ij-color-primary-rgb can be derived`);
+    }
   }
 
   // Validate all color values

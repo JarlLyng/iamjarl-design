@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseHex } from './color.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -154,6 +155,17 @@ function generateSwift(tokens) {
       w('      }');
     }
     w('    }');
+    w('  }');
+    w();
+  }
+
+  // Container widths
+  if (t.container) {
+    w('  // MARK: Container widths');
+    w('  public enum Container {');
+    for (const [key, val] of Object.entries(t.container)) {
+      w(`    public static let ${key}: CGFloat = ${val}`);
+    }
     w('  }');
     w();
   }
@@ -494,6 +506,15 @@ function generateCSS(tokens, scope = ':root') {
     w();
   }
 
+  // Container widths
+  if (t.container) {
+    w('  /* Container max-widths */');
+    for (const [key, val] of Object.entries(t.container)) {
+      w(`  --ij-container-${camelToKebab(key)}: ${val}px;`);
+    }
+    w();
+  }
+
   // Focus
   if (t.focus) {
     w('  /* Focus ring */');
@@ -570,6 +591,18 @@ function generateCSS(tokens, scope = ':root') {
 // --ij-color-<key>; nested groups are flattened (background → "bg").
 function modeColorLines(mode, indent) {
   const out = [];
+  // The primary as a raw "r, g, b" triplet, so a consumer can compose
+  // rgba(var(--ij-color-primary-rgb), 0.3) for tints and glows. CSS cannot derive
+  // this from a hex custom property, which is why two sites had hand-written it.
+  // validate.js requires primary to be hex, so this should never throw. Fail
+  // loudly rather than silently omitting the variable from one mode only.
+  const rgb = typeof mode.primary === 'string' ? parseHex(mode.primary) : null;
+  if (!rgb) {
+    throw new Error(
+      `Cannot derive --ij-color-primary-rgb: primary is "${mode.primary}", which is not a 6- or 8-digit hex color. Run scripts/validate.js.`
+    );
+  }
+  out.push(`${indent}--ij-color-primary-rgb: ${rgb.r}, ${rgb.g}, ${rgb.b};`);
   const groupPrefix = { background: 'bg' };
   function flatten(obj, prefix) {
     for (const [key, val] of Object.entries(obj)) {
@@ -661,6 +694,12 @@ function generateTS(tokens) {
     w();
   }
 
+  // Container widths
+  if (t.container) {
+    w(`export const container = ${JSON.stringify(t.container)} as const;`);
+    w();
+  }
+
   // Breakpoints
   if (t.breakpoints) {
     w(`export const breakpoints = ${JSON.stringify(t.breakpoints)} as const;`);
@@ -706,6 +745,9 @@ function generateTS(tokens) {
     w('export type Motion = typeof motion;');
     w('export type DurationKey = keyof Motion["duration"];');
     w('export type EasingKey = keyof Motion["easing"];');
+  }
+  if (t.container) {
+    w('export type Container = typeof container;');
   }
   if (t.breakpoints) {
     w('export type Breakpoints = typeof breakpoints;');
@@ -782,6 +824,10 @@ function generateJS(tokens) {
     w('}');
     w();
   }
+  if (t.container) {
+    w(`export const container = ${JSON.stringify(t.container)};`);
+    w();
+  }
   if (t.breakpoints) {
     w(`export const breakpoints = ${JSON.stringify(t.breakpoints)};`);
     w();
@@ -846,6 +892,9 @@ function generateDTS(tokens) {
     w(`export declare const motion: ${JSON.stringify(t.motion)};`);
     w('export declare function easingCss(name: keyof typeof motion.easing): string;');
   }
+  if (t.container) {
+    w(`export declare const container: ${JSON.stringify(t.container)};`);
+  }
   if (t.breakpoints) {
     w(`export declare const breakpoints: ${JSON.stringify(t.breakpoints)};`);
   }
@@ -879,6 +928,9 @@ function generateDTS(tokens) {
     w('export type Motion = typeof motion;');
     w('export type DurationKey = keyof Motion["duration"];');
     w('export type EasingKey = keyof Motion["easing"];');
+  }
+  if (t.container) {
+    w('export type Container = typeof container;');
   }
   if (t.breakpoints) {
     w('export type Breakpoints = typeof breakpoints;');

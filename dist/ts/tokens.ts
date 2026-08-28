@@ -1,6 +1,6 @@
-// IAMJARL Design Tokens v1.2.1 — generated, do not edit
+// IAMJARL Design Tokens v1.3.0 — generated, do not edit
 
-export const meta = {"name":"IAMJARL Design System","version":"1.2.1"} as const;
+export const meta = {"name":"IAMJARL Design System","version":"1.3.0"} as const;
 
 export const spacing = {"xs":4,"sm":8,"md":12,"lg":16,"xl":20,"xxl":24,"xxxl":32} as const;
 
@@ -185,6 +185,8 @@ export function easingCss(name: keyof typeof motion.easing): string {
   return `cubic-bezier(${motion.easing[name].join(", ")})`;
 }
 
+export const container = {"sm":680,"md":900,"lg":1080,"xl":1400} as const;
+
 export const breakpoints = {"popup":320,"sm":640,"md":768,"lg":1024,"xl":1280,"xxl":1536} as const;
 
 export const focus = {"width":2,"offset":2} as const;
@@ -210,6 +212,7 @@ export type ShadowKey = keyof Shadows;
 export type Motion = typeof motion;
 export type DurationKey = keyof Motion["duration"];
 export type EasingKey = keyof Motion["easing"];
+export type Container = typeof container;
 export type Breakpoints = typeof breakpoints;
 export type BreakpointKey = keyof Breakpoints;
 export type Focus = typeof focus;
