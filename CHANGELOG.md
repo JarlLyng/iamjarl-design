@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.1] — 2026-09-12
+
+No token changes. Corrects the registry so it matches production.
+
+### Fixed
+- **`apps.json` recorded only one component consumer while two sites were running it.** Walkful adopted `<ij-footer>` and shipped it on v1.6.0, but its `consumes` flag stayed `false` for two weeks. The flag exists to make a rollout traceable, so a stale one makes the registry untrue about its own reach — the exact drift this repo keeps closing, in the one file added to stop it.
+
 ## [1.6.0] — 2026-08-29
 
 Gradients, and the answer to whether `--ij-color-primary-rgb` should have shipped. Closes the questions in #15 and unblocks the TrimrPix and Walkful token migrations.
@@ -211,6 +218,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.6.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.6.1
 [1.6.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.6.0
 [1.5.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.5.0
 [1.4.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.4.0
