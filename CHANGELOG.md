@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.1] — 2026-09-12
+
+Documentation only.
+
+### Fixed
+- **The README described only the CDN path**, which implicitly recommended it to everyone. A site with a build step is better served installing the package: the version lands in `package.json` where dependency tooling can see it, the lockfile pins the exact commit rather than a movable tag, there is no runtime dependency on a third-party CDN, and `integrity` becomes unnecessary because nothing crosses an origin. PageLens had already worked this out independently; the guidance now says so.
+- The SRI section now states that it applies to the CDN path only.
+- Four version references in the README had gone stale again (`from: "1.7.0"`, two `@v1.7.0` URLs, and "through v1.7"). They are hand-written and drift every release; the SRI block is generated and did not. Worth generating the rest of them if this recurs.
+
 ## [1.8.0] — 2026-09-12
 
 Subresource integrity for the three files sites load from the CDN.
@@ -264,6 +273,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.8.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.8.1
 [1.8.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.8.0
 [1.7.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.7.1
 [1.7.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.7.0
