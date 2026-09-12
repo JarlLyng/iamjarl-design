@@ -33,6 +33,7 @@ It is designed to work equally well for **humans** (design overview) and **AI to
 - `dist/ts/tokens.d.ts` — TypeScript declarations
 - `dist/ts/tokens.ts` — TypeScript source (for inspection / TS-aware bundlers)
 - `dist/components/ij-footer.js` — `<ij-footer>` web component, registry inlined
+- `dist/footers/<app>.html` — pre-rendered cross-links per app, for inlining at build time
 
 ---
 
@@ -50,7 +51,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.6.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.7.0")
 ]
 ```
 
@@ -207,7 +208,7 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.4.0/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.7.0/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -228,6 +229,29 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 | `tagline` | Optional line above the links |
 | `layout` | `stacked` (default, the WODrounds shape) or `columns` (the Wean Nicotine shape) |
 | `links-label` | Heading above your own links; defaults to the app's name |
+
+### Cross-links in your served HTML
+
+The component builds the cross-links at runtime, so crawlers that do not execute JavaScript
+(GPTBot, ClaudeBot, CCBot, PerplexityBot) never see them. If your site has a build step, inline the
+pre-rendered fragment for your app and the component will slot it instead of regenerating:
+
+```bash
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.7.0/dist/footers/botlens.html
+```
+
+```html
+<ij-footer app="botlens">
+  <a slot="links" href="/privacy">Privacy</a>
+  <!-- contents of dist/footers/botlens.html -->
+  <a slot="cross-links" href="https://pagelens.iamjarl.com">PageLens</a>
+  <a slot="cross-links" href="https://tonvault.iamjarl.com">TonVault</a>
+</ij-footer>
+```
+
+Both paths come from the same registry and the same selection rule, so they render the same links.
+The difference is freshness: a fragment is a snapshot that refreshes when you rebuild, where the
+generated version is current on every load. Omit the slot entirely and nothing changes.
 
 Two slots, because a footer carries two kinds of per-site content. `links` holds your own
 navigation; `fineprint` holds the colophon — copyright, legal text, attribution. **Put legal text in

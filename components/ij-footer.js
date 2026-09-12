@@ -139,6 +139,13 @@ export class IjFooter extends HTMLElement {
     // One group, not two rows. Made by Human and All projects belong with the
     // apps, the way both reference footers have them.
     const related = [...siblings, ...topUp, ...always];
+
+    // If the page already carries the cross-links, slot them instead of
+    // rebuilding. Links generated here exist only after JS runs, and the
+    // crawlers that matter most for discovery do not run JS. A site that can
+    // inline dist/footers/<app>.html at build time gets the same links in its
+    // served HTML; one that cannot keeps generating them here.
+    const provided = this.querySelector('[slot="cross-links"]') !== null;
     const tagline = this.getAttribute('tagline');
     const ownLabel = this.getAttribute('links-label') ?? self.name;
 
@@ -153,7 +160,9 @@ export class IjFooter extends HTMLElement {
           </div>
           <nav class="group" aria-labelledby="more">
             <p class="label" id="more">More from IAMJARL</p>
-            <div class="links">${related.map(linkHtml).join('')}</div>
+            <div class="links">${provided
+              ? '<slot name="cross-links"></slot>'
+              : related.map(linkHtml).join('')}</div>
           </nav>
         </div>
         <div class="fineprint"><slot name="fineprint"></slot></div>

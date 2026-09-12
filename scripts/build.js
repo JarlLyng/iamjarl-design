@@ -2,7 +2,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { parseHex } from './color.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -994,11 +994,50 @@ function generateComponent(tokens) {
   ].join('\n');
 }
 
+
+// One pre-rendered cross-link fragment per shipped app, for sites that can
+// inline HTML at build time. The component builds these at runtime, which means
+// GPTBot, ClaudeBot, CCBot and PerplexityBot never see them — they do not run
+// JS. A fragment in the served HTML does reach them.
+//
+// Generated from the same selectLinks() and apps.json the component uses, so
+// there is still one registry and one selection rule. The trade is freshness:
+// a fragment is a snapshot, and a site that does not rebuild keeps the links it
+// last built with.
+async function generateFooterFragments(tokens) {
+  const registry = JSON.parse(fs.readFileSync(path.join(ROOT, 'apps.json'), 'utf-8'));
+  const { selectLinks } = await import(
+    pathToFileURL(path.join(ROOT, 'components', 'select-links.js')).href
+  );
+
+  const esc = str => String(str).replace(/[&<>"]/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  const out = [];
+  for (const app of registry.apps.filter(a => a.status === 'shipped')) {
+    const { links } = selectLinks(registry, app.id);
+    const body = links
+      .map(l => `<a slot="cross-links" href="${esc(l.url)}">${esc(l.name)}</a>`)
+      .join('\n');
+    out.push([
+      app.id,
+      [
+        `<!-- IAMJARL cross-links for ${esc(app.name)} — generated, do not edit -->`,
+        `<!-- design system v${tokens.meta.version}, registry updated ${esc(registry.meta.updated)} -->`,
+        `<!-- Paste inside <ij-footer app="${esc(app.id)}">. Rebuild to refresh. -->`,
+        body,
+        '',
+      ].join('\n'),
+    ]);
+  }
+  return out;
+}
+
 // ============================================================
 // MAIN
 // ============================================================
 
-function main() {
+async function main() {
   const tokens = readTokens();
   console.log(`Building IAMJARL Design Tokens v${tokens.meta.version}...\n`);
 
@@ -1023,7 +1062,13 @@ function main() {
   // Web component (single self-contained file, registry inlined)
   writeFile(path.join(ROOT, 'dist', 'components', 'ij-footer.js'), generateComponent(tokens));
 
-  console.log('\nDone! Generated 7 platform files.');
+  // Build-time cross-link fragments, one per shipped app
+  const fragments = await generateFooterFragments(tokens);
+  for (const [id, html] of fragments) {
+    writeFile(path.join(ROOT, 'dist', 'footers', `${id}.html`), html);
+  }
+
+  console.log(`\nDone! Generated 7 platform files and ${fragments.length} footer fragments.`);
 }
 
-main();
+await main();
