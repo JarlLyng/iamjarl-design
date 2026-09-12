@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -1033,6 +1034,69 @@ async function generateFooterFragments(tokens) {
   return out;
 }
 
+
+// ============================================================
+// SUBRESOURCE INTEGRITY
+// ============================================================
+
+// Sites load these three from a pinned CDN URL. A hash makes that pin
+// tamper-evident, and jsDelivr serves /gh/ paths byte-for-byte, so a hash
+// computed here is valid for the URL. Generated rather than hand-kept, because
+// it changes every release and a stale integrity attribute fails closed.
+const SRI_FILES = [
+  'dist/css/tokens.css',
+  'dist/css/tokens.shadow.css',
+  'dist/components/ij-footer.js',
+];
+
+function computeSri() {
+  const out = {};
+  for (const rel of SRI_FILES) {
+    const buf = fs.readFileSync(path.join(ROOT, rel));
+    out[rel] = 'sha384-' + crypto.createHash('sha384').update(buf).digest('base64');
+  }
+  return out;
+}
+
+// Paste-ready tags, kept in the README between markers so the version and the
+// hash can never disagree. A contract test asserts this block is current.
+function sriReadmeBlock(version, hashes) {
+  const cdn = p => `https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v${version}/${p}`;
+  return [
+    '```html',
+    '<link rel="stylesheet"',
+    `  href="${cdn('dist/css/tokens.css')}"`,
+    `  integrity="${hashes['dist/css/tokens.css']}"`,
+    '  crossorigin="anonymous">',
+    '',
+    '<script type="module"',
+    `  src="${cdn('dist/components/ij-footer.js')}"`,
+    `  integrity="${hashes['dist/components/ij-footer.js']}"`,
+    '  crossorigin="anonymous"></script>',
+    '```',
+  ].join('\n');
+}
+
+function writeSriReadme(version, hashes) {
+  const readmePath = path.join(ROOT, 'README.md');
+  const md = fs.readFileSync(readmePath, 'utf-8');
+  const begin = '<!-- SRI:BEGIN -->';
+  const end = '<!-- SRI:END -->';
+  const a = md.indexOf(begin);
+  const b = md.indexOf(end);
+  if (a === -1 || b === -1) {
+    throw new Error('README.md is missing the SRI:BEGIN / SRI:END markers');
+  }
+  const next =
+    md.slice(0, a + begin.length) +
+    '\n' + sriReadmeBlock(version, hashes) + '\n' +
+    md.slice(b);
+  if (next !== md) {
+    fs.writeFileSync(readmePath, next, 'utf-8');
+    console.log('  \u2713 README.md (SRI block)');
+  }
+}
+
 // ============================================================
 // MAIN
 // ============================================================
@@ -1068,7 +1132,15 @@ async function main() {
     writeFile(path.join(ROOT, 'dist', 'footers', `${id}.html`), html);
   }
 
-  console.log(`\nDone! Generated 7 platform files and ${fragments.length} footer fragments.`);
+  // Integrity hashes, computed AFTER the files they cover are written
+  const hashes = computeSri();
+  writeFile(
+    path.join(ROOT, 'dist', 'sri.json'),
+    JSON.stringify({ version: tokens.meta.version, algorithm: 'sha384', files: hashes }, null, 2) + '\n'
+  );
+  writeSriReadme(tokens.meta.version, hashes);
+
+  console.log(`\nDone! Generated 8 platform files and ${fragments.length} footer fragments.`);
 }
 
 await main();

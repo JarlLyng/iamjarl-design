@@ -1,0 +1,9 @@
+{
+  "version": "1.8.0",
+  "algorithm": "sha384",
+  "files": {
+    "dist/css/tokens.css": "sha384-p5XqN4fqJVo1Ph6E6Lo1pCmw8W4821PkoFZtC6JhWcgXufsxshWbB5LQgVFLntqd",
+    "dist/css/tokens.shadow.css": "sha384-C877pfgvqZnqlvtmq/H4LpUUY6eA0zlDC/VeHDmKBZVFIpzI8ZcIbX8FC5+IU1qA",
+    "dist/components/ij-footer.js": "sha384-HxCNrrnondJWmllw29A9hvgZ1uhqpJkaSPG1jsYaxa5/WCGOfXFADGMSxAcyjDco"
+  }
+}
