@@ -4,6 +4,54 @@ Step-by-step instructions for updating consumer projects between versions.
 
 ---
 
+## v1.2.x → v1.7.0
+
+### What changed
+**Nothing broke.** Verified across every release in the range: no CSS custom property was renamed or removed between v1.2.1 and v1.7.0. Six releases, all additive.
+
+| Release | Added | Anything to do? |
+|---|---|---|
+| **1.3.0** | `container` max-widths (`--ij-container-*`), `--ij-color-primary-rgb` | No |
+| **1.4.0** | `<ij-footer>` web component, `apps.json` registry | No — opt in when you want it |
+| **1.5.0** | `fineprint` slot and `layout="columns"` on the footer | Only if you already use the footer |
+| **1.6.0** | `gradient` family (`--ij-gradient-*`) | **One thing** — see below |
+| **1.6.1** | Registry metadata only | No |
+| **1.7.0** | `cross-links` slot, `dist/footers/*.html` fragments | No — opt in if your site has a build step |
+
+### Who needs to migrate
+- ✅ **Everyone** — bump the version. Nothing you use today changes value or name.
+- ⚠️ **One thing to avoid adopting:** `--ij-color-primary-rgb` was added in 1.3.0 and **deprecated in 1.6.0** (removal in 2.0.0). It only ever covered `primary`, so every other colour would have needed its own triplet. Use `color-mix()` instead, which works on every colour token:
+  ```css
+  /* not this */   rgba(var(--ij-color-primary-rgb), 0.3)
+  /* this */       color-mix(in srgb, var(--ij-color-primary) 30%, transparent)
+  ```
+  It is still emitted, so existing 1.3–1.5 usage keeps working — just do not reach for it in new code.
+
+### New capabilities worth adopting
+- **`--ij-container-*`** if your site hand-rolls a content max-width. Six sites had invented their own before this existed.
+- **`--ij-gradient-primary` / `--ij-gradient-brand`** instead of rebuilding a gradient by hand.
+- **`<ij-footer>`** if you maintain a "More from IAMJARL" list. It reads `apps.json`, so adding an app stops being an edit in every repo.
+- **`dist/footers/<app>.html`** if your site has a build step. The component builds cross-links at runtime, which means crawlers that do not execute JavaScript never see them; inlining the fragment puts them in the served HTML. See the README.
+
+### How to check a bump yourself
+This guide is written after the fact because it was missing, and a consuming repo had to establish the same thing by reading the diff. If you want to verify a future bump independently, compare the emitted variable names:
+
+```bash
+diff <(curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.2.1/dist/css/tokens.css \
+        | grep -o '^\s*--ij-[a-z0-9-]*' | tr -d ' ' | sort -u) \
+     <(curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.7.0/dist/css/tokens.css \
+        | grep -o '^\s*--ij-[a-z0-9-]*' | tr -d ' ' | sort -u)
+```
+
+Lines with `<` are names that disappeared — those are the only ones that can break a site. Anything with `>` is new and optional.
+
+### Action
+- **SPM**: Xcode → File → Packages → Update to Latest Package Versions
+- **npm**: `npm update @iamjarl/design-tokens`
+- **Pinned CDN URL**: change the tag in the `<link>` and `<script>` — both at once, so they cannot drift apart
+
+---
+
 ## v1.0.x / v1.1.x → v1.2.0
 
 ### What changed

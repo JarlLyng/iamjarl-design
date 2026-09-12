@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.1] — 2026-09-12
+
+Documentation only. No token, component or generated-output changes.
+
+### Fixed
+- **`MIGRATION.md` stopped at v1.2.0.** Five releases shipped without upgrade notes, so a consuming repo had to diff the emitted CSS itself to establish that a v1.2.1 → v1.6.0 bump was safe (raised in JarlLyng/BotLens#32). There is now a `v1.2.x → v1.7.0` entry recording what every release in the range added, the one thing not to adopt (`--ij-color-primary-rgb`, deprecated in 1.6.0), and the variable-name diff a consumer can run to verify a future bump without waiting for a guide.
+- Verified while writing it: **no CSS custom property was renamed or removed between v1.2.1 and v1.7.0.** Six releases, entirely additive.
+- README's upgrade table and banner also stopped at v1.2; both now cover the range.
+
 ## [1.7.0] — 2026-09-12
 
 Closes #22. The footer's cross-links can now exist in a site's served HTML instead of only after JavaScript runs.
@@ -239,6 +248,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.7.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.7.1
 [1.7.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.7.0
 [1.6.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.6.1
 [1.6.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.6.0
