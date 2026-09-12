@@ -304,6 +304,42 @@ check('labels are sentence case, not shouted',
 check('links carry no platform suffix', !comp.includes('class="platform"'));
 check('supports the columns layout', comp.includes('[layout="columns"]'));
 
+// --- Build-time cross-link fragments (#22) ---
+//
+// The component builds cross-links at runtime, so crawlers that do not run JS
+// never see them. These fragments put the same links in a site's served HTML.
+// Both paths must come from the same selectLinks(), or the registry has two
+// answers and the whole point is lost.
+
+console.log('\nFooter fragments:');
+check('component honours a provided cross-links slot',
+  comp.includes(`this.querySelector('[slot="cross-links"]')`) &&
+  comp.includes('<slot name="cross-links">'));
+
+const shipped = registry.apps.filter(a => a.status === 'shipped');
+let fragProblems = [];
+for (const app of shipped) {
+  let frag;
+  try {
+    frag = read(`dist/footers/${app.id}.html`);
+  } catch {
+    fragProblems.push(`${app.id}: no fragment`);
+    continue;
+  }
+  const hrefs = [...frag.matchAll(/<a slot="cross-links" href="([^"]+)"/g)].map(m => m[1]);
+  const expected = selectLinks(registry, app.id).links.map(l => l.url);
+  if (JSON.stringify(hrefs) !== JSON.stringify(expected)) {
+    fragProblems.push(`${app.id}: fragment links differ from selectLinks()`);
+  }
+  const anchors = (frag.match(/<a /g) || []).length;
+  if (anchors !== hrefs.length) fragProblems.push(`${app.id}: an anchor is missing slot="cross-links"`);
+  if (!frag.includes('registry updated')) fragProblems.push(`${app.id}: no registry date stamp`);
+}
+check(`a fragment per shipped app (${shipped.length})`, fragProblems.length === 0,
+  fragProblems.slice(0, 3).join('; '));
+check('fragments never link the site to itself', shipped.every(a =>
+  !read(`dist/footers/${a.id}.html`).includes(`"${a.url}"`)));
+
 console.log();
 if (failed > 0) {
   console.error(`❌ ${failed} test(s) failed.`);
