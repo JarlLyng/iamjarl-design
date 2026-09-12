@@ -1,10 +1,10 @@
-// IAMJARL <ij-footer> v1.6.0 — generated, do not edit
+// IAMJARL <ij-footer> v1.6.1 — generated, do not edit
 // Sources: components/select-links.js, components/ij-footer.js, apps.json
 
 const REGISTRY = {
   "$comment": "Canonical list of IAMJARL products. Consumed by <ij-footer> to build cross-links, so a new app is added here once rather than in every site's footer. New entries are APPENDED — the top-up rule reads this list from the end to favour the newest.",
   "meta": {
-    "updated": "2026-08-29"
+    "updated": "2026-09-12"
   },
   "categories": {
     "fitness": "Training, movement and health",
@@ -134,7 +134,7 @@ const REGISTRY = {
       "category": "fitness",
       "status": "shipped",
       "listed": true,
-      "consumes": false
+      "consumes": true
     },
     {
       "id": "trimrpix-ios",
