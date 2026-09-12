@@ -230,6 +230,36 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 | `layout` | `stacked` (default, the WODrounds shape) or `columns` (the Wean Nicotine shape) |
 | `links-label` | Heading above your own links; defaults to the app's name |
 
+### Pinning with Subresource Integrity
+
+A pinned tag says *which* file you want; an `integrity` hash proves you got it. jsDelivr serves
+`/gh/` paths byte-for-byte, so these hashes are valid for the URLs below. They are generated at
+build time and regenerate every release &mdash; copy them from here, never from an older version.
+
+<!-- SRI:BEGIN -->
+```html
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.8.0/dist/css/tokens.css"
+  integrity="sha384-p5XqN4fqJVo1Ph6E6Lo1pCmw8W4821PkoFZtC6JhWcgXufsxshWbB5LQgVFLntqd"
+  crossorigin="anonymous">
+
+<script type="module"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.8.0/dist/components/ij-footer.js"
+  integrity="sha384-HxCNrrnondJWmllw29A9hvgZ1uhqpJkaSPG1jsYaxa5/WCGOfXFADGMSxAcyjDco"
+  crossorigin="anonymous"></script>
+```
+<!-- SRI:END -->
+
+Machine-readable equivalents live in [`dist/sri.json`](dist/sri.json), exported as
+`@iamjarl/design-tokens/sri.json` if your build wants to inject them.
+
+**Know the failure mode before you add it.** A mismatched hash fails closed: the browser blocks the
+resource outright. For the component that means the pre-upgrade fallback footer. **For
+`tokens.css` it means the page renders with no tokens at all**, which is a far louder failure than
+a stale stylesheet would have been. Both are safe when the tag and hash move together &mdash; which
+is why they are published together here &mdash; but bump them in the same commit, and never carry a
+hash across a version change.
+
 ### Cross-links in your served HTML
 
 The component builds the cross-links at runtime, so crawlers that do not execute JavaScript

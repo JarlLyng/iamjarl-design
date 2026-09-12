@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] — 2026-09-12
+
+Subresource integrity for the three files sites load from the CDN.
+
+### Added
+- **`dist/sri.json`** — sha384 hashes for `tokens.css`, `tokens.shadow.css` and `ij-footer.js`, generated at build time and exported as `@iamjarl/design-tokens/sri.json`.
+- **Paste-ready tags in the README**, written into a marked block by `build.js` so the pinned version and its hash can never disagree. Contract tests assert the block is current, since `README.md` sits outside the `dist/` drift check.
+
+### Why
+A pinned tag says *which* file you want; a hash proves you got it. JarlLyng/BotLens#32 told adopters to copy an `integrity` value from this README — one that had never existed. Rather than delete the instruction, the hashes now exist.
+
+Verified before building it: jsDelivr serves `/gh/` paths byte-for-byte, so a hash computed here is valid for the CDN URL. All three v1.7.1 files hash identically locally and over the wire.
+
+### The failure mode, stated
+A mismatched hash **fails closed** — the browser blocks the resource outright. For the component that is the pre-upgrade fallback footer. **For `tokens.css` it is a page with no tokens at all**, which is far louder than a stale stylesheet. Safe when the tag and hash move together, which is why they are published together and why the README block is generated rather than hand-kept — but bump them in one commit, and never carry a hash across a version change.
+
 ## [1.7.1] — 2026-09-12
 
 Documentation only. No token, component or generated-output changes.
@@ -248,6 +264,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.8.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.8.0
 [1.7.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.7.1
 [1.7.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.7.0
 [1.6.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.6.1

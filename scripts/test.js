@@ -2,6 +2,7 @@
 // Contract tests — verify generated outputs contain the API the docs promise.
 // No test framework, just assertions.
 
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -339,6 +340,42 @@ check(`a fragment per shipped app (${shipped.length})`, fragProblems.length === 
   fragProblems.slice(0, 3).join('; '));
 check('fragments never link the site to itself', shipped.every(a =>
   !read(`dist/footers/${a.id}.html`).includes(`"${a.url}"`)));
+
+// --- Subresource integrity ---
+//
+// A stale integrity attribute fails closed: the browser blocks the resource.
+// For tokens.css that is a page with no tokens at all, so these hashes must
+// never lag the files they cover.
+
+console.log('\nSubresource integrity:');
+const sri = JSON.parse(read('dist/sri.json'));
+check('sri.json version matches tokens.json', sri.version === tokens.meta.version);
+check('sri.json declares sha384', sri.algorithm === 'sha384');
+
+const recomputed = Object.fromEntries(
+  Object.keys(sri.files).map(rel => [
+    rel,
+    'sha384-' + crypto.createHash('sha384')
+      .update(fs.readFileSync(path.join(ROOT, rel))).digest('base64'),
+  ])
+);
+check('every hash matches its file', Object.entries(sri.files)
+  .every(([rel, h]) => recomputed[rel] === h),
+  Object.keys(sri.files).filter(r => recomputed[r] !== sri.files[r]).join(', '));
+check('covers the three CDN-served files', Object.keys(sri.files).length === 3 &&
+  ['dist/css/tokens.css', 'dist/css/tokens.shadow.css', 'dist/components/ij-footer.js']
+    .every(f => f in sri.files));
+
+// README carries the paste-ready tags and is generated, but sits outside the
+// dist/ drift check — so it is asserted here instead.
+const readme = read('README.md');
+const block = readme.slice(readme.indexOf('<!-- SRI:BEGIN -->'), readme.indexOf('<!-- SRI:END -->'));
+check('README has the SRI markers', block.length > 0);
+check('README block pins the current version', block.includes(`@v${tokens.meta.version}/`));
+check('README block carries the current hashes',
+  block.includes(sri.files['dist/css/tokens.css']) &&
+  block.includes(sri.files['dist/components/ij-footer.js']));
+check('README block uses crossorigin', (block.match(/crossorigin="anonymous"/g) || []).length === 2);
 
 console.log();
 if (failed > 0) {
