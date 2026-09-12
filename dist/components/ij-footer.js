@@ -1,8 +1,8 @@
-// IAMJARL <ij-footer> v1.8.1 — generated, do not edit
+// IAMJARL <ij-footer> v1.9.0 — generated, do not edit
 // Sources: components/select-links.js, components/ij-footer.js, apps.json
 
 const REGISTRY = {
-  "$comment": "Canonical list of IAMJARL products. Consumed by <ij-footer> to build cross-links, so a new app is added here once rather than in every site's footer. New entries are APPENDED — the top-up rule reads this list from the end to favour the newest.",
+  "$comment": "Canonical list of IAMJARL products. Consumed by <ij-footer> to build cross-links, so a new app is added here once rather than in every site's footer. Order is not significant except for the two always-links, which render in the order listed here. Everything else is selected by category and sorted by id, so the list can be re-sorted without rewriting a single fragment.",
   "meta": {
     "updated": "2026-09-12"
   },
@@ -217,13 +217,25 @@ const REGISTRY = {
 
 const DEFAULT_OPTIONS = {
   // Categories with few members would render a near-empty list, so top up from
-  // the rest of the registry. Newest first: apps.json is appended to, so the
-  // end of the list is the most recent, and new apps need exposure most.
+  // the rest of the registry, least-connected first. See categoryReach below.
   minLinks: 3,
   // Side projects are in the registry so the data is complete, but shipped
   // products are what a footer sells. Flip this to widen the net.
   include: ['shipped'],
 };
+
+// How many other apps an app's own category already reaches. An app in a
+// two-member category is seen by one footer; one in a four-member category by
+// three. Top-up prefers the former, which spreads links towards the apps a
+// category cannot reach on its own.
+//
+// Deliberately computed from the registry and NOT from the result: ranking by
+// actual inbound links would make the rule depend on its own output, so two
+// runs could disagree and the generated fragments would not be reproducible.
+function categoryReach(apps, app) {
+  if (!app.category) return Number.MAX_SAFE_INTEGER;
+  return apps.filter(a => a.category === app.category && a.id !== app.id).length;
+}
 
 function selectLinks(registry, siteId, options = {}) {
   const { minLinks, include } = { ...DEFAULT_OPTIONS, ...options };
@@ -244,17 +256,29 @@ function selectLinks(registry, siteId, options = {}) {
   const always = eligible.filter(a => a.always === true);
   const pool = eligible.filter(a => a.always !== true);
 
-  const siblings = self.category ? pool.filter(a => a.category === self.category) : [];
+  // Sorted by id, not by position in apps.json, so re-sorting the registry
+  // cannot rewrite a committed fragment. The always-links are the exception:
+  // they are a curated pair and render in the order the registry lists them.
+  const byId = (a, b) => (a.id < b.id ? -1 : 1);
+  const siblings = self.category
+    ? pool.filter(a => a.category === self.category).sort(byId)
+    : [];
 
   const topUp = [];
   if (siblings.length < minLinks) {
     const chosen = new Set(siblings.map(a => a.id));
-    for (let i = pool.length - 1; i >= 0 && siblings.length + topUp.length < minLinks; i--) {
-      const app = pool[i];
-      if (!chosen.has(app.id)) {
-        chosen.add(app.id);
-        topUp.push(app);
-      }
+    const candidates = pool
+      .filter(a => !chosen.has(a.id))
+      .map(a => ({ app: a, reach: categoryReach(pool, a) }))
+      // Least-connected first, then by id. Deliberately NOT by position in
+      // apps.json: order would make a cosmetic re-sort of the registry rewrite
+      // every committed fragment. Reach already carries the "needs exposure"
+      // signal that ordering used to approximate.
+      .sort((x, y) => x.reach - y.reach || (x.app.id < y.app.id ? -1 : 1));
+
+    for (const c of candidates) {
+      if (siblings.length + topUp.length >= minLinks) break;
+      topUp.push(c.app);
     }
   }
 
