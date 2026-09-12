@@ -8,7 +8,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseHex, parseRgba, parseColor, contrastRatio } from './color.js';
 import { extractNotes } from './release-notes.js';
-import { selectLinks } from '../components/select-links.js';
+import { selectLinks, categoryReach } from '../components/select-links.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -265,7 +265,44 @@ check('a thin cluster is topped up', trimrpix.topUp.length > 0);
 check('top-up reaches the minimum', trimrpix.siblings.length + trimrpix.topUp.length >= 3);
 check('top-up never repeats a sibling',
   new Set(ids(trimrpix)).size === ids(trimrpix).length);
-check('top-up takes the newest first', trimrpix.topUp[0].id === 'tonvault');
+check('top-up prefers the least-connected', (() => {
+  const reach = trimrpix.topUp.map(a => categoryReach(
+    registry.apps.filter(x => x.status === 'shipped' && x.always !== true), a));
+  return reach.every((r, i) => i === 0 || r >= reach[i - 1]);
+})());
+
+// The rule must be a pure function of the registry's CONTENT. If it depended on
+// the registry's ORDER, re-sorting apps.json would rewrite every committed
+// fragment, and the drift check would fire on a cosmetic edit.
+check('selection is independent of registry order', (() => {
+  const ids = registry.apps.filter(a => a.status === 'shipped').map(a => a.id).sort();
+  const snap = r => ids.map(id => {
+    const s = selectLinks(r, id);
+    return id + ':' + [...s.siblings, ...s.topUp].map(l => l.id).join(',');
+  }).join('|');
+  const base = snap(registry);
+  for (let t = 0; t < 25; t++) {
+    const r = JSON.parse(JSON.stringify(registry));
+    for (let i = r.apps.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [r.apps[i], r.apps[j]] = [r.apps[j], r.apps[i]];
+    }
+    if (snap(r) !== base) return false;
+  }
+  return true;
+})());
+
+// The reason the rule changed: a two-member category left its apps reachable
+// from one footer each. No shipped app should sit that far below the rest.
+check('every app is reachable from at least 3 footers', (() => {
+  const counts = {};
+  const linkable = registry.apps.filter(a => a.status === 'shipped' && a.always !== true);
+  for (const a of linkable) counts[a.id] = 0;
+  for (const a of registry.apps.filter(a => a.status === 'shipped')) {
+    for (const l of selectLinks(registry, a.id).links) if (l.id in counts) counts[l.id]++;
+  }
+  return Math.min(...Object.values(counts)) >= 3;
+})(), 'a small category must not strand its members');
 
 check('side projects can be opted in',
   selectLinks(registry, 'tonvault', { include: ['shipped', 'side-project'] })

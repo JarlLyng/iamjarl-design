@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0] — 2026-09-12
+
+The cross-link top-up rule was leaving two apps almost unreachable. Footer contents change; no token or API changes.
+
+### Changed
+- **Top-up now picks the least-connected app, not the newest.** When a category has fewer than three members, the footer tops up from the rest of the registry. That top-up used to prefer the most recently added app; it now prefers the app whose own category reaches the fewest footers.
+
+### Why
+Measured across the live sites: the newest app was chosen for every top-up and appeared in **nine** footers, while BotLens and PageLens — the only two members of their category — sat at **one inbound link each**. The rule was concentrating links on whatever shipped last.
+
+"Newest first" was a proxy for *new apps need exposure most*. Category reach is the accurate version of that intent, and it does not decay: an app stops being new, but a two-member category keeps under-reaching forever.
+
+| | Before | After |
+|---|---|---|
+| BotLens, PageLens | 1 | 5 |
+| TrimrPix | 1 | 3 |
+| TonVault | 9 | 3 |
+| Walkful | 7 | 3 |
+| Spread (std. dev.) | 2.33 | **0.87** |
+
+Nothing now sits below three.
+
+### Also
+- **Selection no longer depends on the order of `apps.json`.** Ranking is computed from registry content, and each group is sorted by id. Re-sorting or reformatting the registry cannot rewrite a committed fragment — previously it rewrote all fourteen. A contract test shuffles the registry 25 times and asserts the result is unchanged.
+- Ranking deliberately uses category reach rather than actual inbound links. Counting real inbound would make the rule depend on its own output, so two runs could disagree and the fragments would stop being reproducible.
+
+### For sites already running the component
+Re-pull your fragment from `dist/footers/<app>.html`. Two of the four adopters get one link swapped; the other two only see the list reordered. Nothing breaks if you do not — the old fragment is still valid markup.
+
 ## [1.8.1] — 2026-09-12
 
 Documentation only.
@@ -273,6 +302,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.9.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.9.0
 [1.8.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.8.1
 [1.8.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.8.0
 [1.7.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.7.1

@@ -238,11 +238,22 @@ Three flags, each earning its place against something real in the current footer
 Two edge cases the current data forces:
 
 **Thin clusters.** The web-tools cluster has two members, so one of them would see a single sibling.
-Rule: if a cluster yields fewer than three, top up from the rest of the registry, newest first. New
-apps need the exposure most and are exactly what hand-written footers forget.
+Rule: if a cluster yields fewer than three, top up from the rest of the registry, **least-connected
+first** — ranked by how many footers an app's own category already reaches.
+
+The first version of this rule said *newest first*, reasoning that new apps need exposure most.
+Measured against the live sites, that was wrong in a way worth recording: the newest app was picked
+for every top-up and ended up in nine footers, while the two apps in the two-member category sat at
+**one inbound link each**. Ranking by category reach is the accurate version of the same intent, and
+it levels the distribution — nothing below three, spread down from 2.33 to 0.87.
+
+The ranking is computed from the registry's content, never from its own output. Ranking by actual
+inbound links would make the rule depend on its result, so two runs could disagree and the committed
+fragments would stop being reproducible.
 
 **Ordering.** Leave it to the registry, not to each site, or the footers drift again in a subtler
-way. Cluster siblings first, then the top-up, then the always-links.
+way. Cluster siblings first, then the top-up, then the always-links — each group sorted by id, so
+re-sorting `apps.json` cannot rewrite a committed fragment.
 
 ### Attribution: the component carries it, the site does not
 
