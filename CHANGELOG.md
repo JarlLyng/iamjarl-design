@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.1] — 2026-09-19
+
+Patternaut joins the registry. No token or API changes.
+
+### Added
+- **Patternaut** in `apps.json`, in the music category. It ships to the Mac App Store shortly and its site consumes `<ij-footer>`, which needs the app to exist here for its cross-links to resolve.
+
+### Why
+A site adopting the shared footer for an app the registry does not know renders a footer without that app's own identity. Registering it is the one step that has to happen here rather than in the app's repo.
+
 ## [1.9.0] — 2026-09-12
 
 The cross-link top-up rule was leaving two apps almost unreachable. Footer contents change; no token or API changes.
@@ -302,6 +312,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.9.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.9.1
 [1.9.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.9.0
 [1.8.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.8.1
 [1.8.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.8.0
