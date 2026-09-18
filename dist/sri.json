@@ -4,6 +4,6 @@
   "files": {
     "dist/css/tokens.css": "sha384-9TObbFSG6c8YTCyahSy1E3odNMMUIa8tvGfmYlwzL82AuEvCQI0QlHu+vys/tasZ",
     "dist/css/tokens.shadow.css": "sha384-jnoWvkKTa7JSDwu1KrkjiII8ufj16aL/wuHD3nn6+HneXS0XYbUMKJUpHDB/wAAA",
-    "dist/components/ij-footer.js": "sha384-5DR63q3a8ZV2CCfPBzXLA7uvad6Hi7uzJVjyBemBJNR1AN0cj5IbsdFvdFV/Zd7v"
+    "dist/components/ij-footer.js": "sha384-hGYyZol7A89zj0BztqF2RlSGOVBm2zZOgDXWg27v/8OdAKgkoVjFHJga2DAaBDLw"
   }
 }

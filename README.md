@@ -276,7 +276,7 @@ build time and regenerate every release &mdash; copy them from here, never from 
 
 <script type="module"
   src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.9.0/dist/components/ij-footer.js"
-  integrity="sha384-5DR63q3a8ZV2CCfPBzXLA7uvad6Hi7uzJVjyBemBJNR1AN0cj5IbsdFvdFV/Zd7v"
+  integrity="sha384-hGYyZol7A89zj0BztqF2RlSGOVBm2zZOgDXWg27v/8OdAKgkoVjFHJga2DAaBDLw"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->

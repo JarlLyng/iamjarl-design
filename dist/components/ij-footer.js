@@ -4,7 +4,7 @@
 const REGISTRY = {
   "$comment": "Canonical list of IAMJARL products. Consumed by <ij-footer> to build cross-links, so a new app is added here once rather than in every site's footer. Order is not significant except for the two always-links, which render in the order listed here. Everything else is selected by category and sorted by id, so the list can be re-sorted without rewriting a single fragment.",
   "meta": {
-    "updated": "2026-09-12"
+    "updated": "2026-09-19"
   },
   "categories": {
     "fitness": "Training, movement and health",
@@ -175,6 +175,16 @@ const REGISTRY = {
       "status": "side-project",
       "listed": true,
       "consumes": false
+    },
+    {
+      "id": "patternaut",
+      "name": "Patternaut",
+      "url": "https://patternaut.iamjarl.com",
+      "platform": "Mac",
+      "category": "music",
+      "status": "shipped",
+      "listed": true,
+      "consumes": true
     },
     {
       "id": "get-to-the-movie",
