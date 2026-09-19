@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.11.0)
+# IAMJARL Design System (v1.11.1)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -37,6 +37,11 @@ Use together with `tokens.json` (single source of truth).
   - `success` → use `onSuccess`
   - `warning` → use `onWarning`
   - `error` → use `onError`
+
+### Patterns
+Longer-form recipes that need more than a rule live in [`patterns/`](patterns/):
+
+- **[The photographic hero ground](patterns/photographic-hero.md)** — a photograph behind the hero, darkened until the text wins. Carries the overlay two sites derived independently, the opacity floor that makes text safe regardless of the image (**α ≥ 0.60**), and a weight budget measured against what is shipping today.
 
 ### Display type (web only)
 The tokens ship `system-ui` and `ui-monospace` and nothing else, so every site that wanted a voice went looking on its own. Four found four different answers; the rest fell back to Inter or the system stack. That is why nine sites read the same and four read like one-offs.

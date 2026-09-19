@@ -461,6 +461,24 @@ check('a category face reaches its apps', (() => {
 check('design.md tells sites to self-host rather than link Google Fonts',
   /Self-host the file\. Do not link Google Fonts/.test(read('design.md')));
 
+// --- Patterns ---
+// The contrast floor is the part a site would otherwise re-derive or skip, so
+// it is asserted rather than left to survive edits by luck.
+console.log('\nPatterns:');
+const heroPattern = read('patterns/photographic-hero.md');
+check('the photographic hero pattern exists and is linked',
+  heroPattern.length > 0 && read('design.md').includes('patterns/photographic-hero.md'));
+check('it states the opacity floor', /\u03b1 \u2265 0\.60/.test(heroPattern));
+check('the floor it states is the one color.js computes', (() => {
+  // rgba(13,13,13,0.60) composited over the lightest possible image, white text
+  const a = 0.6, g = 13;
+  const bg = { r: Math.round(g * a + 255 * (1 - a)), g: Math.round(g * a + 255 * (1 - a)),
+               b: Math.round(g * a + 255 * (1 - a)), a: 1 };
+  return contrastRatio(parseColor('#FFFFFF'), bg) >= 4.5;
+})(), 'the documented floor must still hold if the math ever changes');
+check('it carries a weight budget', /Budget: 250 KB/.test(heroPattern));
+check('it warns about the stacking bug', /paints \*after\* its positioned/.test(heroPattern));
+
 console.log('\nSubresource integrity:');
 const sri = JSON.parse(read('dist/sri.json'));
 check('sri.json version matches tokens.json', sri.version === tokens.meta.version);
