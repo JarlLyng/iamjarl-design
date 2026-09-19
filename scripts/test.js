@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { parseHex, parseRgba, parseColor, contrastRatio } from './color.js';
 import { extractNotes } from './release-notes.js';
 import { selectLinks, categoryReach } from '../components/select-links.js';
+import { accentFor } from '../components/accent.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -397,6 +398,46 @@ check('fragments never link the site to itself', shipped.every(a =>
 // A stale integrity attribute fails closed: the browser blocks the resource.
 // For tokens.css that is a page with no tokens at all, so these hashes must
 // never lag the files they cover.
+
+// --- Family accents ---
+//
+// The system defines one primary per mode, so thirteen of fifteen sites ended up
+// identical. A family accent lets a category differ without leaving the system.
+// It ships inert: nothing renders differently until a category opts in.
+
+console.log('\nFamily accents:');
+const tokenTree = JSON.parse(read('tokens.json')).tokens;
+const shippedApps = registry.apps.filter(a => a.status === 'shipped');
+
+check('every category carries a label', Object.values(registry.categories)
+  .every(c => typeof c?.label === 'string' && c.label.length > 0));
+check('resolves to the shared primary when nothing is declared', shippedApps.every(a => {
+  const acc = accentFor(registry, a.id, tokenTree);
+  return acc.light === tokenTree.colors.modes.light.primary &&
+         acc.dark === tokenTree.colors.modes.dark.primary;
+}), 'no accents are declared yet, so nothing may differ');
+check('nothing is generated while nothing differs',
+  !fs.existsSync(path.join(ROOT, 'dist/accents')) ||
+  fs.readdirSync(path.join(ROOT, 'dist/accents')).length === 0,
+  'an app matching the primary must not get a sheet repeating it');
+
+// Resolution order, checked against a registry built for the purpose rather
+// than against whatever the real one happens to hold today.
+const probe = JSON.parse(JSON.stringify(registry));
+probe.categories['web-tools'].accent = { light: '#0B6E4F', dark: '#37B6E9' };
+check('a category accent reaches its apps',
+  accentFor(probe, 'botlens', tokenTree).light === '#0B6E4F');
+check('the source is reported', accentFor(probe, 'botlens', tokenTree).source === 'category');
+probe.apps.find(a => a.id === 'botlens').accent = { light: '#A435D2', dark: '#D0FF00' };
+check('an app accent overrides its category',
+  accentFor(probe, 'botlens', tokenTree).light === '#A435D2' &&
+  accentFor(probe, 'pagelens', tokenTree).light === '#0B6E4F');
+check('an app matching the primary is not treated as a family accent',
+  accentFor(probe, 'botlens', tokenTree).isFamilyAccent === false,
+  'it resolves to the primary, so there is nothing to emit');
+check('an unknown app throws', (() => {
+  try { accentFor(registry, 'nope', tokenTree); return false; } catch { return true; }
+})());
 
 console.log('\nSubresource integrity:');
 const sri = JSON.parse(read('dist/sri.json'));

@@ -1,17 +1,27 @@
-// IAMJARL <ij-footer> v1.9.2 — generated, do not edit
+// IAMJARL <ij-footer> v1.10.0 — generated, do not edit
 // Sources: components/select-links.js, components/ij-footer.js, apps.json
 
 const REGISTRY = {
-  "$comment": "Canonical list of IAMJARL products. Consumed by <ij-footer> to build cross-links, so a new app is added here once rather than in every site's footer. Order is not significant except for the two always-links, which render in the order listed here. Everything else is selected by category and sorted by id, so the list can be re-sorted without rewriting a single fragment.",
+  "$comment": "Canonical list of IAMJARL products. Consumed by <ij-footer> to build cross-links, so a new app is added here once rather than in every site's footer. Categories carry an optional `accent` ({light, dark}); an app may override it with its own. Absent means the mode primary, so nothing renders differently until a family opts in. Order is not significant except for the two always-links, which render in the order listed here. Everything else is selected by category and sorted by id, so the list can be re-sorted without rewriting a single fragment.",
   "meta": {
     "updated": "2026-09-19"
   },
   "categories": {
-    "fitness": "Training, movement and health",
-    "music": "Audio and music production",
-    "web-tools": "Browser and web-page tools",
-    "images": "Images and screenshots",
-    "play": "Play and art"
+    "fitness": {
+      "label": "Training, movement and health"
+    },
+    "music": {
+      "label": "Audio and music production"
+    },
+    "web-tools": {
+      "label": "Browser and web-page tools"
+    },
+    "images": {
+      "label": "Images and screenshots"
+    },
+    "play": {
+      "label": "Play and art"
+    }
   },
   "apps": [
     {
