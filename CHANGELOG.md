@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.2] — 2026-09-19
+
+No token values changed. Closes an accessibility gap in the gradients shipped in 1.6.0.
+
+### Fixed
+- **Three of the four gradients cannot carry any text colour at AA, and the system said nothing about it.** Raised by JarlLyng/TrimrPix#58 during their token migration. Checking all four:
+
+| Gradient | Safe foreground |
+|---|---|
+| `light.gradient.primary` | **none** |
+| `light.gradient.brand` | **none** |
+| `dark.gradient.brand` | **none** |
+| `dark.gradient.primary` | black |
+
+  `#A435D2` gives black 4.02:1; `#D0FF00` gives white 1.17:1. Whichever foreground is chosen, one end of the ramp fails, and reversing the gradient per mode only moves which end.
+
+  This is the mistake `design.md` rule 6 already forbids for flat colours and `validate.js` already hard-fails for every `on*` pair. Gradients got a rule about their first stop and no contrast rule at all, so the system shipped a token that invites exactly the error it refuses to make.
+
+### Changed
+- **Every gradient now carries its verdict in the CSS**, so the answer is visible where the value is used rather than found in an audit:
+  ```css
+  --ij-gradient-brand: linear-gradient(135deg, #D0FF00, #A435D2); /* decorative only — no text colour clears AA */
+  ```
+- `validate.js` computes and reports text-safety per gradient. **Deliberately not a failure** — a decorative ramp is allowed to span extremes. What was wrong was shipping that silently.
+- `design.md` gains the rule and three ordered alternatives for a brand surface that needs text, the first being to put the text on a solid `primary` panel and let the gradient be an accent around it. It also warns against `onPrimary`, which looks like the fix and moves the failure to the lime end, from a near miss to unreadable.
+
+### Note
+The gradient values are unchanged. They were derived from what two sites already shipped, and narrowing them would change the look of both to fix a use those sites should not have been making. The rule is the fix; the ramps are fine as decoration.
+
 ## [1.9.1] — 2026-09-19
 
 Patternaut joins the registry. No token or API changes.
@@ -312,6 +341,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.9.2]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.9.2
 [1.9.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.9.1
 [1.9.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.9.0
 [1.8.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.8.1

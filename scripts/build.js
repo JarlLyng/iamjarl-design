@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { parseHex } from './color.js';
+import { parseHex, parseColor, contrastRatio } from './color.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -592,6 +592,19 @@ function generateCSS(tokens, scope = ':root') {
 
 // Emit CSS custom properties for a single color mode. Scalar props become
 // --ij-color-<key>; nested groups are flattened (background → "bg").
+// Which single foreground, if any, clears WCAG AA across every stop of a
+// gradient. Decorative ramps legitimately span extremes, so this is a note
+// rather than an error — but it travels with the value so a consumer reads it
+// where they use it rather than discovering it in an audit.
+function gradientTextNote(value) {
+  const stops = (String(value).match(/#[0-9a-fA-F]{6}/g) || []).map(parseColor).filter(Boolean);
+  if (!stops.length) return 'decorative';
+  const safe = [['black', parseColor('#000000')], ['white', parseColor('#FFFFFF')]]
+    .filter(([, fg]) => stops.every(s => contrastRatio(fg, s) >= 4.5))
+    .map(([n]) => n);
+  return safe.length ? `text-safe: ${safe.join(' or ')}` : 'decorative only — no text colour clears AA';
+}
+
 function modeColorLines(mode, indent) {
   const out = [];
   // DEPRECATED since 1.6.0, removal in 2.0.0. Use
@@ -609,8 +622,10 @@ function modeColorLines(mode, indent) {
   out.push(`${indent}--ij-color-primary-rgb: ${rgb.r}, ${rgb.g}, ${rgb.b}; /* deprecated, use color-mix() */`);
   // Gradients are values, not colors, so they get their own --ij-gradient-*
   // namespace rather than being flattened into --ij-color-gradients-*.
+  // Each carries whether text can sit on it, because the answer is not visible
+  // from the value and three of the four ramps cannot carry any foreground.
   for (const [key, val] of Object.entries(mode.gradients ?? {})) {
-    out.push(`${indent}--ij-gradient-${camelToKebab(key)}: ${val};`);
+    out.push(`${indent}--ij-gradient-${camelToKebab(key)}: ${val}; /* ${gradientTextNote(val)} */`);
   }
 
   const groupPrefix = { background: 'bg' };

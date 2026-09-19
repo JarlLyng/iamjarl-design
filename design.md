@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.9.1)
+# IAMJARL Design System (v1.9.2)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -43,6 +43,36 @@ Use together with `tokens.json` (single source of truth).
 - **A gradient must begin at a color the system names.** Later stops are part of that gradient's identity, not colors the system endorses for general use — the validator enforces the first stop and leaves the rest alone.
 - Use `var(--ij-gradient-primary)` rather than rebuilding a gradient by hand. Both were derived from what the sites had each invented separately.
 - Not available in SwiftUI. A CSS gradient string has no Swift equivalent and the apps do not use them.
+
+#### Gradients are decorative. Never put text on one.
+This is rule 6 applied to a ramp instead of a flat color, and it is easy to miss because a gradient looks like a background.
+
+A ramp between two brand colors has no single safe foreground. **Three of the four shipped gradients cannot carry any text color at AA:**
+
+| Gradient | Safe foreground |
+|---|---|
+| `light.gradient.primary` | **none** |
+| `light.gradient.brand` | **none** |
+| `dark.gradient.brand` | **none** |
+| `dark.gradient.primary` | black |
+
+`#A435D2` gives black only 4.02:1; `#D0FF00` gives white 1.17:1. Whichever foreground you pick, one end of the ramp fails — and reversing the gradient per mode just moves which end.
+
+`onPrimary` is **not** the answer. It means "text on the solid primary", and applying it to a ramp moves the failure to the lime end, where it goes from a near miss to unreadable.
+
+Each gradient in `tokens.css` carries its own verdict as a comment, so the answer is visible where the value is used:
+
+```css
+--ij-gradient-brand: linear-gradient(135deg, #D0FF00, #A435D2); /* decorative only — no text colour clears AA */
+```
+
+**What to do instead**, in order of preference:
+
+1. **Put the text on a solid surface.** Use `primary` with `onPrimary` for the panel, and let the gradient be an accent around it — a top border, a rule, a flourish behind the panel. This is the only option where the contrast guarantee is real rather than approximated.
+2. **Stop the ramp before the text.** Keep the gradient decorative in the same block, but end it where the text begins, so the text sits on a stop you have actually checked.
+3. **Narrow the ramp.** Run it between two colors of similar luminance so one foreground clears both ends. Changes the look, and the look is usually the reason the gradient is there.
+
+A scrim between gradient and text is a fourth option and the weakest: it dulls the brand color, which is most of what a brand gradient is for.
 
 ### Tints, glows and translucency
 Use `color-mix()` against an existing token. It works on every color, needs nothing generated, and keeps the source color visible in the code:
