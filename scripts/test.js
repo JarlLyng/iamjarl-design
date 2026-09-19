@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { parseHex, parseRgba, parseColor, contrastRatio } from './color.js';
 import { extractNotes } from './release-notes.js';
 import { selectLinks, categoryReach } from '../components/select-links.js';
-import { accentFor } from '../components/accent.js';
+import { accentFor, displayFor } from '../components/identity.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -417,8 +417,8 @@ check('resolves to the shared primary when nothing is declared', shippedApps.eve
          acc.dark === tokenTree.colors.modes.dark.primary;
 }), 'no accents are declared yet, so nothing may differ');
 check('nothing is generated while nothing differs',
-  !fs.existsSync(path.join(ROOT, 'dist/accents')) ||
-  fs.readdirSync(path.join(ROOT, 'dist/accents')).length === 0,
+  !fs.existsSync(path.join(ROOT, 'dist/identity')) ||
+  fs.readdirSync(path.join(ROOT, 'dist/identity')).length === 0,
   'an app matching the primary must not get a sheet repeating it');
 
 // Resolution order, checked against a registry built for the purpose rather
@@ -438,6 +438,28 @@ check('an app matching the primary is not treated as a family accent',
 check('an unknown app throws', (() => {
   try { accentFor(registry, 'nope', tokenTree); return false; } catch { return true; }
 })());
+
+// --- Display type ---
+const fullTokens = JSON.parse(read('tokens.json'));
+const faces = fullTokens.brand.typography.display;
+check('three approved display faces', Object.keys(faces).length === 3);
+check('every face records a licence and a real fallback', Object.values(faces).every(f =>
+  f.licence && f.stack.includes(',') && /sans-serif|monospace|serif$/.test(f.stack.trim())),
+  'a stack without a real fallback leaves a site unreadable until the file lands');
+check('no family has been assigned a face yet', shippedApps.every(a =>
+  displayFor(registry, a.id, fullTokens).face === null));
+check('an unknown face name throws rather than emitting it', (() => {
+  const probe2 = JSON.parse(JSON.stringify(registry));
+  probe2.categories.music.display = 'serif';
+  try { displayFor(probe2, 'tonvault', fullTokens); return false; } catch { return true; }
+})());
+check('a category face reaches its apps', (() => {
+  const probe2 = JSON.parse(JSON.stringify(registry));
+  probe2.categories.music.display = 'mono';
+  return displayFor(probe2, 'tonvault', fullTokens).face.name === 'JetBrains Mono';
+})());
+check('design.md tells sites to self-host rather than link Google Fonts',
+  /Self-host the file\. Do not link Google Fonts/.test(read('design.md')));
 
 console.log('\nSubresource integrity:');
 const sri = JSON.parse(read('dist/sri.json'));

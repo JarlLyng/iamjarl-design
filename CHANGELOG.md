@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0] — 2026-09-19
+
+An approved display set, so a site's voice is a choice from a list rather than a search. Closes #30. Ships inert, like the family accent.
+
+### Added
+- **`brand.typography.display`** in `tokens.json` — three approved faces with their stack, licence and intended use:
+
+| Slot | Face | Licence |
+|---|---|---|
+| `mono` | JetBrains Mono | OFL-1.1 |
+| `geometric` | Outfit | OFL-1.1 |
+| `humanist` | Instrument Sans | OFL-1.1 |
+
+- **`display` on a category in `apps.json`**, overridable per app, emitted as `--ij-font-display`.
+- **`displayFor()`** in `components/identity.js`, beside `accentFor()`.
+
+### How the three were picked
+Two were derived from production rather than chosen: **JetBrains Mono** is the only mono in use (WODrounds), and **Outfit** runs on two sites where DM Sans runs on one. **The humanist slot has no production evidence and is the most revisable of the three** — it exists because health and calm products should not read as instruments, and nothing in the portfolio had answered that yet.
+
+Worth recording: `Inter` is on three sites as the fallback nobody chose. Part of what this set is for.
+
+### Self-hosting, not Google Fonts
+`design.md` says to self-host, with the `@font-face` recipe and subsetting note. `fonts.googleapis.com` is a third-party request carrying the visitor's IP on every page view, and this portfolio tells people it has no third parties on the very pages making the claim. All three faces are OFL-1.1, so redistribution is a licensing non-issue.
+
+The font files are **not** shipped here. Three binaries change what this package is and how it is updated; that deserves its own decision rather than arriving inside a typography change.
+
+### Changed
+- **`dist/accents/` is now `dist/identity/`**, and the export is `./identity/*`. One file now carries both the family accent and the display face, because they are one decision about how a site presents itself. The old path shipped in 1.10.0 with zero files in it and no consumer, so this costs nothing.
+- `components/accent.js` is now `components/identity.js`.
+
+### Still inert
+No family declares a face, so no identity sheet is generated and nothing renders differently. A contract test asserts that. An unknown face name hard-fails rather than emitting a `--ij-font-display` pointing at something nobody approved or licensed.
+
 ## [1.10.0] — 2026-09-19
 
 The identity layer, shipped inert. Closes #29. No site renders differently until a category opts in.
@@ -367,6 +400,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.11.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.11.0
 [1.10.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.10.0
 [1.9.2]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.9.2
 [1.9.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.9.1

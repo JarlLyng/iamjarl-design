@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.10.0)
+# IAMJARL Design System (v1.11.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -37,6 +37,44 @@ Use together with `tokens.json` (single source of truth).
   - `success` → use `onSuccess`
   - `warning` → use `onWarning`
   - `error` → use `onError`
+
+### Display type (web only)
+The tokens ship `system-ui` and `ui-monospace` and nothing else, so every site that wanted a voice went looking on its own. Four found four different answers; the rest fell back to Inter or the system stack. That is why nine sites read the same and four read like one-offs.
+
+**Three approved faces.** A family picks one. Body copy stays `--ij-font-ui` everywhere — this is the voice, not the text.
+
+| Slot | Face | Licence | For |
+|---|---|---|---|
+| `mono` | **JetBrains Mono** | OFL-1.1 | Gear, timers, data — where the number is the interface |
+| `geometric` | **Outfit** | OFL-1.1 | Tools, for products that present themselves as instruments |
+| `humanist` | **Instrument Sans** | OFL-1.1 | Health and calm, where a site should not read as an instrument |
+
+Two of the three were derived rather than chosen: JetBrains Mono is the only mono in production, and Outfit is on two sites where DM Sans is on one. **The humanist slot has no production evidence behind it and is therefore the most revisable of the three.**
+
+Assigned per category in `apps.json`, overridable per app, emitted as `--ij-font-display` in `dist/identity/<app>.css`. Every stack ends in a real fallback, so a site that has not loaded the file still reads correctly.
+
+#### Self-host the file. Do not link Google Fonts.
+`fonts.googleapis.com` is a third-party request on every page view, and it carries the visitor's IP and referring page. This portfolio tells people it has no tracking and no third parties; loading a font from Google contradicts that on the one page making the claim.
+
+All three faces are OFL-1.1, which permits redistribution, so self-hosting is a licensing non-issue:
+
+```html
+<link rel="stylesheet" href="/fonts/jetbrains-mono.css">
+```
+
+```css
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/fonts/jetbrains-mono-latin.woff2') format('woff2');
+  font-weight: 100 800;        /* variable: one file, every weight */
+  font-display: swap;          /* text is readable before the file lands */
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122;
+}
+```
+
+Subset to the ranges the site actually uses — latin alone is usually a few tens of kilobytes against several hundred for the full face. `font-display: swap` matters because the fallback stack is what a visitor reads until the file arrives, which is the whole reason each stack ends in something real.
+
+> The font files are **not** shipped in this repo. Adding three binaries changes what this package is and how it is updated, and that deserves its own decision rather than arriving inside a typography change. Until then, download the subsets once per site and commit them there.
 
 ### Family accent (web only)
 The system defines one primary per mode. That is why thirteen of fifteen sites ended up black with the same lime pill — they inherited exactly what they were given, and there was no layer where they were allowed to differ.
