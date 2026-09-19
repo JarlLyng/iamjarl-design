@@ -997,11 +997,28 @@ function generateComponent(tokens) {
       .join('\n')
       .replace(/^export (const|function|class) /gm, '$1 ');
 
+// The footer reads seven fields and nothing else — it never touches
+// `categories`, `platform` or `consumes`. Inlining the whole registry shipped
+// those to every visitor and, worse, tied this file's SRI hash to them: picking
+// a family accent would change the hash of a component that cannot use one, and
+// every site pinning `integrity` would break over a colour. Project it down.
+const FOOTER_FIELDS = ['id', 'name', 'url', 'category', 'status', 'listed', 'always'];
+
+function footerRegistry(registry) {
+  return {
+    apps: registry.apps.map(app =>
+      Object.fromEntries(
+        FOOTER_FIELDS.filter(k => app[k] !== undefined).map(k => [k, app[k]])
+      )
+    ),
+  };
+}
+
   return [
     `// IAMJARL <ij-footer> v${tokens.meta.version} — generated, do not edit`,
     `// Sources: components/select-links.js, components/ij-footer.js, apps.json`,
     '',
-    `const REGISTRY = ${JSON.stringify(registry, null, 2)};`,
+    `const REGISTRY = ${JSON.stringify(footerRegistry(registry), null, 2)};`,
     '',
     inline(src('select-links.js')).trim(),
     '',

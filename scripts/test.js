@@ -369,6 +369,26 @@ check('component honours a provided cross-links slot',
   comp.includes(`this.querySelector('[slot="cross-links"]')`) &&
   comp.includes('<slot name="cross-links">'));
 
+// The bundle inlines the registry, so whatever apps.json gains is served to
+// every visitor and folded into this file's SRI hash. The footer reads seven
+// fields; anything else reaching the bundle means a site pinning `integrity`
+// can be broken by a decision the footer cannot even use — a family accent,
+// for instance.
+const bundledRegistry = JSON.parse(
+  comp.match(/const REGISTRY = (\{[\s\S]*?\n\});/)[1]
+);
+check('the bundled registry is projected, not the whole file',
+  Object.keys(bundledRegistry).join() === 'apps',
+  'categories, meta and $comment are not read by the footer');
+check('the bundle carries no colour data', !/accent|#[0-9a-f]{3,8}\b/i.test(
+  comp.slice(comp.indexOf('const REGISTRY'), comp.indexOf('];', comp.indexOf('const REGISTRY')))),
+  'an accent must never change the footer\'s SRI hash');
+check('every field the footer reads survives the projection',
+  bundledRegistry.apps.every(a => a.id && a.name && a.url && a.status) &&
+  bundledRegistry.apps.some(a => a.always) &&
+  bundledRegistry.apps.some(a => a.category && a.listed),
+  'projecting away a field the selection needs would silently empty a footer');
+
 const shipped = registry.apps.filter(a => a.status === 'shipped');
 let fragProblems = [];
 for (const app of shipped) {
@@ -403,23 +423,37 @@ check('fragments never link the site to itself', shipped.every(a =>
 //
 // The system defines one primary per mode, so thirteen of fifteen sites ended up
 // identical. A family accent lets a category differ without leaving the system.
-// It ships inert: nothing renders differently until a category opts in.
+// Four families have declared one; the rest still inherit the primary, and that
+// half of the contract is what keeps opting in optional.
 
 console.log('\nFamily accents:');
-const tokenTree = JSON.parse(read('tokens.json')).tokens;
+const fullTokens = JSON.parse(read('tokens.json'));
+const tokenTree = fullTokens.tokens;
 const shippedApps = registry.apps.filter(a => a.status === 'shipped');
+const identityDir = path.join(ROOT, 'dist/identity');
+const sheets = fs.existsSync(identityDir) ? fs.readdirSync(identityDir) : [];
 
 check('every category carries a label', Object.values(registry.categories)
   .every(c => typeof c?.label === 'string' && c.label.length > 0));
-check('resolves to the shared primary when nothing is declared', shippedApps.every(a => {
-  const acc = accentFor(registry, a.id, tokenTree);
-  return acc.light === tokenTree.colors.modes.light.primary &&
-         acc.dark === tokenTree.colors.modes.dark.primary;
-}), 'no accents are declared yet, so nothing may differ');
-check('nothing is generated while nothing differs',
-  !fs.existsSync(path.join(ROOT, 'dist/identity')) ||
-  fs.readdirSync(path.join(ROOT, 'dist/identity')).length === 0,
-  'an app matching the primary must not get a sheet repeating it');
+check('a declared category accent reaches every app in it', shippedApps
+  .filter(a => registry.categories[a.category]?.accent)
+  .every(a => accentFor(registry, a.id, tokenTree).isFamilyAccent),
+  'a category that declared an accent must not leave one of its apps on the primary');
+check('an undeclared category still resolves to the shared primary', shippedApps
+  .filter(a => !a.accent && !registry.categories[a.category]?.accent)
+  .every(a => {
+    const acc = accentFor(registry, a.id, tokenTree);
+    return acc.light === tokenTree.colors.modes.light.primary &&
+           acc.dark === tokenTree.colors.modes.dark.primary &&
+           acc.isFamilyAccent === false;
+  }), 'opting in stays optional, so a site that declared nothing renders as before');
+check('a sheet exists for every app that differs, and only for those', (() => {
+  const expected = shippedApps
+    .filter(a => accentFor(registry, a.id, tokenTree).isFamilyAccent ||
+                 displayFor(registry, a.id, fullTokens).face)
+    .map(a => `${a.id}.css`).sort();
+  return expected.join() === [...sheets].sort().join();
+})(), 'an app matching the primary must not get a sheet repeating it');
 
 // Resolution order, checked against a registry built for the purpose rather
 // than against whatever the real one happens to hold today.
@@ -440,7 +474,6 @@ check('an unknown app throws', (() => {
 })());
 
 // --- Display type ---
-const fullTokens = JSON.parse(read('tokens.json'));
 const faces = fullTokens.brand.typography.display;
 check('three approved display faces', Object.keys(faces).length === 3);
 check('every face records a licence and a real fallback', Object.values(faces).every(f =>

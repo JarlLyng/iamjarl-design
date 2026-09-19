@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.11.1)
+# IAMJARL Design System (v1.12.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -98,7 +98,25 @@ Absent means the mode primary, so a site that declares nothing renders exactly a
 
 Lime as a light-mode accent gives 1.17:1 on white and is refused. That check is the whole reason a family accent can be trusted the way the rest of the tokens are.
 
-It ships as a small per-app stylesheet, `dist/accents/<app>.css`, because `tokens.css` is one file shared by every site and cannot carry a per-site value. Nothing is generated for an app whose accent resolves to the primary.
+It ships as a small per-app stylesheet, `dist/identity/<app>.css`, because `tokens.css` is one file shared by every site and cannot carry a per-site value. Nothing is generated for an app whose accent resolves to the primary.
+
+#### The declared families
+
+| Family | Light | Dark | Sites |
+|---|---|---|---|
+| `fitness` | `#587114` | `#D0FF00` | Anvil Workout, WODrounds, Wean, Walkful |
+| `music` | `#177082` | `#23ACC7` | It's mono yo!, It's 404 yo!, Echolume, TonVault, Patternaut |
+| `web-tools` | `#217370` | `#35B6B2` | BotLens, PageLens |
+| `images` | `#B4401D` | `#DD5931` | TrimrPix, TrimrPix for iOS |
+
+`play` and the two uncategorised sites declare nothing and still resolve to the primary.
+
+Two of these are worth knowing the reasoning for, because the next family will face the same questions:
+
+- **`fitness` is anchored on the lime the sites already run.** WODrounds and Walkful had it in production, so only the light half needed solving. The cost is that lime at a light-mode lightness is olive, and the pair reads as two related colours rather than one. That is the honest shape of the constraint: a hue bright enough for black cannot also be dark enough for white.
+- **`web-tools` and `music` are close in hue.** Teal and cyan are one step apart. They were kept because both sites in `web-tools` are a sibling pair that should read as one thing, and because no third family sits between them. If BotLens and Echolume ever need to be told apart at a glance, `web-tools` is the cheaper of the two to move.
+
+None sits at the 4.5:1 line. The lowest is `images` at 5.55:1 on black, chosen deliberately: a value that only just clears a hard-fail breaks on the next nudge.
 
 ### Gradients (web only)
 - Two per mode: `gradient.primary` (the accent extended into a second stop) and `gradient.brand` (the two accents against each other, reversed per mode).

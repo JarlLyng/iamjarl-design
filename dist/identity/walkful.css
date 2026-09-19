@@ -1,0 +1,18 @@
+/* IAMJARL identity for Walkful — generated, do not edit */
+/* design system v1.12.0, family: fitness */
+/* Primary is unchanged and still the brand thread; the accent is what this site may lean on. */
+
+:root {
+  --ij-color-accent-family: #587114;
+  --ij-color-accent-family-rgb: 88, 113, 20;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --ij-color-accent-family: #D0FF00;
+    --ij-color-accent-family-rgb: 208, 255, 0;
+  }
+}
+
+.light { --ij-color-accent-family: #587114; --ij-color-accent-family-rgb: 88, 113, 20; }
+.dark { --ij-color-accent-family: #D0FF00; --ij-color-accent-family-rgb: 208, 255, 0; }
