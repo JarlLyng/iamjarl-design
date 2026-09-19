@@ -1112,6 +1112,58 @@ function writeSriReadme(version, hashes) {
   }
 }
 
+// A family accent is per-app, so it cannot live in tokens.css — that file is one
+// stylesheet shared by every site. It ships the way footer cross-links do:
+// a small per-app artifact the site links or inlines.
+//
+// Only apps whose resolved accent actually differs from the shared primary get a
+// file, so the output stays empty until a family opts in rather than repeating
+// the primary once per app.
+async function generateAccentSheets(tokens) {
+  const registry = JSON.parse(fs.readFileSync(path.join(ROOT, 'apps.json'), 'utf-8'));
+  const { accentFor } = await import(
+    pathToFileURL(path.join(ROOT, 'components', 'accent.js')).href
+  );
+
+  const out = [];
+  for (const app of registry.apps.filter(a => a.status === 'shipped')) {
+    const accent = accentFor(registry, app.id, tokens);
+    if (!accent.isFamilyAccent) continue;
+
+    const decl = (hex, indent) => {
+      const { r, g, b } = parseHex(hex);
+      return [
+        `${indent}--ij-color-accent-family: ${hex};`,
+        `${indent}--ij-color-accent-family-rgb: ${r}, ${g}, ${b};`,
+      ].join('\n');
+    };
+
+    out.push([
+      app.id,
+      [
+        `/* IAMJARL family accent for ${app.name} — generated, do not edit */`,
+        `/* design system v${tokens.meta?.version ?? ''}, from ${accent.source}: ${app.category ?? '—'} */`,
+        `/* Primary is unchanged and still the brand thread; this is what this site may lean on. */`,
+        '',
+        ':root {',
+        decl(accent.light, '  '),
+        '}',
+        '',
+        '@media (prefers-color-scheme: dark) {',
+        '  :root:not(.light) {',
+        decl(accent.dark, '    '),
+        '  }',
+        '}',
+        '',
+        `.light { ${decl(accent.light, '').replace(/\n/g, ' ')} }`,
+        `.dark { ${decl(accent.dark, '').replace(/\n/g, ' ')} }`,
+        '',
+      ].join('\n'),
+    ]);
+  }
+  return out;
+}
+
 // ============================================================
 // MAIN
 // ============================================================
@@ -1155,7 +1207,16 @@ async function main() {
   );
   writeSriReadme(tokens.meta.version, hashes);
 
-  console.log(`\nDone! Generated 8 platform files and ${fragments.length} footer fragments.`);
+  // Per-app family accents (empty until a category opts in)
+  const accents = await generateAccentSheets({ ...tokens.tokens, meta: tokens.meta });
+  for (const [id, css] of accents) {
+    writeFile(path.join(ROOT, 'dist', 'accents', `${id}.css`), css);
+  }
+
+  console.log(
+    `\nDone! Generated 8 platform files, ${fragments.length} footer fragments` +
+    `, ${accents.length} accent sheet(s).`
+  );
 }
 
 await main();

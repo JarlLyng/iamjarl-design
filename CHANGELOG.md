@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.0] — 2026-09-19
+
+The identity layer, shipped inert. Closes #29. No site renders differently until a category opts in.
+
+### Added
+- **`accent` on a category in `apps.json`**, `{ light, dark }`, optionally overridden per app. Resolution is app → category → mode primary, so absent means nothing changes.
+- **`components/accent.js`** — `accentFor(registry, appId, tokens)`, pure and exported, feeding the generated CSS, the validator and anything the component does with it later.
+- **`dist/accents/<app>.css`** — `--ij-color-accent-family` and its `-rgb` twin, per mode, exported as `@iamjarl/design-tokens/accents/*`.
+
+### Why
+The system defines one primary per mode, so thirteen of fifteen live sites are black with the same lime pill. That is not drift — they inherited exactly what they were given, and there was no layer where a site was allowed to differ. `primary` stays the brand thread; the family accent is what one site may lean on.
+
+### The check that makes it trustworthy
+**Both modes are required, and each is held to the bar `primary` already clears:** at least 4.5:1 against its own `background.app`, and able to carry black or white at 4.5:1. An accent that works on one ground only is a second primary, and `validate.js` hard-fails it — lime as a light accent gives 1.17:1 on white and is refused.
+
+### Why it ships empty
+No accents are declared. `accentFor` resolves every app to the shared primary, no accent sheet is generated, and a contract test asserts that nothing is emitted while nothing differs. Adding a family is then one registry edit that the validator gates, rather than a release.
+
+### Decisions this settles, and one it does not
+`apps.json` categories are the grain, with a per-app override as the escape hatch — rather than a second taxonomy that would have to be kept consistent with the first, which is the failure mode this repo keeps closing. If identity and cross-link relevance ever genuinely diverge, that is the signal to split them; not before.
+
+**Which colours the first families get is still open.** That is a brand decision, and the machinery is deliberately separate from it.
+
+### Note
+`categories` in `apps.json` changed from `"id": "label"` to `"id": { "label": ... }` so it can carry an accent. Only `Object.keys` was ever read, so nothing downstream breaks.
+
 ## [1.9.2] — 2026-09-19
 
 No token values changed. Closes an accessibility gap in the gradients shipped in 1.6.0.
@@ -341,6 +367,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.10.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.10.0
 [1.9.2]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.9.2
 [1.9.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.9.1
 [1.9.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.9.0

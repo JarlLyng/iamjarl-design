@@ -345,7 +345,7 @@ function validateContrast(tokens) {
 
 // apps.json feeds <ij-footer>'s cross-links. A bad entry here ships a broken or
 // missing link on every consuming site, so it is gated like the tokens are.
-function validateApps() {
+function validateApps(tokensRef) {
   console.log('\nApp registry (apps.json):');
 
   let registry;
@@ -389,6 +389,51 @@ function validateApps() {
     for (const p of problems) fail(p);
   } else {
     pass(`${apps.length} apps, ${categories.length} categories, ids unique`);
+  }
+
+  // Family accents. An accent that works on one ground only is not an accent,
+  // it is a second primary — so both modes are required and each is held to the
+  // same bar the shared primary already clears: legible as text on its own
+  // ground, and able to carry black or white when used as a fill.
+  const grounds = {
+    light: tokensRef?.colors?.modes?.light?.background?.app,
+    dark: tokensRef?.colors?.modes?.dark?.background?.app,
+  };
+  const accentSources = [
+    ...Object.entries(registry.categories ?? {}).map(([k, v]) => [`category "${k}"`, v.accent]),
+    ...apps.map(a => [`app "${a.id}"`, a.accent]),
+  ].filter(([, acc]) => acc);
+
+  let accentProblems = 0;
+  for (const [where, acc] of accentSources) {
+    for (const mode of ['light', 'dark']) {
+      const hex = acc[mode];
+      if (!hex) {
+        fail(`${where}: accent is missing "${mode}" — an accent that works on one ground only is a second primary`);
+        accentProblems++;
+        continue;
+      }
+      const c = parseColor(hex);
+      const ground = parseColor(grounds[mode]);
+      if (!c) { fail(`${where}: accent.${mode} "${hex}" is not a color`); accentProblems++; continue; }
+
+      const onGround = contrastRatio(c, ground);
+      if (onGround < 4.5) {
+        fail(`${where}: accent.${mode} is ${onGround.toFixed(2)}:1 on ${mode} background.app — below AA, so it cannot be used as text`);
+        accentProblems++;
+      }
+      const carries = [['black', '#000000'], ['white', '#FFFFFF']]
+        .filter(([, fg]) => contrastRatio(parseColor(fg), c) >= 4.5).map(([n]) => n);
+      if (!carries.length) {
+        fail(`${where}: accent.${mode} carries neither black nor white at AA, so it cannot be used as a fill`);
+        accentProblems++;
+      }
+    }
+  }
+  if (accentSources.length && !accentProblems) {
+    pass(`${accentSources.length} family accent(s), each AA on its ground and able to carry text`);
+  } else if (!accentSources.length) {
+    pass('no family accents declared — every app inherits the shared primary');
   }
 
   const always = apps.filter(a => a.always === true);
@@ -445,7 +490,7 @@ function main() {
 
   validateStructure(tokens);
   validateContrast(tokens);
-  validateApps();
+  validateApps(tokens.tokens);
 
   console.log();
   if (errors > 0) {

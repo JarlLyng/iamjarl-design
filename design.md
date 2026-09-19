@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.9.2)
+# IAMJARL Design System (v1.10.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -37,6 +37,25 @@ Use together with `tokens.json` (single source of truth).
   - `success` → use `onSuccess`
   - `warning` → use `onWarning`
   - `error` → use `onError`
+
+### Family accent (web only)
+The system defines one primary per mode. That is why thirteen of fifteen sites ended up black with the same lime pill — they inherited exactly what they were given, and there was no layer where they were allowed to differ.
+
+A **family accent** is that layer. It is declared per category in `apps.json`, optionally overridden per app, and it never replaces `primary`:
+
+- `primary` stays the brand thread. It is what makes the portfolio one family.
+- `--ij-color-accent-family` is what a single site may lean on — its hero, its CTA, its headline mark.
+
+Absent means the mode primary, so a site that declares nothing renders exactly as before.
+
+**Both modes are required.** An accent that works on black and not on white is not an accent, it is a second primary, and `validate.js` rejects it. Each mode's value is held to the same bar `primary` already clears:
+
+- at least 4.5:1 against that mode's `background.app`, so it can be used as text or an icon
+- able to carry black or white at 4.5:1, so it can be used as a fill
+
+Lime as a light-mode accent gives 1.17:1 on white and is refused. That check is the whole reason a family accent can be trusted the way the rest of the tokens are.
+
+It ships as a small per-app stylesheet, `dist/accents/<app>.css`, because `tokens.css` is one file shared by every site and cannot carry a per-site value. Nothing is generated for an app whose accent resolves to the primary.
 
 ### Gradients (web only)
 - Two per mode: `gradient.primary` (the accent extended into a second stop) and `gradient.brand` (the two accents against each other, reversed per mode).
