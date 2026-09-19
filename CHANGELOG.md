@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.1] — 2026-09-19
+
+The first entry in `patterns/`. Documentation only. Closes #31.
+
+### Added
+- **[`patterns/photographic-hero.md`](patterns/photographic-hero.md)** — a photograph behind the hero, darkened until the text wins. Two sites had solved it independently and eleven had not tried it.
+
+### What it settles
+- **The overlay**, derived rather than invented. WODrounds and Anvil reached almost the same answer without talking to each other: horizontal, near-opaque where the text sits, thinning toward the image. Both are quoted, with a tokenised version.
+- **An opacity floor that removes the check entirely.** Text over a photograph has no fixed background, so the usual contrast test does not apply. Compositing the overlay over the *lightest possible* image gives a threshold instead: **α ≥ 0.60 guarantees AA for white text no matter what the photograph does.** Both production sites sit at 0.95–0.97 where their text falls, which is why neither has a problem despite never having computed it. A contract test re-derives the number from `color.js`, so the documented floor cannot drift from the math.
+- **A weight budget measured against production.** WODrounds ships **2521 KB** for its hero — the original at 3936px, more than twice any viewport it meets. The same image is 280 KB at 1600px and 164 KB at 1200px. Budget: **250 KB at the largest breakpoint**, and nearly all of the 9× saving comes from serving a sensible width rather than from the codec.
+- **The stacking bug**, which bit this pattern during a prototype: a positioned pseudo-element paints *after* its positioned siblings at the same z-index, so the overlay covers the text and the hero goes flat. One line fixes it and it is easy to lose.
+
+### Note
+`alt=""` on the hero image is documented as correct rather than lazy. The first rule of the pattern is that the photograph is mood and never subject; an empty `alt` is that rule enforced in the markup.
+
 ## [1.11.0] — 2026-09-19
 
 An approved display set, so a site's voice is a choice from a list rather than a search. Closes #30. Ships inert, like the family accent.
@@ -400,6 +416,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.11.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.11.1
 [1.11.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.11.0
 [1.10.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.10.0
 [1.9.2]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.9.2
