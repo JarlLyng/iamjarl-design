@@ -104,6 +104,20 @@ check('every gradient starts at a system color', (() => {
   return ['light', 'dark'].every(m => Object.values(tk.modes[m].gradients)
     .every(g => sys.has((g.match(/#[0-9a-fA-F]{6}/) || [''])[0].toUpperCase())));
 })());
+// Every gradient carries its text-safety verdict where it is used. Three of the
+// four ramps cannot carry any foreground at AA, and that is invisible from the
+// value itself — which is how it reached production on two sites.
+check('every gradient states whether text can sit on it', (() => {
+  // two gradients in each of the four mode blocks
+  const lines = css.split('\n').filter(l => /--ij-gradient-[a-z-]+:/.test(l));
+  return lines.length === 8 &&
+    lines.every(l => /\/\* (text-safe: (black|white)( or (black|white))?|decorative only[^*]*) \*\//.test(l));
+})());
+check('design.md forbids text on a gradient',
+  read('design.md').includes('Gradients are decorative. Never put text on one.'));
+check('design.md warns against onPrimary on a ramp',
+  /`onPrimary` is \*\*not\*\* the answer/.test(read('design.md')));
+
 check('Swift does not emit gradients', !/gradient/i.test(swift),
   'a CSS gradient string has no SwiftUI equivalent');
 check('primary-rgb is marked deprecated, not silently kept',

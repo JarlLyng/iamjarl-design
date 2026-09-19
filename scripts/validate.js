@@ -216,6 +216,24 @@ function validateStructure(tokens) {
       }
     }
     if (!bad) pass(`${mode}.gradients: ${Object.keys(gradients).length}, each starting at a system color`);
+
+    // Whether any single foreground clears AA across the whole ramp. Not a
+    // failure: a decorative gradient is allowed to span extremes. But the
+    // system refuses to ship an inaccessible on*-pair, so it should not ship a
+    // gradient that invites the same mistake without saying so. Reported here
+    // and emitted as a comment beside each value in the CSS.
+    for (const [key, val] of Object.entries(gradients)) {
+      const stops = (String(val).match(/#[0-9a-fA-F]{6}/g) || []).map(parseColor).filter(Boolean);
+      if (!stops.length) continue;
+      const safe = [['black', parseColor('#000000')], ['white', parseColor('#FFFFFF')]]
+        .filter(([, fg]) => stops.every(s => contrastRatio(fg, s) >= 4.5))
+        .map(([name]) => name);
+      if (safe.length) {
+        pass(`${mode}.gradients.${key}: text-safe with ${safe.join(' or ')}`);
+      } else {
+        pass(`${mode}.gradients.${key}: decorative only — no foreground clears AA across the ramp`);
+      }
+    }
   }
 
   // Validate all color values
