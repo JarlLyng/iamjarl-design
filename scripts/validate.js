@@ -396,8 +396,8 @@ function validateApps(tokensRef) {
   // same bar the shared primary already clears: legible as text on its own
   // ground, and able to carry black or white when used as a fill.
   const grounds = {
-    light: tokensRef?.colors?.modes?.light?.background?.app,
-    dark: tokensRef?.colors?.modes?.dark?.background?.app,
+    light: tokensRef?.tokens?.colors?.modes?.light?.background?.app,
+    dark: tokensRef?.tokens?.colors?.modes?.dark?.background?.app,
   };
   const accentSources = [
     ...Object.entries(registry.categories ?? {}).map(([k, v]) => [`category "${k}"`, v.accent]),
@@ -434,6 +434,28 @@ function validateApps(tokensRef) {
     pass(`${accentSources.length} family accent(s), each AA on its ground and able to carry text`);
   } else if (!accentSources.length) {
     pass('no family accents declared — every app inherits the shared primary');
+  }
+
+  // Display faces. The approved set lives in tokens.json; a family only names
+  // one. An unknown name must fail here rather than emit a --ij-font-display
+  // pointing at a face nobody approved or licensed.
+  const faces = Object.keys(tokensRef?.brand?.typography?.display ?? {});
+  const displaySources = [
+    ...Object.entries(registry.categories ?? {}).map(([k, v]) => [`category "${k}"`, v.display]),
+    ...apps.map(a => [`app "${a.id}"`, a.display]),
+  ].filter(([, d]) => d);
+
+  let displayProblems = 0;
+  for (const [where, key] of displaySources) {
+    if (!faces.includes(key)) {
+      fail(`${where}: display "${key}" is not in the approved set (${faces.join(', ') || 'none declared'})`);
+      displayProblems++;
+    }
+  }
+  if (displaySources.length && !displayProblems) {
+    pass(`${displaySources.length} display assignment(s), all from the approved set`);
+  } else if (!displaySources.length) {
+    pass(`no display faces assigned — ${faces.length} approved and waiting`);
   }
 
   const always = apps.filter(a => a.always === true);
@@ -490,7 +512,7 @@ function main() {
 
   validateStructure(tokens);
   validateContrast(tokens);
-  validateApps(tokens.tokens);
+  validateApps(tokens);
 
   console.log();
   if (errors > 0) {

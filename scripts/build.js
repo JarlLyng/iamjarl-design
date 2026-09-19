@@ -1112,54 +1112,70 @@ function writeSriReadme(version, hashes) {
   }
 }
 
-// A family accent is per-app, so it cannot live in tokens.css — that file is one
-// stylesheet shared by every site. It ships the way footer cross-links do:
+// A site's identity is per-app, so it cannot live in tokens.css — that file is
+// one stylesheet shared by every site. It ships the way footer cross-links do:
 // a small per-app artifact the site links or inlines.
 //
-// Only apps whose resolved accent actually differs from the shared primary get a
-// file, so the output stays empty until a family opts in rather than repeating
-// the primary once per app.
-async function generateAccentSheets(tokens) {
+// Only apps that actually declare something get a file, so the output stays
+// empty until a family opts in rather than restating the defaults once per app.
+async function generateIdentitySheets(tokens) {
   const registry = JSON.parse(fs.readFileSync(path.join(ROOT, 'apps.json'), 'utf-8'));
-  const { accentFor } = await import(
-    pathToFileURL(path.join(ROOT, 'components', 'accent.js')).href
+  const { accentFor, displayFor } = await import(
+    pathToFileURL(path.join(ROOT, 'components', 'identity.js')).href
   );
 
+  const rgb = hex => { const { r, g, b } = parseHex(hex); return `${r}, ${g}, ${b}`; };
   const out = [];
-  for (const app of registry.apps.filter(a => a.status === 'shipped')) {
-    const accent = accentFor(registry, app.id, tokens);
-    if (!accent.isFamilyAccent) continue;
 
-    const decl = (hex, indent) => {
-      const { r, g, b } = parseHex(hex);
-      return [
-        `${indent}--ij-color-accent-family: ${hex};`,
-        `${indent}--ij-color-accent-family-rgb: ${r}, ${g}, ${b};`,
-      ].join('\n');
+  for (const app of registry.apps.filter(a => a.status === 'shipped')) {
+    const accent = accentFor(registry, app.id, tokens.tokens);
+    const display = displayFor(registry, app.id, tokens);
+    if (!accent.isFamilyAccent && !display.face) continue;
+
+    const vars = (mode, indent) => {
+      const lines = [];
+      if (accent.isFamilyAccent) {
+        lines.push(`${indent}--ij-color-accent-family: ${accent[mode]};`);
+        lines.push(`${indent}--ij-color-accent-family-rgb: ${rgb(accent[mode])};`);
+      }
+      // The display face does not change with mode, so it is emitted once, in
+      // the :root block only.
+      if (display.face && mode === 'light') {
+        lines.push(`${indent}--ij-font-display: ${display.face.stack};`);
+      }
+      return lines.join('\n');
     };
 
-    out.push([
-      app.id,
-      [
-        `/* IAMJARL family accent for ${app.name} — generated, do not edit */`,
-        `/* design system v${tokens.meta?.version ?? ''}, from ${accent.source}: ${app.category ?? '—'} */`,
-        `/* Primary is unchanged and still the brand thread; this is what this site may lean on. */`,
-        '',
-        ':root {',
-        decl(accent.light, '  '),
-        '}',
+    const body = [
+      `/* IAMJARL identity for ${app.name} — generated, do not edit */`,
+      `/* design system v${tokens.meta.version}, family: ${app.category ?? '—'} */`,
+      display.face
+        ? `/* Display face: ${display.face.name} (${display.face.licence}). Self-host it — see design.md. */`
+        : null,
+      accent.isFamilyAccent
+        ? `/* Primary is unchanged and still the brand thread; the accent is what this site may lean on. */`
+        : null,
+      '',
+      ':root {',
+      vars('light', '  '),
+      '}',
+    ];
+
+    if (accent.isFamilyAccent) {
+      body.push(
         '',
         '@media (prefers-color-scheme: dark) {',
         '  :root:not(.light) {',
-        decl(accent.dark, '    '),
+        vars('dark', '    '),
         '  }',
         '}',
         '',
-        `.light { ${decl(accent.light, '').replace(/\n/g, ' ')} }`,
-        `.dark { ${decl(accent.dark, '').replace(/\n/g, ' ')} }`,
-        '',
-      ].join('\n'),
-    ]);
+        `.light { --ij-color-accent-family: ${accent.light}; --ij-color-accent-family-rgb: ${rgb(accent.light)}; }`,
+        `.dark { --ij-color-accent-family: ${accent.dark}; --ij-color-accent-family-rgb: ${rgb(accent.dark)}; }`
+      );
+    }
+    body.push('');
+    out.push([app.id, body.filter(l => l !== null).join('\n')]);
   }
   return out;
 }
@@ -1207,15 +1223,15 @@ async function main() {
   );
   writeSriReadme(tokens.meta.version, hashes);
 
-  // Per-app family accents (empty until a category opts in)
-  const accents = await generateAccentSheets({ ...tokens.tokens, meta: tokens.meta });
-  for (const [id, css] of accents) {
-    writeFile(path.join(ROOT, 'dist', 'accents', `${id}.css`), css);
+  // Per-app identity: family accent and display face (empty until one is declared)
+  const identity = await generateIdentitySheets(tokens);
+  for (const [id, css] of identity) {
+    writeFile(path.join(ROOT, 'dist', 'identity', `${id}.css`), css);
   }
 
   console.log(
     `\nDone! Generated 8 platform files, ${fragments.length} footer fragments` +
-    `, ${accents.length} accent sheet(s).`
+    `, ${identity.length} identity sheet(s).`
   );
 }
 
