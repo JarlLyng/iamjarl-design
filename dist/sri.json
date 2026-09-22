@@ -1,9 +1,9 @@
 {
-  "version": "1.12.1",
+  "version": "1.13.0",
   "algorithm": "sha384",
   "files": {
-    "dist/css/tokens.css": "sha384-RAdaOqLB7p6ICG0wa1VNn3gmJyvzeB6GBVLhfobK4wyVoMtg9uocZ6shnhNZKg/0",
-    "dist/css/tokens.shadow.css": "sha384-c/9jfbwqdwg7JRnaHNGT6Sw+XNzJMao6yCxJWN+4xW2UryOoXSOVhRVUe9+KZirU",
-    "dist/components/ij-footer.js": "sha384-BWL/pORKKVsFf3NJp672HPAHG98SjDKtcXKTsDqz80KY5iXMWVce5A1vIVmVH2kC"
+    "dist/css/tokens.css": "sha384-zP6Npk2pldCFo8yU7BRGtlXsfaCg61BPk1uI6QuxdabRDonYD0NZj+GSKAvVtsP5",
+    "dist/css/tokens.shadow.css": "sha384-zs90iqBN6GWh142JIsW4VkKT03vuOSPDLTybpzfHm/kGN78/fB0W9yF4EkBVY/jb",
+    "dist/components/ij-footer.js": "sha384-k6rHBD7DQwolVi361Zgb8yp7A44UtH4ZxMCxrqpFY+6MH9k9KsKipOMuiFXA+91v"
   }
 }

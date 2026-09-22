@@ -365,6 +365,15 @@ check('supports the columns layout', comp.includes('[layout="columns"]'));
 // answers and the whole point is lost.
 
 console.log('\nFooter fragments:');
+check('the link rows take --ij-footer-links-justify, defaulting to flex-start',
+  /--_links-justify:\s*var\(--ij-footer-links-justify,\s*flex-start\)/.test(comp) &&
+  /\.links \{[^}]*justify-content: var\(--_links-justify\)/.test(comp),
+  'text-align inherits into the shadow DOM but flex items ignore it, so the rows need their own hook');
+check('columns layout neutralises the horizontal justify',
+  /:host\(\[layout="columns"\]\) \.links \{[^}]*justify-content: flex-start/.test(comp),
+  'a row value must not act on the vertical axis once the links stack');
+check('README documents the alignment hook',
+  read('README.md').includes('--ij-footer-links-justify'));
 check('component honours a provided cross-links slot',
   comp.includes(`this.querySelector('[slot="cross-links"]')`) &&
   comp.includes('<slot name="cross-links">'));

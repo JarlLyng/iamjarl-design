@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.13.0] — 2026-09-23
+
+A hook for aligning the footer's link rows, raised by It's mono's adoption. Closes #41.
+
+### Added
+- **`--ij-footer-links-justify`** on `<ij-footer>` — any `justify-content` value, default `flex-start`, so nothing moves for a site that does not set it.
+
+### Why this was needed
+On a centred footer the labels centred and the links did not. `text-align` inherits through the shadow boundary, so everything that is text followed the page; the link rows are flex containers, and flex items ignore `text-align`. Nothing on the host could reach them.
+
+Measured in a browser with the page set to `text-align: center` and the property set to `center`. Generated links and links slotted from the build-time fragment — It's mono's setup — both centre, at 190 px either side of a 900 px row. With the property unset they sit flush left as before.
+
+### Why a custom property and not `::part`
+`part="links"` would let a host restyle the row in any way, and in doing so make the row's internal structure public API: every later change to the shadow DOM would become a breaking one. A custom property is one deliberate knob, in the two-tier pattern the component already uses for its colours and spacing. In `layout="columns"` the rows become columns, so the property is neutralised there, and a value meant for the horizontal axis never acts on the vertical one. Stacked links already follow `text-align` on their own.
+
+### Documented
+- **`links-label` labels the site's own group**, not the cross-links. The "More from IAMJARL" heading is fixed; setting `links-label` to that text printed it twice, which is the detour the issue describes.
+
 ## [1.12.1] — 2026-09-23
 
 The drift 1.7.0 and 1.7.1 fixed had come back, for the same reason as last time. This release fixes it and removes the reason. Documentation and tooling only; no token, component or footer output changes. Closes #39.
@@ -464,6 +482,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.13.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.13.0
 [1.12.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.12.1
 [1.12.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.12.0
 [1.11.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.11.1
