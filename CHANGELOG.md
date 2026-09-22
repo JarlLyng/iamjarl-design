@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.12.0] — 2026-09-20
+
+Four families declare an accent, so the identity layer stops being inert. No token changed; the sites that inherit nothing still render exactly as before.
+
+### Added
+- **Family accents on four categories** in `apps.json`, emitted as `--ij-color-accent-family` in `dist/identity/<app>.css`:
+
+| Family | Light | Dark | Lowest contrast | Sites |
+|---|---|---|---|---|
+| `fitness` | `#587114` | `#D0FF00` | 5.55:1 | 4 |
+| `music` | `#177082` | `#23ACC7` | 5.71:1 | 5 |
+| `web-tools` | `#217370` | `#35B6B2` | 5.60:1 | 2 |
+| `images` | `#B4401D` | `#DD5931` | 5.55:1 | 2 |
+
+- **13 generated identity sheets**, one per shipped app in a declared family. `play` and the two uncategorised sites declare nothing and still resolve to the primary, which is the half of the contract that keeps opting in optional.
+- **The declared families are now documented in `design.md`**, with the reasoning for the two that involved a real trade-off.
+
+### How the values were picked
+- **Every pair clears the same bar `primary` does** — at least 4.5:1 on its own `background.app`, and able to carry black or white at 4.5:1. `validate.js` already enforced this; nothing here relaxes it.
+- **A first pass landing at 4.50–4.67 was discarded.** Those values are valid and fragile: the validator hard-fails at 4.5, so a value sitting on the line breaks on the next nudge. The set was regenerated against a 5.5 target, and the lowest now sits at 5.55:1.
+- **`fitness` is anchored on `#D0FF00`** because WODrounds and Walkful already ship it, so only the light half was an open question. The cost is visible: lime at a light-mode lightness is olive, and the pair reads as two related colours rather than one.
+
+### Changed
+- **`design.md` said the sheets ship at `dist/accents/<app>.css`.** They have shipped at `dist/identity/` since 1.11.0 — the rename missed this line. It had no consumer to mislead while the layer was inert, which is exactly why it survived.
+- **`<ij-footer>` inlined the entire registry**, so declaring an accent wrote colour data into a component that cannot use one, and served it to every visitor. The bundle now carries a projection of the seven fields the footer actually reads (`id, name, url, category, status, listed, always`); `categories`, `platform`, `consumes` and the `$comment` no longer ship. The file drops from 16.5 KB to 14.2 KB, and all 15 sites' rendered links are byte-identical before and after. This does not affect SRI: a pinned URL such as `@v1.11.1` is immutable, so its hash never changes, and the footer's hash changes with every release anyway because the version is in its header.
+- **Two contract tests asserted the layer was inert** — that every shipped app resolves to the primary, and that `dist/identity/` is empty. Both were correct until this release and would now fail. They are replaced by the invariants that outlive the first opt-in: a declared category reaches every app in it, an undeclared one still resolves to the primary, and a sheet exists for exactly the apps that differ.
+
+### Note
+No site consumes an identity sheet yet. This release makes the accents exist and be correct; adopting one is a per-site decision and a single `<link>`.
+
 ## [1.11.1] — 2026-09-19
 
 The first entry in `patterns/`. Documentation only. Closes #31.
@@ -416,6 +446,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.12.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.12.0
 [1.11.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.11.1
 [1.11.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.11.0
 [1.10.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.10.0

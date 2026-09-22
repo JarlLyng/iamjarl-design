@@ -270,13 +270,13 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.11.1/dist/css/tokens.css"
-  integrity="sha384-L04G8T2ueNJsSeQgLUS3Eje4r9GZywm5MipKrfmFd66VQOrkPDAUfxPzJVQ+/htW"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.12.0/dist/css/tokens.css"
+  integrity="sha384-hD7rMhLWlh7ytHjJ5uguRIVeIDI9gdcN7dpsX9YmQnkPz0cnvVCxdjvGVRyCyQzQ"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.11.1/dist/components/ij-footer.js"
-  integrity="sha384-aa9SbgW/xtP0xM7PgPiJHJC+wc0ZLuWSpUxwf+ynhvenQBkl2T1VMHRkvrDdmmMg"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.12.0/dist/components/ij-footer.js"
+  integrity="sha384-C9+ZWMt/GewrMPkf/iIaAdoe/q4s5ai1UMHweD36uhYoOGu652Lnf/i3SHqUVU+2"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
