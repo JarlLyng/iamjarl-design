@@ -999,9 +999,8 @@ function generateComponent(tokens) {
 
 // The footer reads seven fields and nothing else — it never touches
 // `categories`, `platform` or `consumes`. Inlining the whole registry shipped
-// those to every visitor and, worse, tied this file's SRI hash to them: picking
-// a family accent would change the hash of a component that cannot use one, and
-// every site pinning `integrity` would break over a colour. Project it down.
+// those to every visitor, and once families declared an accent, that meant
+// colour data in a component that cannot use colour. Project it down.
 const FOOTER_FIELDS = ['id', 'name', 'url', 'category', 'status', 'listed', 'always'];
 
 function footerRegistry(registry) {

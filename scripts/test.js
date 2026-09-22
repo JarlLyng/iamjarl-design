@@ -370,10 +370,9 @@ check('component honours a provided cross-links slot',
   comp.includes('<slot name="cross-links">'));
 
 // The bundle inlines the registry, so whatever apps.json gains is served to
-// every visitor and folded into this file's SRI hash. The footer reads seven
-// fields; anything else reaching the bundle means a site pinning `integrity`
-// can be broken by a decision the footer cannot even use — a family accent,
-// for instance.
+// every visitor. The footer reads seven fields; anything else reaching the
+// bundle is weight paid for data the footer cannot use — a family accent, for
+// instance.
 const bundledRegistry = JSON.parse(
   comp.match(/const REGISTRY = (\{[\s\S]*?\n\});/)[1]
 );
@@ -382,7 +381,7 @@ check('the bundled registry is projected, not the whole file',
   'categories, meta and $comment are not read by the footer');
 check('the bundle carries no colour data', !/accent|#[0-9a-f]{3,8}\b/i.test(
   comp.slice(comp.indexOf('const REGISTRY'), comp.indexOf('];', comp.indexOf('const REGISTRY')))),
-  'an accent must never change the footer\'s SRI hash');
+  'the footer cannot use colour, so it must not ship any');
 check('every field the footer reads survives the projection',
   bundledRegistry.apps.every(a => a.id && a.name && a.url && a.status) &&
   bundledRegistry.apps.some(a => a.always) &&
