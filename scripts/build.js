@@ -1108,6 +1108,28 @@ function sriReadmeBlock(version, hashes) {
   ].join('\n');
 }
 
+// Every install line in the README names a version, and each one was bumped by
+// hand at release time — so each release that forgot one left a consumer
+// copying a pin three to five versions old. The SRI block already solved this by
+// being generated; the pins outside it are rewritten the same way. The patterns
+// are the three ways a consumer installs this repo, and nothing else: prose that
+// mentions a version ("deprecated since 1.6.0") is history and stays.
+const README_PINS = [
+  /(iamjarl-design@v)\d+\.\d+\.\d+/g,             // jsDelivr
+  /(iamjarl-design#v)\d+\.\d+\.\d+/g,             // npm from GitHub
+  /(iamjarl-design\.git", from: ")\d+\.\d+\.\d+/g, // Swift Package Manager
+];
+
+function writeReadmePins(version) {
+  const readmePath = path.join(ROOT, 'README.md');
+  const md = fs.readFileSync(readmePath, 'utf-8');
+  const next = README_PINS.reduce((acc, re) => acc.replace(re, `$1${version}`), md);
+  if (next !== md) {
+    fs.writeFileSync(readmePath, next, 'utf-8');
+    console.log('  \u2713 README.md (version pins)');
+  }
+}
+
 function writeSriReadme(version, hashes) {
   const readmePath = path.join(ROOT, 'README.md');
   const md = fs.readFileSync(readmePath, 'utf-8');
@@ -1237,6 +1259,7 @@ async function main() {
     path.join(ROOT, 'dist', 'sri.json'),
     JSON.stringify({ version: tokens.meta.version, algorithm: 'sha384', files: hashes }, null, 2) + '\n'
   );
+  writeReadmePins(tokens.meta.version);
   writeSriReadme(tokens.meta.version, hashes);
 
   // Per-app identity: family accent and display face (empty until one is declared)

@@ -4,6 +4,46 @@ Step-by-step instructions for updating consumer projects between versions.
 
 ---
 
+## v1.7.0 → any later 1.x
+
+Coming from 1.2.x? Read [the section below](#v12x--v170) first — it covers 1.3.0 to 1.7.0 — then this one.
+
+### What changed
+**Nothing broke.** No CSS custom property was renamed or removed between v1.7.0 and today; the `diff` recipe in the section below confirms it for any pair of tags. Package exports have only been added (`./sri.json`, `./identity/*`, `./patterns/*`).
+
+This table gets a row for every release, including the ones where the answer is "nothing". A consumer several releases behind should be able to read one table rather than a changelog. `validate.js` fails a release that does not add its row.
+
+| Release | Added | Anything to do? |
+|---|---|---|
+| **1.7.1** | Documentation only — the previous gap in this file | No |
+| **1.8.0** | `dist/sri.json` and paste-ready `integrity` tags in the README | Only if you pin with SRI — see below |
+| **1.8.1** | Documentation: installing from npm versus loading from the CDN | No |
+| **1.9.0** | Footer top-up now picks the least-connected app; selection no longer depends on the order of `apps.json` | If you inline a footer fragment, re-pull `dist/footers/<app>.html` — every fragment changed. The old one is still valid markup |
+| **1.9.1** | Patternaut in the registry | If you inline a fragment for a music app, re-pull it |
+| **1.9.2** | Every gradient carries its text-safety verdict in the CSS | Check that no text sits on a gradient — only `dark.gradient.primary` with black clears AA |
+| **1.10.0** | The identity layer: `accent` in `apps.json`, per-app sheets | No — it shipped empty |
+| **1.11.0** | Approved display faces; per-app sheets move from `dist/accents/` to `dist/identity/` | No — the old path never held a file |
+| **1.11.1** | [`patterns/photographic-hero.md`](patterns/photographic-hero.md) | No |
+| **1.12.0** | Four families declare an accent, as `--ij-color-accent-family` in `dist/identity/<app>.css`. `ij-footer.js` drops from 16.5 to 14.2 KB, rendering the same links | No — the accent is opt-in, one `<link>` |
+| **1.12.1** | Version pins in the README are generated; this table is enforced | No |
+
+### Who needs to migrate
+- ✅ **Everyone** — bump the version. Nothing you use today changes value or name.
+- ⚠️ **If you pin with `integrity`**, move the tag and the hash together, in one commit, and take the hash from the README or `sri.json` *at the version you move to*. `ij-footer.js` carries the version in its header, so its hash changes with every release. A mismatched hash fails closed: for the footer that is the fallback markup, for `tokens.css` a page with no tokens at all.
+- ⚠️ **If you inline a footer fragment**, re-pull it when you bump past 1.9.0 or 1.9.1. Nothing breaks if you don't; your cross-links just stay as they were.
+
+### New capabilities worth adopting
+- **`integrity` on CDN tags** (1.8.0) — the README block is generated, so the tag and the hash in it always agree.
+- **Your family's accent** (1.12.0) — `dist/identity/<app>.css`, if your app's category has declared one. It gives your site a colour of its own without leaving the system; `primary` is unchanged. [design.md](design.md#family-accent-web-only) lists the families.
+- **The photographic hero** (1.11.1) — if your hero is text on a flat colour and your app has a mood image.
+
+### Action
+- **SPM**: Xcode → File → Packages → Update to Latest Package Versions
+- **npm**: change the tag in `package.json` (`github:jarllyng/iamjarl-design#vX.Y.Z`), then `npm install`
+- **Pinned CDN URL**: change the tag in the `<link>` and `<script>`, and their `integrity`, all at once
+
+---
+
 ## v1.2.x → v1.7.0
 
 ### What changed

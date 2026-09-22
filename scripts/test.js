@@ -541,6 +541,19 @@ check('README block carries the current hashes',
   block.includes(sri.files['dist/components/ij-footer.js']));
 check('README block uses crossorigin', (block.match(/crossorigin="anonymous"/g) || []).length === 2);
 
+// Pins outside the SRI block. README.md sits outside the dist/ drift check, so
+// this is what catches a release built without `npm run build`. The patterns are
+// deliberately broader than any one install method: a pin in a new form still
+// has to be current.
+const pins = [...readme.matchAll(
+  /iamjarl-design(?:\.git", from: "|[@#]v)(\d+\.\d+\.\d+)/g
+)].map(m => m[1]);
+check('the README has install pins to check', pins.length >= 5,
+  `found ${pins.length}; if the install sections moved, this test must move with them`);
+check('every install pin in the README is the current version',
+  pins.every(v => v === tokens.meta.version),
+  `stale: ${[...new Set(pins.filter(v => v !== tokens.meta.version))].join(', ')} — run npm run build`);
+
 console.log();
 if (failed > 0) {
   console.error(`❌ ${failed} test(s) failed.`);
