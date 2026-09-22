@@ -16,6 +16,11 @@ on:
       # validate.js asserts the version in these two agrees with tokens.json
       - 'CHANGELOG.md'
       - 'design.md'
+      # validate.js requires a row for the current version, and test.js checks
+      # the README's pins and SRI block. A file a check reads must be able to
+      # trigger it, or deleting the row is a green PR.
+      - 'MIGRATION.md'
+      - 'README.md'
       - '.github/workflows/**'
 
 permissions:

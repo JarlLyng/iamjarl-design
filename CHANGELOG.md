@@ -18,6 +18,7 @@ The drift 1.7.0 and 1.7.1 fixed had come back, for the same reason as last time.
 - **`build.js` writes the README's install pins** from `package.json`, the way it already writes the SRI block. The three install forms — jsDelivr, npm from GitHub, Swift Package Manager — are rewritten; prose that mentions a version, such as "deprecated since 1.6.0", is history and left alone.
 - **`validate.js` fails a release without a `MIGRATION.md` row**, beside the four places it already checks the version. The row is the one thing that cannot be generated, because what a consumer has to do is a judgement.
 - **A contract test fails when any install pin in the README is not the current version.** The README sits outside the `dist/` drift check, so this is what catches a release built without `npm run build`.
+- **PR CI now runs when `MIGRATION.md` or `README.md` changes.** Both are read by checks — the migration row by `validate.js`, the pins and SRI block by the contract tests — but neither was in the workflow's path filter, so a PR touching only one of them never ran the check that reads it.
 
 ### Why this shape
 Generate what can be derived, check what cannot, and stop writing down what does not need a version. The README pins no longer take a hand edit at all. The migration row still does — and forgetting it now fails CI with the line to add, the way a missing CHANGELOG entry already did.
