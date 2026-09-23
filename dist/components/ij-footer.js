@@ -1,4 +1,4 @@
-// IAMJARL <ij-footer> v1.12.1 — generated, do not edit
+// IAMJARL <ij-footer> v1.13.0 — generated, do not edit
 // Sources: components/select-links.js, components/ij-footer.js, apps.json
 
 const REGISTRY = {
@@ -268,6 +268,19 @@ function selectLinks(registry, siteId, options = {}) {
 // layout="stacked" (default) is the WODrounds shape: groups above one another,
 // links flowing inline. layout="columns" is the Wean Nicotine shape: a grid of
 // groups with links stacked under each heading.
+//
+// links-label names the group holding the site's OWN links (slot="links") and
+// defaults to the app's name. The cross-links heading, "More from IAMJARL", is
+// fixed — setting links-label to it prints the string twice.
+//
+// Alignment follows the page. Labels, tagline and fineprint inherit text-align
+// through the shadow boundary; the link rows are flex and cannot, so they take
+// --ij-footer-links-justify instead (any justify-content value; default
+// flex-start). A centred footer sets both:
+//
+//   ij-footer { text-align: center; --ij-footer-links-justify: center; }
+//
+// In layout="columns" the links stack, and each one already follows text-align.
 
 
 const STYLE = `
@@ -286,6 +299,8 @@ const STYLE = `
   --_size:    var(--ij-font-size-sm, 14px);
   --_focus:   var(--ij-focus-width,  2px);
   --_offset:  var(--ij-focus-offset, 2px);
+  /* Not a token: component API, so a host can align the rows to its layout. */
+  --_links-justify: var(--ij-footer-links-justify, flex-start);
 
   display: block;
   color: var(--_text);
@@ -317,14 +332,20 @@ const STYLE = `
 }
 
 .groups { display: grid; gap: var(--_gap-lg); margin-bottom: var(--_gap-lg); }
-.links { display: flex; flex-wrap: wrap; gap: var(--_gap) var(--_gap-md); }
+.links {
+  display: flex; flex-wrap: wrap; gap: var(--_gap) var(--_gap-md);
+  justify-content: var(--_links-justify);
+}
 
 /* Wean Nicotine's shape: a grid of groups, links stacked under each heading. */
 :host([layout="columns"]) .groups {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: var(--_gap-lg) var(--_gap-lg);
 }
-:host([layout="columns"]) .links { flex-direction: column; gap: var(--_gap); }
+:host([layout="columns"]) .links {
+  flex-direction: column; gap: var(--_gap);
+  justify-content: flex-start;
+}
 
 .fineprint { opacity: var(--ij-opacity-muted, 0.65); }
 .fineprint ::slotted(*) { margin: 0; }

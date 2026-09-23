@@ -51,7 +51,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.12.1")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.13.0")
 ]
 ```
 
@@ -208,7 +208,7 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.12.1/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.13.0/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -228,7 +228,11 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 | `app` | **Required.** An `id` from `apps.json` |
 | `tagline` | Optional line above the links |
 | `layout` | `stacked` (default, the WODrounds shape) or `columns` (the Wean Nicotine shape) |
-| `links-label` | Heading above your own links; defaults to the app's name |
+| `links-label` | Heading above your own `slot="links"` links; defaults to the app's name. The cross-links heading, "More from IAMJARL", is fixed |
+
+| Custom property | |
+| --- | --- |
+| `--ij-footer-links-justify` | How the link rows align: any `justify-content` value, default `flex-start`. Labels, tagline and fineprint already follow the page's `text-align`; the rows are flex and cannot, so a centred footer sets both: `ij-footer { text-align: center; --ij-footer-links-justify: center; }`. In `layout="columns"` the links stack and follow `text-align` on their own |
 
 ### Two ways to take it, and which one you want
 
@@ -244,7 +248,7 @@ a build step, install it instead.**
 | Needs `integrity`? | yes, worth it | no — nothing crosses an origin |
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.12.1
+npm install github:jarllyng/iamjarl-design#v1.13.0
 ```
 
 ```js
@@ -270,13 +274,13 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.12.1/dist/css/tokens.css"
-  integrity="sha384-RAdaOqLB7p6ICG0wa1VNn3gmJyvzeB6GBVLhfobK4wyVoMtg9uocZ6shnhNZKg/0"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.13.0/dist/css/tokens.css"
+  integrity="sha384-zP6Npk2pldCFo8yU7BRGtlXsfaCg61BPk1uI6QuxdabRDonYD0NZj+GSKAvVtsP5"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.12.1/dist/components/ij-footer.js"
-  integrity="sha384-BWL/pORKKVsFf3NJp672HPAHG98SjDKtcXKTsDqz80KY5iXMWVce5A1vIVmVH2kC"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.13.0/dist/components/ij-footer.js"
+  integrity="sha384-k6rHBD7DQwolVi361Zgb8yp7A44UtH4ZxMCxrqpFY+6MH9k9KsKipOMuiFXA+91v"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
@@ -298,7 +302,7 @@ The component builds the cross-links at runtime, so crawlers that do not execute
 pre-rendered fragment for your app and the component will slot it instead of regenerating:
 
 ```bash
-curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.12.1/dist/footers/botlens.html
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.13.0/dist/footers/botlens.html
 ```
 
 ```html
