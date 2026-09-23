@@ -2,6 +2,22 @@
 
 This repo is a shared design system. All IAMJARL apps and websites MUST use these tokens. No hardcoded colors, spacing, or radius values.
 
+## Boundaries: work only in this repo
+
+- Commit, push and open pull requests **only in this repo**. Never edit, commit to, push to or
+  open a pull request in a consumer repo (any app, site or the portfolio hub), even when a
+  release here makes a change there obvious.
+- To ask a consumer to adopt something, **open an issue in that repo**: what changed, the one
+  line to change, how to verify. A "no" is a real answer.
+- Consumers ask this repo for things the same way, through issues here.
+- If a task seems to need a change in another repo, stop, open the issue, and carry on with what
+  this repo can do.
+
+The strategy behind this repo lives in the private hub,
+[iamjarl-strategy](https://github.com/JarlLyng/iamjarl-strategy): `DESIGN.md` is the design strategy
+this repo implements, `VOICE.md` the voice, and `CONVENTIONS.md` the rules that span repos, including
+the one above.
+
 ## Source files
 - `tokens.json` — single source of truth for all design tokens
 - `design.md` — design rules, UI recipes, and non-negotiables
@@ -126,4 +142,10 @@ const theme = colors[scheme]; // theme.primary, theme.text.primary, etc.
 - **Cards**: bg=`background.card`, border=`border.subtle`, radius=`lg`
 
 ## Updating the design system
-If a project needs a new token, do NOT invent one locally. Update `tokens.json` in this repo first, bump `meta.version`, then update the dependency in consuming projects.
+
+If a consumer needs a token that does not exist, do not invent one locally, and do not edit this
+repo from the consumer's session. Open an issue here describing the need.
+
+A session working in this repo adds the token, bumps `meta.version` and releases. It then opens
+an issue in each consumer that should adopt the change, with the one line to change and how to
+verify. It does not edit the consumers.

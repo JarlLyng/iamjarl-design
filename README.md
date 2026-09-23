@@ -384,7 +384,7 @@ Rule: `--ij-` + group + kebab(key). Two non-obvious mappings: **`background` →
 - `--ij-color-state-{success,warning,error}` are **text/foreground** colors, tuned per mode to meet WCAG AA on `--ij-color-bg-app`. Never use a raw fill color as text.
 
 ### Swift accessors
-Mode-aware colors take the `ColorScheme`: `DesignTokens.Common.primary(scheme)`, `.Text.disabled(scheme)`, `.State.error(scheme)`. Non-color scales are static: `DesignTokens.Spacing.md`, `.Radius.lg`, `.ZIndex.modal`, `.Opacity.disabled`. See [CLAUDE.md](CLAUDE.md) for the full accessor list.
+Mode-aware colors take the `ColorScheme`: `DesignTokens.Common.primary(scheme)`, `.Text.disabled(scheme)`, `.State.error(scheme)`. Non-color scales are static: `DesignTokens.Spacing.md`, `.Radius.lg`, `.ZIndex.modal`, `.Opacity.disabled`. See [AGENTS.md](AGENTS.md) for the full accessor list.
 
 ---
 
