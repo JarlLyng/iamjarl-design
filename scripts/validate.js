@@ -294,6 +294,22 @@ function validateVersionCoherence(version) {
   } catch (e) {
     fail(`Could not read design.md: ${e.message}`);
   }
+
+  // MIGRATION.md is the one place written for consumers several releases
+  // behind, and it is hand-written, so it cannot be generated. 1.7.1 filled a
+  // five-release gap in it; by 1.11.1 the gap was back at eight. A release now
+  // cannot ship without its row, even when the row says "No".
+  try {
+    const migration = read('MIGRATION.md');
+    const row = new RegExp(`^\\| \\*\\*${version.replace(/\./g, '\\.')}\\*\\* \\|`, 'm');
+    if (!row.test(migration)) {
+      fail(`MIGRATION.md has no row for ${version} — add "| **${version}** | … | … |", even if the answer is "No"`);
+    } else {
+      pass(`MIGRATION.md has a row for ${version}`);
+    }
+  } catch (e) {
+    fail(`Could not read MIGRATION.md: ${e.message}`);
+  }
 }
 
 function validateContrast(tokens) {

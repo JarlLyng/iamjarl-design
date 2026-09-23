@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.12.1] — 2026-09-23
+
+The drift 1.7.0 and 1.7.1 fixed had come back, for the same reason as last time. This release fixes it and removes the reason. Documentation and tooling only; no token, component or footer output changes. Closes #39.
+
+### Fixed
+- **The README installed old versions.** Four pins had fallen three to five releases behind while the SRI block beside them was current, so the file disagreed with itself: Swift `from: "1.8.1"`, the footer `@v1.8.1`, npm `#v1.8.0`, and the fragment `curl` at `@v1.8.1`. The issue found three; the fourth was in the crawler section.
+- **`MIGRATION.md` stopped at v1.7.0** — eight releases behind, having been five behind when 1.7.1 filled it. It now has a section from v1.7.0 on, with a row for every release, including the ones where the answer is "No".
+- **Three range claims in the README named an end version** ("v1.1 through v1.8", "1.2.x → 1.8.1", PageLens "behind `v1.8.0`" — it is on v1.9.0). A range with an end goes stale at the next release; they are now stated open-ended.
+
+### Changed
+- **`build.js` writes the README's install pins** from `package.json`, the way it already writes the SRI block. The three install forms — jsDelivr, npm from GitHub, Swift Package Manager — are rewritten; prose that mentions a version, such as "deprecated since 1.6.0", is history and left alone.
+- **`validate.js` fails a release without a `MIGRATION.md` row**, beside the four places it already checks the version. The row is the one thing that cannot be generated, because what a consumer has to do is a judgement.
+- **A contract test fails when any install pin in the README is not the current version.** The README sits outside the `dist/` drift check, so this is what catches a release built without `npm run build`.
+- **PR CI now runs when `MIGRATION.md` or `README.md` changes.** Both are read by checks — the migration row by `validate.js`, the pins and SRI block by the contract tests — but neither was in the workflow's path filter, so a PR touching only one of them never ran the check that reads it.
+
+### Why this shape
+Generate what can be derived, check what cannot, and stop writing down what does not need a version. The README pins no longer take a hand edit at all. The migration row still does — and forgetting it now fails CI with the line to add, the way a missing CHANGELOG entry already did.
+
 ## [1.12.0] — 2026-09-20
 
 Four families declare an accent, so the identity layer stops being inert. No token changed; the sites that inherit nothing still render exactly as before.
@@ -446,6 +464,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.12.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.12.1
 [1.12.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.12.0
 [1.11.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.11.1
 [1.11.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.11.0

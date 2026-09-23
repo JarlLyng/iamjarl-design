@@ -12,7 +12,7 @@ It is designed to work equally well for **humans** (design overview) and **AI to
 
 [![Co-created with AI](https://madebyhuman.iamjarl.com/badges/co-created-white.svg)](https://madebyhuman.iamjarl.com)
 
-> **⚠️ Upgrading?** Everything from v1.1 through v1.8 is a safe bump — nothing has been renamed or removed since v1.0. The last breaking change was v1.0, which renamed the `typography.lineHeights` keys (`tight/normal/relaxed/…` → `xs/sm/base/lg/xl/xxl`). Earlier: v0.4 changed the error color and switched the npm package to ESM; v0.3 prefixed all CSS variables with `--ij-`. See **[MIGRATION.md](MIGRATION.md)** for step-by-step upgrade guides.
+> **⚠️ Upgrading?** Every 1.x release is a safe bump — no token or CSS variable has been renamed or removed since v1.0. The last breaking change was v1.0, which renamed the `typography.lineHeights` keys (`tight/normal/relaxed/…` → `xs/sm/base/lg/xl/xxl`). Earlier: v0.4 changed the error color and switched the npm package to ESM; v0.3 prefixed all CSS variables with `--ij-`. See **[MIGRATION.md](MIGRATION.md)** for step-by-step upgrade guides.
 
 ---
 
@@ -51,7 +51,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.8.1")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.12.1")
 ]
 ```
 
@@ -208,7 +208,7 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.8.1/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.12.1/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -244,7 +244,7 @@ a build step, install it instead.**
 | Needs `integrity`? | yes, worth it | no — nothing crosses an origin |
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.8.0
+npm install github:jarllyng/iamjarl-design#v1.12.1
 ```
 
 ```js
@@ -252,9 +252,9 @@ import '@iamjarl/design-tokens/components';   // registers <ij-footer>
 import '@iamjarl/design-tokens/css';          // the token layer
 ```
 
-Pin the tag in the dependency, not just the range. PageLens does this and its lockfile resolves to
-the exact commit behind `v1.8.0`, which is a stronger guarantee than a tag URL — a tag can in
-principle be moved, a commit cannot.
+Pin the tag in the dependency, not just the range. PageLens does this and its lockfile resolves the
+tag to an exact commit, which is a stronger guarantee than a tag URL — a tag can in principle be
+moved, a commit cannot.
 
 The cross-link fragment works either way: fetch `dist/footers/<app>.html` during the build, or read
 it from `node_modules/@iamjarl/design-tokens/dist/footers/`.
@@ -270,13 +270,13 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.12.0/dist/css/tokens.css"
-  integrity="sha384-hD7rMhLWlh7ytHjJ5uguRIVeIDI9gdcN7dpsX9YmQnkPz0cnvVCxdjvGVRyCyQzQ"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.12.1/dist/css/tokens.css"
+  integrity="sha384-RAdaOqLB7p6ICG0wa1VNn3gmJyvzeB6GBVLhfobK4wyVoMtg9uocZ6shnhNZKg/0"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.12.0/dist/components/ij-footer.js"
-  integrity="sha384-C9+ZWMt/GewrMPkf/iIaAdoe/q4s5ai1UMHweD36uhYoOGu652Lnf/i3SHqUVU+2"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.12.1/dist/components/ij-footer.js"
+  integrity="sha384-BWL/pORKKVsFf3NJp672HPAHG98SjDKtcXKTsDqz80KY5iXMWVce5A1vIVmVH2kC"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
@@ -298,7 +298,7 @@ The component builds the cross-links at runtime, so crawlers that do not execute
 pre-rendered fragment for your app and the component will slot it instead of regenerating:
 
 ```bash
-curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.8.1/dist/footers/botlens.html
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.12.1/dist/footers/botlens.html
 ```
 
 ```html
@@ -394,7 +394,7 @@ When updating to a new version, check **[MIGRATION.md](MIGRATION.md)** for break
 
 | From → To | Breaking? | Affects |
 | --- | --- | --- |
-| 1.2.x → 1.8.1 | No | Six releases, all additive — no CSS variable renamed or removed. One caveat: don't adopt `--ij-color-primary-rgb`, deprecated in 1.6.0 in favour of `color-mix()` |
+| 1.2.x → any later 1.x | No | All additive — no CSS variable renamed or removed. One caveat: don't adopt `--ij-color-primary-rgb`, deprecated in 1.6.0 in favour of `color-mix()`. MIGRATION.md has a row for every release |
 | 1.1.x → 1.2.0 | No | Nothing in the tokens. Repo maintenance only: Node floor raised to 22, version-coherence checks, CI fixes |
 | 1.0.x → 1.1.0 | No | SwiftUI only — macOS deployment floor lowered 13 → 11. No token values changed |
 | 0.5.x → 1.0.0 | Yes | `typography.lineHeights` keys renamed (`tight/normal/relaxed/…` → `xs/sm/base/lg/xl/xxl`). Otherwise additive: state-text colors, primary hover/pressed/subtle, disabled tokens, z-index, opacity |
