@@ -57,6 +57,12 @@ jobs:
       - name: Run contract tests
         run: node scripts/test.js
 
+      # The components' DOM, focus and keyboard behaviour, in the Chrome the
+      # runner already ships. No npm dependency; CI=true makes a missing Chrome
+      # a failure rather than a skip.
+      - name: Run browser tests
+        run: node scripts/test-browser.js
+
       - name: Verify npm pack contents
         run: npm pack --dry-run
 

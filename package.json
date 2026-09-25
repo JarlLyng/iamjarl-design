@@ -1,6 +1,6 @@
 {
   "name": "@iamjarl/design-tokens",
-  "version": "1.13.1",
+  "version": "1.14.0",
   "description": "IAMJARL Design System tokens for web and React Native",
   "type": "module",
   "engines": {
@@ -17,6 +17,8 @@
     "./css": "./dist/css/tokens.css",
     "./css/shadow": "./dist/css/tokens.shadow.css",
     "./components": "./dist/components/ij-footer.js",
+    "./components/footer": "./dist/components/ij-footer.js",
+    "./components/nav": "./dist/components/ij-nav.js",
     "./footers/*": "./dist/footers/*",
     "./identity/*": "./dist/identity/*",
     "./apps.json": "./apps.json",
@@ -36,6 +38,7 @@
     "build": "node scripts/build.js",
     "validate": "node scripts/validate.js",
     "test": "node scripts/test.js",
+    "test:browser": "node scripts/test-browser.js",
     "serve": "npx --yes serve . --listen 3000",
     "dev": "npm run build && npm run serve"
   },

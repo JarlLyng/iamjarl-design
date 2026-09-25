@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.14.0] — 2026-09-26
+
+`<ij-nav>`, the shared site navigation, modelled on Echolume's header. The second component, and the first with browser tests. Closes #46.
+
+### Added
+- **`dist/components/ij-nav.js`**, exported as `@iamjarl/design-tokens/components/nav`, with SRI in `sri.json` and in the README's generated block. `./components/footer` is added as an alias for the existing `./components`.
+- **Slots, not generated links:** `brand`, up to three `links`, one `secondary`, one `cta`. Every link is in light DOM, in the served HTML, so crawlers that do not run JavaScript see the whole nav, and without JavaScript it is a row of plain links.
+- **What the component owns:** a `<nav>` landmark and a skip link; `aria-current="page"` on the link for this page (clean URLs and `index.html` included, in-page anchors never), unless the site set one; sticky, translucent and blurred, solid where `backdrop-filter` is missing or reduced transparency is preferred; and **one row below 768px**, with the links folded behind a disclosure button that opens with Enter, closes with Escape or a click outside, and returns focus.
+- **`cta-after="<selector>"`** holds the nav's CTA while the hero's is on screen. One CTA above the fold is a rule in the hub, and Echolume's two differently labelled accent buttons were a critique finding.
+- **Console warnings for the rules:** a fourth link, Privacy or Support in the nav, a second CTA or secondary item, a missing brand, and a CTA reporting a `placement` other than `nav`. Nothing is hidden.
+- **`components/nav-rules.js`**, the rules as pure functions, tested without a DOM like the footer's `select-links.js`.
+- **Browser tests with no dependency.** `scripts/browser.js` drives Chrome over the DevTools protocol with Node's built-in `WebSocket`; `scripts/test-browser.js` runs 39 checks in about four seconds, in PR CI, where a missing Chrome fails the run. `--serve` opens the same fixtures for looking at by hand.
+
+### The accent fills; it does not write
+Echolume's header is 75% opaque and draws hover and current links in its accent. Compositing that bar over the worst case beneath it — white under a dark bar, black under a light one — shows why that cannot carry over:
+
+| At opacity 0.75 | Light | Dark |
+|---|---|---|
+| `text.secondary` | 6.26:1 | 6.69:1 |
+| a family accent as text, worst of the four | 3.02:1 | 2.75:1 |
+
+Keeping an accent AA on the bar needs 0.94 in light mode, which leaves no translucency worth having. So the accent is carried by the dot beside the wordmark and by the CTA's opaque fill. Links are `text.secondary`, turn `text.primary` on hover and for the current page, and the current page is underlined as well, so colour is not the only signal. The focus ring is `text.primary` for the same reason. A contract test re-derives the text floor from `color.js` (0.58 light, 0.64 dark) and fails if the bar's opacity drops below it, and another fails if the accent is ever used as a text colour on it. The general rule is now in `design.md`, *Text on a translucent surface*.
+
+This applies to Echolume as it ships today: with its new teal accent, its hover links fall to 3.86:1 when a light screenshot scrolls under the bar. Adopting the component fixes that.
+
+### Decided along the way
+- **Focus order is DOM order.** Brand, links, secondary, CTA — so on a wide screen the secondary item sits before the CTA, where Echolume has it after. On a phone the folded menu moves after the disclosure button, so Tab goes from the button into what it opened.
+- **The CTA is design.md's primary button on the accent**, with `onPrimary` on it (the equivalence 1.13.1 put under test), and `radius.md` rather than Echolume's pill: the system allows `sm`, `md` and `lg` only.
+- **No invented hover colour** (rule 8): the CTA's label underlines. The system has no `accentHover`, and hand-rolling one is what the rule forbids.
+- **The dot is skipped when the brand carries its own mark**, so TonVault's waveform logo does not get a second one beside it.
+
+### Fixed before release, by the browser tests
+- **`cta-after` flashed.** Its first state came from the observer's first callback, after the bar had painted, so the nav's CTA appeared and then faded out on every page load, focusable while it did. The first state is now set before paint, with transitions off.
+- **The current-page mark ran the full width of the folded menu**, where links stretch to full-width targets, and read as a divider. It is a text underline now, which follows the text.
+- **An in-page anchor would have been marked as the current page.** On a one-page site, `/#features` matched the home page.
+
+### Changed
+- `build.js` shares one `inline()` between the two component bundles. The footer's registry projection, which 1.12.0 left indented inside the function that uses it, is at module level.
+
 ## [1.13.1] — 2026-09-26
 
 The identity sheets are loaded like `tokens.css` — one pinned `<link>` per site — but `sri.json` did not list them, so the first adopter had to compute a hash by hand. Closes #44 and #45, which reported it twice from Echolume's adoption.
@@ -500,6 +539,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.14.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.14.0
 [1.13.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.13.1
 [1.13.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.13.0
 [1.12.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.12.1
