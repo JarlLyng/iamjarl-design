@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.13.1] — 2026-09-26
+
+The identity sheets are loaded like `tokens.css` — one pinned `<link>` per site — but `sri.json` did not list them, so the first adopter had to compute a hash by hand. Closes #44 and #45, which reported it twice from Echolume's adoption.
+
+### Fixed
+- **`sri.json` now has an entry for every identity sheet**: 16 files, up from 3. Echolume's hand-computed hash for v1.13.0 was checked against the file and is correct, so publishing hashes changes nothing for a site that has already adopted.
+- **The build hashed before it wrote the identity sheets.** They were generated after `sri.json`, so adding them to the manifest would have hashed the previous build's files. They are now written first.
+- **A sheet the build no longer generates is removed.** `dist/identity/` had no clean-up, so if a family dropped its accent, the old sheet would have kept shipping — and would now have kept its hash too.
+- **`apps.json` marked three sites as rendering `<ij-footer>`; seven do.** It's mono, BotLens, PageLens and TrimrPix for iOS were missing. Each was checked against its live site: six serve the element in their HTML, and PageLens renders it from React.
+
+### Added
+- **The README documents adopting an identity sheet**: the `<link>` with `integrity`, a one-line command that prints a sheet's hash from `sri.json`, how to use the accent as text, as a fill and translucent, and the rule #45 found in practice — a site that is always dark needs `class="dark"` on `<html>`, or light-mode visitors get the light accent on a dark page.
+- **The fill advice is held by a test.** The README says to put `onPrimary` on the accent. That is safe only because `onPrimary` is the same colour as `background.app` in both modes, so an accent that clears 4.5:1 on its ground clears it under `onPrimary` too. A contract test asserts that equivalence, so the advice cannot silently stop being true.
+- **Contract tests**: every identity sheet has an entry; every entry points at a file that exists (it used to crash the suite instead of failing); footer fragments are deliberately not listed.
+
+### Not changed
+**The footer fragments stay out of `sri.json`**, and the README now says why. A site copies them into its own HTML at build time; the browser never fetches them as a resource, so an `integrity` attribute would have nothing to check.
+
 ## [1.13.0] — 2026-09-23
 
 A hook for aligning the footer's link rows, raised by It's mono's adoption. Closes #41.
@@ -482,6 +500,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.13.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.13.1
 [1.13.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.13.0
 [1.12.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.12.1
 [1.12.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.12.0

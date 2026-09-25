@@ -1070,19 +1070,24 @@ async function generateFooterFragments(tokens) {
 // SUBRESOURCE INTEGRITY
 // ============================================================
 
-// Sites load these three from a pinned CDN URL. A hash makes that pin
-// tamper-evident, and jsDelivr serves /gh/ paths byte-for-byte, so a hash
-// computed here is valid for the URL. Generated rather than hand-kept, because
-// it changes every release and a stale integrity attribute fails closed.
+// Sites load these from a pinned CDN URL. A hash makes that pin tamper-evident,
+// and jsDelivr serves /gh/ paths byte-for-byte, so a hash computed here is valid
+// for the URL. Generated rather than hand-kept, because it changes every release
+// and a stale integrity attribute fails closed.
+//
+// The identity sheets are loaded the same way — one pinned <link> per site — so
+// they are hashed too. The footer fragments are not: a site copies them into its
+// own HTML at build time, and SRI only applies to a resource the browser fetches.
 const SRI_FILES = [
   'dist/css/tokens.css',
   'dist/css/tokens.shadow.css',
   'dist/components/ij-footer.js',
 ];
 
-function computeSri() {
+function computeSri(identityIds) {
   const out = {};
-  for (const rel of SRI_FILES) {
+  const identity = [...identityIds].sort().map(id => `dist/identity/${id}.css`);
+  for (const rel of [...SRI_FILES, ...identity]) {
     const buf = fs.readFileSync(path.join(ROOT, rel));
     out[rel] = 'sha384-' + crypto.createHash('sha384').update(buf).digest('base64');
   }
@@ -1253,20 +1258,32 @@ async function main() {
     writeFile(path.join(ROOT, 'dist', 'footers', `${id}.html`), html);
   }
 
+  // Per-app identity: family accent and display face. The directory is wholly
+  // generated, so a sheet for an app that no longer differs is removed rather
+  // than left to ship — otherwise dropping a family's accent would keep serving it.
+  const identity = await generateIdentitySheets(tokens);
+  const identityDir = path.join(ROOT, 'dist', 'identity');
+  const keep = new Set(identity.map(([id]) => `${id}.css`));
+  if (fs.existsSync(identityDir)) {
+    for (const f of fs.readdirSync(identityDir)) {
+      if (f.endsWith('.css') && !keep.has(f)) {
+        fs.rmSync(path.join(identityDir, f));
+        console.log(`  \u2717 dist/identity/${f} (removed — no longer differs)`);
+      }
+    }
+  }
+  for (const [id, css] of identity) {
+    writeFile(path.join(identityDir, `${id}.css`), css);
+  }
+
   // Integrity hashes, computed AFTER the files they cover are written
-  const hashes = computeSri();
+  const hashes = computeSri(identity.map(([id]) => id));
   writeFile(
     path.join(ROOT, 'dist', 'sri.json'),
     JSON.stringify({ version: tokens.meta.version, algorithm: 'sha384', files: hashes }, null, 2) + '\n'
   );
   writeReadmePins(tokens.meta.version);
   writeSriReadme(tokens.meta.version, hashes);
-
-  // Per-app identity: family accent and display face (empty until one is declared)
-  const identity = await generateIdentitySheets(tokens);
-  for (const [id, css] of identity) {
-    writeFile(path.join(ROOT, 'dist', 'identity', `${id}.css`), css);
-  }
 
   console.log(
     `\nDone! Generated 8 platform files, ${fragments.length} footer fragments` +
