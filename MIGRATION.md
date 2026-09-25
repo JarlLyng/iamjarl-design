@@ -27,6 +27,7 @@ This table gets a row for every release, including the ones where the answer is 
 | **1.12.0** | Four families declare an accent, as `--ij-color-accent-family` in `dist/identity/<app>.css`. `ij-footer.js` drops from 16.5 to 14.2 KB, rendering the same links | No — the accent is opt-in, one `<link>` |
 | **1.12.1** | Version pins in the README are generated; this table is enforced | No |
 | **1.13.0** | `--ij-footer-links-justify` aligns the footer's link rows | Only if your footer is centred or right-aligned — set it alongside `text-align` |
+| **1.13.1** | `sri.json` lists every identity sheet; the README documents adopting one | If you pin an identity sheet with `integrity`, take the hash from `sri.json` from now on |
 
 ### Who needs to migrate
 - ✅ **Everyone** — bump the version. Nothing you use today changes value or name.
