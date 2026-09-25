@@ -51,7 +51,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.13.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.14.0")
 ]
 ```
 
@@ -208,7 +208,7 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.13.0/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.14.0/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -248,7 +248,7 @@ a build step, install it instead.**
 | Needs `integrity`? | yes, worth it | no — nothing crosses an origin |
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.13.0
+npm install github:jarllyng/iamjarl-design#v1.14.0
 ```
 
 ```js
@@ -274,13 +274,18 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.13.0/dist/css/tokens.css"
-  integrity="sha384-zP6Npk2pldCFo8yU7BRGtlXsfaCg61BPk1uI6QuxdabRDonYD0NZj+GSKAvVtsP5"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.14.0/dist/css/tokens.css"
+  integrity="sha384-3gm9wGHkmijzQ4E/h0lLfvRv+cXmYOy3WrlOHkB5hMygetQ6IrcGtK/wrQkpNVjh"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.13.0/dist/components/ij-footer.js"
-  integrity="sha384-k6rHBD7DQwolVi361Zgb8yp7A44UtH4ZxMCxrqpFY+6MH9k9KsKipOMuiFXA+91v"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.14.0/dist/components/ij-footer.js"
+  integrity="sha384-JZeP+8h62QdrK59UteKHul9p3OBMJ8ALjYB2GwSJM3FPfxBqp/h/kaq/KbZUL63s"
+  crossorigin="anonymous"></script>
+
+<script type="module"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.14.0/dist/components/ij-nav.js"
+  integrity="sha384-vSRD6pOG+4+/gjqnIHkGsFOsw5NW1vxWWc1WZ9XEpEZEtKa4ON/VNpC24zaHHsY8"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
@@ -302,7 +307,7 @@ The component builds the cross-links at runtime, so crawlers that do not execute
 pre-rendered fragment for your app and the component will slot it instead of regenerating:
 
 ```bash
-curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.13.0/dist/footers/botlens.html
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.14.0/dist/footers/botlens.html
 ```
 
 ```html
@@ -342,6 +347,115 @@ the mode your site chose.
 
 Edit [`apps.json`](apps.json), run `node scripts/validate.js && node scripts/build.js`, and open a
 PR. Every consuming site picks it up on its next version bump.
+
+---
+
+## Web component: `<ij-nav>`
+
+The shared site navigation. Where the footer is the same on every site, the nav carries each site's
+name and its most important button, so **it shares behaviour, not content**: you supply the links,
+it supplies the landmark, the sticky translucent bar, the phone layout and the keyboard handling.
+
+```html
+<script type="module"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.14.0/dist/components/ij-nav.js"></script>
+
+<ij-nav>
+  <a slot="brand" href="/">Echolume</a>
+  <a slot="links" href="/how-it-works.html">How it works</a>
+  <a slot="links" href="/obs-guide.html">OBS Guide</a>
+  <a slot="links" href="/twitch-guide.html">Twitch</a>
+  <a slot="secondary" href="https://github.com/JarlLyng/echolume">GitHub</a>
+  <a slot="cta" href="https://apps.apple.com/app/…"
+     data-umami-event="store-click" data-umami-event-placement="nav">Download</a>
+</ij-nav>
+<main id="main">…</main>
+```
+
+Place it **directly in `<body>`**: it is `position: sticky`, and a sticky element only sticks within
+its parent. For the pinned-with-`integrity` version, use the SRI block above.
+
+| Slot | |
+| --- | --- |
+| `brand` | **Required.** Your wordmark, linking home. A dot in your family accent sits beside it, unless the link carries its own mark (an `<svg>` or `<img>`) |
+| `links` | Up to three. The one for this page gets `aria-current="page"`, unless you set it yourself |
+| `secondary` | Optional, one. A quiet button — GitHub, a changelog |
+| `cta` | One. Your store link, filled with your family accent |
+
+| Attribute | |
+| --- | --- |
+| `label` | The landmark's `aria-label`. Default `Main` |
+| `skip-to` | The id the skip link jumps to. Default `main`. No element with that id, no skip link — and a console warning |
+| `cta-after` | A selector for your hero's CTA. While it is on screen, the nav's CTA waits, so there is one call to action above the fold |
+
+**What it does for you:**
+
+- **Sticky, translucent at 0.75, blurred.** Solid where `backdrop-filter` is missing or the visitor
+  prefers reduced transparency. 0.75 is above the floor at which `text.*` stays AA over anything that
+  scrolls underneath (see design.md, *Text on a translucent surface*).
+- **One row below 768px.** Brand and CTA stay, the links and secondary item fold behind a button
+  with `aria-expanded`. Escape closes it and returns focus; so does a click outside.
+- **Focus in visual order**, a skip link first, and a visible ring on everything.
+- **Console warnings** for what the rules say does not belong: a fourth link, Privacy or Support in
+  the nav, a second CTA, a CTA reporting `placement="hero"`. Nothing is hidden: every link still
+  renders, and the site decides.
+
+**Before the script loads**, `<ij-nav>` is a row of plain links — which is also what a crawler sees.
+To make that state look like a bar and avoid a jump on upgrade:
+
+```css
+ij-nav:not(:defined) {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--ij-spacing-lg);
+  padding: var(--ij-spacing-md) var(--ij-spacing-xxxl);
+}
+```
+
+Attributes and slots only, so it works unchanged in React, where `<ij-nav>` is just an element.
+
+---
+
+## Family accent: `dist/identity/<app>.css`
+
+A colour your site may lean on — its hero, its CTA, a headline mark — without leaving the system.
+It is declared per family in [`apps.json`](apps.json), and [design.md](design.md#the-declared-families)
+lists which families have one. `primary` does not change. If your app has no file in
+[`dist/identity/`](dist/identity), there is nothing to adopt, and your site keeps the primary.
+
+```html
+<!-- tokens.css first, from the SRI block above -->
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.14.0/dist/identity/<app>.css"
+  integrity="<from sri.json, see below>"
+  crossorigin="anonymous">
+```
+
+**The hash is in `sri.json`, at the same version as the tag.** Every sheet has an entry. This prints
+yours:
+
+```bash
+curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.14.0/dist/sri.json | grep 'identity/<app>.css'
+```
+
+Each sheet carries the version in its header, so its hash changes every release. Move the tag and
+the hash together, as with `tokens.css`.
+
+**Using it:**
+
+- **As text or an icon** on `background.app`: `color: var(--ij-color-accent-family)`. Every accent
+  clears 4.5:1 on its own ground; `validate.js` refuses one that does not.
+- **As a fill**, put `var(--ij-color-on-primary)` on it. That is not a coincidence: `onPrimary` is
+  the same colour as `background.app` in both modes, so an accent that clears 4.5:1 on its ground
+  clears 4.5:1 under `onPrimary` too. A contract test holds that equivalence in place.
+- **Translucent**: `color-mix(in srgb, var(--ij-color-accent-family) 15%, transparent)`, or the
+  `--ij-color-accent-family-rgb` triplet the sheet also sets.
+
+**A site that is always dark must say so.** The sheet sets the light value on `:root` and switches
+under `prefers-color-scheme: dark`, the same as `tokens.css`. A site that is dark regardless of the
+system needs `class="dark"` on `<html>`, or a visitor in light mode gets the light accent on a dark
+page. Echolume does exactly this.
+
+**Not listed in `sri.json`: the footer fragments.** You copy them into your own HTML at build time,
+and the browser never fetches them as a resource, so an `integrity` attribute has nothing to check.
 
 ---
 

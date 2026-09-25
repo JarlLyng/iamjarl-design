@@ -981,21 +981,19 @@ function generateDTS(tokens) {
 // COMPONENTS
 // ============================================================
 
-// The component ships as ONE self-contained ESM file with the registry baked
-// in: a single script tag, no module resolution on the CDN, and no runtime
-// fetch of apps.json that could fail or hit CORS. Sources stay separate files
-// so the pure logic can be tested without a DOM.
-function generateComponent(tokens) {
-  const registry = JSON.parse(fs.readFileSync(path.join(ROOT, 'apps.json'), 'utf-8'));
-  const src = name => fs.readFileSync(path.join(ROOT, 'components', name), 'utf-8');
+// Both components ship as ONE self-contained ESM file each: a single script
+// tag, no module resolution on the CDN, and no runtime fetch that could fail or
+// hit CORS. Sources stay separate files so the pure logic can be tested without
+// a DOM.
+const componentSrc = name => fs.readFileSync(path.join(ROOT, 'components', name), 'utf-8');
 
-  // Inline the modules: drop their local imports, keep everything else.
-  const inline = code =>
-    code
-      .split('\n')
-      .filter(line => !/^import .* from '\.\/.*';$/.test(line))
-      .join('\n')
-      .replace(/^export (const|function|class) /gm, '$1 ');
+// Inline a module: drop its local imports, keep everything else.
+const inline = code =>
+  code
+    .split('\n')
+    .filter(line => !/^import .* from '\.\/.*';$/.test(line))
+    .join('\n')
+    .replace(/^export (const|function|class) /gm, '$1 ');
 
 // The footer reads seven fields and nothing else — it never touches
 // `categories`, `platform` or `consumes`. Inlining the whole registry shipped
@@ -1013,19 +1011,34 @@ function footerRegistry(registry) {
   };
 }
 
+function generateComponent(tokens) {
+  const registry = JSON.parse(fs.readFileSync(path.join(ROOT, 'apps.json'), 'utf-8'));
   return [
     `// IAMJARL <ij-footer> v${tokens.meta.version} — generated, do not edit`,
     `// Sources: components/select-links.js, components/ij-footer.js, apps.json`,
     '',
     `const REGISTRY = ${JSON.stringify(footerRegistry(registry), null, 2)};`,
     '',
-    inline(src('select-links.js')).trim(),
+    inline(componentSrc('select-links.js')).trim(),
     '',
-    inline(src('ij-footer.js')).trim(),
+    inline(componentSrc('ij-footer.js')).trim(),
     '',
   ].join('\n');
 }
 
+// The nav carries no registry: every link is the site's own, slotted in light
+// DOM, because a crawler that does not run JavaScript must still see them.
+function generateNav(tokens) {
+  return [
+    `// IAMJARL <ij-nav> v${tokens.meta.version} — generated, do not edit`,
+    `// Sources: components/nav-rules.js, components/ij-nav.js`,
+    '',
+    inline(componentSrc('nav-rules.js')).trim(),
+    '',
+    inline(componentSrc('ij-nav.js')).trim(),
+    '',
+  ].join('\n');
+}
 
 // One pre-rendered cross-link fragment per shipped app, for sites that can
 // inline HTML at build time. The component builds these at runtime, which means
@@ -1070,19 +1083,25 @@ async function generateFooterFragments(tokens) {
 // SUBRESOURCE INTEGRITY
 // ============================================================
 
-// Sites load these three from a pinned CDN URL. A hash makes that pin
-// tamper-evident, and jsDelivr serves /gh/ paths byte-for-byte, so a hash
-// computed here is valid for the URL. Generated rather than hand-kept, because
-// it changes every release and a stale integrity attribute fails closed.
+// Sites load these from a pinned CDN URL. A hash makes that pin tamper-evident,
+// and jsDelivr serves /gh/ paths byte-for-byte, so a hash computed here is valid
+// for the URL. Generated rather than hand-kept, because it changes every release
+// and a stale integrity attribute fails closed.
+//
+// The identity sheets are loaded the same way — one pinned <link> per site — so
+// they are hashed too. The footer fragments are not: a site copies them into its
+// own HTML at build time, and SRI only applies to a resource the browser fetches.
 const SRI_FILES = [
   'dist/css/tokens.css',
   'dist/css/tokens.shadow.css',
   'dist/components/ij-footer.js',
+  'dist/components/ij-nav.js',
 ];
 
-function computeSri() {
+function computeSri(identityIds) {
   const out = {};
-  for (const rel of SRI_FILES) {
+  const identity = [...identityIds].sort().map(id => `dist/identity/${id}.css`);
+  for (const rel of [...SRI_FILES, ...identity]) {
     const buf = fs.readFileSync(path.join(ROOT, rel));
     out[rel] = 'sha384-' + crypto.createHash('sha384').update(buf).digest('base64');
   }
@@ -1103,6 +1122,11 @@ function sriReadmeBlock(version, hashes) {
     '<script type="module"',
     `  src="${cdn('dist/components/ij-footer.js')}"`,
     `  integrity="${hashes['dist/components/ij-footer.js']}"`,
+    '  crossorigin="anonymous"></script>',
+    '',
+    '<script type="module"',
+    `  src="${cdn('dist/components/ij-nav.js')}"`,
+    `  integrity="${hashes['dist/components/ij-nav.js']}"`,
     '  crossorigin="anonymous"></script>',
     '```',
   ].join('\n');
@@ -1246,6 +1270,7 @@ async function main() {
 
   // Web component (single self-contained file, registry inlined)
   writeFile(path.join(ROOT, 'dist', 'components', 'ij-footer.js'), generateComponent(tokens));
+  writeFile(path.join(ROOT, 'dist', 'components', 'ij-nav.js'), generateNav(tokens));
 
   // Build-time cross-link fragments, one per shipped app
   const fragments = await generateFooterFragments(tokens);
@@ -1253,8 +1278,26 @@ async function main() {
     writeFile(path.join(ROOT, 'dist', 'footers', `${id}.html`), html);
   }
 
+  // Per-app identity: family accent and display face. The directory is wholly
+  // generated, so a sheet for an app that no longer differs is removed rather
+  // than left to ship — otherwise dropping a family's accent would keep serving it.
+  const identity = await generateIdentitySheets(tokens);
+  const identityDir = path.join(ROOT, 'dist', 'identity');
+  const keep = new Set(identity.map(([id]) => `${id}.css`));
+  if (fs.existsSync(identityDir)) {
+    for (const f of fs.readdirSync(identityDir)) {
+      if (f.endsWith('.css') && !keep.has(f)) {
+        fs.rmSync(path.join(identityDir, f));
+        console.log(`  \u2717 dist/identity/${f} (removed — no longer differs)`);
+      }
+    }
+  }
+  for (const [id, css] of identity) {
+    writeFile(path.join(identityDir, `${id}.css`), css);
+  }
+
   // Integrity hashes, computed AFTER the files they cover are written
-  const hashes = computeSri();
+  const hashes = computeSri(identity.map(([id]) => id));
   writeFile(
     path.join(ROOT, 'dist', 'sri.json'),
     JSON.stringify({ version: tokens.meta.version, algorithm: 'sha384', files: hashes }, null, 2) + '\n'
@@ -1262,14 +1305,8 @@ async function main() {
   writeReadmePins(tokens.meta.version);
   writeSriReadme(tokens.meta.version, hashes);
 
-  // Per-app identity: family accent and display face (empty until one is declared)
-  const identity = await generateIdentitySheets(tokens);
-  for (const [id, css] of identity) {
-    writeFile(path.join(ROOT, 'dist', 'identity', `${id}.css`), css);
-  }
-
   console.log(
-    `\nDone! Generated 8 platform files, ${fragments.length} footer fragments` +
+    `\nDone! Generated 9 platform files, ${fragments.length} footer fragments` +
     `, ${identity.length} identity sheet(s).`
   );
 }

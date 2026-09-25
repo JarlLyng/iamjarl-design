@@ -10,6 +10,7 @@ import { parseHex, parseRgba, parseColor, contrastRatio } from './color.js';
 import { extractNotes } from './release-notes.js';
 import { selectLinks, categoryReach } from '../components/select-links.js';
 import { accentFor, displayFor } from '../components/identity.js';
+import { NAV_ALPHA, NAV_COLLAPSE_BELOW, MAX_LINKS, currentIndex, navWarnings } from '../components/nav-rules.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -427,6 +428,88 @@ check('fragments never link the site to itself', shipped.every(a =>
 // For tokens.css that is a page with no tokens at all, so these hashes must
 // never lag the files they cover.
 
+// --- <ij-nav> ---
+//
+// The rules live in components/nav-rules.js, pure, and are asserted here. What
+// needs a browser — focus order, the disclosure, sticky, cta-after — is in
+// scripts/test-browser.js.
+
+console.log('\n<ij-nav> rules:');
+const X = 'https://x.test';
+check('marks the link for this page', currentIndex([`${X}/a.html`, `${X}/b.html`], `${X}/b.html`) === 1);
+check('matches a clean URL to a link written with .html', currentIndex([`${X}/guide.html`], `${X}/guide`) === 0);
+check('treats index.html and a trailing slash as the same page',
+  currentIndex([`${X}/`], `${X}/index.html`) === 0 && currentIndex([`${X}/docs/`], `${X}/docs`) === 0);
+check('ignores the query string', currentIndex([`${X}/a.html`], `${X}/a.html?utm_source=x`) === 0);
+check('never marks a link to another site', currentIndex(['https://github.com/a'], 'https://github.com/a') === 0 &&
+  currentIndex(['https://github.com/a'], `${X}/a`) === -1);
+check('never marks an in-page anchor', currentIndex([`${X}/#features`], `${X}/`) === -1,
+  'on a one-page site every section link would otherwise claim to be the page');
+check('an unparseable location marks nothing', currentIndex([`${X}/`], 'not a url') === -1);
+
+const echolume = {
+  brand: 1,
+  links: [{ text: 'How it works' }, { text: 'OBS Guide' }, { text: 'Twitch' }],
+  cta: [{ text: 'Download', event: 'store-click', placement: 'nav' }],
+  secondary: 1,
+};
+check("Echolume's header breaks no rule", navWarnings(echolume).length === 0, navWarnings(echolume).join(' | '));
+check(`more than ${MAX_LINKS} links is flagged`, navWarnings({ ...echolume,
+  links: [...echolume.links, { text: 'Blog' }] }).some(w => w.includes('4 links')));
+check('Support and Privacy are sent to the footer', ['Privacy', 'Support', ' privacy policy'].every(text =>
+  navWarnings({ ...echolume, links: [{ text }] }).some(w => w.includes('belongs in the footer'))));
+check('a CTA copied from the hero is flagged', navWarnings({ ...echolume,
+  cta: [{ text: 'Get it', event: 'store-click', placement: 'hero' }] }).some(w => w.includes('placement="hero"')));
+check('a CTA without analytics is not second-guessed', navWarnings({ ...echolume,
+  cta: [{ text: 'Download' }] }).length === 0);
+check('two CTAs, no brand, two secondaries are each flagged', [
+  navWarnings({ ...echolume, cta: [...echolume.cta, ...echolume.cta] }),
+  navWarnings({ ...echolume, brand: 0 }),
+  navWarnings({ ...echolume, secondary: 2 }),
+].every(w => w.length === 1));
+
+check('the nav folds at the system\'s md breakpoint', NAV_COLLAPSE_BELOW === tokens.tokens.breakpoints.md,
+  `nav ${NAV_COLLAPSE_BELOW}, breakpoints.md ${tokens.tokens.breakpoints.md}`);
+
+// The bar is translucent, so the text on it has no fixed background. Composite
+// the bar over the worst case beneath it and find the opacity at which the text
+// colours still clear AA; NAV_ALPHA must sit above it in both modes.
+const navFloor = (() => {
+  const modes = tokens.tokens.colors.modes;
+  const mix = (a, b, t) => ({ r: a.r * t + b.r * (1 - t), g: a.g * t + b.g * (1 - t), b: a.b * t + b.b * (1 - t) });
+  const over = (c, g) => (c.a === undefined || c.a === 1 ? c : mix(c, g, c.a));
+  const worst = [parseHex('#000000'), parseHex('#FFFFFF')];
+  const ok = (m, a) => [modes[m].text.primary, modes[m].text.secondary].every(t => worst.every(w => {
+    const ground = mix(parseColor(modes[m].background.app), w, a);
+    return contrastRatio(over(parseColor(t), ground), ground) >= 4.5;
+  }));
+  return Object.fromEntries(['light', 'dark'].map(m =>
+    [m, [...Array(101).keys()].map(i => i / 100).find(a => ok(m, a))]));
+})();
+check(`the bar's opacity (${NAV_ALPHA}) keeps its text AA over anything`,
+  NAV_ALPHA >= navFloor.light && NAV_ALPHA >= navFloor.dark,
+  `floor: light ${navFloor.light}, dark ${navFloor.dark}`);
+
+const navSrc = read('components/ij-nav.js');
+const navDist = read('dist/components/ij-nav.js');
+check('the accent is never a text colour on the bar', !/(^|[^-])color:\s*var\(--_accent\)/m.test(navSrc),
+  'over the worst case an accent falls below AA at this opacity; it may fill, not write');
+check('the focus ring is text.primary, not the accent', /outline:\s*var\(--_focus\) solid var\(--_strong\)/.test(navSrc));
+check('the CTA puts onPrimary on the accent',
+  /::slotted\(\[slot="cta"\]\) \{[^}]*background: var\(--_accent\);[^}]*color: var\(--_on-accent\)/.test(navSrc) &&
+  /--_on-accent:\s*var\(--ij-color-on-primary/.test(navSrc));
+const navCode = navSrc.replace(/^\s*\/\/.*$/gm, '');   // the usage comment shows slotted <a>s
+check('every link is slotted, none generated',
+  (navCode.match(/<a /g) || []).length === 1 && navCode.includes('<a class="skip"'),
+  'the only anchor the component writes is the skip link');
+check('the bundle is self-contained', !/^import /m.test(navDist) && navDist.includes('function currentIndex'));
+check('the bundle defines the element once, guarded',
+  (navDist.match(/customElements\.define\('ij-nav'/g) || []).length === 1 &&
+  navDist.includes("if (!customElements.get('ij-nav'))"));
+check('the bundle pulls in no stylesheet', !/@import|<link\b|adoptedStyleSheets/.test(navDist),
+  'theming comes from the host through custom properties; a stylesheet here would override the site');
+check('package.json exports it', JSON.parse(read('package.json')).exports['./components/nav'] === './dist/components/ij-nav.js');
+
 // --- Family accents ---
 //
 // The system defines one primary per mode, so thirteen of fifteen sites ended up
@@ -455,6 +538,24 @@ check('an undeclared category still resolves to the shared primary', shippedApps
            acc.dark === tokenTree.colors.modes.dark.primary &&
            acc.isFamilyAccent === false;
   }), 'opting in stays optional, so a site that declared nothing renders as before');
+// The README tells adopters to put onPrimary on the accent when it is a fill.
+// That is only safe because onPrimary IS background.app in both modes, so the
+// validator's ground check doubles as the fill check. If either token moves,
+// the advice silently stops being true — so the equivalence is held here.
+check('onPrimary is background.app in both modes, so it is every accent\'s on-colour',
+  ['light', 'dark'].every(m =>
+    tokenTree.colors.modes[m].onPrimary === tokenTree.colors.modes[m].background.app),
+  'README advises onPrimary for text on a family accent; that advice rests on this');
+check('every declared accent carries onPrimary at AA', Object.values(registry.categories)
+  .filter(c => c.accent)
+  .every(c => ['light', 'dark'].every(m =>
+    contrastRatio(parseHex(c.accent[m]), parseHex(tokenTree.colors.modes[m].onPrimary)) >= 4.5)));
+check('README documents adopting an identity sheet, with integrity', (() => {
+  const md = read('README.md');
+  const at = md.indexOf('## Family accent: `dist/identity/<app>.css`');
+  const sec = at === -1 ? '' : md.slice(at, md.indexOf('\n## ', at + 1));
+  return sec.includes('integrity=') && sec.includes('sri.json') && sec.includes('class="dark"');
+})(), 'the first adopter had to compute the hash by hand and find the dark-mode rule themselves');
 check('a sheet exists for every app that differs, and only for those', (() => {
   const expected = shippedApps
     .filter(a => accentFor(registry, a.id, tokenTree).isFamilyAccent ||
@@ -525,8 +626,11 @@ const sri = JSON.parse(read('dist/sri.json'));
 check('sri.json version matches tokens.json', sri.version === tokens.meta.version);
 check('sri.json declares sha384', sri.algorithm === 'sha384');
 
+const missingFiles = Object.keys(sri.files).filter(rel => !fs.existsSync(path.join(ROOT, rel)));
+check('every entry points at a file that exists', missingFiles.length === 0,
+  `listed but not built: ${missingFiles.join(', ')}`);
 const recomputed = Object.fromEntries(
-  Object.keys(sri.files).map(rel => [
+  Object.keys(sri.files).filter(rel => !missingFiles.includes(rel)).map(rel => [
     rel,
     'sha384-' + crypto.createHash('sha384')
       .update(fs.readFileSync(path.join(ROOT, rel))).digest('base64'),
@@ -535,9 +639,18 @@ const recomputed = Object.fromEntries(
 check('every hash matches its file', Object.entries(sri.files)
   .every(([rel, h]) => recomputed[rel] === h),
   Object.keys(sri.files).filter(r => recomputed[r] !== sri.files[r]).join(', '));
-check('covers the three CDN-served files', Object.keys(sri.files).length === 3 &&
-  ['dist/css/tokens.css', 'dist/css/tokens.shadow.css', 'dist/components/ij-footer.js']
+check('covers the four shared CDN files',
+  ['dist/css/tokens.css', 'dist/css/tokens.shadow.css', 'dist/components/ij-footer.js', 'dist/components/ij-nav.js']
     .every(f => f in sri.files));
+// A site adopts its identity sheet with one pinned <link>, exactly like
+// tokens.css, so a sheet without a hash forces every adopter to compute one by
+// hand — which is what the first adopter had to do (JarlLyng/echolume#198).
+const unhashed = sheets.filter(f => !(`dist/identity/${f}` in sri.files));
+check('every identity sheet has an entry', sheets.length > 0 && unhashed.length === 0,
+  `no hash for: ${unhashed.join(', ')}`);
+check('footer fragments are deliberately not listed',
+  !Object.keys(sri.files).some(f => f.startsWith('dist/footers/')),
+  'a fragment is copied into the site\'s HTML at build time; SRI applies only to fetched resources');
 
 // README carries the paste-ready tags and is generated, but sits outside the
 // dist/ drift check — so it is asserted here instead.
@@ -548,7 +661,9 @@ check('README block pins the current version', block.includes(`@v${tokens.meta.v
 check('README block carries the current hashes',
   block.includes(sri.files['dist/css/tokens.css']) &&
   block.includes(sri.files['dist/components/ij-footer.js']));
-check('README block uses crossorigin', (block.match(/crossorigin="anonymous"/g) || []).length === 2);
+check('README block uses crossorigin on every tag',
+  (block.match(/crossorigin="anonymous"/g) || []).length === (block.match(/integrity="/g) || []).length &&
+  (block.match(/integrity="/g) || []).length === 3);
 
 // Pins outside the SRI block. README.md sits outside the dist/ drift check, so
 // this is what catches a release built without `npm run build`. The patterns are

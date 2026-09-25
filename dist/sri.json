@@ -1,9 +1,23 @@
 {
-  "version": "1.13.0",
+  "version": "1.14.0",
   "algorithm": "sha384",
   "files": {
-    "dist/css/tokens.css": "sha384-zP6Npk2pldCFo8yU7BRGtlXsfaCg61BPk1uI6QuxdabRDonYD0NZj+GSKAvVtsP5",
-    "dist/css/tokens.shadow.css": "sha384-zs90iqBN6GWh142JIsW4VkKT03vuOSPDLTybpzfHm/kGN78/fB0W9yF4EkBVY/jb",
-    "dist/components/ij-footer.js": "sha384-k6rHBD7DQwolVi361Zgb8yp7A44UtH4ZxMCxrqpFY+6MH9k9KsKipOMuiFXA+91v"
+    "dist/css/tokens.css": "sha384-3gm9wGHkmijzQ4E/h0lLfvRv+cXmYOy3WrlOHkB5hMygetQ6IrcGtK/wrQkpNVjh",
+    "dist/css/tokens.shadow.css": "sha384-F56LMeRxpNmEaNoc0GZpSYXTg3U7rKAKWUoQU/giVAv8fKisyno9GXzcSrgTPyBX",
+    "dist/components/ij-footer.js": "sha384-JZeP+8h62QdrK59UteKHul9p3OBMJ8ALjYB2GwSJM3FPfxBqp/h/kaq/KbZUL63s",
+    "dist/components/ij-nav.js": "sha384-vSRD6pOG+4+/gjqnIHkGsFOsw5NW1vxWWc1WZ9XEpEZEtKa4ON/VNpC24zaHHsY8",
+    "dist/identity/anvil-workout.css": "sha384-EPaFT7ib19fQD0b7VlBKowrP8ZnGer7Vk02sHEMtg5crbwKrvQPFMxkmoiRNt1O6",
+    "dist/identity/botlens.css": "sha384-VWPHIQ4e+lzdJEBiTjWMwlaO3YBXy7VdH3giiEv4LaFU0BRrCTiX7jpexLNVaVF+",
+    "dist/identity/echolume.css": "sha384-FYnX8YQ6z5tA2vM48Sxg9Li//nVX/6duZKtMWV5lXjGgQlxafDyAVTWiaJ04NWZE",
+    "dist/identity/its-404-yo.css": "sha384-hYi5pNEExFHH1qLfyBGbamULaft4Q3HNRvGVJHqE3zhgkDEjVD3Llc7CGAm/s0nZ",
+    "dist/identity/its-mono-yo.css": "sha384-niO8QnSmwqLVuI/l0+NtkTSRvsCn8R0kwavwBAPvTWLIAHG6FFBQWAe23akVcbMI",
+    "dist/identity/pagelens.css": "sha384-Znk3lkO9baEJqctauvtFlXDaA2vPjU8U3s3lfIETw2t1AZI9f/hdW/tOlh5EAQRw",
+    "dist/identity/patternaut.css": "sha384-ApYgR8xfbkSnOadf+oTjNf4z4UVK6JOjgWIxT5xsbNCLilhEcmuaBCfum/KAQcX0",
+    "dist/identity/tonvault.css": "sha384-i1nSLEEOHpy7/E92Oh9W3YbsUuVatV8B2olkejp2KtWhBnDw8+rhzLqC71X83Qag",
+    "dist/identity/trimrpix.css": "sha384-GcdzFRTw7O+ldr+YoF46UI/C01kK6yr8RBW0bnnjx26nzGO3Q4xwUTtD90CHa+ed",
+    "dist/identity/trimrpix-ios.css": "sha384-cxBA5e5TZJN/Qi+Q7oztKFHvkwrcOGXvDszwFoQ8CYENi+xk1RUPJOTa8ZWI06T+",
+    "dist/identity/walkful.css": "sha384-dFqiS2MvlTRAqzr1BhU40aszYuUVj76JCHRPssqtiwuVCJUxO+ZRSUHAlxcK1mfz",
+    "dist/identity/wean-nicotine.css": "sha384-Z2+DTFoJ1um5ScsdpxjXM4Izrcx931eWQBA5xKwk9uNwug1yb/WAr2OkNRmoo4m4",
+    "dist/identity/wodrounds.css": "sha384-mb5/Qok3qTwXviogzoSBOV9D+6xuLBSPB0cQQV59tChAtGHfqfoOInWS5YW9RUKt"
   }
 }
