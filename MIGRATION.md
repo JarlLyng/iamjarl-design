@@ -28,6 +28,7 @@ This table gets a row for every release, including the ones where the answer is 
 | **1.12.1** | Version pins in the README are generated; this table is enforced | No |
 | **1.13.0** | `--ij-footer-links-justify` aligns the footer's link rows | Only if your footer is centred or right-aligned — set it alongside `text-align` |
 | **1.13.1** | `sri.json` lists every identity sheet; the README documents adopting one | If you pin an identity sheet with `integrity`, take the hash from `sri.json` from now on |
+| **1.14.0** | `<ij-nav>`, the shared site navigation, as `dist/components/ij-nav.js` | No — opt in. Echolume and TonVault pilot it first |
 
 ### Who needs to migrate
 - ✅ **Everyone** — bump the version. Nothing you use today changes value or name.
