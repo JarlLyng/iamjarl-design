@@ -101,4 +101,12 @@ jobs:
                       if dev['name'].startswith('iPhone'):
                           print(dev['udid']); sys.exit()
           sys.exit('no iPhone simulator available')")
-          xcodebuild test -scheme IAMJARLDesignTokens -destination "id=$SIM" -quiet
+          set -o pipefail
+          xcodebuild test -scheme IAMJARLDesignTokens -destination "id=$SIM" 2>&1 | tee ios-test.log \
+            | grep -E "Test Case .*(passed|failed|skipped)|Executed [0-9]+ tests"
+          # A skipped test is green but checked nothing. On the runner's current
+          # iOS, nothing has a reason to skip.
+          if grep -q "Test Case .* skipped" ios-test.log; then
+            echo "::error::An iOS test was skipped in CI, so it checked nothing."
+            exit 1
+          fi
