@@ -301,6 +301,13 @@ The real reason to start with the footer is duller: it sits below the fold, so a
 cheap, and it is the one already asked for. Nav follows once the footer has held in production on at
 least two sites.
 
+**Shipped in 1.14.0 as `<ij-nav>`**, when the footer had held on seven. It differs from the footer
+in one way that shaped everything else: the footer's links are generated from the registry, the
+nav's are all slotted. A site's own navigation is the most important thing a crawler reads on it,
+and a link built in JavaScript inside a shadow root is invisible to the ones that do not run it.
+So the component owns behaviour — landmark, sticky bar, the phone layout, focus, `aria-current` —
+and never content. The rules it checks are in `components/nav-rules.js`, pure, like the footer's.
+
 ## Decisions, now resolved
 
 **Package naming: do not rename.** The audit settles it. Two sites vendored `tokens.css` by hand and
@@ -348,14 +355,26 @@ rendering shell over it.
 artifact is self-contained, inlines the registry, defines the element once, and pulls in no
 stylesheet.
 
-**What this does not cover:** shadow-DOM rendering, slot behaviour, focus order, and the
-pre-upgrade fallback. Those need a browser. Until one is worth adding, they are checked by hand
-against `components/TESTING.md` before a release that touches the component. That checklist found a
-real bug on its first run — attaching a shadow root before validating the `app` attribute hid the
-fallback content precisely when an unknown id made it necessary.
+**What that did not cover:** shadow-DOM rendering, slot behaviour, focus order, and the
+pre-upgrade fallback. Those need a browser, and for the footer they were checked by hand against
+`components/TESTING.md`. That checklist found a real bug on its first run — attaching a shadow root
+before validating the `app` attribute hid the fallback content precisely when an unknown id made it
+necessary.
 
-This is a real gap, stated plainly rather than implied by silence. If the component layer grows past
-one or two elements, a browser test runner earns its dependency and this section should be revisited.
+**Revisited for the second component, and the dependency turned out not to be needed.** This
+section expected a browser test runner to cost the zero-dependency promise. It does not:
+`scripts/browser.js` drives Chrome over the DevTools protocol with Node's built-in `WebSocket`, and
+GitHub's Ubuntu runners ship Chrome. `scripts/test-browser.js` checks focus order, the disclosure,
+Escape, sticky, translucency and its reduced-transparency fallback, `aria-current`, `cta-after`, the
+console warnings and the pre-upgrade state for `<ij-nav>`, plus the two footer checks that have
+already caught bugs. It runs in PR CI and fails there if Chrome is missing; locally it skips.
+
+It found a real bug before release, the way the checklist did: the first version of `cta-after` let
+the nav's CTA paint and then fade out on every page load, focusable while it did. Invisible in a
+screenshot taken after the fade.
+
+The manual checklist remains for what a headless browser cannot judge — whether it looks right on a
+real site.
 
 ## Non-negotiables that already apply
 
@@ -369,7 +388,8 @@ breaks one of those is a bug, not a variant.
    same time.
 2. `apps.json`, the canonical app registry.
 3. `<ij-footer>` reading `apps.json`, rolled out to one site first.
-4. Nav, once the footer has held in production on at least two sites.
+4. Nav, once the footer has held in production on at least two sites. **Done in 1.14.0**; pilots on
+   Echolume and TonVault before any wider rollout.
 
 ## What deliberately does not live here
 

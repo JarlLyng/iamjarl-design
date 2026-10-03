@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.13.1)
+# IAMJARL Design System (v1.14.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -118,6 +118,17 @@ Two of these are worth knowing the reasoning for, because the next family will f
 
 None sits at the 4.5:1 line. The lowest is `images` at 5.55:1 on black, chosen deliberately: a value that only just clears a hard-fail breaks on the next nudge.
 
+### Site navigation (web only)
+The top of the page is for intent. Implemented by `<ij-nav>` — see the README — and these rules hold whether a site uses the component or not.
+
+- **At most three links, one call to action, and an optional secondary item** (a GitHub link, a changelog). Support and Privacy are obligations, not destinations: they belong in the footer.
+- **The CTA is the store link.** It carries `data-umami-event="store-click"` with `data-umami-event-placement="nav"`, so it can be told apart from the hero's.
+- **One CTA above the fold.** If the hero has its own, the nav's waits until the hero's has scrolled away (`cta-after`). Two accent buttons with different labels on the first screen was a critique finding on Echolume.
+- **Every link is in the served HTML.** Crawlers that do not run JavaScript see the nav as plain links. A nav built by script is invisible to them.
+- **One row on a phone.** Brand and CTA stay; the links fold behind a disclosure button. A header that stacks into rows and stays sticky takes a large share of a small screen.
+- **The accent is a dot and a fill, never the link text** — see *Text on a translucent surface* above. Links are `text.secondary`, and go to `text.primary` on hover and for the current page, which is also underlined so colour is not the only signal.
+- **Order is brand, links, secondary, CTA** — in the DOM as well as on screen, so focus follows what the eye sees.
+
 ### Gradients (web only)
 - Two per mode: `gradient.primary` (the accent extended into a second stop) and `gradient.brand` (the two accents against each other, reversed per mode).
 - **A gradient must begin at a color the system names.** Later stops are part of that gradient's identity, not colors the system endorses for general use — the validator enforces the first stop and leaves the rest alone.
@@ -168,6 +179,18 @@ background: radial-gradient(ellipse 80% 60% at 50% -10%,
 /* the same trick works for state colors, which a triplet never covered */
 border-color: color-mix(in srgb, var(--ij-color-error) 40%, transparent);
 ```
+
+#### Text on a translucent surface
+A translucent bar or panel has no fixed background: whatever scrolls under it is part of its ground. So its text is checked the way the photographic hero is, by compositing the surface over the worst case beneath it — pure white under a dark surface, pure black under a light one.
+
+| Text on a `background.app` surface at opacity α | AA over anything from |
+|---|---|
+| `text.primary` and `text.secondary` | **α ≥ 0.58** light, **α ≥ 0.64** dark |
+| any family accent, or `primary` | α ≥ 0.94 light, α ≥ 0.90 dark |
+
+The second row is why **an accent fills and decorates on a translucent surface, but does not write on it.** At a translucency worth having, a teal link falls to 3.86:1. Use `text.*` for the words, and put the accent in a dot, a border or an opaque button. `<ij-nav>` sits at 0.75, and a contract test re-derives both floors from `color.js`.
+
+Where `backdrop-filter` is missing, or the visitor sets `prefers-reduced-transparency`, go solid: translucency without blur is text over a sharp, moving page.
 
 > **Deprecated:** `--ij-color-primary-rgb` (added 1.3.0, deprecated 1.6.0, removed in 2.0.0). It only ever existed for `primary`, so every other color would have needed its own triplet. `color-mix()` generalises; the triplet did not. It is still emitted, so 1.3–1.5 consumers keep working — but do not adopt it in new code.
 

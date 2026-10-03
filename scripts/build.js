@@ -981,21 +981,19 @@ function generateDTS(tokens) {
 // COMPONENTS
 // ============================================================
 
-// The component ships as ONE self-contained ESM file with the registry baked
-// in: a single script tag, no module resolution on the CDN, and no runtime
-// fetch of apps.json that could fail or hit CORS. Sources stay separate files
-// so the pure logic can be tested without a DOM.
-function generateComponent(tokens) {
-  const registry = JSON.parse(fs.readFileSync(path.join(ROOT, 'apps.json'), 'utf-8'));
-  const src = name => fs.readFileSync(path.join(ROOT, 'components', name), 'utf-8');
+// Both components ship as ONE self-contained ESM file each: a single script
+// tag, no module resolution on the CDN, and no runtime fetch that could fail or
+// hit CORS. Sources stay separate files so the pure logic can be tested without
+// a DOM.
+const componentSrc = name => fs.readFileSync(path.join(ROOT, 'components', name), 'utf-8');
 
-  // Inline the modules: drop their local imports, keep everything else.
-  const inline = code =>
-    code
-      .split('\n')
-      .filter(line => !/^import .* from '\.\/.*';$/.test(line))
-      .join('\n')
-      .replace(/^export (const|function|class) /gm, '$1 ');
+// Inline a module: drop its local imports, keep everything else.
+const inline = code =>
+  code
+    .split('\n')
+    .filter(line => !/^import .* from '\.\/.*';$/.test(line))
+    .join('\n')
+    .replace(/^export (const|function|class) /gm, '$1 ');
 
 // The footer reads seven fields and nothing else — it never touches
 // `categories`, `platform` or `consumes`. Inlining the whole registry shipped
@@ -1013,19 +1011,34 @@ function footerRegistry(registry) {
   };
 }
 
+function generateComponent(tokens) {
+  const registry = JSON.parse(fs.readFileSync(path.join(ROOT, 'apps.json'), 'utf-8'));
   return [
     `// IAMJARL <ij-footer> v${tokens.meta.version} — generated, do not edit`,
     `// Sources: components/select-links.js, components/ij-footer.js, apps.json`,
     '',
     `const REGISTRY = ${JSON.stringify(footerRegistry(registry), null, 2)};`,
     '',
-    inline(src('select-links.js')).trim(),
+    inline(componentSrc('select-links.js')).trim(),
     '',
-    inline(src('ij-footer.js')).trim(),
+    inline(componentSrc('ij-footer.js')).trim(),
     '',
   ].join('\n');
 }
 
+// The nav carries no registry: every link is the site's own, slotted in light
+// DOM, because a crawler that does not run JavaScript must still see them.
+function generateNav(tokens) {
+  return [
+    `// IAMJARL <ij-nav> v${tokens.meta.version} — generated, do not edit`,
+    `// Sources: components/nav-rules.js, components/ij-nav.js`,
+    '',
+    inline(componentSrc('nav-rules.js')).trim(),
+    '',
+    inline(componentSrc('ij-nav.js')).trim(),
+    '',
+  ].join('\n');
+}
 
 // One pre-rendered cross-link fragment per shipped app, for sites that can
 // inline HTML at build time. The component builds these at runtime, which means
@@ -1082,6 +1095,7 @@ const SRI_FILES = [
   'dist/css/tokens.css',
   'dist/css/tokens.shadow.css',
   'dist/components/ij-footer.js',
+  'dist/components/ij-nav.js',
 ];
 
 function computeSri(identityIds) {
@@ -1108,6 +1122,11 @@ function sriReadmeBlock(version, hashes) {
     '<script type="module"',
     `  src="${cdn('dist/components/ij-footer.js')}"`,
     `  integrity="${hashes['dist/components/ij-footer.js']}"`,
+    '  crossorigin="anonymous"></script>',
+    '',
+    '<script type="module"',
+    `  src="${cdn('dist/components/ij-nav.js')}"`,
+    `  integrity="${hashes['dist/components/ij-nav.js']}"`,
     '  crossorigin="anonymous"></script>',
     '```',
   ].join('\n');
@@ -1251,6 +1270,7 @@ async function main() {
 
   // Web component (single self-contained file, registry inlined)
   writeFile(path.join(ROOT, 'dist', 'components', 'ij-footer.js'), generateComponent(tokens));
+  writeFile(path.join(ROOT, 'dist', 'components', 'ij-nav.js'), generateNav(tokens));
 
   // Build-time cross-link fragments, one per shipped app
   const fragments = await generateFooterFragments(tokens);
@@ -1286,7 +1306,7 @@ async function main() {
   writeSriReadme(tokens.meta.version, hashes);
 
   console.log(
-    `\nDone! Generated 8 platform files, ${fragments.length} footer fragments` +
+    `\nDone! Generated 9 platform files, ${fragments.length} footer fragments` +
     `, ${identity.length} identity sheet(s).`
   );
 }
