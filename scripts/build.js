@@ -1244,8 +1244,10 @@ async function generateFooterFragments(tokens) {
 // for the URL. Generated rather than hand-kept, because it changes every release
 // and a stale integrity attribute fails closed.
 //
-// The identity sheets are loaded the same way — one pinned <link> per site — so
-// they are hashed too. The footer fragments are not: a site copies them into its
+// The identity sheets and the font-face sheets are loaded the same way — one
+// pinned <link> per site — so they are hashed too. The woff2 files a font-face
+// sheet points at cannot carry integrity (a CSS url() has no attribute for it);
+// they are covered by the tag being immutable. The footer fragments are not: a site copies them into its
 // own HTML at build time, and SRI only applies to a resource the browser fetches.
 const SRI_FILES = [
   'dist/css/tokens.css',
@@ -1254,10 +1256,11 @@ const SRI_FILES = [
   'dist/components/ij-nav.js',
 ];
 
-function computeSri(identityIds) {
+function computeSri(identityIds, fontNames = []) {
   const out = {};
   const identity = [...identityIds].sort().map(id => `dist/identity/${id}.css`);
-  for (const rel of [...SRI_FILES, ...identity]) {
+  const fonts = [...fontNames].sort().map(n => `dist/fonts/${n}.css`);
+  for (const rel of [...SRI_FILES, ...identity, ...fonts]) {
     const buf = fs.readFileSync(path.join(ROOT, rel));
     out[rel] = 'sha384-' + crypto.createHash('sha384').update(buf).digest('base64');
   }
@@ -1336,6 +1339,43 @@ function writeSriReadme(version, hashes) {
 //
 // Only apps that actually declare something get a file, so the output stays
 // empty until a family opts in rather than restating the defaults once per app.
+// The three display faces, shipped once here rather than committed by every
+// site. One @font-face per face, generated from tokens.json so the family name
+// can never differ from the one --ij-font-display asks for. The url is relative
+// to this file, which resolves the same way on jsDelivr (same tag) and inside
+// node_modules (the package ships fonts/).
+//
+// Latin only, which covers English and Danish (æ ø å); the range is the one the
+// files were subset to, so the browser never downloads a face it cannot use.
+const LATIN_RANGE = 'U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, ' +
+  'U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD';
+
+function fontSheetName(face) {
+  return face.file.replace(/-latin-wght-normal\.woff2$/, '');
+}
+
+function generateFontFaces(tokens) {
+  return Object.values(tokens.brand.typography.display).map(face => {
+    const family = face.stack.split(',')[0].trim();
+    const name = fontSheetName(face);
+    const css = [
+      `/* IAMJARL display face: ${face.name} (${face.licence}) — generated, do not edit */`,
+      `/* design system v${tokens.meta.version}, file from ${face.source}. Licence: fonts/LICENSE-${name}.txt */`,
+      '',
+      '@font-face {',
+      `  font-family: ${family};`,
+      '  font-style: normal;',
+      `  font-weight: ${face.weights};`,
+      '  font-display: swap;',
+      `  src: url('../../fonts/${face.file}') format('woff2');`,
+      `  unicode-range: ${LATIN_RANGE};`,
+      '}',
+      '',
+    ].join('\n');
+    return [name, css];
+  });
+}
+
 async function generateIdentitySheets(tokens) {
   const registry = JSON.parse(fs.readFileSync(path.join(ROOT, 'apps.json'), 'utf-8'));
   const { accentFor, displayFor } = await import(
@@ -1453,8 +1493,13 @@ async function main() {
     writeFile(path.join(identityDir, `${id}.css`), css);
   }
 
+  const fontFaces = generateFontFaces(tokens);
+  for (const [name, css] of fontFaces) {
+    writeFile(path.join(ROOT, 'dist', 'fonts', `${name}.css`), css);
+  }
+
   // Integrity hashes, computed AFTER the files they cover are written
-  const hashes = computeSri(identity.map(([id]) => id));
+  const hashes = computeSri(identity.map(([id]) => id), fontFaces.map(([name]) => name));
   writeFile(
     path.join(ROOT, 'dist', 'sri.json'),
     JSON.stringify({ version: tokens.meta.version, algorithm: 'sha384', files: hashes }, null, 2) + '\n'

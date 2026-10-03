@@ -51,7 +51,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.16.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.17.0")
 ]
 ```
 
@@ -235,7 +235,7 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.16.0/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.0/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -275,7 +275,7 @@ a build step, install it instead.**
 | Needs `integrity`? | yes, worth it | no — nothing crosses an origin |
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.16.0
+npm install github:jarllyng/iamjarl-design#v1.17.0
 ```
 
 ```js
@@ -301,18 +301,18 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.16.0/dist/css/tokens.css"
-  integrity="sha384-NtL7t0xZFNMNj01oaNwKWlYFhgTVHT13nKzIdY07hOrAUg5CkpjeyjQLYb85Y1K+"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.0/dist/css/tokens.css"
+  integrity="sha384-uolpoIN89h4TyUPhamFiBPVgi7hhmU13+lSIi7hBoGjaQ5ZD77prjW6odRRNc4N/"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.16.0/dist/components/ij-footer.js"
-  integrity="sha384-oERUDgYesnJ77du7jHfloxwSjAHZOQGsDWj+sYrE6IjW96GAvcDcSwMutO9zYbnV"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.0/dist/components/ij-footer.js"
+  integrity="sha384-wWvScdf0aL/QKp/trbyU4KD/dp2hYOiSP7isIVHVzUtIDRsd92pktZt1ZYHkWCLw"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.16.0/dist/components/ij-nav.js"
-  integrity="sha384-SV1duhyXuAGSEAA/v2orWbUAeq3mrVvfoxrPGg7wpOL2d9hZobO0j2fkP5/GlYj0"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.0/dist/components/ij-nav.js"
+  integrity="sha384-FXZrZDmvM5a1JN4RJHYBw34BGBfo+CQ/tPdIpr1tUcwCkmLI2MC+uwPKBPh4PUvC"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
@@ -334,7 +334,7 @@ The component builds the cross-links at runtime, so crawlers that do not execute
 pre-rendered fragment for your app and the component will slot it instead of regenerating:
 
 ```bash
-curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.16.0/dist/footers/botlens.html
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.0/dist/footers/botlens.html
 ```
 
 ```html
@@ -385,7 +385,7 @@ it supplies the landmark, the sticky translucent bar, the phone layout and the k
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.16.0/dist/components/ij-nav.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.0/dist/components/ij-nav.js"></script>
 
 <ij-nav>
   <a slot="brand" href="/">Echolume</a>
@@ -451,7 +451,7 @@ lists which families have one. `primary` does not change. If your app has no fil
 ```html
 <!-- tokens.css first, from the SRI block above -->
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.16.0/dist/identity/<app>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.0/dist/identity/<app>.css"
   integrity="<from sri.json, see below>"
   crossorigin="anonymous">
 ```
@@ -460,7 +460,7 @@ lists which families have one. `primary` does not change. If your app has no fil
 yours:
 
 ```bash
-curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.16.0/dist/sri.json | grep 'identity/<app>.css'
+curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.0/dist/sri.json | grep 'identity/<app>.css'
 ```
 
 Each sheet carries the version in its header, so its hash changes every release. Move the tag and
@@ -480,6 +480,16 @@ the hash together, as with `tokens.css`.
 under `prefers-color-scheme: dark`, the same as `tokens.css`. A site that is dark regardless of the
 system needs `class="dark"` on `<html>`, or a visitor in light mode gets the light accent on a dark
 page. Echolume does exactly this.
+
+**The display face comes from here too.** The sheet sets `--ij-font-display` to the face's stack; load the face itself from the same tag:
+
+```html
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.0/dist/fonts/<face>.css"
+  integrity="<from sri.json>" crossorigin="anonymous">
+```
+
+`<face>` is `jetbrains-mono`, `outfit` or `instrument-sans` — whichever your family has (design.md, *The assignments*). With a build step, `import '@iamjarl/design-tokens/fonts/outfit.css'` serves it from your own origin instead. Then put it where your voice belongs: `h1, h2, h3 { font-family: var(--ij-font-display); }`. Never from Google Fonts — see design.md for why.
 
 **Not listed in `sri.json`: the footer fragments.** You copy them into your own HTML at build time,
 and the browser never fetches them as a resource, so an `integrity` attribute has nothing to check.

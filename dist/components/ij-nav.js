@@ -1,4 +1,4 @@
-// IAMJARL <ij-nav> v1.16.0 — generated, do not edit
+// IAMJARL <ij-nav> v1.17.0 — generated, do not edit
 // Sources: components/nav-rules.js, components/ij-nav.js
 
 // The rules <ij-nav> enforces, kept out of the DOM so they are covered by the
@@ -53,6 +53,16 @@ function currentIndex(hrefs, here) {
     if (u.hash) return false;   // an anchor on a page, not the page itself
     return pageKey(u) === key;
   });
+}
+
+// Whether the hero's CTA is on screen, from one IntersectionObserver callback.
+// A callback can carry several entries for the same target: if the page
+// scrolls before the first delivery — a visitor landing on /#download, say —
+// the stale "on screen" entry and the fresh "gone" one arrive together. Only
+// the last is current. Reading the first left the nav's CTA hidden for the
+// rest of the visit. Returns null for an empty callback: nothing to decide.
+function heroOnScreen(entries) {
+  return entries.length ? entries[entries.length - 1].isIntersecting : null;
 }
 
 // What a site put in the nav that the rules say does not belong there. The
@@ -547,8 +557,9 @@ class IjNav extends HTMLElement {
     getComputedStyle(this._ctaBox).visibility;   // commit it while instant
     const bar = this._bar;
     requestAnimationFrame(() => requestAnimationFrame(() => bar.classList.remove('instant')));
-    this._observer = new IntersectionObserver(([entry]) => {
-      this._bar.classList.toggle('cta-held', entry.isIntersecting);
+    this._observer = new IntersectionObserver(entries => {
+      const onScreen = heroOnScreen(entries);
+      if (onScreen !== null) this._bar.classList.toggle('cta-held', onScreen);
     }, { rootMargin: `-${height}px 0px 0px 0px` });
     this._observer.observe(hero);
   }

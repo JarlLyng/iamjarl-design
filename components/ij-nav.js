@@ -34,7 +34,7 @@
 // secondary item, then the CTA. At phone width the folded links move after the
 // disclosure button, so Tab goes from the button into the menu it opened.
 
-import { NAV_ALPHA, NAV_COLLAPSE_BELOW, currentIndex, navWarnings } from './nav-rules.js';
+import { NAV_ALPHA, NAV_COLLAPSE_BELOW, currentIndex, heroOnScreen, navWarnings } from './nav-rules.js';
 
 const NARROW = `(max-width: ${NAV_COLLAPSE_BELOW - 0.02}px)`;
 
@@ -450,8 +450,9 @@ export class IjNav extends HTMLElement {
     getComputedStyle(this._ctaBox).visibility;   // commit it while instant
     const bar = this._bar;
     requestAnimationFrame(() => requestAnimationFrame(() => bar.classList.remove('instant')));
-    this._observer = new IntersectionObserver(([entry]) => {
-      this._bar.classList.toggle('cta-held', entry.isIntersecting);
+    this._observer = new IntersectionObserver(entries => {
+      const onScreen = heroOnScreen(entries);
+      if (onScreen !== null) this._bar.classList.toggle('cta-held', onScreen);
     }, { rootMargin: `-${height}px 0px 0px 0px` });
     this._observer.observe(hero);
   }

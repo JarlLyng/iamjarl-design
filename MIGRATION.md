@@ -30,6 +30,7 @@ This table gets a row for every release, including the ones where the answer is 
 | **1.13.1** | `sri.json` lists every identity sheet; the README documents adopting one | If you pin an identity sheet with `integrity`, take the hash from `sri.json` from now on |
 | **1.14.0** | `<ij-nav>`, the shared site navigation, as `dist/components/ij-nav.js` | No — opt in. Echolume and TonVault pilot it first |
 | **1.15.0** | Swift: `DesignTokens.Palette` (colours that adapt by themselves), `.ijFont` (Dynamic Type), `.ijNumeral` and the numeral scale (also `--ij-font-size-numeral-*` on the web) | No — the old API stays. Worth adopting: an app's own adaptive-colour wrapper and Dynamic Type bridge can go, and a fixed `.font(.system(size:))` can become `.ijFont`. `uiFontName`/`monoFontName` are deprecated — nothing used them |
+| **1.17.0** | The three display faces ship as `dist/fonts/<face>.css` + `fonts/*.woff2`. `<ij-nav>`'s `cta-after` fixed | If you self-host a face or load it from Google Fonts, you can load it from here instead. If you use `cta-after`, bump: before this, the nav's CTA could stay hidden for a visitor who landed mid-page |
 | **1.16.0** | Every family's display face, emitted as `--ij-font-display` in its identity sheet (#50) | Nothing, if you do nothing: no site's text changes. **One exception:** with `<ij-nav>` and an identity sheet moved to 1.16.0, the wordmark takes the family face — self-host it first, or a mono family's wordmark falls back to `ui-monospace` |
 
 ### Who needs to migrate

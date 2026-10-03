@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.16.0)
+# IAMJARL Design System (v1.17.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -70,30 +70,31 @@ Decided by the owner on 2026-10-03 (#50).
 
 iamjarl.com and Made by Human are outside the system and get no face.
 
-**A face in the sheet is not a face on the page.** A site picks it up by self-hosting the file (below) and using `var(--ij-font-display)` where its voice belongs. The one place the system uses it by itself is `<ij-nav>`'s wordmark: a site that loads both its identity sheet and the nav gets the wordmark in its family's face, or in the stack's fallback if the file is not there. For a mono family the fallback is `ui-monospace`, which is a visible change, so self-host before moving the sheet.
+**A face in the sheet is not a face on the page.** A site picks it up by loading the face's sheet (below) and using `var(--ij-font-display)` where its voice belongs. The one place the system uses it by itself is `<ij-nav>`'s wordmark: a site that loads both its identity sheet and the nav gets the wordmark in its family's face, or in the stack's fallback if the face is not loaded. For a mono family the fallback is `ui-monospace`, which is a visible change, so load the face before moving the sheet.
 
-#### Self-host the file. Do not link Google Fonts.
+#### Load the face from the design system. Do not link Google Fonts.
 `fonts.googleapis.com` is a third-party request on every page view, and it carries the visitor's IP and referring page. This portfolio tells people it has no tracking and no third parties; loading a font from Google contradicts that on the one page making the claim.
 
-All three faces are OFL-1.1, which permits redistribution, so self-hosting is a licensing non-issue:
+**Since 1.17.0 the three faces ship from here**, so a site loads them the way it already loads `tokens.css`: one pinned `<link>` with `integrity`, from the same place and the same tag. The README has it pinned to the current release.
 
 ```html
-<link rel="stylesheet" href="/fonts/jetbrains-mono.css">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@vX.Y.Z/dist/fonts/outfit.css"
+  integrity="<from sri.json at that tag>" crossorigin="anonymous">
 ```
 
-```css
-@font-face {
-  font-family: 'JetBrains Mono';
-  src: url('/fonts/jetbrains-mono-latin.woff2') format('woff2');
-  font-weight: 100 800;        /* variable: one file, every weight */
-  font-display: swap;          /* text is readable before the file lands */
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122;
-}
-```
+Each sheet is one generated `@font-face`. Its `font-family` is the name `--ij-font-display` asks for, so the two cannot drift apart. It uses `font-display: swap`, so the fallback stack is readable until the file lands, and it covers the latin subset, which includes æ, ø and å. The woff2 sits in `fonts/` beside its OFL-1.1 licence, at the same tag. The relative url in the sheet finds it on jsDelivr and inside `node_modules` alike.
 
-Subset to the ranges the site actually uses — latin alone is usually a few tens of kilobytes against several hundred for the full face. `font-display: swap` matters because the fallback stack is what a visitor reads until the file arrives, which is the whole reason each stack ends in something real.
+- **A site with a build step** imports `@iamjarl/design-tokens/fonts/outfit.css`. The bundler serves the file from the site's own origin, with no CDN at all.
+- **A site that wants no CDN** copies `fonts/<face>-latin-wght-normal.woff2` and its `LICENSE-<face>.txt`, then writes the same `@font-face`. OFL-1.1 permits this as long as the licence goes with the file.
 
-> The font files are **not** shipped in this repo. Adding three binaries changes what this package is and how it is updated, and that deserves its own decision rather than arriving inside a typography change. Until then, download the subsets once per site and commit them there.
+| Face | Sheet | File | Weights |
+|---|---|---|---|
+| JetBrains Mono | `dist/fonts/jetbrains-mono.css` | 40 KB | 100–800 |
+| Outfit | `dist/fonts/outfit.css` | 32 KB | 100–900 |
+| Instrument Sans | `dist/fonts/instrument-sans.css` | 30 KB | 400–700 |
+
+The files are Fontsource's variable latin subsets (v5.3.0), and `tokens.json` records each one's source. A woff2 loaded from a sheet cannot carry `integrity` (a CSS `url()` has no attribute for it), so the sheet is pinned with a hash and the font is covered by the tag being immutable.
 
 ### Family accent (web only)
 The system defines one primary per mode. That is why thirteen of fifteen sites ended up black with the same lime pill — they inherited exactly what they were given, and there was no layer where they were allowed to differ.

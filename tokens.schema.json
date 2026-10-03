@@ -76,12 +76,15 @@
               "type": "object",
               "additionalProperties": {
                 "type": "object",
-                "required": ["name", "stack", "licence", "use"],
+                "required": ["name", "stack", "licence", "use", "file", "weights", "source"],
                 "properties": {
                   "name": { "type": "string" },
                   "stack": { "type": "string" },
                   "licence": { "type": "string" },
-                  "use": { "type": "string" }
+                  "use": { "type": "string" },
+                  "file": { "type": "string", "description": "The woff2 in fonts/ that this face ships as." },
+                  "weights": { "type": "string", "pattern": "^\\d+ \\d+$", "description": "The variable weight axis, as a CSS font-weight range." },
+                  "source": { "type": "string", "description": "Where the file came from, with its version." }
                 }
               }
             }

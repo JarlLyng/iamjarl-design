@@ -52,6 +52,16 @@ export function currentIndex(hrefs, here) {
   });
 }
 
+// Whether the hero's CTA is on screen, from one IntersectionObserver callback.
+// A callback can carry several entries for the same target: if the page
+// scrolls before the first delivery — a visitor landing on /#download, say —
+// the stale "on screen" entry and the fresh "gone" one arrive together. Only
+// the last is current. Reading the first left the nav's CTA hidden for the
+// rest of the visit. Returns null for an empty callback: nothing to decide.
+export function heroOnScreen(entries) {
+  return entries.length ? entries[entries.length - 1].isIntersecting : null;
+}
+
 // What a site put in the nav that the rules say does not belong there. The
 // element logs these as warnings rather than hiding anything: every link stays
 // in light DOM for crawlers, and the site decides what to do about it.
