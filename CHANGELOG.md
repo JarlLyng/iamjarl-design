@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.0] — 2026-10-04
+
+Every family's display face is assigned. The owner's decision, from #50; the mechanism shipped in 1.11.0 and has been waiting. Closes #50.
+
+### Added
+- **Seven declarations in `apps.json`**: `fitness` and `music` take JetBrains Mono (`mono`); `web-tools` and `images` take Outfit (`geometric`); Walkful and Wean override to Instrument Sans (`humanist`), and Echolume to Outfit. Both production claims behind them were checked against the live sites: WODrounds' site sets JetBrains Mono, and Echolume's sets Outfit.
+- **`--ij-font-display` in 13 identity sheets** — every shipped app in a family. iamjarl.com and Made by Human stay outside and get none.
+- **The assignments in `design.md`**, with the reasons for the three exceptions.
+
+### What changes on a page
+Nothing changes on a page by itself. A site picks the face up by self-hosting the file and using `var(--ij-font-display)` where its voice belongs, which `design.md` already describes.
+
+**The one exception is `<ij-nav>`.** Its wordmark is set in `--ij-font-display`, so a site that loads both the nav and an identity sheet at 1.16.0 gets its wordmark in the family face — or in the fallback if the file is not there, which for a mono family is `ui-monospace`. No site loads both today; the note is in `MIGRATION.md` and `design.md` for the first that does. Echolume, the nav pilot that loads its sheet, sets Outfit already, which is the face it is assigned.
+
+### Tests
+The contract test that asserted *no family has been assigned a face yet* was correct until this release and is replaced by the invariants that outlive it: a family's face reaches every app in it unless the app names its own, an app outside every family gets none, and every sheet with a face emits its stack along with the self-host note. Each was checked by breaking what it guards. A browser test confirms the nav's wordmark renders in Outfit under Echolume's sheet.
+
 ## [1.15.0] — 2026-10-03
 
 The Swift package, made for apps. It was the web system translated mechanically, and the apps had each been filling the same gaps on their own: of the eleven that import it, nearly all carry a theme layer beside it. This release puts those layers in the package.
@@ -568,6 +585,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.16.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.16.0
 [1.15.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.15.0
 [1.14.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.14.0
 [1.13.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.13.1

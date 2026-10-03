@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.15.0)
+# IAMJARL Design System (v1.16.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -57,6 +57,20 @@ The tokens ship `system-ui` and `ui-monospace` and nothing else, so every site t
 Two of the three were derived rather than chosen: JetBrains Mono is the only mono in production, and Outfit is on two sites where DM Sans is on one. **The humanist slot has no production evidence behind it and is therefore the most revisable of the three.**
 
 Assigned per category in `apps.json`, overridable per app, emitted as `--ij-font-display` in `dist/identity/<app>.css`. Every stack ends in a real fallback, so a site that has not loaded the file still reads correctly.
+
+#### The assignments
+Decided by the owner on 2026-10-03 (#50).
+
+| Family | Face | Except |
+|---|---|---|
+| `fitness` | JetBrains Mono — timers, sets, reps and weights | **Walkful** and **Wean** take Instrument Sans: health and calm, not an instrument |
+| `music` | JetBrains Mono — gear, samplers, card data | **Echolume** takes Outfit: the live canvas is its signature, and the site already sets Outfit |
+| `web-tools` | Outfit — tools that present themselves as instruments | |
+| `images` | Outfit | |
+
+iamjarl.com and Made by Human are outside the system and get no face.
+
+**A face in the sheet is not a face on the page.** A site picks it up by self-hosting the file (below) and using `var(--ij-font-display)` where its voice belongs. The one place the system uses it by itself is `<ij-nav>`'s wordmark: a site that loads both its identity sheet and the nav gets the wordmark in its family's face, or in the stack's fallback if the file is not there. For a mono family the fallback is `ui-monospace`, which is a visible change, so self-host before moving the sheet.
 
 #### Self-host the file. Do not link Google Fonts.
 `fonts.googleapis.com` is a third-party request on every page view, and it carries the visitor's IP and referring page. This portfolio tells people it has no tracking and no third parties; loading a font from Google contradicts that on the one page making the claim.
