@@ -44,6 +44,7 @@ function validateStructure(tokens) {
 
   validateVersionCoherence(tokens.meta.version);
   validateNumerals(tokens);
+  validateShippedFaces(tokens);
 
   // Tokens
   if (!tokens.tokens) {
@@ -311,6 +312,25 @@ function validateVersionCoherence(version) {
   } catch (e) {
     fail(`Could not read MIGRATION.md: ${e.message}`);
   }
+}
+
+// Every approved face ships: its woff2 and its OFL licence in fonts/. The
+// licence is not optional — OFL-1.1 permits redistribution only with it.
+function validateShippedFaces(tokens) {
+  const faces = Object.entries(tokens.brand?.typography?.display ?? {});
+  const dir = path.join(__dirname, '..', 'fonts');
+  let problems = 0;
+  for (const [slot, f] of faces) {
+    if (!f.file || !fs.existsSync(path.join(dir, f.file))) { fail(`display.${slot}: fonts/${f.file} is missing`); problems++; continue; }
+    const head = fs.readFileSync(path.join(dir, f.file)).subarray(0, 4).toString('latin1');
+    if (head !== 'wOF2') { fail(`display.${slot}: fonts/${f.file} is not a woff2 file`); problems++; }
+    const licence = path.join(dir, `LICENSE-${f.file.replace(/-latin-wght-normal\.woff2$/, '')}.txt`);
+    if (!fs.existsSync(licence) || !/SIL OPEN FONT LICENSE Version 1\.1/.test(fs.readFileSync(licence, 'utf-8'))) {
+      fail(`display.${slot}: no OFL-1.1 licence beside fonts/${f.file}`); problems++;
+    }
+    if (!/^\d+ \d+$/.test(f.weights ?? '')) { fail(`display.${slot}: weights must be a range like "100 900"`); problems++; }
+  }
+  if (!problems) pass(`${faces.length} display faces ship, each a woff2 with its OFL licence`);
 }
 
 // Numbers that are the interface. What sets them apart from text is how they

@@ -79,11 +79,21 @@ ${FULL_NAV.replace('<ij-nav>', '<ij-nav cta-after="#hero-cta">')}
   'footer-unknown': page({ nav: false, footer: true, body: `
 <ij-footer app="does-not-exist"><p id="fallback">© 2026 Fallback</p></ij-footer>` }),
 
+  // The three shipped faces, loaded the way a site would: the generated sheet
+  // from dist/fonts/, which points at the woff2 in fonts/ by a relative url.
+  fonts: page({ nav: false, body: `
+<link rel="stylesheet" href="/dist/fonts/jetbrains-mono.css">
+<link rel="stylesheet" href="/dist/fonts/outfit.css">
+<link rel="stylesheet" href="/dist/fonts/instrument-sans.css">
+<h1 style="font-family: 'JetBrains Mono', monospace">12:30</h1>
+<h1 style="font-family: 'Outfit', sans-serif">Echolume</h1>
+<h1 style="font-family: 'Instrument Sans', sans-serif">Walkful</h1>` }),
+
   'footer-justify': page({ nav: false, footer: true, body: `
 <div style="width: 900px"><ij-footer app="its-mono-yo" style="text-align: center; --ij-footer-links-justify: center"></ij-footer></div>` }),
 };
 
-const TYPES = { '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/html', '.json': 'application/json' };
+const TYPES = { '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/html', '.json': 'application/json', '.woff2': 'font/woff2' };
 
 function serve() {
   const server = http.createServer((req, res) => {
@@ -361,6 +371,26 @@ try {
     !customElements.get('ij-nav') &&
     [...document.querySelectorAll('ij-nav > a')].length === 6 &&
     [...document.querySelectorAll('ij-nav > a')].every(a => a.getClientRects().length > 0)`));
+
+  // Display faces
+  console.log('\nDisplay faces:');
+  await p.goto(`${base}/fixture/fonts/index.html`);
+  const faces = await p.eval(`(async () => {
+    await document.fonts.ready;
+    const out = {};
+    for (const fam of ['JetBrains Mono', 'Outfit', 'Instrument Sans']) {
+      const loaded = await document.fonts.load('700 32px "' + fam + '"', 'Aa');
+      out[fam] = loaded.length > 0 && loaded.every(f => f.status === 'loaded');
+    }
+    out.files = performance.getEntriesByType('resource').map(r => r.name).filter(n => n.endsWith('.woff2')).map(n => n.split('/').pop()).sort();
+    return out;
+  })()`);
+  for (const fam of ['JetBrains Mono', 'Outfit', 'Instrument Sans']) {
+    check(`${fam} loads through its generated sheet`, faces[fam] === true, JSON.stringify(faces));
+  }
+  check('each woff2 is fetched from fonts/, by the relative url', JSON.stringify(faces.files) === JSON.stringify([
+    'instrument-sans-latin-wght-normal.woff2', 'jetbrains-mono-latin-wght-normal.woff2', 'outfit-latin-wght-normal.woff2']),
+    faces.files.join(', '));
 
   // Footer: the manual checks that have already caught real bugs.
   console.log('\n<ij-footer>:');

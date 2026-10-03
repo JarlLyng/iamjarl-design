@@ -10,7 +10,7 @@ import { parseHex, parseRgba, parseColor, contrastRatio } from './color.js';
 import { extractNotes } from './release-notes.js';
 import { selectLinks, categoryReach } from '../components/select-links.js';
 import { accentFor, displayFor } from '../components/identity.js';
-import { NAV_ALPHA, NAV_COLLAPSE_BELOW, MAX_LINKS, currentIndex, navWarnings } from '../components/nav-rules.js';
+import { NAV_ALPHA, NAV_COLLAPSE_BELOW, MAX_LINKS, currentIndex, heroOnScreen, navWarnings } from '../components/nav-rules.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -500,6 +500,11 @@ check('two CTAs, no brand, two secondaries are each flagged', [
   navWarnings({ ...echolume, secondary: 2 }),
 ].every(w => w.length === 1));
 
+check('cta-after reads the latest entry, not the first', heroOnScreen([
+  { isIntersecting: true }, { isIntersecting: false }]) === false,
+  'a scroll before the first delivery batches the stale entry with the fresh one');
+check('cta-after decides nothing from an empty callback',
+  heroOnScreen([]) === null && heroOnScreen([{ isIntersecting: true }]) === true);
 check('the nav folds at the system\'s md breakpoint', NAV_COLLAPSE_BELOW === tokens.tokens.breakpoints.md,
   `nav ${NAV_COLLAPSE_BELOW}, breakpoints.md ${tokens.tokens.breakpoints.md}`);
 
@@ -649,8 +654,25 @@ check('a category face reaches its apps', (() => {
   probe2.categories.music.display = 'mono';
   return displayFor(probe2, 'tonvault', fullTokens).face.name === 'JetBrains Mono';
 })());
-check('design.md tells sites to self-host rather than link Google Fonts',
-  /Self-host the file\. Do not link Google Fonts/.test(read('design.md')));
+// The faces ship from here (1.17.0): one generated @font-face per face, whose
+// family must be the name --ij-font-display asks for, and whose url must land
+// on the woff2 from wherever the sheet is loaded.
+for (const f of Object.values(faces)) {
+  const name = f.file.replace(/-latin-wght-normal\.woff2$/, '');
+  const sheet = `dist/fonts/${name}.css`;
+  const css = fs.existsSync(path.join(ROOT, sheet)) ? read(sheet) : '';
+  check(`${f.name} ships with a font-face sheet that names it as the stack does`,
+    css.includes(`font-family: ${f.stack.split(',')[0].trim()};`) && css.includes(`font-weight: ${f.weights};`));
+  const url = (css.match(/url\('([^']+)'\)/) || [])[1] ?? '';
+  check(`${f.name}'s url resolves to its file, from the sheet's own folder`,
+    fs.existsSync(path.resolve(ROOT, 'dist/fonts', url)) && url.endsWith(f.file), url);
+  check(`${f.name}'s sheet has an SRI entry`, sheet in JSON.parse(read('dist/sri.json')).files);
+}
+const pkgJson = JSON.parse(read('package.json'));
+check('the package ships fonts/ and exports the sheets',
+  pkgJson.files.includes('fonts/') && pkgJson.exports['./fonts/*'] === './dist/fonts/*');
+check('design.md tells sites to load the face from here, never from Google Fonts',
+  /Load the face from the design system\. Do not link Google Fonts/.test(read('design.md')));
 
 // --- Patterns ---
 // The contrast floor is the part a site would otherwise re-derive or skip, so

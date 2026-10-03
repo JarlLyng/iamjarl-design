@@ -10,6 +10,7 @@ on:
       - 'tokens.json'
       - 'apps.json'
       - 'components/**'
+      - 'fonts/**'
       - 'package.json'
       - 'Package.swift'
       - 'design.md'

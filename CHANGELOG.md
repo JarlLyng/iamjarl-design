@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.17.0] — 2026-10-04
+
+The three display faces ship from the design system, so thirteen sites do not each commit the same files. And a bug in `<ij-nav>`'s `cta-after`, found while adding the font tests.
+
+### Added
+- **`fonts/`**: the variable latin woff2 of JetBrains Mono (40 KB), Outfit (32 KB) and Instrument Sans (30 KB), each beside its OFL-1.1 licence. They are Fontsource's v5.3.0 subsets, and `tokens.json` records each one's file, weight axis and source. The package now ships `fonts/`.
+- **`dist/fonts/<face>.css`**: one generated `@font-face` per face, exported as `@iamjarl/design-tokens/fonts/*` and hashed in `sri.json`. The `font-family` comes from the same stack `--ij-font-display` uses, so the two cannot name different families. The url is relative, so it finds the woff2 on jsDelivr at the same tag and inside `node_modules` alike.
+- **Checks:**
+  - `validate.js` fails a face without its woff2, with a file that is not woff2, without its OFL licence (the licence is the condition of redistribution), or with a malformed weight range.
+  - Contract tests hold each sheet's family, weight and url to `tokens.json`.
+  - A browser test loads all three faces through their sheets and checks that each woff2 came from `fonts/`.
+
+### Why ship them, which design.md had deferred
+1.16.0 asked thirteen sites to self-host the same three files, and five of them load fonts from Google Fonts today. Thirteen copies drift. jsDelivr is already the third party the sites accepted for `tokens.css`, so loading the faces from the same pinned tag adds no new one. A site with a build step gets them from `node_modules` and serves them itself.
+
+### Fixed
+- **`cta-after` could leave the nav's CTA hidden for the rest of a visit.** An IntersectionObserver callback can carry several entries for one target. If the page scrolls before the first delivery — a visitor landing on `/#download`, for one — the stale "hero on screen" entry and the fresh "gone" one arrive together. The component read the first. The browser test that checks the CTA returns after scrolling failed in 3 runs of 10 because of it.
+  - **The fault was in the component.** An earlier read blamed background-tab throttling in the test harness; disabling throttling changed nothing, and an observer log showed both entries in one callback.
+  - **The fix:** the decision is now a pure function, `heroOnScreen()` in `nav-rules.js`, which takes the last entry and is contract-tested with a batched pair. The reproduction ran 0 failures in 40, and the full browser suite 0 in 10.
+  - **Impact:** no site uses `<ij-nav>` yet.
+
 ## [1.16.0] — 2026-10-04
 
 Every family's display face is assigned. The owner's decision, from #50; the mechanism shipped in 1.11.0 and has been waiting. Closes #50.
@@ -585,6 +606,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.17.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.17.0
 [1.16.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.16.0
 [1.15.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.15.0
 [1.14.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.14.0

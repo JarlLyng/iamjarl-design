@@ -11,6 +11,7 @@ on:
       - 'scripts/**'
       - 'Sources/**'
       - 'Tests/**'
+      - 'fonts/**'
       - 'dist/**'
       - 'package.json'
       - 'Package.swift'
