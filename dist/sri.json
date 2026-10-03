@@ -1,9 +1,22 @@
 {
-  "version": "1.13.0",
+  "version": "1.13.1",
   "algorithm": "sha384",
   "files": {
-    "dist/css/tokens.css": "sha384-zP6Npk2pldCFo8yU7BRGtlXsfaCg61BPk1uI6QuxdabRDonYD0NZj+GSKAvVtsP5",
-    "dist/css/tokens.shadow.css": "sha384-zs90iqBN6GWh142JIsW4VkKT03vuOSPDLTybpzfHm/kGN78/fB0W9yF4EkBVY/jb",
-    "dist/components/ij-footer.js": "sha384-k6rHBD7DQwolVi361Zgb8yp7A44UtH4ZxMCxrqpFY+6MH9k9KsKipOMuiFXA+91v"
+    "dist/css/tokens.css": "sha384-PX73KPCF2cHPzVKSPm35DOxaVnPArS9fGyZUgzT7yv7XHefDx0wvUt8aeVkaYL9N",
+    "dist/css/tokens.shadow.css": "sha384-DWbtEiilzxoMurTIzk5SKu42d8Kqn1RfSZnYnMcDgXCKPlr8YXwAEDWAN5Gg4Qzk",
+    "dist/components/ij-footer.js": "sha384-p0/1YhVjKlGmuhs6ASdrLbzv3NkbAVtiVH5nepH2tMchzH3dZRVcgrLuuaq/DD8D",
+    "dist/identity/anvil-workout.css": "sha384-oEgVZFpBdWD4L3XGPR4S8pmx8M6Zy+oy/zoO3IadTQV85+y8Z4kkiVvzc9oR3y4d",
+    "dist/identity/botlens.css": "sha384-IetCVNXNuY3sDsnkRNWxG14q1jQmMsCU8ugc4+8bGYgJVFxdhHLWLDjTpteB4KA0",
+    "dist/identity/echolume.css": "sha384-N1yEJ6BiBzQl0ZW74UrrGKGELg8V3tnouDawTCoUNmz1vTc6CCOLqJcTIubaxPcA",
+    "dist/identity/its-404-yo.css": "sha384-cTspZyOcj2/lEl/scOmcOqJfekDd6SZ16uChVKl2QQ2BIGPZ/l+bqQ4Zqx0sDdZh",
+    "dist/identity/its-mono-yo.css": "sha384-pQdk3xLrXd88LYxrj9EptSvPGOc9WNEnlJvoIsZCiLUYcWGLhuLFAEIUDXBZ7Bsi",
+    "dist/identity/pagelens.css": "sha384-nbep7E6Y7amkPKZ8/g9XhD/vq+GXr20qHQ33NPO83K8K7tyyD1Vm53+dQjOr2Rl/",
+    "dist/identity/patternaut.css": "sha384-pc8c6sm2ZMC0N3V9kOfjuNRRcIkyJRUtRf/t+dRVdKnjVcOkQWnWGy3VqC9+4Gf7",
+    "dist/identity/tonvault.css": "sha384-wAswbg9WgKJASFVb1D3c96nytf/lT+5XRJPZFmIRt745b2JnVsHP7RHETuXGVhK5",
+    "dist/identity/trimrpix.css": "sha384-Ai+wjcQcJXLML0cM3BBZFxoep6csrPpB+HM/xD8KG0a/qthL9byFWqeGlBW/oAJ5",
+    "dist/identity/trimrpix-ios.css": "sha384-CReDe8t6060uFOHk2gg2AdP3VSXzJK5bzdRREGirxJ4zAY125Pmb1gS6aghZMOGY",
+    "dist/identity/walkful.css": "sha384-1t49BvV8aCB+xTYpt/tK906NHlPRPB9uhgxi5UYgtW1Pzdp/rKUM0NmGsSkg8J4b",
+    "dist/identity/wean-nicotine.css": "sha384-fFohNcDp7S/IX+jA2Uu9VSTWaxzrfHws6+WoTba6h4iku+DOdUGTqaxXAjoqWpbR",
+    "dist/identity/wodrounds.css": "sha384-dfBS3TiV1zKltCn3lx0uR6AnevBd0E8P4JrPpcHcv1Id64p42q2Uur5XIg7ucd3G"
   }
 }

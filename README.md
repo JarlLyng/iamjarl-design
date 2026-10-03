@@ -51,7 +51,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.13.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.13.1")
 ]
 ```
 
@@ -208,7 +208,7 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.13.0/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.13.1/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -248,7 +248,7 @@ a build step, install it instead.**
 | Needs `integrity`? | yes, worth it | no — nothing crosses an origin |
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.13.0
+npm install github:jarllyng/iamjarl-design#v1.13.1
 ```
 
 ```js
@@ -274,13 +274,13 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.13.0/dist/css/tokens.css"
-  integrity="sha384-zP6Npk2pldCFo8yU7BRGtlXsfaCg61BPk1uI6QuxdabRDonYD0NZj+GSKAvVtsP5"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.13.1/dist/css/tokens.css"
+  integrity="sha384-PX73KPCF2cHPzVKSPm35DOxaVnPArS9fGyZUgzT7yv7XHefDx0wvUt8aeVkaYL9N"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.13.0/dist/components/ij-footer.js"
-  integrity="sha384-k6rHBD7DQwolVi361Zgb8yp7A44UtH4ZxMCxrqpFY+6MH9k9KsKipOMuiFXA+91v"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.13.1/dist/components/ij-footer.js"
+  integrity="sha384-p0/1YhVjKlGmuhs6ASdrLbzv3NkbAVtiVH5nepH2tMchzH3dZRVcgrLuuaq/DD8D"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
@@ -302,7 +302,7 @@ The component builds the cross-links at runtime, so crawlers that do not execute
 pre-rendered fragment for your app and the component will slot it instead of regenerating:
 
 ```bash
-curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.13.0/dist/footers/botlens.html
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.13.1/dist/footers/botlens.html
 ```
 
 ```html
@@ -342,6 +342,51 @@ the mode your site chose.
 
 Edit [`apps.json`](apps.json), run `node scripts/validate.js && node scripts/build.js`, and open a
 PR. Every consuming site picks it up on its next version bump.
+
+---
+
+## Family accent: `dist/identity/<app>.css`
+
+A colour your site may lean on — its hero, its CTA, a headline mark — without leaving the system.
+It is declared per family in [`apps.json`](apps.json), and [design.md](design.md#the-declared-families)
+lists which families have one. `primary` does not change. If your app has no file in
+[`dist/identity/`](dist/identity), there is nothing to adopt, and your site keeps the primary.
+
+```html
+<!-- tokens.css first, from the SRI block above -->
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.13.1/dist/identity/<app>.css"
+  integrity="<from sri.json, see below>"
+  crossorigin="anonymous">
+```
+
+**The hash is in `sri.json`, at the same version as the tag.** Every sheet has an entry. This prints
+yours:
+
+```bash
+curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.13.1/dist/sri.json | grep 'identity/<app>.css'
+```
+
+Each sheet carries the version in its header, so its hash changes every release. Move the tag and
+the hash together, as with `tokens.css`.
+
+**Using it:**
+
+- **As text or an icon** on `background.app`: `color: var(--ij-color-accent-family)`. Every accent
+  clears 4.5:1 on its own ground; `validate.js` refuses one that does not.
+- **As a fill**, put `var(--ij-color-on-primary)` on it. That is not a coincidence: `onPrimary` is
+  the same colour as `background.app` in both modes, so an accent that clears 4.5:1 on its ground
+  clears 4.5:1 under `onPrimary` too. A contract test holds that equivalence in place.
+- **Translucent**: `color-mix(in srgb, var(--ij-color-accent-family) 15%, transparent)`, or the
+  `--ij-color-accent-family-rgb` triplet the sheet also sets.
+
+**A site that is always dark must say so.** The sheet sets the light value on `:root` and switches
+under `prefers-color-scheme: dark`, the same as `tokens.css`. A site that is dark regardless of the
+system needs `class="dark"` on `<html>`, or a visitor in light mode gets the light accent on a dark
+page. Echolume does exactly this.
+
+**Not listed in `sri.json`: the footer fragments.** You copy them into your own HTML at build time,
+and the browser never fetches them as a resource, so an `integrity` attribute has nothing to check.
 
 ---
 

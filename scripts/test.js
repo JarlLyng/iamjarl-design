@@ -455,6 +455,24 @@ check('an undeclared category still resolves to the shared primary', shippedApps
            acc.dark === tokenTree.colors.modes.dark.primary &&
            acc.isFamilyAccent === false;
   }), 'opting in stays optional, so a site that declared nothing renders as before');
+// The README tells adopters to put onPrimary on the accent when it is a fill.
+// That is only safe because onPrimary IS background.app in both modes, so the
+// validator's ground check doubles as the fill check. If either token moves,
+// the advice silently stops being true — so the equivalence is held here.
+check('onPrimary is background.app in both modes, so it is every accent\'s on-colour',
+  ['light', 'dark'].every(m =>
+    tokenTree.colors.modes[m].onPrimary === tokenTree.colors.modes[m].background.app),
+  'README advises onPrimary for text on a family accent; that advice rests on this');
+check('every declared accent carries onPrimary at AA', Object.values(registry.categories)
+  .filter(c => c.accent)
+  .every(c => ['light', 'dark'].every(m =>
+    contrastRatio(parseHex(c.accent[m]), parseHex(tokenTree.colors.modes[m].onPrimary)) >= 4.5)));
+check('README documents adopting an identity sheet, with integrity', (() => {
+  const md = read('README.md');
+  const at = md.indexOf('## Family accent: `dist/identity/<app>.css`');
+  const sec = at === -1 ? '' : md.slice(at, md.indexOf('\n## ', at + 1));
+  return sec.includes('integrity=') && sec.includes('sri.json') && sec.includes('class="dark"');
+})(), 'the first adopter had to compute the hash by hand and find the dark-mode rule themselves');
 check('a sheet exists for every app that differs, and only for those', (() => {
   const expected = shippedApps
     .filter(a => accentFor(registry, a.id, tokenTree).isFamilyAccent ||
@@ -525,8 +543,11 @@ const sri = JSON.parse(read('dist/sri.json'));
 check('sri.json version matches tokens.json', sri.version === tokens.meta.version);
 check('sri.json declares sha384', sri.algorithm === 'sha384');
 
+const missingFiles = Object.keys(sri.files).filter(rel => !fs.existsSync(path.join(ROOT, rel)));
+check('every entry points at a file that exists', missingFiles.length === 0,
+  `listed but not built: ${missingFiles.join(', ')}`);
 const recomputed = Object.fromEntries(
-  Object.keys(sri.files).map(rel => [
+  Object.keys(sri.files).filter(rel => !missingFiles.includes(rel)).map(rel => [
     rel,
     'sha384-' + crypto.createHash('sha384')
       .update(fs.readFileSync(path.join(ROOT, rel))).digest('base64'),
@@ -535,9 +556,18 @@ const recomputed = Object.fromEntries(
 check('every hash matches its file', Object.entries(sri.files)
   .every(([rel, h]) => recomputed[rel] === h),
   Object.keys(sri.files).filter(r => recomputed[r] !== sri.files[r]).join(', '));
-check('covers the three CDN-served files', Object.keys(sri.files).length === 3 &&
+check('covers the three shared CDN files',
   ['dist/css/tokens.css', 'dist/css/tokens.shadow.css', 'dist/components/ij-footer.js']
     .every(f => f in sri.files));
+// A site adopts its identity sheet with one pinned <link>, exactly like
+// tokens.css, so a sheet without a hash forces every adopter to compute one by
+// hand — which is what the first adopter had to do (JarlLyng/echolume#198).
+const unhashed = sheets.filter(f => !(`dist/identity/${f}` in sri.files));
+check('every identity sheet has an entry', sheets.length > 0 && unhashed.length === 0,
+  `no hash for: ${unhashed.join(', ')}`);
+check('footer fragments are deliberately not listed',
+  !Object.keys(sri.files).some(f => f.startsWith('dist/footers/')),
+  'a fragment is copied into the site\'s HTML at build time; SRI applies only to fetched resources');
 
 // README carries the paste-ready tags and is generated, but sits outside the
 // dist/ drift check — so it is asserted here instead.
