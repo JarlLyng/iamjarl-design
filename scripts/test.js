@@ -55,10 +55,40 @@ const swiftAPI = [
   'public extension Color',
   'init(hex: String)',
   'init(rgba: String)',
+  'public enum Palette',
+  'public enum Style: CaseIterable, Sendable',
+  'public enum Numeral: CaseIterable, Sendable',
 ];
 for (const sig of swiftAPI) {
   check(`Swift contains "${sig}"`, swift.includes(sig));
 }
+
+// The palette is what apps should reach for: every mode-aware colour, adapting
+// by itself. Count it against tokens.json so a token added to the modes cannot
+// be left out of it, and against the generated tests so none goes unchecked.
+const modeLeaves = (() => {
+  const out = [];
+  const walk = (o, p) => { for (const [k, v] of Object.entries(o)) {
+    if (k === 'gradients') continue;
+    typeof v === 'string' ? out.push([...p, k].join('.')) : walk(v, [...p, k]);
+  } };
+  walk(JSON.parse(read('tokens.json')).tokens.colors.modes.light, []);
+  return out;
+})();
+const paletteBlock = swift.slice(swift.indexOf('public enum Palette'));
+check(`the palette covers every mode-aware colour (${modeLeaves.length})`,
+  (paletteBlock.match(/= DesignTokens\.adaptive\(/g) || []).length === modeLeaves.length);
+check('every palette colour has a generated Swift test',
+  (read('Tests/IAMJARLDesignTokensTests/PaletteTests.swift').match(/try assertAdaptive\(/g) || []).length === modeLeaves.length);
+check('the CSS font names are deprecated in Swift, not silently kept',
+  (swift.match(/@available\(\*, deprecated[^\n]*\n\s*public static let (uiFontName|monoFontName)/g) || []).length === 2,
+  '"system-ui" means nothing to SwiftUI');
+const swiftSrc = name => read(`Sources/IAMJARLDesignTokens/${name}`);
+check('ijFont scales with Dynamic Type', /ScaledMetric\(wrappedValue: style\.size, relativeTo: style\.textStyle\)/.test(swiftSrc('DynamicType.swift')));
+check('ijNumeral uses tabular digits and is capped',
+  swiftSrc('DynamicType.swift').includes('.monospacedDigit()') && swiftSrc('DynamicType.swift').includes('numeralMaxScale'));
+check('adaptive colours cover UIKit, AppKit and watchOS',
+  ['os(watchOS)', 'canImport(UIKit)', 'canImport(AppKit)'].every(x => swiftSrc('Adaptive.swift').includes(x)));
 
 // --- CSS output ---
 console.log('\nCSS output:');
@@ -93,6 +123,7 @@ check('CSS has dark-mode media query', css.includes('@media (prefers-color-schem
 check('CSS has .light class override', /\.light\s*\{/.test(css));
 check('CSS has .dark class override', /\.dark\s*\{/.test(css));
 check('CSS has popup breakpoint', css.includes('--ij-breakpoint-popup'));
+check('CSS has the numeral scale', ['sm', 'md', 'lg'].every(k => css.includes(`--ij-font-size-numeral-${k}:`)));
 
 // Gradients — web only, own namespace, and each must start at a system color.
 check('CSS emits gradients in every mode block',
@@ -170,6 +201,7 @@ const dtsExports = [
   'export declare const zIndex',
   'export declare const opacity',
   'export type ZIndexKey',
+  'export type Numeral',
   'export type OpacityKey',
 ];
 for (const sig of dtsExports) {

@@ -65,6 +65,25 @@
             "lineHeights": {
               "type": "object",
               "additionalProperties": { "type": "number", "minimum": 0 }
+            },
+            "numerals": {
+              "description": "Sizes for numbers that are the interface: timers, counters, readouts. Always set with tabular digits.",
+              "type": "object",
+              "additionalProperties": { "type": "number", "minimum": 0 }
+            },
+            "display": {
+              "description": "Approved display faces (web only): a font stack, a licence and the intended use.",
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "required": ["name", "stack", "licence", "use"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "stack": { "type": "string" },
+                  "licence": { "type": "string" },
+                  "use": { "type": "string" }
+                }
+              }
             }
           }
         }

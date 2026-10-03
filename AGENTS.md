@@ -34,15 +34,18 @@ Then:
 ```swift
 import IAMJARLDesignTokens
 
-// Mode-aware colors (pass @Environment(\.colorScheme) var scheme)
+// Mode-aware colors — resolve light/dark by themselves. Prefer these.
+DesignTokens.Palette.primary
+DesignTokens.Palette.primaryHover            // also primaryPressed, primarySubtle
+DesignTokens.Palette.onPrimary
+DesignTokens.Palette.Text.primary            // also secondary, tertiary, disabled, inverse
+DesignTokens.Palette.Background.app          // also muted, card, disabled
+DesignTokens.Palette.Border.subtle
+DesignTokens.Palette.State.error             // text-safe state colours; also success, warning
+DesignTokens.adaptive(light:dark:)           // for an app's own derived colours
+
+// The older form, which needs @Environment(\.colorScheme) passed in, still works:
 DesignTokens.Common.primary(scheme)
-DesignTokens.Common.primaryHover(scheme)     // also primaryPressed, primarySubtle
-DesignTokens.Common.Text.primary(scheme)
-DesignTokens.Common.Text.disabled(scheme)
-DesignTokens.Common.Background.app(scheme)
-DesignTokens.Common.Background.disabled(scheme)
-DesignTokens.Common.Border.subtle(scheme)
-DesignTokens.Common.OnPrimary.text(scheme)
 
 // State colors as TEXT/foreground (mode-aware, WCAG AA on background.app)
 DesignTokens.Common.State.error(scheme)      // also success, warning
@@ -59,8 +62,10 @@ DesignTokens.Opacity.disabled   // 0.4
 DesignTokens.Spacing.md   // 12pt
 DesignTokens.Radius.lg    // 16pt
 
-// Typography
-DesignTokens.Typography.Size.base   // 16pt
+// Typography — follows Dynamic Type; never .font(.system(size:)) with a token
+Text("Rounds").ijFont(.lg, weight: .semibold)   // xs, sm, base, lg, xl, xxl
+Text("12:30").ijNumeral(.lg)                      // sm 32, md 56, lg 80: tabular digits
+DesignTokens.Typography.Size.base   // 16pt, the raw value
 DesignTokens.Typography.Weight.semibold
 
 // Shadows

@@ -10,6 +10,7 @@ on:
       - 'tokens.schema.json'
       - 'scripts/**'
       - 'Sources/**'
+      - 'Tests/**'
       - 'dist/**'
       - 'package.json'
       - 'Package.swift'
@@ -49,7 +50,7 @@ jobs:
 
       - name: Verify generated files are in sync
         run: |
-          if ! git diff --exit-code Sources/ dist/; then
+          if ! git diff --exit-code Sources/ Tests/ dist/; then
             echo "::error::Generated files are out of sync. Run 'node scripts/build.js' locally and commit the changes."
             exit 1
           fi
@@ -73,3 +74,39 @@ jobs:
 
       - name: Build Swift package
         run: swift build
+
+      # macOS: the AppKit path of the palette, and tabular digits.
+      - name: Test on macOS
+        run: swift test
+
+      # `swift build` only ever compiled for macOS, so the UIKit and watchOS
+      # branches had never been built in CI. Build each platform the package
+      # declares.
+      - name: Build for iOS, watchOS and tvOS
+        run: |
+          for platform in iOS watchOS tvOS; do
+            xcodebuild build -scheme IAMJARLDesignTokens -destination "generic/platform=$platform" -quiet
+          done
+
+      # iOS: the UIKit path of the palette, and Dynamic Type, which macOS does
+      # not have — this is where text is measured growing.
+      - name: Test on an iOS simulator
+        run: |
+          SIM=$(xcrun simctl list devices available -j | python3 -c "
+          import json, sys
+          d = json.load(sys.stdin)['devices']
+          for runtime in sorted(d, reverse=True):
+              if 'iOS' in runtime:
+                  for dev in d[runtime]:
+                      if dev['name'].startswith('iPhone'):
+                          print(dev['udid']); sys.exit()
+          sys.exit('no iPhone simulator available')")
+          set -o pipefail
+          xcodebuild test -scheme IAMJARLDesignTokens -destination "id=$SIM" 2>&1 | tee ios-test.log \
+            | grep -E "Test Case .*(passed|failed|skipped)|Executed [0-9]+ tests"
+          # A skipped test is green but checked nothing. On the runner's current
+          # iOS, nothing has a reason to skip.
+          if grep -q "Test Case .* skipped" ios-test.log; then
+            echo "::error::An iOS test was skipped in CI, so it checked nothing."
+            exit 1
+          fi

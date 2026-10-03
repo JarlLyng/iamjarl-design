@@ -8,6 +8,11 @@ let package = Package(
         .library(name: "IAMJARLDesignTokens", targets: ["IAMJARLDesignTokens"])
     ],
     targets: [
-        .target(name: "IAMJARLDesignTokens", path: "Sources/IAMJARLDesignTokens")
+        .target(name: "IAMJARLDesignTokens", path: "Sources/IAMJARLDesignTokens"),
+        .testTarget(
+            name: "IAMJARLDesignTokensTests",
+            dependencies: ["IAMJARLDesignTokens"],
+            path: "Tests/IAMJARLDesignTokensTests"
+        )
     ]
 )

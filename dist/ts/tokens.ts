@@ -1,6 +1,6 @@
-// IAMJARL Design Tokens v1.14.0 — generated, do not edit
+// IAMJARL Design Tokens v1.15.0 — generated, do not edit
 
-export const meta = {"name":"IAMJARL Design System","version":"1.14.0"} as const;
+export const meta = {"name":"IAMJARL Design System","version":"1.15.0"} as const;
 
 export const spacing = {"xs":4,"sm":8,"md":12,"lg":16,"xl":20,"xxl":24,"xxxl":32} as const;
 
@@ -31,6 +31,11 @@ export const typography = {
     "lg": 28,
     "xl": 32,
     "xxl": 44
+  },
+  "numerals": {
+    "sm": 32,
+    "md": 56,
+    "lg": 80
   }
 } as const;
 
@@ -212,6 +217,7 @@ export type Typography = typeof typography;
 export type FontSize = keyof Typography["sizes"];
 export type FontWeight = keyof Typography["weights"];
 export type LineHeight = keyof Typography["lineHeights"];
+export type Numeral = keyof Typography["numerals"];
 export type ThemeColors = typeof colors.light;
 export type StaticColors = typeof colors.static;
 export type SharedColors = typeof colors.shared;
