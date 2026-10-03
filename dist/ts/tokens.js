@@ -1,12 +1,12 @@
-// IAMJARL Design Tokens v1.14.0 — generated, do not edit
+// IAMJARL Design Tokens v1.15.0 — generated, do not edit
 
-export const meta = {"name":"IAMJARL Design System","version":"1.14.0"};
+export const meta = {"name":"IAMJARL Design System","version":"1.15.0"};
 
 export const spacing = {"xs":4,"sm":8,"md":12,"lg":16,"xl":20,"xxl":24,"xxxl":32};
 
 export const radius = {"sm":8,"md":12,"lg":16};
 
-export const typography = {"family":{"ui":"system-ui","mono":"ui-monospace"},"weights":{"regular":400,"semibold":600,"bold":700},"sizes":{"xs":12,"sm":14,"base":16,"lg":18,"xl":24,"xxl":36},"lineHeights":{"xs":16,"sm":20,"base":24,"lg":28,"xl":32,"xxl":44}};
+export const typography = {"family":{"ui":"system-ui","mono":"ui-monospace"},"weights":{"regular":400,"semibold":600,"bold":700},"sizes":{"xs":12,"sm":14,"base":16,"lg":18,"xl":24,"xxl":36},"lineHeights":{"xs":16,"sm":20,"base":24,"lg":28,"xl":32,"xxl":44},"numerals":{"sm":32,"md":56,"lg":80}};
 
 export const icons = {"library":"phosphor","defaultWeight":"regular","weightsAllowed":["thin","light","regular","bold","fill","duotone"],"defaultSizes":[16,20,24,28]};
 

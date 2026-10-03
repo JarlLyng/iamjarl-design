@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - IAMJARL Design Tokens (SwiftUI)
 //
-// Auto-generated from tokens.json v1.14.0 — do not edit manually.
+// Auto-generated from tokens.json v1.15.0 — do not edit manually.
 // Run: node scripts/build.js
 //
 // Design DNA:
@@ -33,7 +33,9 @@ public enum DesignTokens {
   // MARK: Typography
   // Note: SwiftUI does not use numeric weights directly; these are mapped to Font.Weight.
   public enum Typography {
+    @available(*, deprecated, message: "A CSS font name with no meaning in SwiftUI, which draws the system font by default. Use .ijFont(_:).")
     public static let uiFontName: String = "system-ui"
+    @available(*, deprecated, message: "A CSS font name with no meaning in SwiftUI. Use .ijFont(_:design: .monospaced) or .ijNumeral(_:).")
     public static let monoFontName: String = "ui-monospace"
 
     public enum Size {
@@ -58,6 +60,61 @@ public enum DesignTokens {
       public static let regular: Font.Weight = .regular
       public static let semibold: Font.Weight = .semibold
       public static let bold: Font.Weight = .bold
+    }
+
+    /// The text scale as styles that follow Dynamic Type. Set one with `.ijFont(_:)`.
+    public enum Style: CaseIterable, Sendable {
+      case xs, sm, base, lg, xl, xxl
+
+      /// Size in points at the default text size.
+      public var size: CGFloat {
+        switch self {
+        case .xs: return Size.xs
+        case .sm: return Size.sm
+        case .base: return Size.base
+        case .lg: return Size.lg
+        case .xl: return Size.xl
+        case .xxl: return Size.xxl
+        }
+      }
+
+      public var lineHeight: CGFloat {
+        switch self {
+        case .xs: return LineHeight.xs
+        case .sm: return LineHeight.sm
+        case .base: return LineHeight.base
+        case .lg: return LineHeight.lg
+        case .xl: return LineHeight.xl
+        case .xxl: return LineHeight.xxl
+        }
+      }
+
+      /// The Dynamic Type style this size scales along.
+      public var textStyle: Font.TextStyle {
+        switch self {
+        case .xs: return .caption
+        case .sm: return .footnote
+        case .base: return .callout
+        case .lg: return .body
+        case .xl: return .title2
+        case .xxl: return .largeTitle
+        }
+      }
+    }
+
+    /// Numbers that are the interface: timers, counters, readouts. Set one with
+    /// `.ijNumeral(_:)`, which adds tabular digits and Dynamic Type.
+    public enum Numeral: CaseIterable, Sendable {
+      case sm, md, lg
+
+      /// Size in points at the default text size.
+      public var size: CGFloat {
+        switch self {
+        case .sm: return 32
+        case .md: return 56
+        case .lg: return 80
+        }
+      }
     }
   }
 
@@ -322,6 +379,54 @@ public enum DesignTokens {
       public static func error(_ scheme: ColorScheme) -> Color {
         DesignTokens.color(light: ColorToken.Light.State.error, dark: ColorToken.Dark.State.error, scheme: scheme)
       }
+    }
+  }
+
+  // MARK: - Palette
+
+  /// Every mode-aware colour, resolving light or dark by itself wherever it is
+  /// drawn — no `colorScheme` to pass, and correct outside a SwiftUI view too.
+  /// Prefer this to `Common`, which needs the scheme handed in.
+  ///
+  ///     Text("Start").foregroundStyle(DesignTokens.Palette.Text.primary)
+  ///
+  /// The shared state fills are not mode-dependent and stay in `ColorToken.State`.
+  public enum Palette {
+    public static let primary = DesignTokens.adaptive(light: ColorToken.Light.primary, dark: ColorToken.Dark.primary)
+    public static let onPrimary = DesignTokens.adaptive(light: ColorToken.Light.onPrimary, dark: ColorToken.Dark.onPrimary)
+    public static let primaryHover = DesignTokens.adaptive(light: ColorToken.Light.primaryHover, dark: ColorToken.Dark.primaryHover)
+    public static let primaryPressed = DesignTokens.adaptive(light: ColorToken.Light.primaryPressed, dark: ColorToken.Dark.primaryPressed)
+    public static let primarySubtle = DesignTokens.adaptive(light: ColorToken.Light.primarySubtle, dark: ColorToken.Dark.primarySubtle)
+
+    public enum Text {
+      public static let primary = DesignTokens.adaptive(light: ColorToken.Light.Text.primary, dark: ColorToken.Dark.Text.primary)
+      public static let secondary = DesignTokens.adaptive(light: ColorToken.Light.Text.secondary, dark: ColorToken.Dark.Text.secondary)
+      public static let tertiary = DesignTokens.adaptive(light: ColorToken.Light.Text.tertiary, dark: ColorToken.Dark.Text.tertiary)
+      public static let disabled = DesignTokens.adaptive(light: ColorToken.Light.Text.disabled, dark: ColorToken.Dark.Text.disabled)
+      public static let inverse = DesignTokens.adaptive(light: ColorToken.Light.Text.inverse, dark: ColorToken.Dark.Text.inverse)
+    }
+
+    public enum Background {
+      public static let app = DesignTokens.adaptive(light: ColorToken.Light.Background.app, dark: ColorToken.Dark.Background.app)
+      public static let muted = DesignTokens.adaptive(light: ColorToken.Light.Background.muted, dark: ColorToken.Dark.Background.muted)
+      public static let card = DesignTokens.adaptive(light: ColorToken.Light.Background.card, dark: ColorToken.Dark.Background.card)
+      public static let disabled = DesignTokens.adaptive(light: ColorToken.Light.Background.disabled, dark: ColorToken.Dark.Background.disabled)
+    }
+
+    public enum Surface {
+      public static let `default` = DesignTokens.adaptive(light: ColorToken.Light.Surface.`default`, dark: ColorToken.Dark.Surface.`default`)
+      public static let raised = DesignTokens.adaptive(light: ColorToken.Light.Surface.raised, dark: ColorToken.Dark.Surface.raised)
+    }
+
+    public enum Border {
+      public static let subtle = DesignTokens.adaptive(light: ColorToken.Light.Border.subtle, dark: ColorToken.Dark.Border.subtle)
+      public static let `default` = DesignTokens.adaptive(light: ColorToken.Light.Border.`default`, dark: ColorToken.Dark.Border.`default`)
+    }
+
+    public enum State {
+      public static let success = DesignTokens.adaptive(light: ColorToken.Light.State.success, dark: ColorToken.Dark.State.success)
+      public static let warning = DesignTokens.adaptive(light: ColorToken.Light.State.warning, dark: ColorToken.Dark.State.warning)
+      public static let error = DesignTokens.adaptive(light: ColorToken.Light.State.error, dark: ColorToken.Dark.State.error)
     }
   }
 }

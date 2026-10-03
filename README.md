@@ -39,7 +39,7 @@ It is designed to work equally well for **humans** (design overview) and **AI to
 
 ## Quick start: Install in your project
 
-### SwiftUI (iOS / macOS) via Swift Package Manager
+### SwiftUI (iOS / macOS / watchOS / tvOS) via Swift Package Manager
 
 In Xcode: File > Add Package Dependencies, enter:
 
@@ -51,7 +51,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.14.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.15.0")
 ]
 ```
 
@@ -60,14 +60,41 @@ Then use in code:
 ```swift
 import IAMJARLDesignTokens
 
-// Mode-aware colors
-let primary = DesignTokens.Common.primary(scheme)
-let textColor = DesignTokens.Common.Text.primary(scheme)
+// Colours that resolve light or dark by themselves — nothing to pass
+Text("Start")
+  .foregroundStyle(DesignTokens.Palette.Text.primary)
+  .background(DesignTokens.Palette.Background.app)
+
+// Text that follows Dynamic Type, at the token's size by default
+Text("Rounds").ijFont(.lg, weight: .semibold)
+
+// A number that is the interface: tabular digits, capped growth
+Text("12:30").ijNumeral(.lg)
 
 // Spacing and radius
 let padding = DesignTokens.Spacing.md
 let corner = DesignTokens.Radius.lg
 ```
+
+**Why `Palette` rather than `Common`:** `Common.primary(scheme)` needs the `ColorScheme` passed in,
+so it only works inside a view that has read it, and every app ended up wrapping it. `Palette`
+resolves by itself — in a widget, a `.tint()`, a `ShapeStyle` or a UIKit/AppKit view as well.
+`Common` and `ColorToken` stay. For an app's own derived colours, `DesignTokens.adaptive(light:dark:)`
+makes one that adapts the same way.
+
+**Why `.ijFont` rather than `.font(.system(size: DesignTokens.Typography.Size.base))`:** the fixed
+version stays 16 pt for someone who has asked their phone for larger text. `.ijFont` is exactly the
+token at the default size and scales along the nearest Apple text style (`caption` for `xs` up to
+`largeTitle` for `xxl`), with the token's line height. On macOS and tvOS, which have no Dynamic
+Type, it is the token.
+
+**Numerals** — `sm` 32, `md` 56, `lg` 80 — were derived from what ships: WODrounds' 80 pt timer
+and 56 pt values, and the watch timers of WODrounds (34) and Anvil (30). `.ijNumeral` sets
+tabular digits, so a timer does not shift sideways as its digits change, and caps Dynamic Type
+at 1.5×, because an 80 pt timer that keeps growing leaves the screen. Pick the design for your
+app: `.ijNumeral(.lg, design: .rounded)`.
+
+On watchOS `Palette` is always the dark value — the watch has one appearance.
 
 ### React web (npm)
 
@@ -208,7 +235,7 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.14.0/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.15.0/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -248,7 +275,7 @@ a build step, install it instead.**
 | Needs `integrity`? | yes, worth it | no — nothing crosses an origin |
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.14.0
+npm install github:jarllyng/iamjarl-design#v1.15.0
 ```
 
 ```js
@@ -274,18 +301,18 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.14.0/dist/css/tokens.css"
-  integrity="sha384-3gm9wGHkmijzQ4E/h0lLfvRv+cXmYOy3WrlOHkB5hMygetQ6IrcGtK/wrQkpNVjh"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.15.0/dist/css/tokens.css"
+  integrity="sha384-9z/OqWluRRUqCMS3/ZguYYWxRR74dKfCRRBl8jve4RW5L+UXJ1Qgg+LXqSORT1QS"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.14.0/dist/components/ij-footer.js"
-  integrity="sha384-JZeP+8h62QdrK59UteKHul9p3OBMJ8ALjYB2GwSJM3FPfxBqp/h/kaq/KbZUL63s"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.15.0/dist/components/ij-footer.js"
+  integrity="sha384-xfFurPamPd8aFRk41C6AM09/g3y69M0zDM2hqGjeJCgnfbZ5+hiAq6UKiwLYQSEk"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.14.0/dist/components/ij-nav.js"
-  integrity="sha384-vSRD6pOG+4+/gjqnIHkGsFOsw5NW1vxWWc1WZ9XEpEZEtKa4ON/VNpC24zaHHsY8"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.15.0/dist/components/ij-nav.js"
+  integrity="sha384-MtPXiV07CO7KqdX51H40QTm5CczEpMnBTjDLzpihzL26YqkhY47NBG8q9IcmvYNs"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
@@ -307,7 +334,7 @@ The component builds the cross-links at runtime, so crawlers that do not execute
 pre-rendered fragment for your app and the component will slot it instead of regenerating:
 
 ```bash
-curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.14.0/dist/footers/botlens.html
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.15.0/dist/footers/botlens.html
 ```
 
 ```html
@@ -358,7 +385,7 @@ it supplies the landmark, the sticky translucent bar, the phone layout and the k
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.14.0/dist/components/ij-nav.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.15.0/dist/components/ij-nav.js"></script>
 
 <ij-nav>
   <a slot="brand" href="/">Echolume</a>
@@ -424,7 +451,7 @@ lists which families have one. `primary` does not change. If your app has no fil
 ```html
 <!-- tokens.css first, from the SRI block above -->
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.14.0/dist/identity/<app>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.15.0/dist/identity/<app>.css"
   integrity="<from sri.json, see below>"
   crossorigin="anonymous">
 ```
@@ -433,7 +460,7 @@ lists which families have one. `primary` does not change. If your app has no fil
 yours:
 
 ```bash
-curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.14.0/dist/sri.json | grep 'identity/<app>.css'
+curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.15.0/dist/sri.json | grep 'identity/<app>.css'
 ```
 
 Each sheet carries the version in its header, so its hash changes every release. Move the tag and
@@ -502,7 +529,7 @@ Rule: `--ij-` + group + kebab(key). Two non-obvious mappings: **`background` →
 - `--ij-color-state-{success,warning,error}` are **text/foreground** colors, tuned per mode to meet WCAG AA on `--ij-color-bg-app`. Never use a raw fill color as text.
 
 ### Swift accessors
-Mode-aware colors take the `ColorScheme`: `DesignTokens.Common.primary(scheme)`, `.Text.disabled(scheme)`, `.State.error(scheme)`. Non-color scales are static: `DesignTokens.Spacing.md`, `.Radius.lg`, `.ZIndex.modal`, `.Opacity.disabled`. See [AGENTS.md](AGENTS.md) for the full accessor list.
+Mode-aware colours resolve by themselves through `DesignTokens.Palette` — `.primary`, `.Text.disabled`, `.State.error`. The older `DesignTokens.Common.primary(scheme)` form, which takes the `ColorScheme`, still works. Text: `.ijFont(.base)` and `.ijNumeral(.lg)`. Non-color scales are static: `DesignTokens.Spacing.md`, `.Radius.lg`, `.ZIndex.modal`, `.Opacity.disabled`. See [AGENTS.md](AGENTS.md) for the full accessor list.
 
 ---
 

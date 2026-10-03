@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.14.0)
+# IAMJARL Design System (v1.15.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -232,6 +232,17 @@ Where `backdrop-filter` is missing, or the visitor sets `prefers-reduced-transpa
 - Default UI font: system-ui (platform native)
 - Keep type scale minimal and consistent.
 - Prefer semibold for headings, regular for body.
+
+#### In apps: text follows Dynamic Type
+A token is a size at the default text setting, not a fixed size. Someone who has asked their phone for larger text gets it. In SwiftUI, set text with `.ijFont(_:)` rather than `.font(.system(size:))`: it is exactly the token at the default size, and scales along the Apple text style nearest to it, from `caption` for `xs` to `largeTitle` for `xxl`.
+
+#### Numerals: when the number is the interface
+Timers, counters and readouts use the numeral scale — `sm` 32, `md` 56, `lg` 80 — derived from what the fitness apps ship. Two rules come with it:
+
+- **Tabular digits, always.** Proportional digits make a running timer shift sideways every second: "1111" is 109 px wide at `md` where "0000" is 149.
+- **Dynamic Type, capped at 1.5×.** A numeral still grows for someone who needs larger text, but not until it leaves the screen.
+
+`.ijNumeral(_:)` does both. The design (default, rounded, monospaced) is the app's: WODrounds sets its timer monospaced, Anvil rounded.
 
 ### Icons (Phosphor)
 - Icon set: **Phosphor**

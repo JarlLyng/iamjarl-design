@@ -43,6 +43,7 @@ function validateStructure(tokens) {
   }
 
   validateVersionCoherence(tokens.meta.version);
+  validateNumerals(tokens);
 
   // Tokens
   if (!tokens.tokens) {
@@ -310,6 +311,18 @@ function validateVersionCoherence(version) {
   } catch (e) {
     fail(`Could not read MIGRATION.md: ${e.message}`);
   }
+}
+
+// Numbers that are the interface. What sets them apart from text is how they
+// are set — tabular digits, a cap on Dynamic Type — not their size: the watch
+// timers they were derived from (30 and 34 pt) are smaller than the largest
+// heading. So the scale only has to be whole points, stepping upward.
+function validateNumerals(tokens) {
+  const vals = Object.values(tokens.brand?.typography?.numerals ?? {});
+  if (!vals.length) { fail('typography.numerals is missing'); return; }
+  if (!vals.every(Number.isInteger)) fail('typography.numerals must be whole points');
+  else if (!vals.every((n, i) => i === 0 || n > vals[i - 1])) fail(`typography.numerals must ascend: ${vals.join(', ')}`);
+  else pass(`numerals ${vals.join(' / ')} ascend`);
 }
 
 function validateContrast(tokens) {

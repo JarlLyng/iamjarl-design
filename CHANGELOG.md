@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.0] — 2026-10-03
+
+The Swift package, made for apps. It was the web system translated mechanically, and the apps had each been filling the same gaps on their own: of the eleven that import it, nearly all carry a theme layer beside it. This release puts those layers in the package.
+
+### Added
+- **`DesignTokens.Palette`** — every mode-aware colour, resolving light or dark by itself: `Palette.primary`, `Palette.Text.secondary`, `Palette.State.error`. Nothing to pass, so it works in a widget, a `.tint()`, a `ShapeStyle` or a UIKit/AppKit view, not only inside a body that has read `colorScheme`. It replaces what Walkful wrote by hand (*"the package gives separate Light/Dark colours; we wrap them here"*), down to the `onPrimary` it had to hardcode as hex because of the API's shape. UIKit on iOS and tvOS, AppKit on macOS; on watchOS, which has one appearance, the dark value.
+- **`DesignTokens.adaptive(light:dark:)`** for an app's own derived colours, such as Walkful's ring track.
+- **`.ijFont(_:weight:design:)`** — the text scale under Dynamic Type. Exactly the token at the default size, scaling along the nearest Apple text style (`caption` for `xs` … `largeTitle` for `xxl`), with the token's line height. A fixed `.font(.system(size: Size.base))` stays 16 pt for someone who asked for larger text; of the apps, only TrimrPix for iOS had bridged this, in its own `DynamicFont.swift`.
+- **The numeral scale** — `sm` 32, `md` 56, `lg` 80, in `tokens.json` as `brand.typography.numerals`, emitted for every platform (`--ij-font-size-numeral-*` on the web). Derived from production: WODrounds' 80 pt timer and 56 pt values, the watch timers of WODrounds (34) and Anvil (30). The text scale stopped at 36, so WODrounds had added its own.
+- **`.ijNumeral(_:weight:design:)`** — tabular digits, so a timer does not shift sideways as it runs, and Dynamic Type capped at 1.5×, so an 80 pt timer does not leave the screen.
+- **`DesignTokens.Typography.Style` and `.Numeral`**, generated. A text size without a Dynamic Type mapping fails the build rather than silently not scaling.
+
+### Tests, where there were none
+The Swift package had no tests, and CI only ever compiled it for macOS — the UIKit and watchOS paths had never been built there.
+
+- **A generated test per palette colour (21):** it must resolve to the light token in a light appearance and the dark token in a dark one.
+- **Typography measured in rendered pixels**, on an iOS simulator: every style is exact at the default size and grows at `accessibility3`; a numeral grows but stops at 1.5×; tabular digits hold "1111" and "0000" to the same width.
+- **CI** now runs `swift test` on macOS, builds for iOS, watchOS and tvOS, and runs the tests on an iOS simulator.
+
+Each was checked by breaking what it guards: an `adaptive()` that always returns the light colour, fixed sizes, no tabular digits, no cap.
+
+### Changed
+- **`Typography.uiFontName` and `monoFontName` are deprecated** in Swift. They held `"system-ui"` and `"ui-monospace"` — CSS values with no meaning in SwiftUI. No app used them.
+- `tokens.schema.json` documents `numerals`, and `display`, which 1.11.0 added without it.
+
+### Not in this release
+- **Watch and TV scales.** WODrounds' watch app halves spacing and invents its own radii, and Apple TV is its second platform, so both are real. How much the system should carry for them is worth deciding from each app's platform split rather than assuming.
+- **Two decisions for the owner:** whether native apps use Phosphor, as rule 5 says, or SF Symbols, as most of them do; and whether the family accents apply inside the apps or only on their sites.
+
 ## [1.14.0] — 2026-09-26
 
 `<ij-nav>`, the shared site navigation, modelled on Echolume's header. The second component, and the first with browser tests. Closes #46.
@@ -539,6 +568,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.15.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.15.0
 [1.14.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.14.0
 [1.13.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.13.1
 [1.13.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.13.0
