@@ -243,6 +243,9 @@ try {
   check('the dot and the CTA carry the family accent (music, light: #177082)',
     colours.dot === 'rgb(23, 112, 130)' && colours.ctaBg === 'rgb(23, 112, 130)', JSON.stringify(colours));
   check('the CTA label is onPrimary', colours.ctaText === 'rgb(255, 255, 255)', colours.ctaText);
+  check("the wordmark takes the family's display face (Echolume: Outfit)", await p.eval(
+    `getComputedStyle(${slotted('brand', 'Echolume')}).fontFamily.startsWith('Outfit')`),
+    await p.eval(`getComputedStyle(${slotted('brand', 'Echolume')}).fontFamily`));
   check('no link is drawn in the accent', colours.links.every(c => c !== colours.dot), colours.links.join(', '));
 
   await p.media([{ name: 'prefers-color-scheme', value: 'dark' }]);

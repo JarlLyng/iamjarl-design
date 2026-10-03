@@ -620,8 +620,25 @@ check('three approved display faces', Object.keys(faces).length === 3);
 check('every face records a licence and a real fallback', Object.values(faces).every(f =>
   f.licence && f.stack.includes(',') && /sans-serif|monospace|serif$/.test(f.stack.trim())),
   'a stack without a real fallback leaves a site unreadable until the file lands');
-check('no family has been assigned a face yet', shippedApps.every(a =>
-  displayFor(registry, a.id, fullTokens).face === null));
+// Faces are assigned (#50). What must hold from here on: a family's face reaches
+// every app in it unless the app names its own, an app outside a family gets
+// none, and every sheet that carries a face says how to load it.
+check('a family\'s face reaches its apps, and an app\'s own face wins', shippedApps.every(a => {
+  const want = a.display ?? registry.categories[a.category]?.display ?? null;
+  const got = displayFor(registry, a.id, fullTokens);
+  return want === null ? got.face === null : got.key === want;
+}));
+check('an app outside every family gets no face', shippedApps
+  .filter(a => !a.display && !registry.categories[a.category]?.display)
+  .every(a => !fs.existsSync(path.join(identityDir, `${a.id}.css`)) ||
+    !read(`dist/identity/${a.id}.css`).includes('--ij-font-display')));
+check('every sheet with a face emits its stack and says to self-host it', shippedApps
+  .map(a => [a, displayFor(registry, a.id, fullTokens)])
+  .filter(([, d]) => d.face)
+  .every(([a, d]) => {
+    const css = read(`dist/identity/${a.id}.css`);
+    return css.includes(`--ij-font-display: ${d.face.stack};`) && css.includes('Self-host it');
+  }), 'a face that is declared but never emitted is the inert state this replaced');
 check('an unknown face name throws rather than emitting it', (() => {
   const probe2 = JSON.parse(JSON.stringify(registry));
   probe2.categories.music.display = 'serif';

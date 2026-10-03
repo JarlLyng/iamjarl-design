@@ -1,10 +1,12 @@
 /* IAMJARL identity for TonVault — generated, do not edit */
-/* design system v1.15.0, family: music */
+/* design system v1.16.0, family: music */
+/* Display face: JetBrains Mono (OFL-1.1). Self-host it — see design.md. */
 /* Primary is unchanged and still the brand thread; the accent is what this site may lean on. */
 
 :root {
   --ij-color-accent-family: #177082;
   --ij-color-accent-family-rgb: 23, 112, 130;
+  --ij-font-display: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 @media (prefers-color-scheme: dark) {

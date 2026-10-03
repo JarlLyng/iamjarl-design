@@ -1,7 +1,7 @@
 {
   "$comment": "Canonical list of IAMJARL products. Consumed by <ij-footer> to build cross-links, so a new app is added here once rather than in every site's footer. Categories carry an optional `accent` ({light, dark}); an app may override it with its own. Absent means the mode primary, so nothing renders differently until a family opts in. Order is not significant except for the two always-links, which render in the order listed here. Everything else is selected by category and sorted by id, so the list can be re-sorted without rewriting a single fragment.",
   "meta": {
-    "updated": "2026-09-26"
+    "updated": "2026-10-04"
   },
   "categories": {
     "fitness": {
@@ -9,28 +9,32 @@
       "accent": {
         "light": "#587114",
         "dark": "#D0FF00"
-      }
+      },
+      "display": "mono"
     },
     "music": {
       "label": "Audio and music production",
       "accent": {
         "light": "#177082",
         "dark": "#23ACC7"
-      }
+      },
+      "display": "mono"
     },
     "web-tools": {
       "label": "Browser and web-page tools",
       "accent": {
         "light": "#217370",
         "dark": "#35B6B2"
-      }
+      },
+      "display": "geometric"
     },
     "images": {
       "label": "Images and screenshots",
       "accent": {
         "light": "#B4401D",
         "dark": "#DD5931"
-      }
+      },
+      "display": "geometric"
     },
     "play": {
       "label": "Play and art"
@@ -85,7 +89,8 @@
       "category": "fitness",
       "status": "shipped",
       "listed": true,
-      "consumes": false
+      "consumes": false,
+      "display": "humanist"
     },
     {
       "id": "its-404-yo",
@@ -127,7 +132,8 @@
       "category": "music",
       "status": "shipped",
       "listed": true,
-      "consumes": false
+      "consumes": false,
+      "display": "geometric"
     },
     {
       "id": "botlens",
@@ -157,7 +163,8 @@
       "category": "fitness",
       "status": "shipped",
       "listed": true,
-      "consumes": true
+      "consumes": true,
+      "display": "humanist"
     },
     {
       "id": "trimrpix-ios",

@@ -51,7 +51,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.15.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.16.0")
 ]
 ```
 
@@ -235,7 +235,7 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.15.0/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.16.0/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -275,7 +275,7 @@ a build step, install it instead.**
 | Needs `integrity`? | yes, worth it | no — nothing crosses an origin |
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.15.0
+npm install github:jarllyng/iamjarl-design#v1.16.0
 ```
 
 ```js
@@ -301,18 +301,18 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.15.0/dist/css/tokens.css"
-  integrity="sha384-9z/OqWluRRUqCMS3/ZguYYWxRR74dKfCRRBl8jve4RW5L+UXJ1Qgg+LXqSORT1QS"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.16.0/dist/css/tokens.css"
+  integrity="sha384-NtL7t0xZFNMNj01oaNwKWlYFhgTVHT13nKzIdY07hOrAUg5CkpjeyjQLYb85Y1K+"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.15.0/dist/components/ij-footer.js"
-  integrity="sha384-xfFurPamPd8aFRk41C6AM09/g3y69M0zDM2hqGjeJCgnfbZ5+hiAq6UKiwLYQSEk"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.16.0/dist/components/ij-footer.js"
+  integrity="sha384-oERUDgYesnJ77du7jHfloxwSjAHZOQGsDWj+sYrE6IjW96GAvcDcSwMutO9zYbnV"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.15.0/dist/components/ij-nav.js"
-  integrity="sha384-MtPXiV07CO7KqdX51H40QTm5CczEpMnBTjDLzpihzL26YqkhY47NBG8q9IcmvYNs"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.16.0/dist/components/ij-nav.js"
+  integrity="sha384-SV1duhyXuAGSEAA/v2orWbUAeq3mrVvfoxrPGg7wpOL2d9hZobO0j2fkP5/GlYj0"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
@@ -334,7 +334,7 @@ The component builds the cross-links at runtime, so crawlers that do not execute
 pre-rendered fragment for your app and the component will slot it instead of regenerating:
 
 ```bash
-curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.15.0/dist/footers/botlens.html
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.16.0/dist/footers/botlens.html
 ```
 
 ```html
@@ -385,7 +385,7 @@ it supplies the landmark, the sticky translucent bar, the phone layout and the k
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.15.0/dist/components/ij-nav.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.16.0/dist/components/ij-nav.js"></script>
 
 <ij-nav>
   <a slot="brand" href="/">Echolume</a>
@@ -451,7 +451,7 @@ lists which families have one. `primary` does not change. If your app has no fil
 ```html
 <!-- tokens.css first, from the SRI block above -->
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.15.0/dist/identity/<app>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.16.0/dist/identity/<app>.css"
   integrity="<from sri.json, see below>"
   crossorigin="anonymous">
 ```
@@ -460,7 +460,7 @@ lists which families have one. `primary` does not change. If your app has no fil
 yours:
 
 ```bash
-curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.15.0/dist/sri.json | grep 'identity/<app>.css'
+curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.16.0/dist/sri.json | grep 'identity/<app>.css'
 ```
 
 Each sheet carries the version in its header, so its hash changes every release. Move the tag and

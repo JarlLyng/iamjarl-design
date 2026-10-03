@@ -1,10 +1,12 @@
 /* IAMJARL identity for TrimrPix — generated, do not edit */
-/* design system v1.15.0, family: images */
+/* design system v1.16.0, family: images */
+/* Display face: Outfit (OFL-1.1). Self-host it — see design.md. */
 /* Primary is unchanged and still the brand thread; the accent is what this site may lean on. */
 
 :root {
   --ij-color-accent-family: #B4401D;
   --ij-color-accent-family-rgb: 180, 64, 29;
+  --ij-font-display: 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
