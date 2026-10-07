@@ -21,7 +21,7 @@ It is designed to work equally well for **humans** (design overview) and **AI to
 - `design.md` — rules, principles and non-negotiables (Cursor-friendly)
 - `COMPONENTS.md` — the components layer: reasoning, scope and testing policy
 - `apps.json` — canonical product registry, consumed by `<ij-footer>` for cross-links
-- `index.html` — human-friendly viewer that renders tokens visually
+- `index.html` — the docs page: every token in both modes, the families, the faces and live components, rendered from `tokens.json` and `apps.json`. A browser test fails if a token is missing from it
 - `scripts/build.js` — generates platform-specific token files from `tokens.json`
 - `scripts/validate.js` — validates token structure and contrast ratios
 
@@ -51,7 +51,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.17.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.17.1")
 ]
 ```
 
@@ -235,7 +235,7 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.0/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.1/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -275,7 +275,7 @@ a build step, install it instead.**
 | Needs `integrity`? | yes, worth it | no — nothing crosses an origin |
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.17.0
+npm install github:jarllyng/iamjarl-design#v1.17.1
 ```
 
 ```js
@@ -301,18 +301,18 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.0/dist/css/tokens.css"
-  integrity="sha384-uolpoIN89h4TyUPhamFiBPVgi7hhmU13+lSIi7hBoGjaQ5ZD77prjW6odRRNc4N/"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.1/dist/css/tokens.css"
+  integrity="sha384-7EzGfzw8BzUDYlKEJLxz+9M3gz/RfU6Rc5mcvKJxnt63gcj8o63oVQ7O/Ltj9hnu"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.0/dist/components/ij-footer.js"
-  integrity="sha384-wWvScdf0aL/QKp/trbyU4KD/dp2hYOiSP7isIVHVzUtIDRsd92pktZt1ZYHkWCLw"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.1/dist/components/ij-footer.js"
+  integrity="sha384-UikzhLKZzSDIJAtBB80KSmA2wgQd/Ma5ydjeBmmt747z5hECAoqLfBvHIS7Ri3+5"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.0/dist/components/ij-nav.js"
-  integrity="sha384-FXZrZDmvM5a1JN4RJHYBw34BGBfo+CQ/tPdIpr1tUcwCkmLI2MC+uwPKBPh4PUvC"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.1/dist/components/ij-nav.js"
+  integrity="sha384-FpBuuw/cV5YXSh4JBF9+JP/ynUD7NZBfitUUZ9Dp6a7HqINJUzOwVnJfPt/8DzYR"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
@@ -334,7 +334,7 @@ The component builds the cross-links at runtime, so crawlers that do not execute
 pre-rendered fragment for your app and the component will slot it instead of regenerating:
 
 ```bash
-curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.0/dist/footers/botlens.html
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.1/dist/footers/botlens.html
 ```
 
 ```html
@@ -385,7 +385,7 @@ it supplies the landmark, the sticky translucent bar, the phone layout and the k
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.0/dist/components/ij-nav.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.1/dist/components/ij-nav.js"></script>
 
 <ij-nav>
   <a slot="brand" href="/">Echolume</a>
@@ -451,7 +451,7 @@ lists which families have one. `primary` does not change. If your app has no fil
 ```html
 <!-- tokens.css first, from the SRI block above -->
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.0/dist/identity/<app>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.1/dist/identity/<app>.css"
   integrity="<from sri.json, see below>"
   crossorigin="anonymous">
 ```
@@ -460,7 +460,7 @@ lists which families have one. `primary` does not change. If your app has no fil
 yours:
 
 ```bash
-curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.0/dist/sri.json | grep 'identity/<app>.css'
+curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.1/dist/sri.json | grep 'identity/<app>.css'
 ```
 
 Each sheet carries the version in its header, so its hash changes every release. Move the tag and
@@ -485,7 +485,7 @@ page. Echolume does exactly this.
 
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.0/dist/fonts/<face>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.17.1/dist/fonts/<face>.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 ```
 
@@ -606,7 +606,7 @@ Task:
 node scripts/validate.js   # check structure + contrast
 node scripts/build.js       # regenerate platform files
 ```
-- [ ] Open `index.html` locally and confirm tokens render correctly
+- [ ] `node scripts/test-browser.js` covers the docs page; `node scripts/test-browser.js --serve` serves it for looking at (it fetches `tokens.json`, so it needs http, not `file://`)
 
 ### 3) Publish
 - [ ] Commit everything (including generated files in `Sources/` and `dist/`)
@@ -636,8 +636,10 @@ No dependencies required — scripts use only Node.js built-ins.
 
 ## Hosting
 
-This repo is hosted on GitHub Pages:
+This repo is hosted on GitHub Pages, from `main`:
 
 ```
 https://jarllyng.github.io/iamjarl-design/
 ```
+
+The page renders `tokens.json` and `apps.json` at the commit it is served from, so it is never behind a release. It also cannot quietly stop covering one: a browser test walks every token in `tokens.json` and fails if the page does not show it, and checks that every CSS variable and Swift name it prints exists. The previous page stopped at v1.0.0's tokens for seventeen releases, while still showing the current version number.

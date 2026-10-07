@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.17.1] — 2026-10-07
+
+The docs page, rebuilt so it cannot fall behind again, and a token bug the rebuild found on its first render.
+
+### Fixed
+- **`--ij-font-mono` drew as serif in Chrome.** It was `ui-monospace` and nothing else. Chrome accepts that name — `CSS.supports` says yes — but has no font behind it, so it falls back to the default serif. Measured: `ui-monospace` renders `iiii` and `MMMM` at 18 and 57 px, exactly as `serif` does, where a real monospace gives 39 and 39. Every site that set code or numbers in `var(--ij-font-mono)` has shown Times in Chrome since the token existed. It is now `ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace`.
+- **`--ij-font-ui` gets the same protection**: `system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`. `system-ui` does work in current Chrome; the fallback covers the browsers where it does not.
+- **`validate.js` requires every font stack to end in `sans-serif`, `serif` or `monospace`**, the generics browsers actually implement. The display stacks already did; the two base stacks were the ones that did not.
+
+### Changed
+- **`index.html`, the docs page at jarllyng.github.io/iamjarl-design, is rebuilt.** The old one had not changed since v1.0.0 (2026-05-31). It fetched `tokens.json` live, so it printed the current version, but drew only what its code knew in May: 9 of the 21 colours per mode, no scales, nothing from after 1.0. It also offered the state **fills** with a copy button and never the text-safe `state.*` colours, which invites exactly the mistake rule 7 forbids.
+  - **What it shows now:** every token, in both modes side by side whatever the page's mode. That covers all 21 colours with contrast computed by `scripts/color.js`, the fills against the text colours (rule 7, with numbers), gradients with the build's own verdict, the text scale, weights, numerals, the three display faces loaded from `dist/fonts/` and drawn in themselves, the families with their accents and faces, every scale, and live `<ij-nav>` and `<ij-footer>`. Each row carries its CSS variable and its Swift name.
+  - **It uses what it documents:** tokens only, the shipped faces, and `<ij-nav>` as its own navigation. It works at 375 px with no horizontal scroll.
+- **A browser test now holds it to `tokens.json`.** It fails if any token in the file is missing from the page (125 today), if any CSS variable it prints is not in `tokens.css` (83), if any Swift name is not in the package (78), if a shipped app or family is missing, if anything loads from Google Fonts, or if the page scrolls sideways at 375 px. Each check was mutation-tested: an unknown token group, a wrong variable prefix, and the old mono stack.
+
 ## [1.17.0] — 2026-10-04
 
 The three display faces ship from the design system, so thirteen sites do not each commit the same files. And a bug in `<ij-nav>`'s `cta-after`, found while adding the font tests.
@@ -606,6 +621,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.17.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.17.1
 [1.17.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.17.0
 [1.16.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.16.0
 [1.15.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.15.0

@@ -45,6 +45,7 @@ function validateStructure(tokens) {
   validateVersionCoherence(tokens.meta.version);
   validateNumerals(tokens);
   validateShippedFaces(tokens);
+  validateFontStacks(tokens);
 
   // Tokens
   if (!tokens.tokens) {
@@ -312,6 +313,20 @@ function validateVersionCoherence(version) {
   } catch (e) {
     fail(`Could not read MIGRATION.md: ${e.message}`);
   }
+}
+
+// Every stack must end in a generic family the browser actually implements.
+// `--ij-font-mono` was `ui-monospace` alone for its whole life, and Chrome
+// accepts that name but draws it as serif — so mono text was Times there.
+function validateFontStacks(tokens) {
+  const ty = tokens.brand?.typography ?? {};
+  const stacks = [
+    ...Object.entries(ty.family ?? {}).map(([k, v]) => [`family.${k}`, v]),
+    ...Object.entries(ty.display ?? {}).map(([k, v]) => [`display.${k}`, v.stack]),
+  ];
+  const bad = stacks.filter(([, s]) => !/,\s*(sans-serif|serif|monospace)\s*$/.test(String(s)));
+  if (bad.length) bad.forEach(([k, s]) => fail(`typography.${k} "${s}" must end in sans-serif, serif or monospace`));
+  else pass(`${stacks.length} font stacks, each ending in a generic family browsers implement`);
 }
 
 // Every approved face ships: its woff2 and its OFL licence in fonts/. The

@@ -392,6 +392,72 @@ try {
     'instrument-sans-latin-wght-normal.woff2', 'jetbrains-mono-latin-wght-normal.woff2', 'outfit-latin-wght-normal.woff2']),
     faces.files.join(', '));
 
+  // The docs page (index.html). It renders tokens.json live, but only what its
+  // code knows how to draw — which is how the old one stalled at v1.0.0 while
+  // still printing the current version. So: every token must be on it, and
+  // every name it shows must exist.
+  console.log('\nDocs page:');
+  await p.viewport(1280, 900);
+  await p.goto(`${base}/index.html`);
+  await p.eval(`new Promise(r => { const t0 = Date.now(); (function w() {
+    if (document.documentElement.dataset.rendered || Date.now() - t0 > 8000) return r(); setTimeout(w, 50); })(); })`);
+  check('renders, without console errors',
+    await p.eval(`document.documentElement.dataset.rendered === 'true'`) && !p.console.some(m => m.type === 'error'),
+    JSON.stringify(p.console.filter(m => m.type === 'error')));
+
+  const tokensJson = JSON.parse(fs.readFileSync(path.join(ROOT, 'tokens.json'), 'utf-8'));
+  const leaves = [];
+  (function walk(node, at) {
+    const composite = /^(tokens\.shadows|brand\.typography\.display)\.[^.]+$/.test(at);
+    if (at && (composite || Array.isArray(node) || typeof node !== 'object' || node === null)) { leaves.push(at); return; }
+    for (const [k, v] of Object.entries(node)) {
+      if (!at && (k === '$schema' || k === 'meta')) continue;
+      walk(v, at ? `${at}.${k}` : k);
+    }
+  })(tokensJson, '');
+  const tokensShown = new Set(await p.eval(`[...document.querySelectorAll('[data-token]')].map(e => e.dataset.token)`));
+  const missing = leaves.filter(l => !tokensShown.has(l));
+  check(`every token in tokens.json is on the page (${leaves.length})`, missing.length === 0, `missing: ${missing.join(', ')}`);
+
+  const reg = JSON.parse(fs.readFileSync(path.join(ROOT, 'apps.json'), 'utf-8'));
+  const appsShown = new Set(await p.eval(`[...document.querySelectorAll('[data-app]')].map(e => e.dataset.app)`));
+  const famShown = new Set(await p.eval(`[...document.querySelectorAll('[data-family]')].map(e => e.dataset.family)`));
+  const shippedIds = reg.apps.filter(a => a.status === 'shipped').map(a => a.id);
+  const families = Object.entries(reg.categories).filter(([, c]) => c.accent || c.display).map(([id]) => id);
+  check('every shipped app and every family is on the page',
+    shippedIds.every(id => appsShown.has(id)) && families.every(id => famShown.has(id)),
+    `apps missing: ${shippedIds.filter(id => !appsShown.has(id)).join(', ')}; families missing: ${families.filter(id => !famShown.has(id)).join(', ')}`);
+
+  const codes = await p.eval(`[...document.querySelectorAll('code')].map(c => c.textContent.trim())`);
+  const cssDefined = new Set(fs.readFileSync(path.join(ROOT, 'dist/css/tokens.css'), 'utf-8').match(/--ij-[a-z0-9-]+(?=:)/g));
+  const cssShown = [...new Set(codes.filter(c => /^--ij-[a-z0-9-]+$/.test(c)))];
+  check(`every CSS variable it names exists in tokens.css (${cssShown.length})`, cssShown.every(v => cssDefined.has(v)),
+    cssShown.filter(v => !cssDefined.has(v)).join(', '));
+  const swiftSrc = ['DesignTokens.swift', 'DynamicType.swift', 'Adaptive.swift']
+    .map(f => fs.readFileSync(path.join(ROOT, 'Sources/IAMJARLDesignTokens', f), 'utf-8')).join('\n');
+  const swiftShown = [...new Set(codes.filter(c => /^(DesignTokens\.[A-Za-z.`]+(\(\))?|\.ij(Font|Numeral)\(\.[a-z]+\))$/.test(c)))];
+  const swiftExists = name => {
+    const m = name.match(/^\.ij(Font|Numeral)\(\.([a-z]+)\)$/);
+    if (m) return new RegExp(`enum ${m[1] === 'Font' ? 'Style' : 'Numeral'}[^{]*\\{\\s*case [^\\n]*\\b${m[2]}\\b`).test(swiftSrc);
+    const leaf = name.replace(/\(\)$/, '').split('.').pop().replace(/`/g, '');
+    return new RegExp(`(enum|static (let|func)) \`?${leaf}\`?\\b`).test(swiftSrc);
+  };
+  check(`every Swift name it shows exists in the package (${swiftShown.length})`, swiftShown.every(swiftExists),
+    swiftShown.filter(n => !swiftExists(n)).join(', '));
+
+  const loadedFaces = await p.eval(`(async () => { await document.fonts.ready;
+    return ['JetBrains Mono', 'Outfit', 'Instrument Sans'].filter(f => document.fonts.check('16px "' + f + '"')); })()`);
+  const requests = await p.eval(`performance.getEntriesByType('resource').map(r => r.name)`);
+  check('shows the three faces in themselves, and nothing comes from Google Fonts',
+    loadedFaces.length === 3 && !requests.some(u => /fonts\.(googleapis|gstatic)\.com/.test(u)), JSON.stringify(loadedFaces));
+
+  await p.viewport(375, 812);
+  await p.goto(`${base}/index.html?narrow`);
+  await p.eval(`new Promise(r => { (function w() { document.documentElement.dataset.rendered ? r() : setTimeout(w, 50); })(); })`);
+  check('no horizontal scroll at 375px: wide tables scroll inside their own box',
+    await p.eval(`document.documentElement.scrollWidth <= innerWidth`), String(await p.eval(`document.documentElement.scrollWidth`)));
+  await p.viewport(1024, 800);
+
   // Footer: the manual checks that have already caught real bugs.
   console.log('\n<ij-footer>:');
   await p.goto(`${base}/fixture/footer-unknown/index.html`);

@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - IAMJARL Design Tokens (SwiftUI)
 //
-// Auto-generated from tokens.json v1.17.0 — do not edit manually.
+// Auto-generated from tokens.json v1.17.1 — do not edit manually.
 // Run: node scripts/build.js
 //
 // Design DNA:
@@ -34,9 +34,9 @@ public enum DesignTokens {
   // Note: SwiftUI does not use numeric weights directly; these are mapped to Font.Weight.
   public enum Typography {
     @available(*, deprecated, message: "A CSS font name with no meaning in SwiftUI, which draws the system font by default. Use .ijFont(_:).")
-    public static let uiFontName: String = "system-ui"
+    public static let uiFontName: String = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
     @available(*, deprecated, message: "A CSS font name with no meaning in SwiftUI. Use .ijFont(_:design: .monospaced) or .ijNumeral(_:).")
-    public static let monoFontName: String = "ui-monospace"
+    public static let monoFontName: String = "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace"
 
     public enum Size {
       public static let xs: CGFloat = 12

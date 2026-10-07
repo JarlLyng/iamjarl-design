@@ -12,6 +12,8 @@ on:
       - 'Sources/**'
       - 'Tests/**'
       - 'fonts/**'
+      # The docs page has a browser test of its own
+      - 'index.html'
       - 'dist/**'
       - 'package.json'
       - 'Package.swift'
