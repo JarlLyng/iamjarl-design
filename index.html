@@ -179,7 +179,8 @@
 
     <section id="families" aria-labelledby="families-h">
       <h2 id="families-h">Families</h2>
-      <p class="muted">A family accent and display face per category, overridable per app. Shipped apps only.</p>
+      <p class="muted">A family accent and display face per category, overridable per app. Shipped apps only.
+        <strong>On the sites only:</strong> inside an app, its colour belongs to its icon, so the Swift package does not offer these.</p>
       <div class="grid" id="family-grid"></div>
       <div class="callout small" id="family-none"></div>
     </section>
@@ -263,6 +264,8 @@
       <dl class="meta" id="icon-meta"></dl>
       <h3>Usage</h3>
       <ul class="plain">
+        <li><strong>Phosphor on the web, SF Symbols in native apps.</strong> One set per app, never both.</li>
+        <li>In a native app, size a symbol with the text beside it, so it follows Dynamic Type; 20 and 24 are the web sizes.</li>
         <li>Regular weight for core UI by default.</li>
         <li>Duotone only for highlights and illustrations, not core navigation.</li>
         <li>Don't mix icon weights on the same screen.</li>

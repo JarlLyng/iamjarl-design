@@ -674,6 +674,26 @@ check('the package ships fonts/ and exports the sheets',
 check('design.md tells sites to load the face from here, never from Google Fonts',
   /Load the face from the design system\. Do not link Google Fonts/.test(read('design.md')));
 
+// --- Owner decisions, 2026-10-04 (#53) ---
+// Written down in the docs, and the one with code consequences asserted on the
+// code: the family accents are a web layer, so the Swift package must not
+// carry them. If someone adds them "for consistency", this says why not.
+console.log('\nOwner decisions (#53):');
+const designMd = read('design.md');
+check('design.md: Phosphor on the web, SF Symbols in native apps, never both',
+  /Websites use Phosphor/.test(designMd) && /Native apps use SF Symbols/.test(designMd) && /One set per app, never both/.test(designMd));
+check('AGENTS.md rule 5 says the same', /5\. Icons: \*\*Phosphor on the web\*\*.*\*\*SF Symbols in native apps\*\*/.test(read('AGENTS.md')));
+check('tokens.json names both sets', fullTokens.brand.icons.library === 'phosphor' && fullTokens.brand.icons.nativeLibrary === 'sf-symbols');
+check('design.md: family accents on the sites only', /On the sites only, not inside the apps/.test(designMd));
+const swiftAll = fs.readdirSync(path.join(ROOT, 'Sources/IAMJARLDesignTokens'))
+  .map(f => read(`Sources/IAMJARLDesignTokens/${f}`)).join('\n');
+const accentHexes = [...new Set(Object.values(registry.categories).filter(c => c.accent)
+  .flatMap(c => [c.accent.light, c.accent.dark]))]
+  .filter(h => ![tokenTree.colors.modes.light.primary, tokenTree.colors.modes.dark.primary].includes(h));
+check('the Swift package carries no family accent',
+  !/accent[-_]?family|familyAccent|accentFamily/i.test(swiftAll) && accentHexes.every(h => !swiftAll.toUpperCase().includes(h.toUpperCase())),
+  'inside an app its colour belongs to its icon; the accents group products on the web (#53)');
+
 // --- Patterns ---
 // The contrast floor is the part a site would otherwise re-derive or skip, so
 // it is asserted rather than left to survive edits by luck.

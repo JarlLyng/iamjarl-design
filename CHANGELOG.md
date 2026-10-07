@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.18.0] — 2026-10-07
+
+The two questions 1.15.0 left open, answered by the owner (#53) and written down where they bind.
+
+### Decided
+- **Icons: Phosphor on the web, SF Symbols in native apps, one set per app.** SF Symbols follow Dynamic Type, take the weight of the text beside them, carry accessibility labels, and match the system font `.ijFont` scales. The surfaces the system draws itself — widgets, Live Activities, tab bars, the watch — use them anyway, so an app on Phosphor ends up with both sets. Counted from `main`: Anvil uses Phosphor 93 times in its app and SF Symbols 13 times in its watch app, widgets and tab bar; TrimrPix (5) and TonVault (27) use Phosphor only; the other native apps already use SF Symbols.
+- **Family accents: on the sites only.** They group the products on the web. Inside an app the user is already in the product, and the app's colour belongs to its icon — Anvil's App Store icon is magenta, which the fitness lime would clash with.
+
+### Changed
+- `design.md`: the icon section is now one rule per platform, with native sizing tied to the text rather than to points. The family-accent section says sites only.
+- `AGENTS.md` rule 5 and the README say the same.
+- **`tokens.json` names both sets:** `brand.icons.library` stays `phosphor` (the web, which the TypeScript export serves), and `brand.icons.nativeLibrary` is `sf-symbols`. The docs page shows both.
+
+### Held by tests
+- Contract tests check that `design.md`, `AGENTS.md` and `tokens.json` state both rules.
+- **The Swift package must carry no family accent**, so if one is added "for consistency" the test fails and says why. It was checked by adding one.
+
+### Follow-ups
+Issues in Anvil, TrimrPix and TonVault, with each app's icons counted and listed. Anvil's mix is the first to fix; TrimrPix and TonVault can move with their next release.
+
 ## [1.17.1] — 2026-10-07
 
 The docs page, rebuilt so it cannot fall behind again, and a token bug the rebuild found on its first render.
@@ -621,6 +641,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.18.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.18.0
 [1.17.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.17.1
 [1.17.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.17.0
 [1.16.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.16.0
