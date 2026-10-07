@@ -169,16 +169,20 @@ export class IjFooter extends HTMLElement {
     const provided = this.querySelector('[slot="cross-links"]') !== null;
     const tagline = this.getAttribute('tagline');
     const ownLabel = this.getAttribute('links-label') ?? self.name;
+    // A site with no links of its own gets no group for them. Rendered anyway,
+    // it was a label above an empty row — It's mono set links-label="" to hide
+    // the label and still got the empty row and its gap.
+    const ownLinks = this.querySelector('[slot="links"]') !== null;
 
     this.shadowRoot.innerHTML = `
       <style>${STYLE}</style>
       <footer class="footer">
         ${tagline ? `<p class="tagline">${escape(tagline)}</p>` : ''}
         <div class="groups">
-          <div class="group">
+          ${ownLinks ? `<div class="group">
             <p class="label">${escape(ownLabel)}</p>
             <div class="links"><slot name="links"></slot></div>
-          </div>
+          </div>` : ''}
           <nav class="group" aria-labelledby="more">
             <p class="label" id="more">More from IAMJARL</p>
             <div class="links">${provided

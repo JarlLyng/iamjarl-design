@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.18.1] — 2026-10-07
+
+### Fixed
+- **`<ij-footer>` drew an empty group when a site had no links of its own.** The group for `slot="links"` was always rendered, so a footer without own links showed a label above an empty row, and its gap. It's mono had set `links-label=""` to hide the label and still got the row. The group is now rendered only when there are links for it. Of the six live footers, It's mono is the only one without own links, so it is the only page that changes, and only by losing the empty space. Browser tests cover both cases, and were checked by forcing the group back.
+- **`COMPONENTS.md` pinned a file that never existed**, `dist/components/index.js` at v1.3.0. The proposal planned an index, but the components shipped as one file each. The example now shows what was built.
+
+### Checked, not changed
+- **PageLens' cross-links do reach crawlers.** An earlier note here said they could not, because the site renders in the browser. It was wrong: a build plugin inlines the design system's fragment into the served HTML, and all five links are there, matching `dist/footers/pagelens.html`. No issue was filed.
+
 ## [1.18.0] — 2026-10-07
 
 The two questions 1.15.0 left open, answered by the owner (#53) and written down where they bind.
@@ -641,6 +650,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.18.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.18.1
 [1.18.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.18.0
 [1.17.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.17.1
 [1.17.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.17.0
