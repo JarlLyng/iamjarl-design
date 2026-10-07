@@ -104,8 +104,10 @@ works in every one of them, with a single script tag and no tooling.
 Proposed shape, alongside the existing token outputs:
 
 ```
-dist/components/          # ESM, one file per component + an index
+dist/components/          # ESM, one self-contained file per component
 ```
+
+*As built:* one file per component (`ij-footer.js`, `ij-nav.js`), each with its own SRI hash, and no index. An index would make every site load every component and would tie their hashes together.
 
 Serve it from a **pinned jsDelivr tag**, not GitHub Pages. Pages serves always-latest, so one bad
 commit would hit every site at once. A tag URL is immutable, supports SRI, and needs no
@@ -113,9 +115,12 @@ infrastructure:
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.3.0/dist/components/index.js"></script>
-<ij-footer></ij-footer>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@vX.Y.Z/dist/components/ij-footer.js"
+  integrity="…" crossorigin="anonymous"></script>
+<ij-footer app="…"></ij-footer>
 ```
+
+The README carries this pinned to the current release, with its hash.
 
 ## Theming: not with `tokens.shadow.css`
 

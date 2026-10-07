@@ -448,6 +448,10 @@ try {
   const loadedFaces = await p.eval(`(async () => { await document.fonts.ready;
     return ['JetBrains Mono', 'Outfit', 'Instrument Sans'].filter(f => document.fonts.check('16px "' + f + '"')); })()`);
   const requests = await p.eval(`performance.getEntriesByType('resource').map(r => r.name)`);
+  check('a footer with its own links still shows their group', await p.eval(`(() => {
+    const sr = document.querySelector('.card ij-footer').shadowRoot;
+    return sr.querySelectorAll('.group').length === 2 && !!sr.querySelector('slot[name="links"]');
+  })()`));
   check('shows the three faces in themselves, and nothing comes from Google Fonts',
     loadedFaces.length === 3 && !requests.some(u => /fonts\.(googleapis|gstatic)\.com/.test(u)), JSON.stringify(loadedFaces));
 
@@ -474,6 +478,10 @@ try {
     const first = as.filter(a => Math.abs(a.top - as[0].top) < 2);
     return { left: Math.min(...first.map(a => a.left)) - r.left, right: r.right - Math.max(...first.map(a => a.right)) };
   })()`);
+  check('no links of its own, no empty group for them (It\'s mono\'s case)', await p.eval(`(() => {
+    const sr = document.querySelector('ij-footer').shadowRoot;
+    return sr.querySelectorAll('.group').length === 1 && !sr.querySelector('slot[name="links"]');
+  })()`));
   check('--ij-footer-links-justify: center centres the row', gaps.left > 20 && Math.abs(gaps.left - gaps.right) < 2,
     JSON.stringify(gaps));
 } finally {
