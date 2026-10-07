@@ -1,255 +1,590 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IAMJARL Design System</title>
+  <meta name="description" content="Every token in the IAMJARL design system, rendered live from tokens.json and apps.json: colour in both modes, type, numerals, display faces, the families, scales and components.">
+
+  <!-- The page is a consumer of the system it documents: tokens, faces and
+       components all come from this repository, at whatever commit is served. -->
   <link rel="stylesheet" href="./dist/css/tokens.css">
+  <link rel="stylesheet" href="./dist/fonts/jetbrains-mono.css">
+  <link rel="stylesheet" href="./dist/fonts/outfit.css">
+  <link rel="stylesheet" href="./dist/fonts/instrument-sans.css">
+  <script type="module" src="./dist/components/ij-nav.js"></script>
+  <script type="module" src="./dist/components/ij-footer.js"></script>
+
   <style>
-    /* Viewer styles using its own design tokens */
+    /* Tokens only: no colour, spacing or radius here is a literal. */
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: calc(var(--ij-spacing-xxxl) * 3); }
     body {
+      margin: 0;
       font-family: var(--ij-font-ui);
-      margin: var(--ij-spacing-xxl);
+      font-size: var(--ij-font-size-base);
+      line-height: var(--ij-line-height-base);
       background: var(--ij-color-bg-app);
       color: var(--ij-color-text-primary);
     }
-    header { display: flex; align-items: baseline; gap: var(--ij-spacing-md); margin-bottom: var(--ij-spacing-xxl); }
-    .pill {
-      padding: var(--ij-spacing-xs) var(--ij-spacing-sm);
-      border-radius: 999px;
-      border: 1px solid var(--ij-color-border-subtle);
-      font-size: var(--ij-font-size-xs);
+    ij-nav:not(:defined) {
+      display: flex; flex-wrap: wrap; align-items: center; gap: var(--ij-spacing-lg);
+      padding: var(--ij-spacing-md) var(--ij-spacing-xxxl);
     }
-    h2 { margin-top: var(--ij-spacing-xxxl); font-size: var(--ij-font-size-xl); }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--ij-spacing-md); }
-    .card {
-      border: 1px solid var(--ij-color-border-subtle);
-      border-radius: var(--ij-radius-md);
-      padding: var(--ij-spacing-md);
-      background: var(--ij-color-surface-default);
-    }
-    .swatch { height: 56px; border-radius: var(--ij-radius-md); border: 1px solid var(--ij-color-border-subtle); }
-    .row {
-      display: flex;
-      justify-content: space-between;
-      gap: var(--ij-spacing-md);
-      font-size: var(--ij-font-size-sm);
-      margin-top: var(--ij-spacing-sm);
-    }
-    code { font-family: var(--ij-font-mono); font-size: var(--ij-font-size-xs); }
-    button {
-      border: 1px solid var(--ij-color-border-default);
-      border-radius: var(--ij-radius-sm);
-      padding: var(--ij-spacing-xs) var(--ij-spacing-sm);
-      background: var(--ij-color-surface-default);
-      color: var(--ij-color-text-primary);
-      cursor: pointer;
-      font-family: inherit;
-      transition: transform var(--ij-duration-fast) var(--ij-easing-standard);
-    }
-    button:hover { transform: translateY(-1px); }
-    button:focus-visible {
-      outline: var(--ij-focus-width) solid var(--ij-color-primary);
-      outline-offset: var(--ij-focus-offset);
-    }
-    .two { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ij-spacing-lg); }
-    .small { font-size: var(--ij-font-size-sm); line-height: 1.4; }
+    main, .page-foot { max-width: var(--ij-container-lg); margin: 0 auto; padding: 0 var(--ij-spacing-lg); }
+    a { color: inherit; text-underline-offset: 0.2em; }
+    a:hover { color: var(--ij-color-text-primary); }
+    :focus-visible { outline: var(--ij-focus-width) solid var(--ij-color-text-primary); outline-offset: var(--ij-focus-offset); }
+    code, .mono { font-family: var(--ij-font-mono); font-size: var(--ij-font-size-sm); }
+    h1 { font-size: var(--ij-font-size-xxl); line-height: var(--ij-line-height-xxl); margin: var(--ij-spacing-xxxl) 0 var(--ij-spacing-sm); }
+    h2 { font-size: var(--ij-font-size-xl); line-height: var(--ij-line-height-xl); margin: 0 0 var(--ij-spacing-md); }
+    h3 { font-size: var(--ij-font-size-lg); line-height: var(--ij-line-height-lg); margin: var(--ij-spacing-xxl) 0 var(--ij-spacing-sm); }
+    p { margin: 0 0 var(--ij-spacing-md); }
     .muted { color: var(--ij-color-text-secondary); }
-    .list { margin: var(--ij-spacing-sm) 0 0 var(--ij-spacing-lg); }
-    @media (max-width: 720px) { .two { grid-template-columns: 1fr; } }
+    .small { font-size: var(--ij-font-size-sm); line-height: var(--ij-line-height-sm); }
+    section { padding: var(--ij-spacing-xxxl) 0; border-top: 1px solid var(--ij-color-border-subtle); }
+
+    .intro { padding-bottom: var(--ij-spacing-xxl); }
+    .badge {
+      display: inline-block; padding: var(--ij-spacing-xs) var(--ij-spacing-sm);
+      border: 1px solid var(--ij-color-border-default); border-radius: var(--ij-radius-sm);
+      font-family: var(--ij-font-mono); font-size: var(--ij-font-size-sm);
+    }
+    .toc { display: flex; flex-wrap: wrap; gap: var(--ij-spacing-sm) var(--ij-spacing-lg); padding: 0; margin: var(--ij-spacing-lg) 0 0; list-style: none; }
+    .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ij-spacing-md); margin-top: var(--ij-spacing-lg); }
+    .seg { display: inline-flex; border: 1px solid var(--ij-color-border-default); border-radius: var(--ij-radius-md); overflow: hidden; }
+    .seg button, .copy, .demo-btn {
+      font: inherit; font-size: var(--ij-font-size-sm); line-height: var(--ij-line-height-sm);
+      padding: var(--ij-spacing-xs) var(--ij-spacing-md); border: 0; background: var(--ij-color-bg-card);
+      color: var(--ij-color-text-primary); cursor: pointer;
+    }
+    .seg button[aria-pressed="true"] { background: var(--ij-color-primary); color: var(--ij-color-on-primary); }
+    .copy { border: 1px solid var(--ij-color-border-subtle); border-radius: var(--ij-radius-sm); }
+    .demo-btn { border: 1px solid var(--ij-color-border-default); border-radius: var(--ij-radius-md); }
+    #status:empty { display: none; }
+    #status { padding: var(--ij-spacing-md); border: 1px solid var(--ij-color-border-default); border-radius: var(--ij-radius-md); }
+
+    .callout {
+      padding: var(--ij-spacing-lg); margin: var(--ij-spacing-lg) 0;
+      background: var(--ij-color-bg-card); border: 1px solid var(--ij-color-border-subtle); border-radius: var(--ij-radius-lg);
+    }
+    .grid { display: grid; gap: var(--ij-spacing-lg); grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+    .card { padding: var(--ij-spacing-lg); background: var(--ij-color-bg-card); border: 1px solid var(--ij-color-border-subtle); border-radius: var(--ij-radius-lg); }
+
+    /* A mode panel resolves every var() in that mode, whatever the page is in. */
+    .mode-panel { padding: var(--ij-spacing-lg); background: var(--ij-color-bg-app); color: var(--ij-color-text-primary); border: 1px solid var(--ij-color-border-default); border-radius: var(--ij-radius-lg); }
+    .modes { display: grid; gap: var(--ij-spacing-lg); }
+    /* Grid items default to min-width: auto, so a wide table would widen the
+       whole column — and the page — instead of scrolling inside its wrapper. */
+    .modes > *, .grid > *, .scale-row > * { min-width: 0; }
+    .modes.pair { grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+    code { overflow-wrap: anywhere; }
+    td code, th code { white-space: nowrap; overflow-wrap: normal; }
+    .names { display: grid; gap: var(--ij-spacing-xs); }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: var(--ij-font-size-sm); line-height: var(--ij-line-height-sm); }
+    th, td { text-align: left; vertical-align: middle; padding: var(--ij-spacing-sm); border-bottom: 1px solid var(--ij-color-border-subtle); }
+    th { font-weight: var(--ij-font-weight-semibold); color: var(--ij-color-text-secondary); }
+    caption { text-align: left; font-weight: var(--ij-font-weight-semibold); padding: var(--ij-spacing-sm) 0; color: var(--ij-color-text-secondary); }
+    .sw { width: calc(var(--ij-spacing-xxxl) + var(--ij-spacing-sm)); height: var(--ij-spacing-xxl); border-radius: var(--ij-radius-sm); border: 1px solid var(--ij-color-border-subtle); }
+    .pass { color: var(--ij-color-state-success); font-weight: var(--ij-font-weight-semibold); }
+    .fail { color: var(--ij-color-state-error); font-weight: var(--ij-font-weight-semibold); }
+
+    .fill { display: flex; align-items: center; justify-content: space-between; gap: var(--ij-spacing-md); padding: var(--ij-spacing-md); border-radius: var(--ij-radius-md); font-weight: var(--ij-font-weight-semibold); }
+    .gradient { height: calc(var(--ij-spacing-xxxl) * 2); border-radius: var(--ij-radius-md); }
+
+    .sample { margin: 0; overflow-wrap: anywhere; }
+    .numeral { font-variant-numeric: tabular-nums; font-weight: var(--ij-font-weight-bold); line-height: 1; margin: 0; }
+    .face-sample { font-size: var(--ij-font-size-xxl); line-height: var(--ij-line-height-xxl); margin: var(--ij-spacing-sm) 0; }
+    dl.meta { display: grid; grid-template-columns: max-content 1fr; gap: var(--ij-spacing-xs) var(--ij-spacing-md); margin: 0; font-size: var(--ij-font-size-sm); }
+    dl.meta dt { color: var(--ij-color-text-secondary); }
+    dl.meta dd { margin: 0; }
+
+    .bar { height: var(--ij-spacing-md); background: var(--ij-color-primary); border-radius: var(--ij-radius-sm); }
+    .scale-row { display: grid; grid-template-columns: minmax(0, 9rem) 1fr; align-items: center; gap: var(--ij-spacing-md); padding: var(--ij-spacing-xs) 0; }
+    .radius-box { width: calc(var(--ij-spacing-xxxl) * 2); height: calc(var(--ij-spacing-xxxl) * 2); border: var(--ij-focus-width) solid var(--ij-color-primary); }
+    .shadow-box { padding: var(--ij-spacing-lg); background: var(--ij-color-surface-default); border-radius: var(--ij-radius-md); }
+    .track { position: relative; height: var(--ij-spacing-xxl); background: var(--ij-color-bg-muted); border-radius: var(--ij-radius-sm); }
+    .dot { position: absolute; top: var(--ij-spacing-xs); left: var(--ij-spacing-xs); width: var(--ij-spacing-lg); height: var(--ij-spacing-lg); border-radius: 50%; background: var(--ij-color-primary); }
+    .track.run .dot { left: calc(100% - var(--ij-spacing-lg) - var(--ij-spacing-xs)); }
+    @media (prefers-reduced-motion: reduce) { .dot { transition: none !important; } }
+
+    .frame { height: 300px; overflow: auto; border: 1px solid var(--ij-color-border-default); border-radius: var(--ij-radius-lg); background: var(--ij-color-bg-app); }
+    .frame-body { padding: var(--ij-spacing-lg); }
+    .frame-body .tall { height: 600px; }
+    pre { overflow-x: auto; padding: var(--ij-spacing-md); background: var(--ij-color-bg-card); border-radius: var(--ij-radius-md); border: 1px solid var(--ij-color-border-subtle); }
+    ul.plain { padding-left: var(--ij-spacing-lg); margin: 0; }
+    .chips { display: flex; flex-wrap: wrap; gap: var(--ij-spacing-xs); padding: 0; margin: var(--ij-spacing-sm) 0 0; list-style: none; }
+    .chips li { padding: 0 var(--ij-spacing-sm); border: 1px solid var(--ij-color-border-subtle); border-radius: var(--ij-radius-sm); font-size: var(--ij-font-size-sm); }
+    .page-foot { padding-top: var(--ij-spacing-xxl); padding-bottom: var(--ij-spacing-xxxl); border-top: 1px solid var(--ij-color-border-subtle); }
   </style>
 </head>
 <body>
-  <header>
-    <h1 style="margin:0;">IAMJARL Design System</h1>
-    <span class="pill" id="version">v?</span>
-    <button id="reload">Reload tokens</button>
-  </header>
+  <ij-nav>
+    <a slot="brand" href="./">IAMJARL Design</a>
+    <a slot="links" href="#colour">Colour</a>
+    <a slot="links" href="#type">Type</a>
+    <a slot="links" href="#components">Components</a>
+    <a slot="secondary" href="https://github.com/JarlLyng/iamjarl-design">GitHub</a>
+  </ij-nav>
 
-  <p class="small">Human-friendly viewer for <code>tokens.json</code>. Edit tokens once, reuse everywhere.</p>
-  <p class="small muted">
-    SwiftUI: <code>Sources/IAMJARLDesignTokens/DesignTokens.swift</code> · Icons: Phosphor
-  </p>
+  <main id="main">
+    <header class="intro">
+      <h1 data-token="brand.name">IAMJARL Design System</h1>
+      <p><span class="badge" id="version">…</span></p>
+      <p class="muted">Every token, rendered live from <a href="./tokens.json"><code>tokens.json</code></a> and
+        <a href="./apps.json"><code>apps.json</code></a> at the commit this page is served from. Nothing on it is
+        typed by hand, so it cannot fall behind the release.</p>
+      <ul class="toc">
+        <li><a href="#colour">Colour</a></li>
+        <li><a href="#families">Families</a></li>
+        <li><a href="#type">Type</a></li>
+        <li><a href="#scales">Scales</a></li>
+        <li><a href="#components">Components</a></li>
+        <li><a href="#icons">Icons</a></li>
+        <li><a href="#guidance">Guidance</a></li>
+      </ul>
+      <div class="toolbar">
+        <span class="small muted" id="theme-label">Page mode</span>
+        <div class="seg" role="group" aria-labelledby="theme-label">
+          <button type="button" data-theme="">System</button>
+          <button type="button" data-theme="light">Light</button>
+          <button type="button" data-theme="dark">Dark</button>
+        </div>
+        <span class="small muted">The colour tables always show both modes side by side.</span>
+      </div>
+      <div id="status" role="status"></div>
+    </header>
 
-  <div class="two">
-    <section>
-      <h2>Light mode</h2>
-      <div id="light" class="grid"></div>
+    <section id="colour" aria-labelledby="colour-h">
+      <h2 id="colour-h">Colour</h2>
+      <p class="muted">Every mode-aware colour, in both modes. Contrast is computed with the repository's own
+        <a href="./scripts/color.js"><code>color.js</code></a>, the code that gates every release.</p>
+      <div class="modes" id="modes"></div>
+
+      <h3>Text colour or fill — rule 7</h3>
+      <p>The shared state colours are <strong>fills</strong>: they carry their <code>on</code> colour. As text
+        they fail on one of the two grounds, which is why the text-safe <code>state.*</code> colours above exist.</p>
+      <div class="grid" id="fills"></div>
+
+      <h3>Static</h3>
+      <div class="grid" id="static"></div>
+
+      <h3>Gradients</h3>
+      <p class="muted">Decorative unless marked otherwise. The verdict is the one the build writes beside each
+        gradient in <code>tokens.css</code>.</p>
+      <div class="grid" id="gradients"></div>
     </section>
-    <section>
-      <h2>Dark mode</h2>
-      <div id="dark" class="grid"></div>
+
+    <section id="families" aria-labelledby="families-h">
+      <h2 id="families-h">Families</h2>
+      <p class="muted">A family accent and display face per category, overridable per app. Shipped apps only.</p>
+      <div class="grid" id="family-grid"></div>
+      <div class="callout small" id="family-none"></div>
     </section>
-  </div>
 
-  <section>
-    <h2>Shared state colors</h2>
-    <div id="shared" class="grid"></div>
-  </section>
+    <section id="type" aria-labelledby="type-h">
+      <h2 id="type-h">Type</h2>
+      <dl class="meta" id="families-ui"></dl>
 
-  <section>
-    <h2>Typography</h2>
-    <div id="type" class="card"></div>
-  </section>
+      <h3>Text scale</h3>
+      <div class="table-wrap"><table id="type-scale">
+        <thead><tr><th scope="col">Sample</th><th scope="col">Size</th><th scope="col">Line height</th><th scope="col">CSS</th><th scope="col">Swift</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
 
-  <section>
-    <h2>Icons</h2>
-    <div id="icons" class="card"></div>
-  </section>
+      <h3>Weights</h3>
+      <div class="grid" id="weights"></div>
 
-  <script>
-    async function loadTokens() {
-      const res = await fetch('./tokens.json', { cache: 'no-store' });
-      if (!res.ok) throw new Error('Could not load tokens.json');
-      return await res.json();
+      <h3>Numerals</h3>
+      <p class="muted">For numbers that are the interface. Always tabular digits; in Swift, Dynamic Type capped at 1.5×.</p>
+      <div class="grid" id="numerals"></div>
+
+      <h3>Display faces</h3>
+      <p class="muted">Loaded on this page from <code>dist/fonts/</code>, the way a site loads them.</p>
+      <div class="grid" id="faces"></div>
+    </section>
+
+    <section id="scales" aria-labelledby="scales-h">
+      <h2 id="scales-h">Scales</h2>
+      <h3>Spacing</h3><div id="spacing"></div>
+      <h3>Radius</h3><div class="grid" id="radius"></div>
+      <h3>Shadows</h3><div class="grid" id="shadows"></div>
+      <h3>Motion</h3><div class="grid" id="motion"></div>
+      <h3>Breakpoints</h3><div id="breakpoints"></div>
+      <h3>Container widths</h3><div id="container"></div>
+      <h3>Focus</h3><div class="grid" id="focus"></div>
+      <h3>Opacity</h3><div class="grid" id="opacity"></div>
+      <h3>Stacking</h3>
+      <div class="table-wrap"><table id="zindex">
+        <thead><tr><th scope="col">Layer</th><th scope="col">z-index</th><th scope="col">CSS</th><th scope="col">Swift</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </section>
+
+    <section id="components" aria-labelledby="components-h">
+      <h2 id="components-h">Components</h2>
+      <p class="muted">Web only. Live below; contracts in the <a href="./README.md">README</a>.</p>
+
+      <h3><code>&lt;ij-nav&gt;</code></h3>
+      <p class="small">This page's own navigation is one. Here it is inside a frame that scrolls, sticky and translucent.</p>
+      <div class="frame">
+        <ij-nav label="Example" skip-to="components">
+          <a slot="brand" href="#components">Echolume</a>
+          <a slot="links" href="#components">How it works</a>
+          <a slot="links" href="#components">OBS Guide</a>
+          <a slot="links" href="#components">Twitch</a>
+          <a slot="secondary" href="#components">GitHub</a>
+          <a slot="cta" href="#components">Download</a>
+        </ij-nav>
+        <div class="frame-body"><p class="muted">Scroll inside this frame.</p><div class="tall"></div></div>
+      </div>
+      <pre><code>&lt;ij-nav&gt;
+  &lt;a slot="brand" href="/"&gt;Echolume&lt;/a&gt;
+  &lt;a slot="links" href="/how-it-works.html"&gt;How it works&lt;/a&gt;
+  &lt;a slot="secondary" href="https://github.com/…"&gt;GitHub&lt;/a&gt;
+  &lt;a slot="cta" href="https://apps.apple.com/…"&gt;Download&lt;/a&gt;
+&lt;/ij-nav&gt;</code></pre>
+
+      <h3><code>&lt;ij-footer&gt;</code></h3>
+      <p class="small">Cross-links generated from <code>apps.json</code>; here as WODrounds would show them.</p>
+      <div class="card">
+        <ij-footer app="wodrounds" tagline="An IAMJARL app.">
+          <a slot="links" href="#components">Privacy</a>
+          <a slot="links" href="#components">Support</a>
+          <p slot="fineprint">© IAMJARL</p>
+        </ij-footer>
+      </div>
+    </section>
+
+    <section id="icons" aria-labelledby="icons-h">
+      <h2 id="icons-h">Icons</h2>
+      <dl class="meta" id="icon-meta"></dl>
+      <h3>Usage</h3>
+      <ul class="plain">
+        <li>Regular weight for core UI by default.</li>
+        <li>Duotone only for highlights and illustrations, not core navigation.</li>
+        <li>Don't mix icon weights on the same screen.</li>
+        <li>Default colour is <code>text.primary</code>; <code>primary</code> for active or emphasis; <code>error</code> for destructive.</li>
+      </ul>
+    </section>
+
+    <section id="guidance" aria-labelledby="guidance-h">
+      <h2 id="guidance-h">Guidance</h2>
+      <div class="grid" id="guidance-grid"></div>
+      <p class="small muted">The full rules are in <a href="./design.md">design.md</a>.</p>
+    </section>
+  </main>
+
+  <footer class="page-foot small muted">
+    <p>
+      <a href="./README.md">README</a> ·
+      <a href="./design.md">design.md</a> ·
+      <a href="./MIGRATION.md">MIGRATION.md</a> ·
+      <a href="./CHANGELOG.md">CHANGELOG.md</a> ·
+      <a href="https://github.com/JarlLyng/iamjarl-design/releases">Releases</a>
+    </p>
+    <p id="generated"></p>
+  </footer>
+
+  <script type="module">
+    import { parseColor, contrastRatio } from './scripts/color.js';
+
+    // ---------- small helpers ----------
+    const $ = id => document.getElementById(id);
+    function el(tag, props = {}, ...kids) {
+      const n = document.createElement(tag);
+      for (const [k, v] of Object.entries(props)) {
+        if (v === undefined || v === null || v === false) continue;
+        if (k === 'class') n.className = v;
+        else if (k === 'text') n.textContent = v;
+        else if (k === 'style') n.style.cssText = v;
+        else n.setAttribute(k, v);
+      }
+      for (const kid of kids.flat()) if (kid !== null && kid !== undefined) n.append(kid);
+      return n;
+    }
+    const code = t => el('code', { text: t });
+    const kebab = s => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+    const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+    const swiftId = k => (k === 'default' ? '`default`' : k);
+
+    function copyButton(value, label) {
+      const b = el('button', { type: 'button', class: 'copy', 'aria-label': `Copy ${label}`, text: 'Copy' });
+      b.addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(value); b.textContent = 'Copied'; }
+        catch { b.textContent = 'Copy failed'; }
+        setTimeout(() => (b.textContent = 'Copy'), 900);
+      });
+      return b;
     }
 
-    function swatchCard(name, value) {
-      const el = document.createElement('div');
-      el.className = 'card';
-      const sw = document.createElement('div');
-      sw.className = 'swatch';
-      sw.style.background = value;
-      const row = document.createElement('div');
-      row.className = 'row';
+    // Contrast of a colour that may be translucent, over the ground it sits on.
+    const over = (c, g) => (c.a === undefined || c.a === 1 ? c
+      : { r: c.r * c.a + g.r * (1 - c.a), g: c.g * c.a + g.g * (1 - c.a), b: c.b * c.a + g.b * (1 - c.a) });
+    const ratio = (fg, bg) => { const g = parseColor(bg), f = parseColor(fg); return contrastRatio(over(f, g), g); };
+    function verdict(r, need = 4.5, note) {
+      const ok = r >= need;
+      return el('span', { class: ok ? 'pass' : 'fail' }, `${r.toFixed(2)}:1 ${ok ? '✓' : '✗'}`, note ? el('span', { class: 'muted', text: ` ${note}` }) : null);
+    }
 
-      const left = document.createElement('div');
-      left.innerHTML = `<strong>${name}</strong><br/><code>${value}</code>`;
+    // CSS variable and Swift name for a mode colour, following build.js.
+    const GROUP_CSS = { text: 'text', background: 'bg', surface: 'surface', border: 'border', state: 'state' };
+    function modeCss(group, key) {
+      if (group === 'gradients') return `--ij-gradient-${kebab(key)}`;
+      return group ? `--ij-color-${GROUP_CSS[group]}-${kebab(key)}` : `--ij-color-${kebab(key)}`;
+    }
+    const modeSwift = (group, key) => `DesignTokens.Palette.${group ? cap(group) + '.' : ''}${swiftId(key)}`;
 
-      const btn = document.createElement('button');
-      btn.textContent = 'Copy';
-      btn.onclick = async () => {
-        await navigator.clipboard.writeText(value);
-        btn.textContent = 'Copied';
-        setTimeout(() => (btn.textContent = 'Copy'), 800);
+    // ---------- load ----------
+    const status = $('status');
+    let tokens, registry, tokensCss;
+    try {
+      const get = async (url, as) => {
+        const r = await fetch(url, { cache: 'no-store' });
+        if (!r.ok) throw new Error(`${url}: ${r.status}`);
+        return as === 'text' ? r.text() : r.json();
       };
+      [tokens, registry, tokensCss] = await Promise.all([get('./tokens.json'), get('./apps.json'), get('./dist/css/tokens.css', 'text')]);
+    } catch (e) {
+      status.textContent = `Could not load the tokens (${e.message}). Serve the repository over http rather than opening the file directly.`;
+      throw e;
+    }
+    const t = tokens.tokens;
+    const ty = tokens.brand.typography;
+    const modes = t.colors.modes;
+    $('version').textContent = `v${tokens.meta.version}`;
+    $('generated').textContent = `Rendered from tokens.json v${tokens.meta.version} (updated ${tokens.meta.updated}) and apps.json (updated ${registry.meta.updated}).`;
 
-      row.appendChild(left);
-      row.appendChild(btn);
-      el.appendChild(sw);
-      el.appendChild(row);
-      return el;
+    // ---------- page mode ----------
+    const themeButtons = [...document.querySelectorAll('[data-theme]')];
+    function setTheme(v) {
+      document.documentElement.classList.remove('light', 'dark');
+      if (v) document.documentElement.classList.add(v);
+      themeButtons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.theme === v)));
+      try { v ? localStorage.setItem('ij-docs-theme', v) : localStorage.removeItem('ij-docs-theme'); } catch {}
+    }
+    themeButtons.forEach(b => b.addEventListener('click', () => setTheme(b.dataset.theme)));
+    let saved = '';
+    try { saved = localStorage.getItem('ij-docs-theme') || ''; } catch {}
+    setTheme(saved);
+
+    // ---------- colour, per mode ----------
+    function colourRow(mode, group, key, value) {
+      const m = modes[mode];
+      const cssName = modeCss(group, key);
+      let contrast = '—';
+      if (group === 'text' || group === 'state') {
+        contrast = key === 'disabled' ? verdict(ratio(value, m.background.app), 0, 'on background.app — disabled text is exempt')
+          : key === 'inverse' ? verdict(ratio(value, m.primary), 4.5, 'on primary')
+          : verdict(ratio(value, m.background.app), 4.5, 'on background.app');
+      } else if (!group && key === 'primary') {
+        contrast = verdict(ratio(m.onPrimary, value), 4.5, 'under onPrimary');
+      } else if (!group && key === 'onPrimary') {
+        contrast = verdict(ratio(value, m.primary), 4.5, 'on primary');
+      } else if (!group && (key === 'primaryHover' || key === 'primaryPressed')) {
+        contrast = verdict(ratio(m.onPrimary, value), 4.5, 'under onPrimary');
+      }
+      return el('tr', { 'data-token': `tokens.colors.modes.${mode}.${group ? group + '.' : ''}${key}` },
+        el('td', {}, el('div', { class: 'sw', style: `background: var(${cssName})`, 'aria-hidden': 'true' })),
+        el('th', { scope: 'row' }, group ? `${group}.${key}` : key),
+        el('td', {}, code(value)),
+        el('td', {}, contrast),
+        el('td', {}, el('div', { class: 'names' }, code(cssName), code(modeSwift(group, key)))),
+        el('td', {}, copyButton(`var(${cssName})`, cssName)));
+    }
+    for (const mode of ['light', 'dark']) {
+      const m = modes[mode];
+      const panel = el('div', { class: `mode-panel ${mode}`, 'data-mode': mode }, el('h3', { text: `${cap(mode)} mode`, style: 'margin-top:0' }));
+      const groups = [['Brand', null, Object.entries(m).filter(([, v]) => typeof v === 'string')]];
+      for (const g of Object.keys(m)) if (typeof m[g] === 'object' && g !== 'gradients') groups.push([cap(g), g, Object.entries(m[g])]);
+      for (const [title, group, entries] of groups) {
+        const table = el('table', {}, el('caption', { text: group === 'state' ? 'State — text-safe' : title }),
+          el('thead', {}, el('tr', {}, ...['', 'Token', 'Value', 'Contrast', 'CSS · Swift', ''].map(h => el('th', { scope: 'col', text: h })))),
+          el('tbody', {}, entries.map(([k, v]) => colourRow(mode, group, k, v))));
+        panel.append(el('div', { class: 'table-wrap' }, table));
+      }
+      $('modes').append(panel);
     }
 
-    function attachCopyHandlers(root) {
-      const buttons = root.querySelectorAll('button[data-copy]');
-      buttons.forEach((btn) => {
-        btn.onclick = async () => {
-          const value = btn.getAttribute('data-copy') || '';
-          await navigator.clipboard.writeText(value);
-          const prev = btn.textContent;
-          btn.textContent = 'Copied';
-          setTimeout(() => (btn.textContent = prev || 'Copy'), 800);
-        };
-      });
+    // ---------- fills: text or fill ----------
+    const shared = t.colors.shared;
+    for (const k of Object.keys(shared).filter(k => !k.startsWith('on'))) {
+      const on = `on${cap(k)}`;
+      $('fills').append(el('div', { class: 'card' },
+        el('div', { class: 'fill', style: `background: var(--ij-color-${k}); color: var(--ij-color-on-${k})`, 'data-token': `tokens.colors.shared.${k}` },
+          el('span', { text: k }), el('span', { class: 'mono', text: shared[k] })),
+        el('p', { class: 'small', 'data-token': `tokens.colors.shared.${on}`, style: 'margin-top: var(--ij-spacing-sm)' },
+          `${on} `, code(shared[on]), ' on it: ', verdict(ratio(shared[on], shared[k]))),
+        el('p', { class: 'small' }, 'As text on white: ', verdict(ratio(shared[k], t.colors.static.white)), ' · on black: ', verdict(ratio(shared[k], t.colors.static.black))),
+        el('p', { class: 'small muted' }, 'For text use ', code(`state.${k}`), ` — ${modes.light.state[k]} light, ${modes.dark.state[k]} dark.`),
+        el('p', { class: 'small' }, code(`--ij-color-${k}`), ' · ', code(`DesignTokens.ColorToken.State.${k}`))));
+    }
+    for (const [k, v] of Object.entries(t.colors.static)) {
+      $('static').append(el('div', { class: 'card', 'data-token': `tokens.colors.static.${k}` },
+        el('div', { class: 'sw', style: `background: var(--ij-color-${k}); width: 100%`, 'aria-hidden': 'true' }),
+        el('p', { class: 'small', style: 'margin-top: var(--ij-spacing-sm)' }, el('strong', { text: k }), ' ', code(v), ' · ', code(`--ij-color-${k}`), ' · ', code(`DesignTokens.ColorToken.${k}`))));
     }
 
-    function renderMode(container, modeObj) {
-      container.innerHTML = '';
-      // Pick key swatches that matter most
-      const items = [
-        ['Primary', modeObj.primary],
-        ['On Primary', modeObj.onPrimary],
-        ['Background / App', modeObj.background.app],
-        ['Background / Muted', modeObj.background.muted],
-        ['Background / Card', modeObj.background.card],
-        ['Text / Primary', modeObj.text.primary],
-        ['Text / Secondary', modeObj.text.secondary],
-        ['Text / Tertiary', modeObj.text.tertiary],
-        ['Border / Subtle', modeObj.border.subtle]
+    // ---------- gradients: verdict as the build wrote it ----------
+    const gradientNote = value => {
+      const line = tokensCss.split('\n').find(l => l.includes(value) && l.includes('/*'));
+      return line ? line.slice(line.indexOf('/*') + 2, line.lastIndexOf('*/')).trim() : 'decorative';
+    };
+    for (const mode of ['light', 'dark']) {
+      for (const [k, v] of Object.entries(modes[mode].gradients ?? {})) {
+        const note = gradientNote(v);
+        $('gradients').append(el('div', { class: `card mode-panel ${mode}`, 'data-token': `tokens.colors.modes.${mode}.gradients.${k}` },
+          el('div', { class: 'gradient', style: `background: var(${modeCss('gradients', k)})`, 'aria-hidden': 'true' }),
+          el('p', { class: 'small', style: 'margin-top: var(--ij-spacing-sm)' }, el('strong', { text: `${mode}.${k}` }), ' ', code(modeCss('gradients', k))),
+          el('p', { class: `small ${note.startsWith('text-safe') ? 'pass' : 'muted'}`, text: note })));
+      }
+    }
+
+    // ---------- families ----------
+    const faces = ty.display;
+    const shipped = registry.apps.filter(a => a.status === 'shipped');
+    for (const [id, cat] of Object.entries(registry.categories)) {
+      if (!cat.accent && !cat.display) continue;
+      const members = shipped.filter(a => a.category === id);
+      const card = el('div', { class: 'card', 'data-family': id }, el('h3', { text: cat.label, style: 'margin-top:0' }), el('p', { class: 'small muted' }, code(id)));
+      if (cat.accent) {
+        const accents = el('div', { class: 'modes pair' });
+        for (const mode of ['light', 'dark']) {
+          const a = cat.accent[mode];
+          accents.append(el('div', { class: `mode-panel ${mode}` },
+            el('div', { class: 'fill', style: `background: ${a}; color: var(--ij-color-on-primary)` }, el('span', { text: mode }), el('span', { class: 'mono', text: a })),
+            el('p', { class: 'small', style: 'margin: var(--ij-spacing-sm) 0 0' }, 'As text: ', verdict(ratio(a, modes[mode].background.app)))));
+        }
+        card.append(accents);
+      }
+      if (cat.display) {
+        const f = faces[cat.display];
+        card.append(el('p', { class: 'face-sample', style: `font-family: ${f.stack}`, text: f.name }));
+      }
+      card.append(el('ul', { class: 'chips' }, members.map(a => {
+        const face = a.display ? faces[a.display].name : null;
+        return el('li', { 'data-app': a.id, style: a.display ? `font-family: ${faces[a.display].stack}` : null }, a.name, face ? el('span', { class: 'muted', text: ` · ${face}` }) : null);
+      })));
+      $('family-grid').append(card);
+    }
+    const outside = shipped.filter(a => !registry.categories[a.category]?.accent && !registry.categories[a.category]?.display && !a.accent && !a.display);
+    $('family-none').append('Outside the families, on the shared primary and no display face: ',
+      ...outside.flatMap((a, i) => [i ? ', ' : '', el('span', { 'data-app': a.id, text: a.name })]), '.');
+
+    // ---------- type ----------
+    $('families-ui').append(
+      el('dt', { text: 'UI' }), el('dd', { 'data-token': 'brand.typography.family.ui' }, code(ty.family.ui), ' · ', code('--ij-font-ui')),
+      el('dt', { text: 'Mono' }), el('dd', { 'data-token': 'brand.typography.family.mono' }, code(ty.family.mono), ' · ', code('--ij-font-mono')));
+    for (const [k, size] of Object.entries(ty.sizes)) {
+      const lh = ty.lineHeights[k];
+      $('type-scale').tBodies[0].append(el('tr', {},
+        el('td', {}, el('p', { class: 'sample', style: `font-size: var(--ij-font-size-${k}); line-height: var(--ij-line-height-${k})`, text: 'Time your intervals from your wrist' })),
+        el('td', { 'data-token': `brand.typography.sizes.${k}` }, code(`${k} ${size}`)),
+        el('td', { 'data-token': `brand.typography.lineHeights.${k}` }, code(String(lh))),
+        el('td', {}, code(`--ij-font-size-${k}`), el('br'), code(`--ij-line-height-${k}`)),
+        el('td', {}, code(`.ijFont(.${k})`))));
+    }
+    for (const [k, w] of Object.entries(ty.weights)) {
+      $('weights').append(el('div', { class: 'card', 'data-token': `brand.typography.weights.${k}` },
+        el('p', { class: 'sample', style: `font-size: var(--ij-font-size-xl); line-height: var(--ij-line-height-xl); font-weight: var(--ij-font-weight-${k})`, text: `${cap(k)} ${w}` }),
+        el('p', { class: 'small' }, code(`--ij-font-weight-${k}`), ' · ', code(`DesignTokens.Typography.Weight.${k}`))));
+    }
+    for (const [k, n] of Object.entries(ty.numerals ?? {})) {
+      $('numerals').append(el('div', { class: 'card', 'data-token': `brand.typography.numerals.${k}` },
+        el('p', { class: 'numeral', style: `font-size: var(--ij-font-size-numeral-${k})`, text: '12:30' }),
+        el('p', { class: 'small', style: 'margin-top: var(--ij-spacing-sm)' }, code(`${k} ${n}`), ' · ', code(`--ij-font-size-numeral-${k}`), ' · ', code(`.ijNumeral(.${k})`))));
+    }
+    for (const [slot, f] of Object.entries(faces)) {
+      const users = [
+        ...Object.entries(registry.categories).filter(([, c]) => c.display === slot).map(([id]) => `${id} family`),
+        ...shipped.filter(a => a.display === slot).map(a => a.name),
       ];
-      items.forEach(([k,v]) => container.appendChild(swatchCard(k, v)));
+      const sheet = f.file.replace(/-latin-wght-normal\.woff2$/, '');
+      $('faces').append(el('div', { class: 'card', 'data-token': `brand.typography.display.${slot}` },
+        el('p', { class: 'face-sample', style: `font-family: ${f.stack}`, text: f.name }),
+        el('p', { class: 'sample', style: `font-family: ${f.stack}; font-size: var(--ij-font-size-lg)`, text: 'Aa Ææ Øø Åå 0123456789' }),
+        el('dl', { class: 'meta', style: 'margin-top: var(--ij-spacing-md)' },
+          el('dt', { text: 'Slot' }), el('dd', {}, code(slot)),
+          el('dt', { text: 'For' }), el('dd', { text: f.use }),
+          el('dt', { text: 'Weights' }), el('dd', {}, code(f.weights)),
+          el('dt', { text: 'Sheet' }), el('dd', {}, code(`dist/fonts/${sheet}.css`)),
+          el('dt', { text: 'Licence' }), el('dd', {}, el('a', { href: `./fonts/LICENSE-${sheet}.txt`, text: f.licence })),
+          el('dt', { text: 'Source' }), el('dd', {}, code(f.source)),
+          el('dt', { text: 'Used by' }), el('dd', { text: users.join(', ') || '—' }))));
     }
 
-    function renderShared(container, sharedObj) {
-      container.innerHTML = '';
-      Object.entries(sharedObj).forEach(([k,v]) => {
-        container.appendChild(swatchCard(k, v));
-      });
+    // ---------- scales ----------
+    const maxSpace = Math.max(...Object.values(t.spacing));
+    for (const [k, v] of Object.entries(t.spacing)) {
+      $('spacing').append(el('div', { class: 'scale-row', 'data-token': `tokens.spacing.${k}` },
+        el('span', { class: 'small' }, code(`${k} ${v}`)),
+        el('div', {}, el('div', { class: 'bar', style: `width: var(--ij-spacing-${k})` }),
+          el('span', { class: 'small muted' }, code(`--ij-spacing-${k}`), ' · ', code(`DesignTokens.Spacing.${k}`)))));
+    }
+    for (const [k, v] of Object.entries(t.radius)) {
+      $('radius').append(el('div', { class: 'card', 'data-token': `tokens.radius.${k}` },
+        el('div', { class: 'radius-box', style: `border-radius: var(--ij-radius-${k})` }),
+        el('p', { class: 'small', style: 'margin-top: var(--ij-spacing-sm)' }, code(`${k} ${v}`), ' · ', code(`--ij-radius-${k}`), ' · ', code(`DesignTokens.Radius.${k}`))));
+    }
+    for (const [k, s] of Object.entries(t.shadows)) {
+      $('shadows').append(el('div', { 'data-token': `tokens.shadows.${k}` },
+        el('div', { class: 'shadow-box', style: `box-shadow: var(--ij-shadow-${k})` },
+          el('strong', { text: k }), el('p', { class: 'small muted', style: 'margin:0' }, `${s.x} ${s.y} ${s.blur}, opacity ${s.opacity}`)),
+        el('p', { class: 'small', style: 'margin-top: var(--ij-spacing-sm)' }, code(`--ij-shadow-${k}`), ' · ', code(`DesignTokens.Shadow.${k}`))));
+    }
+    const motionCard = (label, token, cssDur, cssEase, swift) => {
+      const track = el('div', { class: 'track' }, el('div', { class: 'dot', style: `transition: left var(${cssDur}) var(${cssEase})` }));
+      const btn = el('button', { type: 'button', class: 'demo-btn', text: 'Play' });
+      btn.addEventListener('click', () => track.classList.toggle('run'));
+      return el('div', { class: 'card', 'data-token': token }, el('p', {}, el('strong', { text: label })), track,
+        el('p', { class: 'small', style: 'margin-top: var(--ij-spacing-sm)' }, btn, ' ', code(swift)));
+    };
+    for (const [k, ms] of Object.entries(t.motion.duration)) {
+      $('motion').append(motionCard(`${k} · ${ms} ms`, `tokens.motion.duration.${k}`, `--ij-duration-${k}`, '--ij-easing-standard', `DesignTokens.Motion.Duration.${k}`));
+    }
+    for (const [k, curve] of Object.entries(t.motion.easing)) {
+      $('motion').append(motionCard(`${k} · cubic-bezier(${curve.join(', ')})`, `tokens.motion.easing.${k}`, '--ij-duration-slow', `--ij-easing-${k}`, `DesignTokens.Motion.Easing.${k}()`));
+    }
+    const bars = (target, group, prefix, swift) => {
+      const max = Math.max(...Object.values(t[group]));
+      for (const [k, v] of Object.entries(t[group])) {
+        $(target).append(el('div', { class: 'scale-row', 'data-token': `tokens.${group}.${k}` },
+          el('span', { class: 'small' }, code(`${k} ${v}`)),
+          el('div', {}, el('div', { class: 'bar', style: `width: ${(v / max) * 100}%` }),
+            el('span', { class: 'small muted' }, code(`${prefix}-${k}`), ' · ', code(`${swift}.${k}`)))));
+      }
+    };
+    bars('breakpoints', 'breakpoints', '--ij-breakpoint', 'DesignTokens.Breakpoint');
+    bars('container', 'container', '--ij-container', 'DesignTokens.Container');
+    for (const [k, v] of Object.entries(t.focus)) {
+      $('focus').append(el('div', { class: 'card', 'data-token': `tokens.focus.${k}` },
+        el('p', {}, el('strong', { text: `${k} ${v}` }), ' ', code(`--ij-focus-${k}`), ' · ', code(`DesignTokens.Focus.${k}`)),
+        k === 'width' ? el('button', { type: 'button', class: 'demo-btn', text: 'Tab to me to see the ring' }) : null));
+    }
+    for (const [k, v] of Object.entries(t.opacity)) {
+      $('opacity').append(el('div', { class: 'card', 'data-token': `tokens.opacity.${k}` },
+        el('div', { class: 'fill', style: `background: var(--ij-color-primary); color: var(--ij-color-on-primary); opacity: var(--ij-opacity-${k})` }, el('span', { text: k }), el('span', { class: 'mono', text: String(v) })),
+        el('p', { class: 'small', style: 'margin-top: var(--ij-spacing-sm)' }, code(`--ij-opacity-${k}`), ' · ', code(`DesignTokens.Opacity.${k}`))));
+    }
+    for (const [k, v] of Object.entries(t.zIndex)) {
+      $('zindex').tBodies[0].append(el('tr', { 'data-token': `tokens.zIndex.${k}` },
+        el('th', { scope: 'row', text: k }), el('td', {}, code(String(v))), el('td', {}, code(`--ij-z-${kebab(k)}`)), el('td', {}, code(`DesignTokens.ZIndex.${swiftId(k)}`))));
     }
 
-    function renderType(container, t) {
-      container.innerHTML = `
-        <div style="display:flex; flex-direction:column; gap:10px;">
-          <div><strong>UI font:</strong> <code>${t.family.ui}</code></div>
-          <div><strong>Mono:</strong> <code>${t.family.mono}</code></div>
-          <div style="display:flex; gap:12px; flex-wrap:wrap;">
-            <span class="pill">weights: ${Object.values(t.weights).join(', ')}</span>
-            <span class="pill">sizes: ${Object.entries(t.sizes).map(([k,v])=>`${k}:${v}`).join(' | ')}</span>
-          </div>
-          <div style="margin-top:8px;">
-            <div style="font-size:${t.sizes.xxl}px; line-height:${t.lineHeights.xxl}px; font-weight:${t.weights.bold};">Then the Letting Go</div>
-            <div style="font-size:${t.sizes.xl}px; line-height:${t.lineHeights.xl}px; font-weight:${t.weights.semibold}; margin-top:6px;">A calm, minimal UI with a neon accent.</div>
-            <div style="font-size:${t.sizes.base}px; line-height:${t.lineHeights.base}px; font-weight:${t.weights.regular}; margin-top:8px;">
-              Body text should be readable, neutral, and consistent across products.
-            </div>
-          </div>
-        </div>
-      `;
+    // ---------- icons and guidance ----------
+    const icons = tokens.brand.icons;
+    for (const [k, v] of Object.entries(icons)) {
+      $('icon-meta').append(el('dt', { text: k }), el('dd', { 'data-token': `brand.icons.${k}` }, code(Array.isArray(v) ? v.join(', ') : String(v))));
+    }
+    for (const [k, list] of Object.entries(tokens.guidance ?? {})) {
+      $('guidance-grid').append(el('div', { class: 'card', 'data-token': `guidance.${k}` },
+        el('h3', { text: k.replace(/([A-Z])/g, ' $1').toLowerCase(), style: 'margin-top:0' }),
+        el('ul', { class: 'plain' }, list.map(item => el('li', { text: item })))));
     }
 
-    function renderIcons(container, icons) {
-      const allowedWeights = icons.weightsAllowed.join(', ');
-      const defaultSizes = icons.defaultSizes.join(', ');
-
-      container.innerHTML = `
-        <div style="display:flex; flex-direction:column; gap:10px;">
-
-          <div class="row">
-            <div><strong>Library:</strong> <code>${icons.library}</code></div>
-            <button data-copy="${icons.library}">Copy</button>
-          </div>
-
-          <div class="row">
-            <div><strong>Default weight:</strong> <code>${icons.defaultWeight}</code></div>
-            <button data-copy="${icons.defaultWeight}">Copy</button>
-          </div>
-
-          <div class="row">
-            <div><strong>Allowed weights:</strong> <code>${allowedWeights}</code></div>
-            <button data-copy="${allowedWeights}">Copy</button>
-          </div>
-
-          <div class="row">
-            <div><strong>Default sizes:</strong> <code>${defaultSizes}</code></div>
-            <button data-copy="${defaultSizes}">Copy</button>
-          </div>
-
-          <div>
-            <strong>Usage rules</strong>
-            <ul class="list">
-              <li>Use <code>regular</code> for core UI by default.</li>
-              <li>Use <code>duotone</code> only for highlights/illustrations, not core navigation.</li>
-              <li>Avoid mixing icon weights within the same screen.</li>
-              <li>Default icon color is <code>text.primary</code>; use <code>primary</code> for active/emphasis; use <code>error</code> for destructive.</li>
-            </ul>
-          </div>
-
-        </div>
-      `;
-
-      attachCopyHandlers(container);
-    }
-
-    async function main() {
-      const tokens = await loadTokens();
-      document.getElementById('version').textContent = `v${tokens.meta.version}`;
-
-      const light = tokens.tokens.colors.modes.light;
-      const dark  = tokens.tokens.colors.modes.dark;
-      const shared = tokens.tokens.colors.shared;
-      const type = tokens.brand.typography;
-      const icons = tokens.brand.icons;
-
-      renderMode(document.getElementById('light'), light);
-      renderMode(document.getElementById('dark'), dark);
-      renderShared(document.getElementById('shared'), shared);
-      renderType(document.getElementById('type'), type);
-      renderIcons(document.getElementById('icons'), icons);
-    }
-
-    document.getElementById('reload').onclick = () => main().catch(console.error);
-    main().catch(console.error);
+    document.documentElement.dataset.rendered = 'true';
   </script>
 </body>
 </html>
