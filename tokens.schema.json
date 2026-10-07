@@ -36,7 +36,8 @@
           "type": "object",
           "required": ["library", "defaultWeight", "weightsAllowed", "defaultSizes"],
           "properties": {
-            "library": { "type": "string" },
+            "library": { "type": "string", "description": "The icon set on the web." },
+            "nativeLibrary": { "type": "string", "description": "The icon set in native apps. One set per app, never both." },
             "defaultWeight": { "type": "string" },
             "weightsAllowed": { "type": "array", "items": { "type": "string" } },
             "defaultSizes": { "type": "array", "items": { "type": "number" } }

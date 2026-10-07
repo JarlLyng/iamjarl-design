@@ -133,7 +133,7 @@ const theme = colors[scheme]; // theme.primary, theme.text.primary, etc.
 2. Always support light + dark mode
 3. Use `onPrimary` for text/icons on `primary` backgrounds (same for onSuccess, onWarning, onError)
 4. Use `error` (not `primary`) for destructive actions
-5. Use Phosphor icons, default weight `regular`, sizes 20 (inline) or 24 (primary actions)
+5. Icons: **Phosphor on the web** (default weight `regular`, sizes 20 inline / 24 primary actions); **SF Symbols in native apps**, sized with the text beside them. One set per app — never both
 6. Keep corner radius consistent — use `radius.sm/md/lg` only
 7. State colors: shared `success/warning/error` are **fills** (pair with `on*`). For colored **text** on a normal background use the mode-aware `state.*` tokens — never a raw fill color as text.
 8. Don't hand-roll hover/pressed/disabled — use `primaryHover`/`primaryPressed`, `text.disabled`/`background.disabled`, or `opacity.disabled`.

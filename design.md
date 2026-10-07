@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.17.1)
+# IAMJARL Design System (v1.18.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -112,6 +112,8 @@ Absent means the mode primary, so a site that declares nothing renders exactly a
 - able to carry black or white at 4.5:1, so it can be used as a fill
 
 Lime as a light-mode accent gives 1.17:1 on white and is refused. That check is the whole reason a family accent can be trusted the way the rest of the tokens are.
+
+**On the sites only, not inside the apps** (decided 2026-10-04, #53). The family accents group the products on the web. Inside an app, the user is already in the product, and the app's colour belongs to its icon: Anvil's App Store icon is magenta, which the fitness lime would clash with. So the Swift package does not offer them, and a contract test keeps it that way.
 
 It ships as a small per-app stylesheet, `dist/identity/<app>.css`, because `tokens.css` is one file shared by every site and cannot carry a per-site value. Nothing is generated for an app whose accent resolves to the primary.
 
@@ -259,17 +261,21 @@ Timers, counters and readouts use the numeral scale — `sm` 32, `md` 56, `lg` 8
 
 `.ijNumeral(_:)` does both. The design (default, rounded, monospaced) is the app's: WODrounds sets its timer monospaced, Anvil rounded.
 
-### Icons (Phosphor)
-- Icon set: **Phosphor**
-- Default icon weight: **regular**
-- Allowed weights: thin, light, regular, bold, fill, duotone
+### Icons: Phosphor on the web, SF Symbols in native apps
+Decided by the owner on 2026-10-04 (#53).
+
+- **Websites use Phosphor.** Default weight **regular**; allowed weights thin, light, regular, bold, fill, duotone.
+- **Native apps use SF Symbols** on iOS, iPadOS, watchOS, tvOS and macOS. They follow Dynamic Type, take the weight of the text beside them, carry accessibility labels, and match the system font that `.ijFont` scales. The surfaces the system draws itself — widgets, Live Activities, tab bars, the watch — use them anyway, so an app on Phosphor ends up with two sets.
+- **One set per app, never both.** Anvil was the case this rule was written for: Phosphor in the app, SF Symbols in its watch app, widgets and tab bar.
+
+In a native app, size a symbol with the text style it sits beside (`.font(.body)`, `.imageScale(.large)`) rather than in fixed points, so it scales with the text. The 20 and 24 below are the web sizes. The usage and colour rules apply to both.
 
 #### Usage rules
 - Use **regular** weight for all core UI by default.
 - Use **duotone** only for highlights, illustrations, or special emphasis — never for core navigation or standard actions.
 - Avoid mixing different icon weights within the same screen or component.
 
-#### Sizes
+#### Sizes (web)
 - **20** → inline actions (toolbars, list rows, secondary actions)
 - **24** → primary actions, navigation, empty states
 
