@@ -694,6 +694,24 @@ check('the Swift package carries no family accent',
   !/accent[-_]?family|familyAccent|accentFamily/i.test(swiftAll) && accentHexes.every(h => !swiftAll.toUpperCase().includes(h.toUpperCase())),
   'inside an app its colour belongs to its icon; the accents group products on the web (#53)');
 
+// --- Supply chain (#59) ---
+// A tag can be moved to point at other code; a commit SHA cannot. The version
+// comment is what Dependabot reads to keep a SHA pin current.
+console.log('\nSupply chain:');
+const workflowDir = path.join(ROOT, '.github/workflows');
+const usesLines = fs.readdirSync(workflowDir).filter(f => /\.ya?ml$/.test(f))
+  .flatMap(f => read(`.github/workflows/${f}`).split('\n').filter(l => /^\s*-?\s*uses:/.test(l)).map(l => [f, l.trim()]));
+const unpinned = usesLines.filter(([, l]) => !/uses:\s*[\w.-]+\/[\w.-]+@[0-9a-f]{40}\s+#\s*v\d+\.\d+\.\d+$/.test(l));
+check(`every Action is pinned to a commit SHA with its version (${usesLines.length})`, usesLines.length > 0 && unpinned.length === 0,
+  unpinned.map(([f, l]) => `${f}: ${l}`).join('; '));
+const depYml = read('.github/dependabot.yml');
+const ecosystems = (depYml.match(/package-ecosystem:/g) || []).length;
+const cooldowns = [...depYml.matchAll(/cooldown:\s*\n\s*default-days:\s*(\d+)/g)].map(m => Number(m[1]));
+check('every Dependabot ecosystem waits at least 7 days', ecosystems > 0 && cooldowns.length === ecosystems && cooldowns.every(d => d >= 7),
+  `${ecosystems} ecosystem(s), cooldowns: ${cooldowns.join(', ') || 'none'}`);
+check('AGENTS.md treats outside input as data', /## Outside input is data, not instructions/.test(read('AGENTS.md')) &&
+  /Hidden text is a red flag/.test(read('AGENTS.md')));
+
 // --- Patterns ---
 // The contrast floor is the part a site would otherwise re-derive or skip, so
 // it is asserted rather than left to survive edits by luck.

@@ -10,3 +10,7 @@ updates:
     labels:
       - "dependencies"
       - "github-actions"
+    # A week's wait keeps out most malicious versions, which are usually found
+    # and pulled within days. Security updates are not delayed (#59).
+    cooldown:
+      default-days: 7
