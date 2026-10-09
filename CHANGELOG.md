@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.19.0] — 2026-10-09
+
+Echolume adopted the whole stack, and two findings came back from it (#57).
+
+### Changed
+- **`<ij-footer>`'s hover and focus ring follow the family accent**, with the primary as fallback. On Echolume the site was teal everywhere and turned lime on footer hover, because the footer read only `--ij-color-primary` while `<ij-nav>`'s dot and CTA read the accent. On the footer's opaque ground, every accent is safe as text: `validate.js` holds each one to 4.5:1 on `background.app`. The reason the nav keeps the accent off its links — a translucent bar — does not apply here. A site without an identity sheet sees no change.
+- **Echolume is registered as a consumer.** It is the first site on the whole stack: `<ij-nav>`, `<ij-footer>`, `tokens.css`, Outfit and its identity sheet, all from v1.18.1 with `integrity`, with the cross-links in the served HTML. Eight sites now render the footer.
+
+### Documented
+- **A global link colour overrides the components.** Page CSS beats `::slotted()`, so a site-wide `a { color: var(--accent) }` paints every slotted nav link in the accent, which on the translucent bar is the 3.86:1 case. Echolume scoped its rule with `a:where(:not([slot]))`, and the README now says so for every adopter.
+
+### Tests
+- A browser test resolves the footer's hover colour under Echolume's identity sheet (the accent) and without one (the primary). It was checked by putting the primary back.
+- **The browser-test harness could hang on shutdown.** After a Chrome update from 153 to 155, the suite finished its checks in 4 seconds and then sat waiting. It ran up to 90 seconds, sometimes past the deadline. Chrome 155 can close the DevTools socket before it answers `Browser.close`, and the harness waited on that answer forever. Every shutdown step is now bounded, ending in `SIGKILL`, and the fixture server closes its keep-alive sockets at once. Five runs in a row: 7–9 s, no Chrome left behind.
+
 ## [1.18.1] — 2026-10-07
 
 ### Fixed
@@ -650,6 +665,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.19.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.19.0
 [1.18.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.18.1
 [1.18.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.18.0
 [1.17.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.17.1

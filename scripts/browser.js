@@ -149,10 +149,18 @@ export async function launch(chromePath) {
     return page;
   }
 
+  // Chrome may close the socket before it answers Browser.close (155 does), and
+  // a pending call would then wait forever. So every step of shutdown is
+  // bounded, ending in SIGKILL, and a hung browser can never stall CI.
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
   async function close() {
-    try { await send('Browser.close'); } catch { /* already gone */ }
-    ws.close();
-    await new Promise(r => { if (proc.exitCode !== null) r(); else proc.on('exit', r); });
+    await Promise.race([send('Browser.close').catch(() => {}), sleep(2000)]);
+    try { ws.close(); } catch { /* already closed */ }
+    const exited = new Promise(r => (proc.exitCode !== null ? r() : proc.once('exit', r)));
+    if (!(await Promise.race([exited.then(() => true), sleep(3000).then(() => false)]))) {
+      proc.kill('SIGKILL');
+      await exited;
+    }
     fs.rmSync(profile, { recursive: true, force: true });
   }
 

@@ -407,6 +407,9 @@ check('columns layout neutralises the horizontal justify',
   'a row value must not act on the vertical axis once the links stack');
 check('README documents the alignment hook',
   read('README.md').includes('--ij-footer-links-justify'));
+check('footer hover follows the family accent, with primary as the fallback',
+  (comp.match(/--_hover:\s*var\(--ij-color-accent-family, var\(--ij-color-primary,/g) || []).length === 2,
+  'both the light block and the no-token dark block (#57)');
 check('component honours a provided cross-links slot',
   comp.includes(`this.querySelector('[slot="cross-links"]')`) &&
   comp.includes('<slot name="cross-links">'));
