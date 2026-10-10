@@ -1,4 +1,4 @@
-// IAMJARL <ij-store-cta> v1.20.0 — generated, do not edit
+// IAMJARL <ij-store-cta> v1.21.0: generated, do not edit
 // Sources: components/store.js, components/ij-store-cta.js, apps.json, badges/
 
 const REGISTRY = {
@@ -244,7 +244,7 @@ const BADGE_WIDTHS = {
 };
 
 // The store button, from the registry: the link with its campaign, the click
-// event, the badge and the facts line. Pure — no DOM, no fetch — so build.js
+// event, the badge and the facts line. Pure (no DOM, no fetch), so build.js
 // writes the fragments with it, <ij-store-cta> renders with it, and the
 // contract tests check it without a browser.
 //
@@ -253,7 +253,7 @@ const BADGE_WIDTHS = {
 // wrong on one, an OS requirement wrong on another (#58).
 
 // Apple's campaign: one provider token for the portfolio, and ct=site per site
-// rather than per page — Apple only reports a campaign after five first-time
+// rather than per page: Apple only reports a campaign after five first-time
 // downloads, so splitting it per page would hide every number.
 const CAMPAIGN = { pt: '128512007', ct: 'site' };
 const MEDIA_TYPE = { 'app-store': '8', 'mac-app-store': '12' };
@@ -279,6 +279,22 @@ const LOCALES = {
         alt: { 'app-store': 'Hämta i App Store' } },
 };
 LOCALES.no = LOCALES.nb;   // Norwegian pages say either
+
+// Each storefront's currency, for the JSON-LD Offer. Apple writes the US price
+// with a decimal point and the European ones with a decimal comma.
+const CURRENCY = { us: 'USD', dk: 'DKK', de: 'EUR', es: 'EUR', fr: 'EUR', no: 'NOK', se: 'SEK' };
+
+// Where a fragment sits on the page, written to the click event. The nav is not
+// one of them: its call to action is a text link (navLinkHtml), not a badge.
+const PLACEMENTS = ['hero', 'midpage', 'footer'];
+const TONES = ['black', 'white'];
+
+// The fragment's file name in dist/store/. The hero, and a badge that follows
+// the visitor's light or dark setting, are the defaults and add nothing:
+//   wodrounds.da.html, wodrounds.da.midpage.html, wodrounds.da.footer.white.html
+function fragmentName(id, code, { placement = 'hero', tone } = {}) {
+  return [id, code, placement === 'hero' ? null : placement, tone].filter(Boolean).join('.') + '.html';
+}
 
 function locale(code) {
   const l = LOCALES[code];
@@ -336,26 +352,52 @@ function eventAttrs(store, placement, code) {
     `data-umami-event-placement="${esc(placement)}" data-umami-event-locale="${esc(code)}"`;
 }
 
-// The badge and the facts line. Black badge on a light page, white on a dark
-// one, following the visitor's setting; <ij-store-cta tone="…"> can pin it for a
-// site whose mode does not follow the system. Height per badgeHeight().
+// The badge and the facts line. With no tone, the badge follows the visitor's
+// setting: black on a light page, white on a dark one. A site whose mode does
+// not follow the system (Echolume is always dark) takes a fixed tone instead,
+// one <img> with no <source>, so the served HTML is right without JavaScript.
+// Height per badgeHeight().
 //   badges = { base: 'https://…/badges/', width: file => width at 40 px tall }
-function badgeHtml(app, code, { placement = 'hero', badges }) {
+function badgeHtml(app, code, { placement = 'hero', tone, badges }) {
   const s = app.store;
-  const src = tone => esc(badges.base + badgeFile(s.platform, code, tone));
+  const src = t => esc(badges.base + badgeFile(s.platform, code, t));
   const height = badgeHeight(s.platform);
   const width = Math.round(badges.width(badgeFile(s.platform, code, 'black')) * height / 40);
+  const img = t => `<img src="${src(t)}" alt="${esc(badgeAlt(s.platform, code))}" width="${width}" height="${height}">`;
+  const badge = TONES.includes(tone)
+    ? [`    ${img(tone)}`]
+    : [
+        `    <picture>`,
+        `      <source srcset="${src('white')}" media="(prefers-color-scheme: dark)">`,
+        `      ${img('black')}`,
+        `    </picture>`,
+      ];
   return [
     `<div class="ij-store" data-ij-store="${esc(app.id)}" data-ij-store-locale="${esc(code)}">`,
     `  <a class="ij-store-badge" href="${esc(storeLink(s))}" ${eventAttrs(s, placement, code)}>`,
-    `    <picture>`,
-    `      <source srcset="${src('white')}" media="(prefers-color-scheme: dark)">`,
-    `      <img src="${src('black')}" alt="${esc(badgeAlt(s.platform, code))}" width="${width}" height="${height}">`,
-    `    </picture>`,
+    ...badge,
     `  </a>`,
     `  <p class="ij-store-facts">${esc(factsLine(s, code))}</p>`,
     `</div>`,
   ].join('\n');
+}
+
+// The JSON-LD Offer for the page's storefront: the value of a SoftwareApplication's
+// "offers", so the structured data quotes the same price as the facts line. The
+// url is the plain store page; the campaign is for visitors who click, and a
+// search engine reading the markup is not one.
+function offer(store, code) {
+  const l = locale(code);
+  const raw = store.price?.[l.front];
+  if (raw === undefined) throw new Error(`No ${l.front} price for "${store.id}" (locale ${code})`);
+  let price = '0';
+  if (raw !== 'Free') {
+    const digits = raw.replace(/[^\d.,]/g, '');
+    price = l.front === 'us' ? digits.replace(/,/g, '') : digits.replace(/\./g, '').replace(',', '.');
+    if (!/^\d+(\.\d{2})?$/.test(price)) throw new Error(`Cannot read the price "${raw}" for "${store.id}"`);
+  }
+  const url = store.platform === 'chrome-web-store' ? storeLink(store) : `https://apps.apple.com/app/id${store.id}`;
+  return { '@type': 'Offer', price, priceCurrency: CURRENCY[l.front], url };
 }
 
 // The nav's call to action is a text link, not a badge: Apple allows one badge
@@ -375,19 +417,19 @@ function smartBannerHtml(app, registry) {
 }
 
 // <ij-store-cta app="tonvault" placement="hero" locale="en" tone="white">
-//   …the generated fragment from dist/store/<app>.<locale>.html…
+//   …a generated fragment from dist/store/…
 // </ij-store-cta>
 //
 // The fragment does the work and needs no JavaScript: badge, campaign link,
 // click event and the facts line are in the served HTML, where crawlers and AI
-// assistants read them. This element only adjusts it:
+// assistants read them. There is one per placement and tone, so a site that
+// pastes the right file needs no element at all (#63). This element adjusts
+// a fragment that was pasted once and reused:
 //
-//   placement  sets data-umami-event-placement, so one fragment serves the hero,
-//              a mid-page repeat or the footer. Analytics runs on JavaScript
-//              anyway, so the value is right whenever an event can fire.
+//   placement  sets data-umami-event-placement.
 //   locale     sets data-umami-event-locale.
 //   tone       black or white, for a site whose mode does not follow the
-//              system — Echolume is always dark. Without it the badge follows
+//              system. Echolume is always dark. Without it the badge follows
 //              the visitor's setting.
 //
 // Left empty, it renders the fragment itself from the registry, for a site with
@@ -421,6 +463,7 @@ class IjStoreCta extends HTMLElement {
     const code = app.store.locales.includes(wanted) ? wanted : 'en';
     this.innerHTML = badgeHtml(app, code, {
       placement: this.getAttribute('placement') || 'hero',
+      tone: this.getAttribute('tone'),
       badges: { base: new URL('../../badges/', import.meta.url).href, width: f => BADGE_WIDTHS[f] },
     });
   }

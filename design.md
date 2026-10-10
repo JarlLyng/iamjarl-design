@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.20.0)
+# IAMJARL Design System (v1.21.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -153,8 +153,9 @@ The link to the store is the most important link on a site that sells an app. Be
 - **The right badge**: the Mac App Store badge for a Mac app, the App Store badge for iPhone, Apple's localised badge on a translated page, black on light and white on dark. The files ship in `badges/` exactly as Apple and Google publish them, and are never edited.
 - **The campaign is the portfolio's**: `pt=128512007`, `ct=site`, and `mt=8` for iPhone or `mt=12` for Mac. `ct` is per site, not per page, because Apple only shows a campaign after five first-time downloads.
 - **Every store link reports `store-click`**, with `store`, `placement` (`hero`, `nav`, `midpage`, `footer`) and `locale`.
-- **The facts line is the store's own**: the price as that storefront states it, "once" for a one-time purchase, and the minimum OS — *"$2.99 once · iOS 16 or later"*. English pages quote the US store; a translated page quotes its own country's. A weekly check compares the registry with Apple and opens an issue when they differ.
-- **It works without JavaScript.** The generated fragment is plain HTML in the served page, where crawlers and AI assistants read it.
+- **The facts line is the store's own**: the price as that storefront states it, "once" for a one-time purchase, and the minimum OS: *"$2.99 once · iOS 16 or later"*. English pages quote the US store; a translated page quotes its own country's. A weekly check compares the registry with Apple and opens an issue when they differ.
+- **It works without JavaScript, all of it.** The generated fragment is plain HTML in the served page, where crawlers and AI assistants read it. There is a file per placement and per fixed tone, so a site that pastes by hand serves the right event and, on an always-dark site, the right badge with no script (#63).
+- **The structured data quotes the same price.** A page's JSON-LD takes its `Offer` from the generated `offer.json`, not from a hand-typed number.
 
 A QR code for iPhone-only apps on desktop is planned as a later step.
 

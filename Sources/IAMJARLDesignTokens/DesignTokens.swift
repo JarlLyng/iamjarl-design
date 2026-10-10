@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - IAMJARL Design Tokens (SwiftUI)
 //
-// Auto-generated from tokens.json v1.20.0 — do not edit manually.
+// Auto-generated from tokens.json v1.21.0. Do not edit manually.
 // Run: node scripts/build.js
 //
 // Design DNA:
@@ -385,7 +385,7 @@ public enum DesignTokens {
   // MARK: - Palette
 
   /// Every mode-aware colour, resolving light or dark by itself wherever it is
-  /// drawn — no `colorScheme` to pass, and correct outside a SwiftUI view too.
+  /// drawn: no `colorScheme` to pass, and correct outside a SwiftUI view too.
   /// Prefer this to `Common`, which needs the scheme handed in.
   ///
   ///     Text("Start").foregroundStyle(DesignTokens.Palette.Text.primary)

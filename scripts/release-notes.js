@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 // Prints the CHANGELOG.md section for a given version, for use as GitHub
-// release notes. Defaults to tokens.json's meta.version.
+// release notes, followed by the version's integrity hashes when dist/sri.json
+// is for that version. Defaults to tokens.json's meta.version.
 //
 //   node scripts/release-notes.js          # current version
 //   node scripts/release-notes.js 1.1.0    # a specific one
@@ -34,6 +35,24 @@ export function extractNotes(changelog, version) {
   return lines.slice(start + 1, end).join('\n').trim();
 }
 
+// The integrity hash of every file a site loads from the CDN, for this tag.
+// Sites computed them by hand from the CDN file whenever a release's notes
+// left them out (#63); dist/sri.json has them, so every release now carries
+// them. Empty when sri.json belongs to another version.
+export function sriNotes(sri, version) {
+  if (sri?.version !== version) return '';
+  const cdn = `https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v${version}/`;
+  return [
+    '### Integrity hashes',
+    '',
+    `For the files at \`${cdn}\`. Paste the hash into \`integrity\`, with \`crossorigin="anonymous"\`.`,
+    '',
+    '| File | `integrity` |',
+    '|---|---|',
+    ...Object.entries(sri.files).map(([f, h]) => `| \`${f}\` | \`${h}\` |`),
+  ].join('\n');
+}
+
 function main() {
   const version =
     process.argv[2] ||
@@ -47,7 +66,9 @@ function main() {
     process.exit(1);
   }
 
-  console.log(notes);
+  const sriPath = path.join(root, 'dist', 'sri.json');
+  const sri = fs.existsSync(sriPath) ? JSON.parse(fs.readFileSync(sriPath, 'utf-8')) : null;
+  console.log([notes, sriNotes(sri, version)].filter(Boolean).join('\n\n'));
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) main();

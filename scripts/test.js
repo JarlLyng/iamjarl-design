@@ -7,11 +7,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseHex, parseRgba, parseColor, contrastRatio } from './color.js';
-import { extractNotes } from './release-notes.js';
+import { extractNotes, sriNotes } from './release-notes.js';
 import { selectLinks, categoryReach } from '../components/select-links.js';
 import { accentFor, displayFor } from '../components/identity.js';
 import { NAV_ALPHA, NAV_COLLAPSE_BELOW, MAX_LINKS, currentIndex, heroOnScreen, navWarnings } from '../components/nav-rules.js';
-import { storeLink, factsLine, badgeFile, badgeHeight, smartBannerHtml } from '../components/store.js';
+import { storeLink, factsLine, badgeFile, badgeHeight, smartBannerHtml, fragmentName, offer, PLACEMENTS, TONES } from '../components/store.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -288,6 +288,11 @@ check(`release notes exist for ${tokens.meta.version}`, typeof notes === 'string
 check('release notes exclude the next heading', !String(notes).includes('## ['));
 check('release notes exclude link references', !/^\[\d+\.\d+\.\d+\]:/m.test(String(notes)));
 check('unknown version yields no notes', extractNotes(changelog, '9.9.9') === null);
+const sriFile = JSON.parse(read('dist/sri.json'));
+const sriBlock = sriNotes(sriFile, tokens.meta.version);
+check(`release notes carry every integrity hash for the tag (${Object.keys(sriFile.files).length})`,
+  Object.entries(sriFile.files).every(([f, h]) => sriBlock.includes(`| \`${f}\` | \`${h}\` |`)) &&
+  sriBlock.includes(`@v${tokens.meta.version}/`) && sriNotes(sriFile, '9.9.9') === '');
 
 // --- Component: link selection (pure logic, no DOM) ---
 //
@@ -737,6 +742,23 @@ check('a missing storefront price throws rather than printing nothing', (() => {
 })());
 check('badges at their minimum legible height: Apple 40 px, Google 58', badgeHeight('app-store') === 40 &&
   badgeHeight('mac-app-store') === 40 && badgeHeight('chrome-web-store') === 58);
+check('a fragment is named by placement and tone, the hero and the following badge adding nothing',
+  fragmentName('wodrounds', 'da') === 'wodrounds.da.html' &&
+  fragmentName('wodrounds', 'da', { placement: 'midpage' }) === 'wodrounds.da.midpage.html' &&
+  fragmentName('wodrounds', 'da', { tone: 'white' }) === 'wodrounds.da.white.html' &&
+  fragmentName('wodrounds', 'da', { placement: 'footer', tone: 'black' }) === 'wodrounds.da.footer.black.html');
+check('the Offer reads the storefront price as a number in its currency', (() => {
+  const o = offer(ios, 'da'), u = offer(ios, 'en');
+  return o.price === '29.00' && o.priceCurrency === 'DKK' && u.price === '2.99' && u.priceCurrency === 'USD' &&
+    o['@type'] === 'Offer' && o.url === 'https://apps.apple.com/app/id6759229877';
+})());
+check('the Offer reads thousands separators both ways, and a free app as 0',
+  offer({ ...ios, price: { us: '$1,299.00' } }, 'en').price === '1299.00' &&
+  offer({ ...ios, price: { dk: '1.299,00\u00a0kr' } }, 'da').price === '1299.00' &&
+  offer(cws, 'en').price === '0' && offer(cws, 'en').url === storeLink(cws));
+check('an Offer price it cannot read throws rather than guessing', (() => {
+  try { offer({ ...ios, price: { us: 'about three dollars' } }, 'en'); return false; } catch { return true; }
+})());
 check('the localised App Store badge, the English Mac badge', badgeFile('app-store', 'da', 'black') === 'app-store-black-da-dk.svg' &&
   badgeFile('mac-app-store', 'da', 'white') === 'mac-app-store-white-en-us.svg');
 
@@ -744,20 +766,37 @@ const storeAppsReg = registry.apps.filter(a => a.status === 'shipped' && a.store
 const fragmentProblems = [];
 for (const a of storeAppsReg) {
   for (const code of a.store.locales) {
-    const f = `dist/store/${a.id}.${code}.html`, n = `dist/store/${a.id}.${code}.nav.html`;
-    if (!fs.existsSync(path.join(ROOT, f)) || !fs.existsSync(path.join(ROOT, n))) { fragmentProblems.push(`${f} missing`); continue; }
-    const html = read(f), nav = read(n);
     const href = storeLink(a.store).replace(/&/g, '&amp;');
-    if (!html.includes(`href="${href}"`) || !nav.includes(`href="${href}"`)) fragmentProblems.push(`${a.id}.${code}: link`);
-    if (!html.includes(`<p class="ij-store-facts">${factsLine(a.store, code)}</p>`)) fragmentProblems.push(`${a.id}.${code}: facts`);
-    if (!/data-umami-event="store-click"/.test(html) || !html.includes(`data-umami-event-locale="${code}"`)) fragmentProblems.push(`${a.id}.${code}: event`);
-    if (!html.includes(`height="${badgeHeight(a.store.platform)}"`)) fragmentProblems.push(`${a.id}.${code}: badge height`);
+    for (const placement of PLACEMENTS) {
+      for (const tone of [undefined, ...TONES]) {
+        const name = fragmentName(a.id, code, { placement, tone });
+        if (!fs.existsSync(path.join(ROOT, 'dist/store', name))) { fragmentProblems.push(`${name} missing`); continue; }
+        const html = read(`dist/store/${name}`);
+        if (!html.includes(`href="${href}"`)) fragmentProblems.push(`${name}: link`);
+        if (!html.includes(`<p class="ij-store-facts">${factsLine(a.store, code)}</p>`)) fragmentProblems.push(`${name}: facts`);
+        if (!/data-umami-event="store-click"/.test(html) || !html.includes(`data-umami-event-locale="${code}"`)) fragmentProblems.push(`${name}: event`);
+        if (!html.includes(`data-umami-event-placement="${placement}"`)) fragmentProblems.push(`${name}: placement`);
+        if (!html.includes(`height="${badgeHeight(a.store.platform)}"`)) fragmentProblems.push(`${name}: badge height`);
+        // A fixed tone is one <img> of that tone and nothing for the browser to swap.
+        const ok = tone
+          ? !html.includes('<source') && html.includes(`/${badgeFile(a.store.platform, code, tone)}"`)
+          : html.includes(`srcset="`) && html.includes(`/${badgeFile(a.store.platform, code, 'white')}"`) &&
+            html.includes(`/${badgeFile(a.store.platform, code, 'black')}"`);
+        if (!ok) fragmentProblems.push(`${name}: tone`);
+      }
+    }
+    const n = `dist/store/${a.id}.${code}.nav.html`;
+    if (!fs.existsSync(path.join(ROOT, n))) { fragmentProblems.push(`${n} missing`); continue; }
+    const nav = read(n);
+    if (!nav.includes(`href="${href}"`)) fragmentProblems.push(`${a.id}.${code}.nav: link`);
     if (!/\n<a slot="cta"[^>]*data-umami-event-placement="nav"/.test(nav)) fragmentProblems.push(`${a.id}.${code}: nav fragment`);
+    const o = `dist/store/${a.id}.${code}.offer.json`;
+    if (!fs.existsSync(path.join(ROOT, o)) || JSON.stringify(JSON.parse(read(o))) !== JSON.stringify(offer(a.store, code))) fragmentProblems.push(`${o}: offer`);
   }
   const banner = smartBannerHtml(a, registry);
   if (Boolean(banner) !== fs.existsSync(path.join(ROOT, `dist/store/${a.id}.head.html`))) fragmentProblems.push(`${a.id}: smart banner`);
 }
-check(`every store fragment matches the registry (${storeAppsReg.reduce((n, a) => n + a.store.locales.length, 0)} locales)`,
+check(`every store fragment matches the registry (${storeAppsReg.reduce((n, a) => n + a.store.locales.length, 0)} locales, ${PLACEMENTS.length} placements, ${TONES.length + 1} tones, the nav and the Offer)`,
   fragmentProblems.length === 0, fragmentProblems.join('; '));
 check('an iPhone app, or a Mac app with an iPhone sibling, gets a Smart App Banner',
   read('dist/store/trimrpix.head.html').includes('app-id=6761081919') && !fs.existsSync(path.join(ROOT, 'dist/store/tonvault.head.html')));
@@ -766,6 +805,16 @@ check('the element bundle is self-contained', !/^import /m.test(storeDist) && st
   (storeDist.match(/customElements\.define\('ij-store-cta'/g) || []).length === 1);
 check('the element ships with an SRI entry and an export', 'dist/components/ij-store-cta.js' in JSON.parse(read('dist/sri.json')).files &&
   JSON.parse(read('package.json')).exports['./components/store-cta'] === './dist/components/ij-store-cta.js');
+// The portfolio's voice rules ban the em-dash, and a site cannot fix a comment
+// in a file marked "do not edit": every paste would bring one back (#63).
+const generatedFiles = dir => fs.readdirSync(path.join(ROOT, dir), { recursive: true })
+  .map(f => path.join(dir, String(f))).filter(f => fs.statSync(path.join(ROOT, f)).isFile() && !/\.(woff2|png|svg)$/.test(f));
+const dashed = ['dist', 'Sources', 'Tests'].flatMap(generatedFiles).filter(f => read(f).includes('\u2014'));
+check('no generated file carries an em-dash', dashed.length === 0, dashed.join(', '));
+check('the README gives the element its integrity hash', (() => {
+  const block = read('README.md').split('<!-- SRI:BEGIN -->')[1]?.split('<!-- SRI:END -->')[0] ?? '';
+  return block.includes('dist/components/ij-store-cta.js') && block.includes(sriFile.files['dist/components/ij-store-cta.js']);
+})());
 check('the badges ship with their source and rules', JSON.parse(read('package.json')).files.includes('badges/') &&
   /Use them as published/.test(read('badges/README.md')));
 
@@ -829,7 +878,7 @@ check('README block carries the current hashes',
   block.includes(sri.files['dist/components/ij-footer.js']));
 check('README block uses crossorigin on every tag',
   (block.match(/crossorigin="anonymous"/g) || []).length === (block.match(/integrity="/g) || []).length &&
-  (block.match(/integrity="/g) || []).length === 3);
+  (block.match(/integrity="/g) || []).length === 4);
 
 // Pins outside the SRI block. README.md sits outside the dist/ drift check, so
 // this is what catches a release built without `npm run build`. The patterns are
