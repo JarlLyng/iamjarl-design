@@ -1,7 +1,7 @@
 {
   "$comment": "Canonical list of IAMJARL products. Consumed by <ij-footer> to build cross-links, so a new app is added here once rather than in every site's footer. Categories carry an optional `accent` ({light, dark}); an app may override it with its own. Absent means the mode primary, so nothing renders differently until a family opts in. Order is not significant except for the two always-links, which render in the order listed here. Everything else is selected by category and sorted by id, so the list can be re-sorted without rewriting a single fragment.",
   "meta": {
-    "updated": "2026-10-09"
+    "updated": "2026-10-10"
   },
   "categories": {
     "fitness": {
@@ -49,7 +49,18 @@
       "category": "music",
       "status": "shipped",
       "listed": true,
-      "consumes": true
+      "consumes": true,
+      "store": {
+        "platform": "mac-app-store",
+        "id": "6758866918",
+        "minOS": "12.0",
+        "price": {
+          "us": "$0.99"
+        },
+        "locales": [
+          "en"
+        ]
+      }
     },
     {
       "id": "trimrpix",
@@ -59,7 +70,19 @@
       "category": "images",
       "status": "shipped",
       "listed": true,
-      "consumes": false
+      "consumes": false,
+      "store": {
+        "platform": "mac-app-store",
+        "id": "6758639590",
+        "minOS": "15.2",
+        "price": {
+          "us": "$1.99"
+        },
+        "locales": [
+          "en"
+        ],
+        "iphoneSibling": "trimrpix-ios"
+      }
     },
     {
       "id": "anvil-workout",
@@ -69,7 +92,18 @@
       "category": "fitness",
       "status": "shipped",
       "listed": true,
-      "consumes": false
+      "consumes": false,
+      "store": {
+        "platform": "app-store",
+        "id": "6760627760",
+        "minOS": "17.0",
+        "price": {
+          "us": "$2.99"
+        },
+        "locales": [
+          "en"
+        ]
+      }
     },
     {
       "id": "wodrounds",
@@ -79,7 +113,30 @@
       "category": "fitness",
       "status": "shipped",
       "listed": true,
-      "consumes": false
+      "consumes": false,
+      "store": {
+        "platform": "app-store",
+        "id": "6759229877",
+        "minOS": "16.0",
+        "price": {
+          "us": "$2.99",
+          "dk": "29,00 kr",
+          "de": "2,99 €",
+          "es": "2,99 €",
+          "fr": "2,99 €",
+          "no": "39,00 kr",
+          "se": "39,00 kr"
+        },
+        "locales": [
+          "en",
+          "da",
+          "de",
+          "es",
+          "fr",
+          "nb",
+          "sv"
+        ]
+      }
     },
     {
       "id": "wean-nicotine",
@@ -90,7 +147,24 @@
       "status": "shipped",
       "listed": true,
       "consumes": false,
-      "display": "humanist"
+      "display": "humanist",
+      "store": {
+        "platform": "app-store",
+        "id": "6758867485",
+        "minOS": "15.1",
+        "price": {
+          "us": "$2.99",
+          "dk": "29,00 kr",
+          "no": "39,00 kr",
+          "se": "39,00 kr"
+        },
+        "locales": [
+          "en",
+          "da",
+          "no",
+          "sv"
+        ]
+      }
     },
     {
       "id": "its-404-yo",
@@ -100,7 +174,18 @@
       "category": "music",
       "status": "shipped",
       "listed": true,
-      "consumes": false
+      "consumes": false,
+      "store": {
+        "platform": "mac-app-store",
+        "id": "6785918261",
+        "minOS": "13.0",
+        "price": {
+          "us": "$0.99"
+        },
+        "locales": [
+          "en"
+        ]
+      }
     },
     {
       "id": "made-by-human",
@@ -133,7 +218,18 @@
       "status": "shipped",
       "listed": true,
       "consumes": true,
-      "display": "geometric"
+      "display": "geometric",
+      "store": {
+        "platform": "mac-app-store",
+        "id": "6759684323",
+        "minOS": "14.0",
+        "price": {
+          "us": "$19.99"
+        },
+        "locales": [
+          "en"
+        ]
+      }
     },
     {
       "id": "botlens",
@@ -143,7 +239,18 @@
       "category": "web-tools",
       "status": "shipped",
       "listed": true,
-      "consumes": true
+      "consumes": true,
+      "store": {
+        "platform": "chrome-web-store",
+        "id": "lpopnolnbpkmealenachikdfkfeaoecl",
+        "slug": "botlens",
+        "price": {
+          "us": "Free"
+        },
+        "locales": [
+          "en"
+        ]
+      }
     },
     {
       "id": "pagelens",
@@ -153,7 +260,18 @@
       "category": "web-tools",
       "status": "shipped",
       "listed": true,
-      "consumes": true
+      "consumes": true,
+      "store": {
+        "platform": "chrome-web-store",
+        "id": "mkajolhhjdlpmjlgdfnmbhfpbbeebgja",
+        "slug": "pagelens",
+        "price": {
+          "us": "Free"
+        },
+        "locales": [
+          "en"
+        ]
+      }
     },
     {
       "id": "walkful",
@@ -164,7 +282,20 @@
       "status": "shipped",
       "listed": true,
       "consumes": true,
-      "display": "humanist"
+      "display": "humanist",
+      "store": {
+        "platform": "app-store",
+        "id": "6781303837",
+        "minOS": "18.0",
+        "price": {
+          "us": "Free",
+          "dk": "Free"
+        },
+        "locales": [
+          "en",
+          "da"
+        ]
+      }
     },
     {
       "id": "trimrpix-ios",
@@ -174,7 +305,18 @@
       "category": "images",
       "status": "shipped",
       "listed": true,
-      "consumes": true
+      "consumes": true,
+      "store": {
+        "platform": "app-store",
+        "id": "6761081919",
+        "minOS": "17.0",
+        "price": {
+          "us": "$1.99"
+        },
+        "locales": [
+          "en"
+        ]
+      }
     },
     {
       "id": "tonvault",
@@ -184,7 +326,18 @@
       "category": "music",
       "status": "shipped",
       "listed": true,
-      "consumes": true
+      "consumes": true,
+      "store": {
+        "platform": "mac-app-store",
+        "id": "6792136657",
+        "minOS": "14.0",
+        "price": {
+          "us": "$1.99"
+        },
+        "locales": [
+          "en"
+        ]
+      }
     },
     {
       "id": "beertuner",
@@ -214,7 +367,18 @@
       "category": "music",
       "status": "shipped",
       "listed": true,
-      "consumes": true
+      "consumes": true,
+      "store": {
+        "platform": "mac-app-store",
+        "id": "6792365053",
+        "minOS": "14.0",
+        "price": {
+          "us": "$7.99"
+        },
+        "locales": [
+          "en"
+        ]
+      }
     },
     {
       "id": "get-to-the-movie",

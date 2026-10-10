@@ -1,4 +1,4 @@
-// IAMJARL <ij-footer> v1.19.0 — generated, do not edit
+// IAMJARL <ij-footer> v1.20.0 — generated, do not edit
 // Sources: components/select-links.js, components/ij-footer.js, apps.json
 
 const REGISTRY = {

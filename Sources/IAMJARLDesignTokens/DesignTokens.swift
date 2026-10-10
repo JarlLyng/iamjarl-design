@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - IAMJARL Design Tokens (SwiftUI)
 //
-// Auto-generated from tokens.json v1.19.0 — do not edit manually.
+// Auto-generated from tokens.json v1.20.0 — do not edit manually.
 // Run: node scripts/build.js
 //
 // Design DNA:

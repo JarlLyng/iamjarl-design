@@ -1,0 +1,31 @@
+name: Store facts
+
+# Weekly: does the App Store still say what apps.json says? The store button
+# prints apps.json, so a price or OS floor changed in App Store Connect and not
+# in the registry would be wrong on every site. Reports through ONE issue, which
+# it updates while the facts differ and closes when they agree. It never edits
+# apps.json: whether a change was intended is the owner's call (#58).
+
+on:
+  schedule:
+    - cron: '17 6 * * 1'   # Mondays, 06:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+
+      - name: Compare apps.json with the App Store
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/check-store-facts.js --issue

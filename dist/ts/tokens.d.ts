@@ -1,4 +1,4 @@
-// IAMJARL Design Tokens v1.19.0 — generated, do not edit
+// IAMJARL Design Tokens v1.20.0 — generated, do not edit
 
 export declare const meta: { readonly name: string; readonly version: string };
 
