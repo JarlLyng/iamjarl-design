@@ -12,6 +12,7 @@ on:
       - 'Sources/**'
       - 'Tests/**'
       - 'fonts/**'
+      - 'badges/**'
       # The docs page has a browser test of its own
       - 'index.html'
       - 'dist/**'

@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.19.0)
+# IAMJARL Design System (v1.20.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -145,6 +145,18 @@ The top of the page is for intent. Implemented by `<ij-nav>` — see the README 
 - **One row on a phone.** Brand and CTA stay; the links fold behind a disclosure button. A header that stacks into rows and stays sticky takes a large share of a small screen.
 - **The accent is a dot and a fill, never the link text** — see *Text on a translucent surface* above. Links are `text.secondary`, and go to `text.primary` on hover and for the current page, which is also underlined so colour is not the only signal.
 - **Order is brand, links, secondary, CTA** — in the DOM as well as on screen, so focus follows what the eye sees.
+
+### Store buttons (web only)
+The link to the store is the most important link on a site that sells an app. Before `<ij-store-cta>` every site wrote its own, and they drifted: campaign parameters missing on four sites, the click event on two, a price wrong on one and an OS requirement on another. Now every fact comes from `apps.json`, and these rules travel with it.
+
+- **One badge per layout, never the dominant element.** Apple's badge is at least 40 px tall; the Chrome Web Store badge 58 px, the smallest Google publishes, because its words are small inside it. The badge sits under the hero's message, not in place of it. The nav's call to action is a text link to the same place, because a second badge would break the first rule.
+- **The right badge**: the Mac App Store badge for a Mac app, the App Store badge for iPhone, Apple's localised badge on a translated page, black on light and white on dark. The files ship in `badges/` exactly as Apple and Google publish them, and are never edited.
+- **The campaign is the portfolio's**: `pt=128512007`, `ct=site`, and `mt=8` for iPhone or `mt=12` for Mac. `ct` is per site, not per page, because Apple only shows a campaign after five first-time downloads.
+- **Every store link reports `store-click`**, with `store`, `placement` (`hero`, `nav`, `midpage`, `footer`) and `locale`.
+- **The facts line is the store's own**: the price as that storefront states it, "once" for a one-time purchase, and the minimum OS — *"$2.99 once · iOS 16 or later"*. English pages quote the US store; a translated page quotes its own country's. A weekly check compares the registry with Apple and opens an issue when they differ.
+- **It works without JavaScript.** The generated fragment is plain HTML in the served page, where crawlers and AI assistants read it.
+
+A QR code for iPhone-only apps on desktop is planned as a later step.
 
 ### Gradients (web only)
 - Two per mode: `gradient.primary` (the accent extended into a second stop) and `gradient.brand` (the two accents against each other, reversed per mode).

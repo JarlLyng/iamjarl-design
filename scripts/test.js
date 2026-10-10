@@ -11,6 +11,7 @@ import { extractNotes } from './release-notes.js';
 import { selectLinks, categoryReach } from '../components/select-links.js';
 import { accentFor, displayFor } from '../components/identity.js';
 import { NAV_ALPHA, NAV_COLLAPSE_BELOW, MAX_LINKS, currentIndex, heroOnScreen, navWarnings } from '../components/nav-rules.js';
+import { storeLink, factsLine, badgeFile, badgeHeight, smartBannerHtml } from '../components/store.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -714,6 +715,59 @@ check('every Dependabot ecosystem waits at least 7 days', ecosystems > 0 && cool
   `${ecosystems} ecosystem(s), cooldowns: ${cooldowns.join(', ') || 'none'}`);
 check('AGENTS.md treats outside input as data', /## Outside input is data, not instructions/.test(read('AGENTS.md')) &&
   /Hidden text is a red flag/.test(read('AGENTS.md')));
+
+// --- Store button (#58) ---
+// Every fact a store button prints comes from apps.json through store.js; the
+// fragments are checked against both, so a hand edit cannot slip in.
+console.log('\nStore button:');
+const ios = { platform: 'app-store', id: '6759229877', minOS: '16.0', price: { us: '$2.99', dk: '29,00 kr' }, locales: ['en', 'da'] };
+const mac = { platform: 'mac-app-store', id: '6792136657', minOS: '14.0', price: { us: '$1.99' }, locales: ['en'] };
+const cws = { platform: 'chrome-web-store', id: 'lpopnolnbpkmealenachikdfkfeaoecl', slug: 'botlens', price: { us: 'Free' }, locales: ['en'] };
+check('the App Store link carries the portfolio campaign, mt=8 for iPhone',
+  storeLink(ios) === 'https://apps.apple.com/app/id6759229877?pt=128512007&ct=site&mt=8');
+check('the Mac App Store link uses mt=12', storeLink(mac).endsWith('&mt=12'));
+check('the Chrome Web Store link is the listing', storeLink(cws) === 'https://chromewebstore.google.com/detail/botlens/lpopnolnbpkmealenachikdfkfeaoecl');
+check('the facts line: price, once, the OS floor', factsLine(ios, 'en') === '$2.99 once · iOS 16 or later' &&
+  factsLine(mac, 'en') === '$1.99 once · macOS 14 or later');
+check('a translated page quotes its own storefront in its own words', factsLine(ios, 'da') === '29,00 kr engangskøb · iOS 16 eller nyere');
+check('a free app says so, without "once"', factsLine({ ...ios, price: { us: 'Free' } }, 'en') === 'Free · iOS 16 or later' &&
+  factsLine(cws, 'en') === 'Free');
+check('a missing storefront price throws rather than printing nothing', (() => {
+  try { factsLine(ios, 'sv'); return false; } catch { return true; }
+})());
+check('badges at their minimum legible height: Apple 40 px, Google 58', badgeHeight('app-store') === 40 &&
+  badgeHeight('mac-app-store') === 40 && badgeHeight('chrome-web-store') === 58);
+check('the localised App Store badge, the English Mac badge', badgeFile('app-store', 'da', 'black') === 'app-store-black-da-dk.svg' &&
+  badgeFile('mac-app-store', 'da', 'white') === 'mac-app-store-white-en-us.svg');
+
+const storeAppsReg = registry.apps.filter(a => a.status === 'shipped' && a.store);
+const fragmentProblems = [];
+for (const a of storeAppsReg) {
+  for (const code of a.store.locales) {
+    const f = `dist/store/${a.id}.${code}.html`, n = `dist/store/${a.id}.${code}.nav.html`;
+    if (!fs.existsSync(path.join(ROOT, f)) || !fs.existsSync(path.join(ROOT, n))) { fragmentProblems.push(`${f} missing`); continue; }
+    const html = read(f), nav = read(n);
+    const href = storeLink(a.store).replace(/&/g, '&amp;');
+    if (!html.includes(`href="${href}"`) || !nav.includes(`href="${href}"`)) fragmentProblems.push(`${a.id}.${code}: link`);
+    if (!html.includes(`<p class="ij-store-facts">${factsLine(a.store, code)}</p>`)) fragmentProblems.push(`${a.id}.${code}: facts`);
+    if (!/data-umami-event="store-click"/.test(html) || !html.includes(`data-umami-event-locale="${code}"`)) fragmentProblems.push(`${a.id}.${code}: event`);
+    if (!html.includes(`height="${badgeHeight(a.store.platform)}"`)) fragmentProblems.push(`${a.id}.${code}: badge height`);
+    if (!/\n<a slot="cta"[^>]*data-umami-event-placement="nav"/.test(nav)) fragmentProblems.push(`${a.id}.${code}: nav fragment`);
+  }
+  const banner = smartBannerHtml(a, registry);
+  if (Boolean(banner) !== fs.existsSync(path.join(ROOT, `dist/store/${a.id}.head.html`))) fragmentProblems.push(`${a.id}: smart banner`);
+}
+check(`every store fragment matches the registry (${storeAppsReg.reduce((n, a) => n + a.store.locales.length, 0)} locales)`,
+  fragmentProblems.length === 0, fragmentProblems.join('; '));
+check('an iPhone app, or a Mac app with an iPhone sibling, gets a Smart App Banner',
+  read('dist/store/trimrpix.head.html').includes('app-id=6761081919') && !fs.existsSync(path.join(ROOT, 'dist/store/tonvault.head.html')));
+const storeDist = read('dist/components/ij-store-cta.js');
+check('the element bundle is self-contained', !/^import /m.test(storeDist) && storeDist.includes('function storeLink') &&
+  (storeDist.match(/customElements\.define\('ij-store-cta'/g) || []).length === 1);
+check('the element ships with an SRI entry and an export', 'dist/components/ij-store-cta.js' in JSON.parse(read('dist/sri.json')).files &&
+  JSON.parse(read('package.json')).exports['./components/store-cta'] === './dist/components/ij-store-cta.js');
+check('the badges ship with their source and rules', JSON.parse(read('package.json')).files.includes('badges/') &&
+  /Use them as published/.test(read('badges/README.md')));
 
 // --- Patterns ---
 // The contrast floor is the part a site would otherwise re-derive or skip, so

@@ -93,11 +93,24 @@ ${FULL_NAV.replace('<ij-nav>', '<ij-nav cta-after="#hero-cta">')}
   'footer-accent': page({ nav: false, footer: true, identity: 'echolume', body: `
 <ij-footer app="echolume"><a slot="links" href="#">Privacy</a></ij-footer>` }),
 
+  // The store button: the generated fragment as a site would paste it, with its
+  // badges pointed at this server instead of the release tag on the CDN.
+  'store-fragment': page({ nav: false, body: `<main id="main">${
+    fs.readFileSync(path.join(ROOT, 'dist/store/wodrounds.da.html'), 'utf-8')
+      .replace(/https:\/\/cdn\.jsdelivr\.net\/gh\/jarllyng\/iamjarl-design@v[\d.]+\/badges\//g, '/badges/')}</main>` }),
+  'store-element': page({ nav: false, body: `<script type="module" src="/dist/components/ij-store-cta.js"></script>
+<ij-store-cta id="from-registry" app="tonvault" placement="midpage"></ij-store-cta>
+<ij-store-cta id="pinned" app="wodrounds" tone="white">${
+    fs.readFileSync(path.join(ROOT, 'dist/store/wodrounds.en.html'), 'utf-8')
+      .replace(/https:\/\/cdn\.jsdelivr\.net\/gh\/jarllyng\/iamjarl-design@v[\d.]+\/badges\//g, '/badges/')}</ij-store-cta>
+<ij-store-cta id="unknown" app="nope"></ij-store-cta>` }),
+
   'footer-justify': page({ nav: false, footer: true, body: `
 <div style="width: 900px"><ij-footer app="its-mono-yo" style="text-align: center; --ij-footer-links-justify: center"></ij-footer></div>` }),
 };
 
-const TYPES = { '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/html', '.json': 'application/json', '.woff2': 'font/woff2' };
+const TYPES = { '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/html', '.json': 'application/json', '.woff2': 'font/woff2',
+  '.svg': 'image/svg+xml', '.png': 'image/png' };
 
 function serve() {
   const server = http.createServer((req, res) => {
@@ -465,6 +478,52 @@ try {
   check('no horizontal scroll at 375px: wide tables scroll inside their own box',
     await p.eval(`document.documentElement.scrollWidth <= innerWidth`), String(await p.eval(`document.documentElement.scrollWidth`)));
   await p.viewport(1024, 800);
+
+  // Store button
+  console.log('\nStore button:');
+  await p.viewport(1024, 800);
+  await p.media([{ name: 'prefers-color-scheme', value: 'light' }]);
+  await p.goto(`${base}/fixture/store-fragment/index.html`);
+  await p.settle(300);
+  const frag = await p.eval(`(async () => {
+    const img = document.querySelector('.ij-store img');
+    await (img.complete ? null : new Promise(r => img.addEventListener('load', r, { once: true })));
+    const a = document.querySelector('.ij-store-badge');
+    return { loaded: img.naturalWidth > 0, height: Math.round(img.getBoundingClientRect().height), src: img.currentSrc,
+      alt: img.alt, href: a.href, event: a.dataset.umamiEvent, placement: a.dataset.umamiEventPlacement,
+      facts: document.querySelector('.ij-store-facts').textContent };
+  })()`);
+  check('the fragment works without JavaScript: badge loaded at 40 px, link and event in place',
+    frag.loaded && frag.height === 40 && frag.href.includes('pt=128512007') && frag.event === 'store-click' && frag.placement === 'hero',
+    JSON.stringify(frag));
+  check('the Danish page gets the Danish badge, alt text and facts',
+    /app-store-black-da-dk\.svg$/.test(frag.src) && frag.alt === 'Hent i App Store' &&
+    // Apple writes the price with a no-break space before the currency; keep it, compare loosely.
+    frag.facts.replace(/\s/g, ' ') === '29,00 kr engangskøb · iOS 16 eller nyere',
+    `${frag.src} · ${frag.alt} · ${frag.facts}`);
+  await p.media([{ name: 'prefers-color-scheme', value: 'dark' }]);
+  await p.goto(`${base}/fixture/store-fragment/index.html?dark`);
+  await p.settle(300);
+  check('the white badge on a dark page', /app-store-white-da-dk\.svg$/.test(await p.eval(`document.querySelector('.ij-store img').currentSrc`)));
+  await p.media([{ name: 'prefers-color-scheme', value: 'light' }]);
+
+  await p.goto(`${base}/fixture/store-element/index.html`);
+  await p.eval(`customElements.whenDefined('ij-store-cta')`);
+  await p.settle(300);
+  const el = await p.eval(`(() => {
+    const reg = document.querySelector('#from-registry'), pin = document.querySelector('#pinned');
+    const ri = reg.querySelector('img'), pi = pin.querySelector('img');
+    return { regSrc: ri && ri.getAttribute('src'), regLoaded: !!ri && ri.naturalWidth > 0,
+      regPlacement: reg.querySelector('.ij-store-badge')?.dataset.umamiEventPlacement,
+      regFacts: reg.querySelector('.ij-store-facts')?.textContent,
+      pinSrc: pi.src, pinSource: !!pin.querySelector('source'),
+      unknown: document.querySelector('#unknown').innerHTML.trim() };
+  })()`);
+  check('empty, it renders from the registry — Mac badge, facts, placement', /mac-app-store-black-en-us\.svg$/.test(el.regSrc || '') &&
+    el.regLoaded && el.regPlacement === 'midpage' && el.regFacts === '$1.99 once · macOS 14 or later', JSON.stringify(el));
+  check('tone="white" pins the badge for an always-dark site', /app-store-white-en-us\.svg$/.test(el.pinSrc) && !el.pinSource, el.pinSrc);
+  check('an app with no store entry renders nothing and says why', el.unknown === '' &&
+    p.console.some(m => m.type === 'error' && m.text.includes('no store entry for app "nope"')));
 
   // Footer: the manual checks that have already caught real bugs.
   console.log('\n<ij-footer>:');

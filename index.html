@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="./dist/fonts/instrument-sans.css">
   <script type="module" src="./dist/components/ij-nav.js"></script>
   <script type="module" src="./dist/components/ij-footer.js"></script>
+  <script type="module" src="./dist/components/ij-store-cta.js"></script>
 
   <style>
     /* Tokens only: no colour, spacing or radius here is a literal. */
@@ -247,6 +248,14 @@
   &lt;a slot="secondary" href="https://github.com/…"&gt;GitHub&lt;/a&gt;
   &lt;a slot="cta" href="https://apps.apple.com/…"&gt;Download&lt;/a&gt;
 &lt;/ij-nav&gt;</code></pre>
+
+      <h3><code>&lt;ij-store-cta&gt;</code></h3>
+      <p class="small">The store button from <code>apps.json</code>: badge, campaign link, click event and the facts line. Rendered here from the registry; a site pastes the fragment instead.</p>
+      <div class="grid">
+        <div class="card"><ij-store-cta app="tonvault" placement="docs"></ij-store-cta></div>
+        <div class="card"><ij-store-cta app="wodrounds" locale="da" placement="docs"></ij-store-cta></div>
+        <div class="card"><ij-store-cta app="botlens" placement="docs"></ij-store-cta></div>
+      </div>
 
       <h3><code>&lt;ij-footer&gt;</code></h3>
       <p class="small">Cross-links generated from <code>apps.json</code>; here as WODrounds would show them.</p>

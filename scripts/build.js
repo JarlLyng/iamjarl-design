@@ -1182,6 +1182,72 @@ function generateComponent(tokens) {
   ].join('\n');
 }
 
+// The badges' widths at Apple's 40 px height, read from the files so a
+// fragment reserves the right space and nothing shifts when the image lands.
+function badgeWidths() {
+  const dir = path.join(ROOT, 'badges');
+  const out = {};
+  for (const f of fs.readdirSync(dir)) {
+    const buf = fs.readFileSync(path.join(dir, f));
+    if (f.endsWith('.svg')) {
+      const m = buf.toString('utf-8').match(/<svg[^>]*\swidth="([\d.]+)"[^>]*\sheight="([\d.]+)"/);
+      if (m) out[f] = (Number(m[1]) / Number(m[2])) * 40;
+    } else if (f.endsWith('.png')) {
+      out[f] = (buf.readUInt32BE(16) / buf.readUInt32BE(20)) * 40;
+    }
+  }
+  return out;
+}
+
+const storeApps = registry => registry.apps.filter(a => a.status === 'shipped' && a.store);
+
+// <ij-store-cta>, one file, with the store facts it needs inlined — the same
+// shape as the footer, and for the same reason: no runtime fetch of apps.json.
+function generateStoreCta(tokens) {
+  const registry = JSON.parse(fs.readFileSync(path.join(ROOT, 'apps.json'), 'utf-8'));
+  const projected = { apps: storeApps(registry).map(a => ({ id: a.id, name: a.name, store: a.store })) };
+  return [
+    `// IAMJARL <ij-store-cta> v${tokens.meta.version} — generated, do not edit`,
+    `// Sources: components/store.js, components/ij-store-cta.js, apps.json, badges/`,
+    '',
+    `const REGISTRY = ${JSON.stringify(projected, null, 2)};`,
+    '',
+    `const BADGE_WIDTHS = ${JSON.stringify(badgeWidths(), null, 2)};`,
+    '',
+    inline(componentSrc('store.js')).trim(),
+    '',
+    inline(componentSrc('ij-store-cta.js')).trim(),
+    '',
+  ].join('\n');
+}
+
+// The store fragments, per app and page locale: the badge with its facts line,
+// the nav's text link, and Safari's Smart App Banner where there is an iPhone
+// app. Badges load from the release's own tag, like the font sheets.
+async function generateStoreFragments(tokens) {
+  const registry = JSON.parse(fs.readFileSync(path.join(ROOT, 'apps.json'), 'utf-8'));
+  const store = await import(pathToFileURL(path.join(ROOT, 'components', 'store.js')).href);
+  const widths = badgeWidths();
+  const badges = {
+    base: `https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v${tokens.meta.version}/badges/`,
+    width: f => {
+      if (!(f in widths)) throw new Error(`No badge file badges/${f}`);
+      return widths[f];
+    },
+  };
+  const out = [];
+  for (const app of storeApps(registry)) {
+    for (const code of app.store.locales) {
+      const head = `<!-- IAMJARL store button for ${app.name} (${code}) — generated from apps.json, v${tokens.meta.version}. Do not edit. -->`;
+      out.push([`${app.id}.${code}.html`, `${head}\n${store.badgeHtml(app, code, { badges })}\n`]);
+      out.push([`${app.id}.${code}.nav.html`, `${head.replace('store button', 'nav call to action')}\n${store.navLinkHtml(app, code)}\n`]);
+    }
+    const banner = store.smartBannerHtml(app, registry);
+    if (banner) out.push([`${app.id}.head.html`, `<!-- Smart App Banner for ${app.name}: put in <head>. Generated, do not edit. -->\n${banner}\n`]);
+  }
+  return out;
+}
+
 // The nav carries no registry: every link is the site's own, slotted in light
 // DOM, because a crawler that does not run JavaScript must still see them.
 function generateNav(tokens) {
@@ -1254,6 +1320,7 @@ const SRI_FILES = [
   'dist/css/tokens.shadow.css',
   'dist/components/ij-footer.js',
   'dist/components/ij-nav.js',
+  'dist/components/ij-store-cta.js',
 ];
 
 function computeSri(identityIds, fontNames = []) {
@@ -1467,6 +1534,14 @@ async function main() {
   // Web component (single self-contained file, registry inlined)
   writeFile(path.join(ROOT, 'dist', 'components', 'ij-footer.js'), generateComponent(tokens));
   writeFile(path.join(ROOT, 'dist', 'components', 'ij-nav.js'), generateNav(tokens));
+  writeFile(path.join(ROOT, 'dist', 'components', 'ij-store-cta.js'), generateStoreCta(tokens));
+  const storeFragments = await generateStoreFragments(tokens);
+  const storeDir = path.join(ROOT, 'dist', 'store');
+  const storeKeep = new Set(storeFragments.map(([f]) => f));
+  if (fs.existsSync(storeDir)) {
+    for (const f of fs.readdirSync(storeDir)) if (!storeKeep.has(f)) fs.rmSync(path.join(storeDir, f));
+  }
+  for (const [f, html] of storeFragments) writeFile(path.join(storeDir, f), html);
   writeFile(path.join(ROOT, 'Tests', 'IAMJARLDesignTokensTests', 'PaletteTests.swift'), generateSwiftPaletteTests(tokens));
 
   // Build-time cross-link fragments, one per shipped app

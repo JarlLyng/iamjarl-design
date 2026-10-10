@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseColor, contrastRatio } from './color.js';
+import { LOCALES, badgeFile, factsLine, storeLink } from '../components/store.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -529,6 +530,41 @@ function validateApps(tokensRef) {
   const consumers = apps.filter(a => a.consumes === true);
   if (!consumers.length) fail('no app has consumes:true — nothing renders the component');
   else pass(`${consumers.length} component consumer(s): ${consumers.map(a => a.name).join(', ')}`);
+
+  validateStores(apps);
+}
+
+// Store facts (#58). Everything the store button prints comes from here, so a
+// wrong entry would put a wrong price or a broken badge on a live page.
+function validateStores(apps) {
+  const ID = { 'app-store': /^\d{9,10}$/, 'mac-app-store': /^\d{9,10}$/, 'chrome-web-store': /^[a-p]{32}$/ };
+  const badgeDir = path.join(__dirname, '..', 'badges');
+  const withStore = apps.filter(a => a.store);
+  let problems = 0;
+  const bad = (a, msg) => { fail(`${a.id}.store: ${msg}`); problems++; };
+  for (const a of withStore) {
+    const s = a.store;
+    if (!ID[s.platform]) { bad(a, `unknown platform "${s.platform}"`); continue; }
+    if (!ID[s.platform].test(String(s.id))) bad(a, `id "${s.id}" is not a ${s.platform} id`);
+    if (s.platform === 'chrome-web-store' && !s.slug) bad(a, 'a Chrome Web Store listing needs its slug');
+    if (s.platform !== 'chrome-web-store' && !/^\d+(\.\d+){0,2}$/.test(String(s.minOS))) bad(a, `minOS "${s.minOS}" is not a version`);
+    if (!Array.isArray(s.locales) || !s.locales.includes('en')) { bad(a, 'locales must include "en"'); continue; }
+    for (const code of s.locales) {
+      if (!LOCALES[code]) { bad(a, `no store locale "${code}"`); continue; }
+      const price = s.price?.[LOCALES[code].front];
+      if (typeof price !== 'string' || !(price === 'Free' || /\d/.test(price))) bad(a, `no ${LOCALES[code].front} price for locale "${code}"`);
+      for (const tone of ['black', 'white']) {
+        const f = badgeFile(s.platform, code, tone);
+        if (!fs.existsSync(path.join(badgeDir, f))) bad(a, `badges/${f} is missing for locale "${code}"`);
+      }
+      try { factsLine(s, code); storeLink(s); } catch (e) { bad(a, e.message); }
+    }
+    if (s.iphoneSibling) {
+      const sib = apps.find(x => x.id === s.iphoneSibling);
+      if (sib?.store?.platform !== 'app-store') bad(a, `iphoneSibling "${s.iphoneSibling}" is not an App Store app`);
+    }
+  }
+  if (!problems) pass(`${withStore.length} store entries, each with an id, a price per locale and its badges`);
 }
 
 // --- Helpers ---

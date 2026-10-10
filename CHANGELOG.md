@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.20.0] — 2026-10-10
+
+The store button, from the registry (#58). Every site used to write its own store link and the facts beside it, and the hub's audit found them drifting: campaign parameters missing on four sites, the click event on two, a price wrong on one, an OS requirement wrong on another.
+
+### Added
+- **Store facts in `apps.json`** for all 13 apps that sell or list somewhere: platform, store ID, the minimum OS as Apple states it, the price per storefront in the store's own wording, and the site's page locales. TrimrPix for Mac also names its iPhone sibling. The IDs came from the live sites and the prices and OS floors from Apple's lookup API. English pages quote the US store, and translated pages their own country's (the owner's call): WODrounds in seven languages, Wean in four, Walkful in two.
+- **`components/store.js`**, pure, builds everything a button prints:
+  - **the link,** with the portfolio's campaign (`pt=128512007`, `ct=site`, `mt=8` or `mt=12`)
+  - **the `store-click` event,** with store, placement and locale
+  - **the facts line,** in seven languages: *"$2.99 once · iOS 16 or later"*, *"29,00 kr engangskøb · iOS 16 eller nyere"*
+  - **the right badge** for the platform, locale and tone
+- **`dist/store/`**, 52 generated fragments:
+  - per app and locale, the badge with its facts line, plain HTML for the served page
+  - a `.nav.html` text link for `<ij-nav>`'s CTA, since Apple allows one badge per layout
+  - a `.head.html` Smart App Banner wherever there is an iPhone app
+- **`<ij-store-cta>`** (`dist/components/ij-store-cta.js`, with SRI):
+  - sets the event's placement and locale on the fragment it wraps
+  - pins the badge's tone for an always-dark site
+  - renders the fragment itself from the registry when left empty
+- **`badges/`:** Apple's App Store badge in black and white in seven languages, the Mac App Store badge, and the Chrome Web Store badge. They were downloaded with the owner's approval from Apple's Marketing Toolbox and Google's branding page, verified, and shipped unedited with a README of their rules.
+- **A weekly check** (`.github/workflows/store-facts.yml`, `scripts/check-store-facts.js`). It compares each app's price and OS floor with Apple's lookup API, in every storefront its pages use, and keeps one issue here while they differ, closing it when they agree. It never edits `apps.json`. Today all 21 lookups agree. A planted wrong price and OS floor were both reported.
+
+### Checks
+- `validate.js` refuses a store entry with an unknown platform, a malformed ID, a missing price for one of its locales, or a missing badge.
+- **Contract tests (13)** hold the link, the facts in four shapes, and every one of the 23 app-and-locale fragments to the registry.
+- **Browser tests:**
+  - the fragment works with no JavaScript, with the badge loaded at 40 px
+  - the Danish page gets the Danish badge and facts, and dark mode gets the white badge
+  - the element renders from the registry, `tone` pins the badge, and an unknown app renders nothing and says why
+- The docs page shows the button live.
+
+### Notes
+- Apple writes prices with a no-break space before the currency (`29,00 kr`). It is kept, because the weekly check compares Apple's exact string, and because the amount should not break across lines anyway.
+- **Badge heights:** Apple's at its 40 px minimum, and the Chrome Web Store's at 58 px, the smallest size Google publishes. At 40 px Google's words were unreadable, which was only visible on screen, so the fix came from a visual check.
+- A QR code for iPhone-only apps on desktop is a later step (the owner's call).
+
 ## [1.19.0] — 2026-10-09
 
 Echolume adopted the whole stack, and two findings came back from it (#57).
@@ -665,6 +701,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.20.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.20.0
 [1.19.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.19.0
 [1.18.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.18.1
 [1.18.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.18.0

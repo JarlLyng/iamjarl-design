@@ -1,6 +1,6 @@
 {
   "name": "@iamjarl/design-tokens",
-  "version": "1.19.0",
+  "version": "1.20.0",
   "description": "IAMJARL Design System tokens for web and React Native",
   "type": "module",
   "engines": {
@@ -19,9 +19,12 @@
     "./components": "./dist/components/ij-footer.js",
     "./components/footer": "./dist/components/ij-footer.js",
     "./components/nav": "./dist/components/ij-nav.js",
+    "./components/store-cta": "./dist/components/ij-store-cta.js",
     "./footers/*": "./dist/footers/*",
     "./identity/*": "./dist/identity/*",
     "./fonts/*": "./dist/fonts/*",
+    "./store/*": "./dist/store/*",
+    "./badges/*": "./badges/*",
     "./apps.json": "./apps.json",
     "./sri.json": "./dist/sri.json",
     "./tokens.json": "./tokens.json",
@@ -31,6 +34,7 @@
   "files": [
     "dist/",
     "fonts/",
+    "badges/",
     "apps.json",
     "tokens.json",
     "design.md",
