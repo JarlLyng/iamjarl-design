@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseColor, contrastRatio } from './color.js';
-import { LOCALES, badgeFile, factsLine, storeLink } from '../components/store.js';
+import { LOCALES, badgeFile, factsLine, offer, storeLink } from '../components/store.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -311,6 +311,14 @@ function validateVersionCoherence(version) {
     } else {
       pass(`MIGRATION.md has a row for ${version}`);
     }
+    // Read row by row, so a table out of order sends a reader the wrong way.
+    // From 1.16.0 to 1.20.0 each new row went in under 1.15.0, upside down.
+    const tables = migration.split(/\n(?!\| \*\*)/).map(chunk => [...chunk.matchAll(/^\| \*\*(\d+)\.(\d+)\.(\d+)\*\* \|/gm)]
+      .map(m => m.slice(1).map(Number))).filter(t => t.length > 1);
+    const behind = (a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
+    const unordered = tables.flatMap(t => t.slice(1).filter((v, i) => behind(t[i], v) > 0).map(v => v.join('.')));
+    if (unordered.length) fail(`MIGRATION.md rows out of order at ${unordered.join(', ')}: each table runs oldest first`);
+    else pass('MIGRATION.md tables run oldest first');
   } catch (e) {
     fail(`Could not read MIGRATION.md: ${e.message}`);
   }
@@ -557,14 +565,16 @@ function validateStores(apps) {
         const f = badgeFile(s.platform, code, tone);
         if (!fs.existsSync(path.join(badgeDir, f))) bad(a, `badges/${f} is missing for locale "${code}"`);
       }
-      try { factsLine(s, code); storeLink(s); } catch (e) { bad(a, e.message); }
+      // offer() reads the price as a number for the JSON-LD, so a price it cannot
+      // read would put a wrong one in the structured data.
+      try { factsLine(s, code); storeLink(s); offer(s, code); } catch (e) { bad(a, e.message); }
     }
     if (s.iphoneSibling) {
       const sib = apps.find(x => x.id === s.iphoneSibling);
       if (sib?.store?.platform !== 'app-store') bad(a, `iphoneSibling "${s.iphoneSibling}" is not an App Store app`);
     }
   }
-  if (!problems) pass(`${withStore.length} store entries, each with an id, a price per locale and its badges`);
+  if (!problems) pass(`${withStore.length} store entries, each with an id, a readable price per locale and its badges`);
 }
 
 // --- Helpers ---

@@ -1,4 +1,4 @@
-/* IAMJARL Design Tokens v1.20.0 — generated, do not edit */
+/* IAMJARL Design Tokens v1.21.0: generated, do not edit */
 
 :root {
   /* Spacing */
@@ -45,12 +45,12 @@
   --ij-shadow-md: 0px 4px 8px rgba(0, 0, 0, 0.08);
   --ij-shadow-lg: 0px 8px 24px rgba(0, 0, 0, 0.12);
 
-  /* Motion — duration */
+  /* Motion: duration */
   --ij-duration-fast: 150ms;
   --ij-duration-normal: 250ms;
   --ij-duration-slow: 400ms;
 
-  /* Motion — easing */
+  /* Motion: easing */
   --ij-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --ij-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
 
@@ -100,8 +100,8 @@
 
   /* Mode colors (light default) */
   --ij-color-primary-rgb: 164, 53, 210; /* deprecated, use color-mix() */
-  --ij-gradient-primary: linear-gradient(135deg, #A435D2, #E0529C); /* decorative only — no text colour clears AA */
-  --ij-gradient-brand: linear-gradient(135deg, #D0FF00, #A435D2); /* decorative only — no text colour clears AA */
+  --ij-gradient-primary: linear-gradient(135deg, #A435D2, #E0529C); /* decorative only, no text colour clears AA */
+  --ij-gradient-brand: linear-gradient(135deg, #D0FF00, #A435D2); /* decorative only, no text colour clears AA */
   --ij-color-primary: #A435D2;
   --ij-color-on-primary: #FFFFFF;
   --ij-color-primary-hover: #8E2BB8;
@@ -129,7 +129,7 @@
   :root {
     --ij-color-primary-rgb: 208, 255, 0; /* deprecated, use color-mix() */
     --ij-gradient-primary: linear-gradient(135deg, #D0FF00, #5DE0A6, #37B6E9); /* text-safe: black */
-    --ij-gradient-brand: linear-gradient(135deg, #A435D2, #D0FF00); /* decorative only — no text colour clears AA */
+    --ij-gradient-brand: linear-gradient(135deg, #A435D2, #D0FF00); /* decorative only, no text colour clears AA */
     --ij-color-primary: #D0FF00;
     --ij-color-on-primary: #000000;
     --ij-color-primary-hover: #B8E000;
@@ -157,8 +157,8 @@
 /* Explicit class overrides for manual mode switching */
 .light {
   --ij-color-primary-rgb: 164, 53, 210; /* deprecated, use color-mix() */
-  --ij-gradient-primary: linear-gradient(135deg, #A435D2, #E0529C); /* decorative only — no text colour clears AA */
-  --ij-gradient-brand: linear-gradient(135deg, #D0FF00, #A435D2); /* decorative only — no text colour clears AA */
+  --ij-gradient-primary: linear-gradient(135deg, #A435D2, #E0529C); /* decorative only, no text colour clears AA */
+  --ij-gradient-brand: linear-gradient(135deg, #D0FF00, #A435D2); /* decorative only, no text colour clears AA */
   --ij-color-primary: #A435D2;
   --ij-color-on-primary: #FFFFFF;
   --ij-color-primary-hover: #8E2BB8;
@@ -185,7 +185,7 @@
 .dark {
   --ij-color-primary-rgb: 208, 255, 0; /* deprecated, use color-mix() */
   --ij-gradient-primary: linear-gradient(135deg, #D0FF00, #5DE0A6, #37B6E9); /* text-safe: black */
-  --ij-gradient-brand: linear-gradient(135deg, #A435D2, #D0FF00); /* decorative only — no text colour clears AA */
+  --ij-gradient-brand: linear-gradient(135deg, #A435D2, #D0FF00); /* decorative only, no text colour clears AA */
   --ij-color-primary: #D0FF00;
   --ij-color-on-primary: #000000;
   --ij-color-primary-hover: #B8E000;

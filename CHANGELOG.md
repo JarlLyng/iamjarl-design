@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.21.0] — 2026-10-11
+
+The store button after its first two pilots, Anvil Workout and Patternaut (#63). Most of the portfolio's sites have no build step, so they paste the fragment by hand, and anything the fragment left to JavaScript was wrong in the served HTML: the badge on an always-dark site, and the placement of every repeat.
+
+### Added
+- **A fragment per placement and tone.** `dist/store/<app>.<locale>.<placement>.html` for `midpage` and `footer`, and `.black.html` / `.white.html` (also after a placement) with one `<img>` of that tone and no `<source>`. A site that pastes the right file serves the right click event and badge with no script. 23 locales × 9 variants, from the same `badgeHtml()`.
+- **`dist/store/<app>.<locale>.offer.json`**: the JSON-LD `Offer` for the page's storefront, with the price as a number in its currency (`29,00 kr` becomes `"29.00"`, `DKK`), so the structured data quotes the same price as the facts line. Its `url` is the plain store page, without the campaign. The validator now refuses a price that `offer()` cannot read.
+- **Integrity hashes in every release's notes.** `release-notes.js` appends a table of every file in `dist/sri.json` for the tag, so nobody computes one from the CDN file again. The README's SRI block now includes `ij-store-cta.js`.
+- **README:** which file goes where; that a site with no build step refreshes by hand and checks the version in the comment; a layout snippet for the fragment (`display: block` on the element, a column with a muted facts line, the facts selector doubled to outrank a section's own `p` rule, a hero height on the `img`); that the nav fragment's `slot="cta"` is harmless outside `<ij-nav>`; and a note on mixing versions.
+
+### Changed
+- **No em-dash in any generated file.** The portfolio's voice rules ban it, and a site cannot fix a comment in a file marked "do not edit", so every paste brought one back. The generator's comments and the component sources that bundles inline now use colons and commas. A contract test checks `dist/`, `Sources/` and `Tests/`.
+- `<ij-store-cta>` renders a fixed tone directly when it builds the fragment from the registry.
+
+### Not in this release
+- **A check that a site's pasted fragments still match `dist/store/`.** The hub builds it on its side, next to its footer check.
+- **The campaign in the Smart App Banner.** Apple's documentation of the banner names only `app-id` and `app-argument`, and its staff in the forum thread the hub cited say to use the tokens without saying how. The `affiliate-data=pt=…&ct=…` form comes from other developers, and the one in that thread who tried it saw no campaign data. The banner keeps `app-id` alone until there is something to confirm it.
+- **A facts file for meta descriptions and FAQs.** The Offer covers the JSON-LD. The rest can follow if a site asks.
+
 ## [1.20.0] — 2026-10-10
 
 The store button, from the registry (#58). Every site used to write its own store link and the facts beside it, and the hub's audit found them drifting: campaign parameters missing on four sites, the click event on two, a price wrong on one, an OS requirement wrong on another.
@@ -701,6 +720,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.21.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.21.0
 [1.20.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.20.0
 [1.19.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.19.0
 [1.18.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.18.1

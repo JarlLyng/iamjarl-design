@@ -1,17 +1,17 @@
 // <ij-store-cta app="tonvault" placement="hero" locale="en" tone="white">
-//   …the generated fragment from dist/store/<app>.<locale>.html…
+//   …a generated fragment from dist/store/…
 // </ij-store-cta>
 //
 // The fragment does the work and needs no JavaScript: badge, campaign link,
 // click event and the facts line are in the served HTML, where crawlers and AI
-// assistants read them. This element only adjusts it:
+// assistants read them. There is one per placement and tone, so a site that
+// pastes the right file needs no element at all (#63). This element adjusts
+// a fragment that was pasted once and reused:
 //
-//   placement  sets data-umami-event-placement, so one fragment serves the hero,
-//              a mid-page repeat or the footer. Analytics runs on JavaScript
-//              anyway, so the value is right whenever an event can fire.
+//   placement  sets data-umami-event-placement.
 //   locale     sets data-umami-event-locale.
 //   tone       black or white, for a site whose mode does not follow the
-//              system — Echolume is always dark. Without it the badge follows
+//              system. Echolume is always dark. Without it the badge follows
 //              the visitor's setting.
 //
 // Left empty, it renders the fragment itself from the registry, for a site with
@@ -47,6 +47,7 @@ export class IjStoreCta extends HTMLElement {
     const code = app.store.locales.includes(wanted) ? wanted : 'en';
     this.innerHTML = badgeHtml(app, code, {
       placement: this.getAttribute('placement') || 'hero',
+      tone: this.getAttribute('tone'),
       badges: { base: new URL('../../badges/', import.meta.url).href, width: f => BADGE_WIDTHS[f] },
     });
   }

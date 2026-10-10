@@ -51,7 +51,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.20.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.21.0")
 ]
 ```
 
@@ -235,7 +235,7 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.21.0/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -275,7 +275,7 @@ a build step, install it instead.**
 | Needs `integrity`? | yes, worth it | no — nothing crosses an origin |
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.20.0
+npm install github:jarllyng/iamjarl-design#v1.21.0
 ```
 
 ```js
@@ -301,24 +301,31 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/dist/css/tokens.css"
-  integrity="sha384-DjfuXDv/238vttpeixwnvRoSVP/njZTMiIFKTaEaNhIu3UTvR1iJr+96C2pHTcSk"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.21.0/dist/css/tokens.css"
+  integrity="sha384-iPMEFyvKaCGYBtCO7WjeiUbOvbqg6bdYoLG8PZ67uptuECMx8NrYhzOxme4GpFNL"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/dist/components/ij-footer.js"
-  integrity="sha384-oqsgpHEoY0FQayr6lENtvDnBpaYOeHQKyvtFV6cS0wyhI+eCFI8IMhLnYxbNeqSV"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.21.0/dist/components/ij-footer.js"
+  integrity="sha384-+GpWxeSPVSocAhBSRZXLPAe5Bkr34kHyNPA/EKW27X1E0D9BhQm1xH2mReqF1Kl5"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/dist/components/ij-nav.js"
-  integrity="sha384-r2QB8gfhSzNeTdk6YVt3A1FmIKPDLKKXjrI8S7qKIxrjtqMu2WJPbRLnWbVsdoH2"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.21.0/dist/components/ij-nav.js"
+  integrity="sha384-+OUSRJOoYUxFf0lFxfb1RJXNV5AeUdja2Sh3VywAqD6nasV6i9TRpgfFKjtft9gO"
+  crossorigin="anonymous"></script>
+
+<script type="module"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.21.0/dist/components/ij-store-cta.js"
+  integrity="sha384-cSaLmm9Pbx15SwUW+m+v+9BLn59VKNW0Eu9OSLkDOIQYlP+dTXn+JqjFYIMcC8kn"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
 
 Machine-readable equivalents live in [`dist/sri.json`](dist/sri.json), exported as
 `@iamjarl/design-tokens/sri.json` if your build wants to inject them.
+
+---
 
 **Know the failure mode before you add it.** A mismatched hash fails closed: the browser blocks the
 resource outright. For the component that means the pre-upgrade fallback footer. **For
@@ -327,6 +334,14 @@ a stale stylesheet would have been. Both are safe when the tag and hash move tog
 is why they are published together here &mdash; but bump them in the same commit, and never carry a
 hash across a version change.
 
+### Mixing versions
+
+Nothing breaks when a page loads files from different releases. Every file loads only files from
+its own tag, and the components fall back to their own value for any token the page lacks. What a
+file that trails behind misses is content: the footer's cross-links and the store facts are as of
+its tag. The simple rule is one version for everything, changed in one go, with the hashes from
+that release's notes.
+
 ### Cross-links in your served HTML
 
 The component builds the cross-links at runtime, so crawlers that do not execute JavaScript
@@ -334,7 +349,7 @@ The component builds the cross-links at runtime, so crawlers that do not execute
 pre-rendered fragment for your app and the component will slot it instead of regenerating:
 
 ```bash
-curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/dist/footers/botlens.html
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.21.0/dist/footers/botlens.html
 ```
 
 ```html
@@ -385,7 +400,7 @@ it supplies the landmark, the sticky translucent bar, the phone layout and the k
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/dist/components/ij-nav.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.21.0/dist/components/ij-nav.js"></script>
 
 <ij-nav>
   <a slot="brand" href="/">Echolume</a>
@@ -455,10 +470,10 @@ Attributes and slots only, so it works unchanged in React, where `<ij-nav>` is j
 ## Store button: `<ij-store-cta>`
 
 The badge, the campaign link, the `store-click` event and the facts line, all from `apps.json`.
-**Paste the fragment** into your page at build time; it is plain HTML and needs no JavaScript:
+**Paste the fragment** into your page; it is plain HTML and needs no JavaScript:
 
 ```html
-<!-- dist/store/<app>.<locale>.html — e.g. wodrounds.da.html -->
+<!-- dist/store/<app>.<locale>.html, e.g. wodrounds.da.html -->
 <div class="ij-store" data-ij-store="wodrounds" data-ij-store-locale="da">
   <a class="ij-store-badge" href="https://apps.apple.com/app/id6759229877?pt=128512007&amp;ct=site&amp;mt=8"
      data-umami-event="store-click" data-umami-event-store="app-store"
@@ -469,30 +484,96 @@ The badge, the campaign link, the `store-click` event and the facts line, all fr
 </div>
 ```
 
+**Pick the file for the spot and the site.** Each one is right as served, so a site that pastes the
+right file needs no script:
+
 | File | For |
 | --- | --- |
-| `dist/store/<app>.<locale>.html` | the badge and facts line, for the hero or a later repeat |
-| `dist/store/<app>.<locale>.nav.html` | `<ij-nav>`'s call to action: a text link, since there is one badge per layout |
+| `dist/store/<app>.<locale>.html` | the hero; the badge follows the visitor's light or dark setting |
+| `dist/store/<app>.<locale>.<placement>.html` | `midpage` or `footer`: a later repeat, so the click event says where it was |
+| `dist/store/<app>.<locale>[.<placement>].<tone>.html` | `black` or `white` fixed, for a site that is always light or always dark. One `<img>`, no `<source>` |
+| `dist/store/<app>.<locale>.nav.html` | `<ij-nav>`'s call to action: a text link, since there is one badge per layout. Its `slot="cta"` does nothing outside `<ij-nav>`, so a site's own nav can keep it |
+| `dist/store/<app>.<locale>.offer.json` | the JSON-LD `Offer`, below |
 | `dist/store/<app>.head.html` | Safari's Smart App Banner, for an iPhone app or a Mac app with an iPhone sibling |
 
-**Wrap it in `<ij-store-cta>`** to set the event's placement and pin the badge's tone. Left empty, the
-element renders the fragment itself from the registry, which suits a site without a build step, but
-crawlers will not see that copy:
+So Echolume, always dark, uses `echolume.en.white.html` in the hero and `echolume.en.footer.white.html`
+at the end of the page.
+
+**A site with no build step pastes by hand, and refreshes by hand.** The comment on the first line
+names the version it came from: when a release changes a price or an OS floor, paste the files
+from that release again. The hub is adding a check that reports a site whose pasted copy no
+longer matches (#63).
+
+### Structured data: the `Offer`
+
+`<app>.<locale>.offer.json` is the `offers` value of the page's `SoftwareApplication`, in the
+currency of the storefront the page quotes, so the JSON-LD and the facts line agree:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/dist/components/ij-store-cta.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "WODrounds",
+  "operatingSystem": "iOS",
+  "offers": { "@type": "Offer", "price": "29.00", "priceCurrency": "DKK", "url": "https://apps.apple.com/app/id6759229877" }
+}
+</script>
+```
+
+The Offer's `url` is the plain store page: the campaign counts visitors who click, and a search
+engine reading the markup is not one.
+
+### Layout
+
+The fragment brings no styles. These defaults, from the pilots on Anvil and Patternaut, cover what
+every site ended up writing:
+
+```css
+ij-store-cta { display: block; }          /* a custom element is inline by default */
+
+.ij-store {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ij-spacing-xs);
+}
+.ij-store .ij-store-facts {               /* doubled, to outrank a section's own `p` rule */
+  margin: 0;
+  font-size: var(--ij-font-size-sm);
+  color: var(--ij-color-text-secondary);
+}
+.ij-store-badge img { height: 52px; width: auto; }   /* a hero size; never below 40 (Chrome: 58) */
+
+.cta-row { display: flex; align-items: flex-start; gap: var(--ij-spacing-md); }  /* badge beside a plain button */
+```
+
+The fragment sets the badge at its minimum, 40 px for Apple and 58 px for the Chrome Web Store.
+Set a larger hero size on the `img` with `height`, and leave `width` to follow.
+
+### The element
+
+**Wrap a fragment in `<ij-store-cta>`** to change the placement or tone of one you pasted once and
+reuse. Left empty, the element renders the fragment itself from the registry, which suits a site
+without a build step, but crawlers will not see that copy:
+
+```html
+<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.21.0/dist/components/ij-store-cta.js"></script>
 <ij-store-cta app="wodrounds" placement="midpage" tone="white">…fragment…</ij-store-cta>
 ```
+
+Its `integrity` hash is in the [SRI block](#pinning-with-subresource-integrity) above, and every
+release's notes list the hashes for all its files.
 
 | Attribute | |
 | --- | --- |
 | `app` | An `id` from `apps.json`, needed when the element renders the fragment itself |
-| `placement` | `hero` (default), `nav`, `midpage` or `footer`, written to the click event |
+| `placement` | `hero` (default), `midpage` or `footer`, written to the click event |
 | `locale` | The page's language; the element otherwise reads `<html lang>` |
 | `tone` | `black` or `white`. Leave it out and the badge follows the visitor's setting; set it on a site that is always dark |
 
-Style the fragment with `.ij-store` and `.ij-store-facts`. The facts come from `apps.json`, and a
-weekly workflow checks them against the App Store, opening one issue here if they differ.
+The facts come from `apps.json`, and a weekly workflow checks them against the App Store, opening
+one issue here if they differ.
 
 ---
 
@@ -506,7 +587,7 @@ lists which families have one. `primary` does not change. If your app has no fil
 ```html
 <!-- tokens.css first, from the SRI block above -->
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/dist/identity/<app>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.21.0/dist/identity/<app>.css"
   integrity="<from sri.json, see below>"
   crossorigin="anonymous">
 ```
@@ -515,7 +596,7 @@ lists which families have one. `primary` does not change. If your app has no fil
 yours:
 
 ```bash
-curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/dist/sri.json | grep 'identity/<app>.css'
+curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.21.0/dist/sri.json | grep 'identity/<app>.css'
 ```
 
 Each sheet carries the version in its header, so its hash changes every release. Move the tag and
@@ -540,7 +621,7 @@ page. Echolume does exactly this.
 
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.20.0/dist/fonts/<face>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.21.0/dist/fonts/<face>.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 ```
 

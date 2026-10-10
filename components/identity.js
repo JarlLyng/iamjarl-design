@@ -3,7 +3,7 @@
 //
 // The system defines one primary per mode, so thirteen of fifteen sites ended
 // up black with the same lime pill. A family accent gives a category room to
-// differ without leaving the system — primary stays the brand thread.
+// differ without leaving the system; primary stays the brand thread.
 //
 // Resolution order: the app's own accent, then its category's, then the mode
 // primary. Absent everywhere means nothing changes, which is why this can ship

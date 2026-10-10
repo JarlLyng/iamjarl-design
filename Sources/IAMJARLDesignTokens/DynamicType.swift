@@ -25,7 +25,7 @@ public extension View {
     modifier(IJScaledFont(style: style, weight: weight, design: design))
   }
 
-  /// A number that is the interface — a timer, a counter, a readout — with
+  /// A number that is the interface (a timer, a counter, a readout), with
   /// tabular digits, so it does not shift sideways as the digits change.
   ///
   ///     Text(timeString).ijNumeral(.lg)

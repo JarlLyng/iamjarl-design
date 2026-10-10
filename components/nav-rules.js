@@ -6,8 +6,8 @@
 
 // How opaque the bar is. Derived, not chosen: text sits on a translucent ground
 // with the page scrolling underneath, so its background is whatever is behind
-// it. Compositing the bar over the worst case — pure white under a dark bar,
-// pure black under a light one — gives the opacity at which text.primary and
+// it. Compositing the bar over the worst case (pure white under a dark bar,
+// pure black under a light one) gives the opacity at which text.primary and
 // text.secondary still clear AA: 0.58 in light mode, 0.64 in dark. A contract
 // test re-derives both from color.js, so this value cannot drift below them.
 //
@@ -54,7 +54,7 @@ export function currentIndex(hrefs, here) {
 
 // Whether the hero's CTA is on screen, from one IntersectionObserver callback.
 // A callback can carry several entries for the same target: if the page
-// scrolls before the first delivery — a visitor landing on /#download, say —
+// scrolls before the first delivery (a visitor landing on /#download, say),
 // the stale "on screen" entry and the fresh "gone" one arrive together. Only
 // the last is current. Reading the first left the nav's CTA hidden for the
 // rest of the visit. Returns null for an empty callback: nothing to decide.
@@ -80,7 +80,7 @@ export function navWarnings({ brand = 0, links = [], cta = [], secondary = 0 }) 
     out.push(`${brand} elements in slot="brand"; use one`);
   }
   if (links.length > MAX_LINKS) {
-    out.push(`${links.length} links; the top nav holds at most ${MAX_LINKS} — ` +
+    out.push(`${links.length} links; the top nav holds at most ${MAX_LINKS}; ` +
       'the rest belong on the page or in the footer');
   }
   for (const { text } of links) {

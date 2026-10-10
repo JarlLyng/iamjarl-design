@@ -11,13 +11,13 @@
 //   </ij-footer>
 //
 // Two slots, because a footer has two kinds of per-site content: the site's own
-// links, and the colophon — copyright, legal disclaimers, attribution. Both
+// links, and the colophon: copyright, legal disclaimers, attribution. Both
 // reference footers in the portfolio have that second region, and without a slot
 // for it a consuming site would silently lose its legal text on upgrade.
 //
 // Anything in neither slot is deliberately not rendered. Custom elements show
 // their own children until they upgrade, so that content is what a visitor sees
-// if this script never loads — a plainer footer rather than none.
+// if this script never loads: a plainer footer rather than none.
 //
 // layout="stacked" (default) is the WODrounds shape: groups above one another,
 // links flowing inline. layout="columns" is the Wean Nicotine shape: a grid of
@@ -25,7 +25,7 @@
 //
 // links-label names the group holding the site's OWN links (slot="links") and
 // defaults to the app's name. The cross-links heading, "More from IAMJARL", is
-// fixed — setting links-label to it prints the string twice.
+// fixed; setting links-label to it prints the string twice.
 //
 // Alignment follows the page. Labels, tagline and fineprint inherit text-align
 // through the shadow boundary; the link rows are flex and cannot, so they take
@@ -42,7 +42,7 @@ import { REGISTRY } from './registry.js';
 const STYLE = `
 :host {
   /* The host page wins if it has tokens; otherwise fall back to the system's
-     own values. Never import tokens.shadow.css here — its :host declarations
+     own values. Never import tokens.shadow.css here: its :host declarations
      would beat the page's and override the site's chosen mode. */
   --_text:    var(--ij-color-text-secondary, rgba(0, 0, 0, 0.70));
   --_heading: var(--ij-color-text-primary,   rgba(0, 0, 0, 1));
@@ -50,7 +50,7 @@ const STYLE = `
   /* Hover follows the site's family accent where it has one, as <ij-nav>'s
      dot and CTA do, so a teal site is not lime on footer hover (#57). Safe as
      text: the footer sits on the opaque page ground, and every accent clears
-     4.5:1 on background.app — validate.js refuses one that does not. */
+     4.5:1 on background.app, and validate.js refuses one that does not. */
   --_hover:   var(--ij-color-accent-family, var(--ij-color-primary, #A435D2));
   --_border:  var(--ij-color-border-subtle,  rgba(0, 0, 0, 0.10));
   --_gap:     var(--ij-spacing-sm,   8px);
@@ -68,7 +68,7 @@ const STYLE = `
   line-height: var(--ij-line-height-sm, 20px);
 }
 
-/* Only for hosts with no token layer at all — a site that defines --ij-*
+/* Only for hosts with no token layer at all. A site that defines --ij-*
    already carries its own mode and must not be second-guessed here. */
 @media (prefers-color-scheme: dark) {
   :host {
@@ -84,7 +84,7 @@ const STYLE = `
 .tagline { color: var(--_heading); margin: 0 0 var(--_gap-lg); }
 
 /* A quiet label, not a shouted one. Both reference footers in the portfolio use
-   sentence case at normal weight — no uppercase, no letter-spacing. */
+   sentence case at normal weight: no uppercase, no letter-spacing. */
 .label {
   color: var(--_heading);
   opacity: var(--ij-opacity-muted, 0.65);
@@ -174,7 +174,7 @@ export class IjFooter extends HTMLElement {
     const tagline = this.getAttribute('tagline');
     const ownLabel = this.getAttribute('links-label') ?? self.name;
     // A site with no links of its own gets no group for them. Rendered anyway,
-    // it was a label above an empty row — It's mono set links-label="" to hide
+    // it was a label above an empty row. It's mono set links-label="" to hide
     // the label and still got the empty row and its gap.
     const ownLinks = this.querySelector('[slot="links"]') !== null;
 

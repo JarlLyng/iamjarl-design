@@ -1,4 +1,4 @@
-// IAMJARL <ij-nav> v1.20.0 — generated, do not edit
+// IAMJARL <ij-nav> v1.21.0: generated, do not edit
 // Sources: components/nav-rules.js, components/ij-nav.js
 
 // The rules <ij-nav> enforces, kept out of the DOM so they are covered by the
@@ -9,8 +9,8 @@
 
 // How opaque the bar is. Derived, not chosen: text sits on a translucent ground
 // with the page scrolling underneath, so its background is whatever is behind
-// it. Compositing the bar over the worst case — pure white under a dark bar,
-// pure black under a light one — gives the opacity at which text.primary and
+// it. Compositing the bar over the worst case (pure white under a dark bar,
+// pure black under a light one) gives the opacity at which text.primary and
 // text.secondary still clear AA: 0.58 in light mode, 0.64 in dark. A contract
 // test re-derives both from color.js, so this value cannot drift below them.
 //
@@ -57,7 +57,7 @@ function currentIndex(hrefs, here) {
 
 // Whether the hero's CTA is on screen, from one IntersectionObserver callback.
 // A callback can carry several entries for the same target: if the page
-// scrolls before the first delivery — a visitor landing on /#download, say —
+// scrolls before the first delivery (a visitor landing on /#download, say),
 // the stale "on screen" entry and the fresh "gone" one arrive together. Only
 // the last is current. Reading the first left the nav's CTA hidden for the
 // rest of the visit. Returns null for an empty callback: nothing to decide.
@@ -83,7 +83,7 @@ function navWarnings({ brand = 0, links = [], cta = [], secondary = 0 }) {
     out.push(`${brand} elements in slot="brand"; use one`);
   }
   if (links.length > MAX_LINKS) {
-    out.push(`${links.length} links; the top nav holds at most ${MAX_LINKS} — ` +
+    out.push(`${links.length} links; the top nav holds at most ${MAX_LINKS}; ` +
       'the rest belong on the page or in the footer');
   }
   for (const { text } of links) {
@@ -115,8 +115,8 @@ function navWarnings({ brand = 0, links = [], cta = [], secondary = 0 }) {
 //   <a slot="secondary" href="https://github.com/…">GitHub</a>
 // </ij-nav>
 //
-// The shared site navigation. Unlike the footer it is not the same everywhere —
-// it carries each site's name and its most important button — so it shares
+// The shared site navigation. Unlike the footer it is not the same everywhere:
+// it carries each site's name and its most important button, so it shares
 // behaviour, not content. Every link is the site's own, in light DOM, in the
 // served HTML: crawlers that do not run JavaScript see all of it, and without
 // JavaScript it is a row of plain links.
@@ -145,14 +145,14 @@ function navWarnings({ brand = 0, links = [], cta = [], secondary = 0 }) {
 
 const NARROW = `(max-width: ${NAV_COLLAPSE_BELOW - 0.02}px)`;
 
-// Phosphor, regular weight — the system's icon set (design.md).
+// Phosphor, regular weight: the system's icon set (design.md).
 const ICON_LIST = '<path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/>';
 const ICON_X = '<path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/>';
 
 const NAV_STYLE = `
 :host {
   /* The host page wins if it has tokens; otherwise the system's own values.
-     Never import tokens.shadow.css here — see COMPONENTS.md. */
+     Never import tokens.shadow.css here; see COMPONENTS.md. */
   --_bg:        var(--ij-color-bg-app,         #FFFFFF);
   --_text:      var(--ij-color-text-secondary, rgba(0, 0, 0, 0.70));
   --_strong:    var(--ij-color-text-primary,   #000000);
@@ -273,7 +273,7 @@ const NAV_STYLE = `
 
 /* design.md's primary button, on the family accent. onPrimary is its on-colour
    in both modes because it IS background.app, and every accent clears 4.5:1
-   against that — a contract test holds the equivalence. */
+   against that. A contract test holds the equivalence. */
 .cta { display: flex; transition: opacity var(--ij-duration-normal, 250ms), visibility var(--ij-duration-normal, 250ms); }
 ::slotted([slot="cta"]) {
   display: inline-flex;
@@ -547,7 +547,7 @@ class IjNav extends HTMLElement {
     }
     const height = Math.round(this.getBoundingClientRect().height);
     // Decide the first state now, before the bar paints. Left to the observer's
-    // first callback, the CTA would paint, then fade out on every page load —
+    // first callback, the CTA would paint, then fade out on every page load,
     // and stay focusable while it did. Measuring the hero has already computed
     // the CTA as visible, so the first change is made with transitions off.
     const r = hero.getBoundingClientRect();

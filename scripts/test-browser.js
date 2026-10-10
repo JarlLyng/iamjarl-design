@@ -98,6 +98,11 @@ ${FULL_NAV.replace('<ij-nav>', '<ij-nav cta-after="#hero-cta">')}
   'store-fragment': page({ nav: false, body: `<main id="main">${
     fs.readFileSync(path.join(ROOT, 'dist/store/wodrounds.da.html'), 'utf-8')
       .replace(/https:\/\/cdn\.jsdelivr\.net\/gh\/jarllyng\/iamjarl-design@v[\d.]+\/badges\//g, '/badges/')}</main>` }),
+  // An always-dark site's closing call to action, pasted by hand with no module:
+  // the white, midpage variant must be right in the served HTML alone (#63).
+  'store-tone': page({ nav: false, body: `<main id="main" style="background: #000">${
+    fs.readFileSync(path.join(ROOT, 'dist/store/wodrounds.da.midpage.white.html'), 'utf-8')
+      .replace(/https:\/\/cdn\.jsdelivr\.net\/gh\/jarllyng\/iamjarl-design@v[\d.]+\/badges\//g, '/badges/')}</main>` }),
   'store-element': page({ nav: false, body: `<script type="module" src="/dist/components/ij-store-cta.js"></script>
 <ij-store-cta id="from-registry" app="tonvault" placement="midpage"></ij-store-cta>
 <ij-store-cta id="pinned" app="wodrounds" tone="white">${
@@ -506,6 +511,18 @@ try {
   await p.settle(300);
   check('the white badge on a dark page', /app-store-white-da-dk\.svg$/.test(await p.eval(`document.querySelector('.ij-store img').currentSrc`)));
   await p.media([{ name: 'prefers-color-scheme', value: 'light' }]);
+
+  await p.goto(`${base}/fixture/store-tone/index.html`);
+  await p.settle(300);
+  const tone = await p.eval(`(async () => {
+    const img = document.querySelector('.ij-store img');
+    await (img.complete ? null : new Promise(r => img.addEventListener('load', r, { once: true })));
+    return { src: img.currentSrc, loaded: img.naturalWidth > 0, scripts: document.scripts.length,
+      placement: document.querySelector('.ij-store-badge').dataset.umamiEventPlacement };
+  })()`);
+  check('without JavaScript, the white variant stays white for a visitor in light mode, placed midpage',
+    /app-store-white-da-dk\.svg$/.test(tone.src) && tone.loaded && tone.scripts === 0 && tone.placement === 'midpage',
+    JSON.stringify(tone));
 
   await p.goto(`${base}/fixture/store-element/index.html`);
   await p.eval(`customElements.whenDefined('ij-store-cta')`);
