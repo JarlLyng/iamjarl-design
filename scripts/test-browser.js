@@ -89,6 +89,10 @@ ${FULL_NAV.replace('<ij-nav>', '<ij-nav cta-after="#hero-cta">')}
 <h1 style="font-family: 'Outfit', sans-serif">Echolume</h1>
 <h1 style="font-family: 'Instrument Sans', sans-serif">Walkful</h1>` }),
 
+  // Footer hover: the family accent under an identity sheet, primary without.
+  'footer-accent': page({ nav: false, footer: true, identity: 'echolume', body: `
+<ij-footer app="echolume"><a slot="links" href="#">Privacy</a></ij-footer>` }),
+
   'footer-justify': page({ nav: false, footer: true, body: `
 <div style="width: 900px"><ij-footer app="its-mono-yo" style="text-align: center; --ij-footer-links-justify: center"></ij-footer></div>` }),
 };
@@ -482,10 +486,24 @@ try {
     const sr = document.querySelector('ij-footer').shadowRoot;
     return sr.querySelectorAll('.group').length === 1 && !sr.querySelector('slot[name="links"]');
   })()`));
+  await p.media([{ name: 'prefers-color-scheme', value: 'light' }]);
+  await p.goto(`${base}/fixture/footer-accent/index.html`);
+  await p.settle(150);
+  const hoverAccent = await p.eval(`getComputedStyle(document.querySelector('ij-footer')).getPropertyValue('--_hover').trim()`);
+  await p.goto(`${base}/fixture/footer-justify/index.html`);
+  await p.settle(150);
+  const hoverPrimary = await p.eval(`getComputedStyle(document.querySelector('ij-footer')).getPropertyValue('--_hover').trim()`);
+  check('footer hover is the family accent under an identity sheet, primary without',
+    /^(#177082|rgb\(23, 112, 130\))$/i.test(hoverAccent) && /^(#A435D2|rgb\(164, 53, 210\))$/i.test(hoverPrimary),
+    `with sheet ${hoverAccent}, without ${hoverPrimary}`);
+  await p.goto(`${base}/fixture/footer-justify/index.html`);
+  await p.settle(150);
   check('--ij-footer-links-justify: center centres the row', gaps.left > 20 && Math.abs(gaps.left - gaps.right) < 2,
     JSON.stringify(gaps));
 } finally {
   await browser.close();
+  // Keep-alive sockets would otherwise hold the process open for seconds.
+  server.closeAllConnections();
   server.close();
 }
 

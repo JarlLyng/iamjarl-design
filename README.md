@@ -51,7 +51,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.18.1")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.19.0")
 ]
 ```
 
@@ -235,7 +235,7 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.18.1/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.19.0/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -275,7 +275,7 @@ a build step, install it instead.**
 | Needs `integrity`? | yes, worth it | no — nothing crosses an origin |
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.18.1
+npm install github:jarllyng/iamjarl-design#v1.19.0
 ```
 
 ```js
@@ -301,18 +301,18 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.18.1/dist/css/tokens.css"
-  integrity="sha384-22MrFE+80z5lCKUZNzjvELfuIcp6Tpky6CAIRarb1O3kBRhKRcurJb60WPF/+img"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.19.0/dist/css/tokens.css"
+  integrity="sha384-3K6QhALlE8LyBL8I7ifeCfMqNfC0dCmQH54BvJAVwdKNzLAJIFHlK03o+x0BHIYT"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.18.1/dist/components/ij-footer.js"
-  integrity="sha384-vbo2o61hGBKT7RZB4taOfO8TxwNA3akt7UBF0X31Xjfk5rZlCXkz6oJ9HqiBglTJ"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.19.0/dist/components/ij-footer.js"
+  integrity="sha384-J+w2hdheEYw3Rz0lkzchVKASM5lp1EuuNxaDkUZ1ib6RBJHS2EUVuVhEe5ep9Y8X"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.18.1/dist/components/ij-nav.js"
-  integrity="sha384-i/0VwGVuk94AEHDbAix4x5BfuKvSjBhS8cdqsCXBHlwOidcAGJTBMi6QM2eU1RAV"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.19.0/dist/components/ij-nav.js"
+  integrity="sha384-EKddxavaqp0UtQDo/S7UwtCwiNCe+T8vEkM6QK8VmqBfvSwPAsIIlfrxHS2HQrHP"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
@@ -334,7 +334,7 @@ The component builds the cross-links at runtime, so crawlers that do not execute
 pre-rendered fragment for your app and the component will slot it instead of regenerating:
 
 ```bash
-curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.18.1/dist/footers/botlens.html
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.19.0/dist/footers/botlens.html
 ```
 
 ```html
@@ -385,7 +385,7 @@ it supplies the landmark, the sticky translucent bar, the phone layout and the k
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.18.1/dist/components/ij-nav.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.19.0/dist/components/ij-nav.js"></script>
 
 <ij-nav>
   <a slot="brand" href="/">Echolume</a>
@@ -437,6 +437,17 @@ ij-nav:not(:defined) {
 }
 ```
 
+**A global link colour overrides the component.** Page CSS beats a component's `::slotted()` rules,
+so a site-wide `a { color: var(--accent) }` paints every slotted nav link in the accent, which is
+exactly what the bar cannot carry (design.md, *Text on a translucent surface*). Scope the rule to
+links outside the components:
+
+```css
+a:where(:not([slot])) { color: var(--accent); }
+```
+
+Echolume found this when it adopted the nav (#57). The same holds for `<ij-footer>`.
+
 Attributes and slots only, so it works unchanged in React, where `<ij-nav>` is just an element.
 
 ---
@@ -451,7 +462,7 @@ lists which families have one. `primary` does not change. If your app has no fil
 ```html
 <!-- tokens.css first, from the SRI block above -->
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.18.1/dist/identity/<app>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.19.0/dist/identity/<app>.css"
   integrity="<from sri.json, see below>"
   crossorigin="anonymous">
 ```
@@ -460,7 +471,7 @@ lists which families have one. `primary` does not change. If your app has no fil
 yours:
 
 ```bash
-curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.18.1/dist/sri.json | grep 'identity/<app>.css'
+curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.19.0/dist/sri.json | grep 'identity/<app>.css'
 ```
 
 Each sheet carries the version in its header, so its hash changes every release. Move the tag and
@@ -485,7 +496,7 @@ page. Echolume does exactly this.
 
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.18.1/dist/fonts/<face>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.19.0/dist/fonts/<face>.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 ```
 

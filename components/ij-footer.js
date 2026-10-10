@@ -47,7 +47,11 @@ const STYLE = `
   --_text:    var(--ij-color-text-secondary, rgba(0, 0, 0, 0.70));
   --_heading: var(--ij-color-text-primary,   rgba(0, 0, 0, 1));
   --_link:    var(--ij-color-text-secondary, rgba(0, 0, 0, 0.70));
-  --_hover:   var(--ij-color-primary,        #A435D2);
+  /* Hover follows the site's family accent where it has one, as <ij-nav>'s
+     dot and CTA do, so a teal site is not lime on footer hover (#57). Safe as
+     text: the footer sits on the opaque page ground, and every accent clears
+     4.5:1 on background.app — validate.js refuses one that does not. */
+  --_hover:   var(--ij-color-accent-family, var(--ij-color-primary, #A435D2));
   --_border:  var(--ij-color-border-subtle,  rgba(0, 0, 0, 0.10));
   --_gap:     var(--ij-spacing-sm,   8px);
   --_gap-md:  var(--ij-spacing-lg,  16px);
@@ -71,7 +75,7 @@ const STYLE = `
     --_text:    var(--ij-color-text-secondary, rgba(255, 255, 255, 0.75));
     --_heading: var(--ij-color-text-primary,   rgba(255, 255, 255, 1));
     --_link:    var(--ij-color-text-secondary, rgba(255, 255, 255, 0.75));
-    --_hover:   var(--ij-color-primary,        #D0FF00);
+    --_hover:   var(--ij-color-accent-family, var(--ij-color-primary, #D0FF00));
     --_border:  var(--ij-color-border-subtle,  rgba(255, 255, 255, 0.12));
   }
 }
