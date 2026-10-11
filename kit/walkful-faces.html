@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Walkful display face: three candidates</title>
+<meta name="robots" content="noindex">
+<!--
+  A proposal page for #65: Walkful's hero, once per candidate face, so the owner
+  can choose. The colours here are the proposed Walkful identity, declared on the
+  page until the per-app identity sheets carry them. The phone frame is a
+  placeholder for the owner's drawn frame, and the screen is Walkful's own.
+-->
+<link rel="stylesheet" href="../dist/css/tokens.css">
+<style>
+  @font-face {
+    font-family: 'Fraunces';
+    src: url('../fonts/fraunces-latin-soft-normal.woff2') format('woff2');
+    font-weight: 100 900; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Young Serif';
+    src: url('../fonts/young-serif-latin-400-normal.woff2') format('woff2');
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Newsreader';
+    src: url('../fonts/newsreader-latin-wght-normal.woff2') format('woff2');
+    font-weight: 200 800; font-style: normal; font-display: swap;
+  }
+
+  /* Walkful, proposed: a sand ground, charcoal text, the icon's magenta for the
+     drawn line. Light only, so the page ignores the visitor's dark setting. */
+  :root {
+    color-scheme: light;
+    --sand: #F5EFE6;
+    --charcoal: #2B2825;
+    --charcoal-2: #5C5751;
+    --magenta: #F140FE;
+    --frame: #23211F;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--sand); color: var(--charcoal);
+         font-family: var(--ij-font-ui); -webkit-font-smoothing: antialiased; }
+
+  .hero { min-height: 100svh; display: grid; grid-template-rows: auto 1fr;
+          padding: 0 clamp(20px, 5vw, 64px); }
+  .bar, .stage { width: 100%; max-width: 1100px; margin: 0 auto; }
+  .bar { display: flex; align-items: center; justify-content: space-between; padding: 28px 0; }
+  .wordmark { font-family: var(--display); font-size: 26px; letter-spacing: -0.01em; }
+  .candidate { font-size: 13px; color: var(--charcoal-2); border: 1px solid rgba(43, 40, 37, 0.2);
+               border-radius: 999px; padding: 6px 12px; }
+
+  .stage { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+           align-items: center; gap: clamp(32px, 5vw, 72px); padding: 8px 0 56px; }
+  h1 { font-family: var(--display); font-weight: var(--display-weight, 400);
+       font-variation-settings: var(--display-axes, normal);
+       font-size: clamp(3.25rem, 1.6rem + 5.2vw, 6rem); line-height: 1.02;
+       letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+  .line { display: block; width: min(70%, 360px); height: auto; margin: 14px 0 30px; color: var(--magenta); }
+  .lede { font-size: clamp(1.125rem, 1rem + 0.4vw, 1.375rem); line-height: 1.5;
+          color: var(--charcoal-2); max-width: 32ch; margin: 0 0 36px; text-wrap: pretty; }
+  .ij-store-badge img { display: block; height: 48px; width: auto; }
+  .ij-store-facts { margin: 12px 0 0; font-size: 15px; color: var(--charcoal-2); }
+
+  /* Placeholder for the drawn frame: a generic phone, no island, no buttons. */
+  .phone { justify-self: center; width: min(330px, 100%); padding: 11px; border-radius: 56px;
+           background: var(--frame);
+           box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.12), 0 40px 80px -40px rgba(43, 40, 37, 0.45); }
+  .phone img { display: block; width: 100%; height: auto; border-radius: 46px; }
+
+  .fraunces { --display: 'Fraunces', Georgia, serif; --display-weight: 400; --display-axes: 'SOFT' 100, 'WONK' 0; }
+  .young    { --display: 'Young Serif', Georgia, serif; }
+  .news     { --display: 'Newsreader', Georgia, serif; --display-weight: 450; }
+
+  .about { max-width: 1100px; margin: 0 auto; padding: 48px clamp(20px, 5vw, 64px) 96px;
+           color: var(--charcoal-2); font-size: 16px; line-height: 1.6; }
+  .about h2 { font-size: 18px; color: var(--charcoal); margin: 0 0 8px; }
+
+  @media (max-width: 760px) {
+    .stage { grid-template-columns: minmax(0, 1fr); padding-bottom: 40px; }
+    .phone { width: min(250px, 100%); border-radius: 44px; padding: 9px; }
+    .phone img { border-radius: 36px; }
+    .ij-store-badge img { height: 44px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="hero fraunces" id="fraunces" aria-label="Fraunces">
+  <div class="bar"><span class="wordmark">Walkful</span><span class="candidate">Fraunces, soft</span></div>
+  <div class="stage">
+    <div>
+      <h1>Every step counts.</h1>
+      <svg class="line" viewBox="0 0 320 24" aria-hidden="true"><path d="M3 15c28-9 52-11 79-6s45 9 74 3 47-12 79-8 47 9 82 4" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>
+      <p class="lede">Walkful turns your daily walks into something meaningful, calmly and entirely on your phone.</p>
+      <div class="ij-store" data-ij-store="walkful" data-ij-store-locale="en">
+        <a class="ij-store-badge" href="https://apps.apple.com/app/id6781303837?pt=128512007&amp;ct=site&amp;mt=8">
+          <img src="../badges/app-store-black-en-us.svg" alt="Download on the App Store" width="120" height="40">
+        </a>
+        <p class="ij-store-facts">Free · iOS 18 or later</p>
+      </div>
+    </div>
+    <div class="phone"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/walkful@6071758543886c553cab87c1d34dc8fdeebccc27/docs/assets/today-light.png" alt="Walkful's Today screen" width="1206" height="2622"></div>
+  </div>
+</section>
+
+<section class="hero young" id="young-serif" aria-label="Young Serif">
+  <div class="bar"><span class="wordmark">Walkful</span><span class="candidate">Young Serif</span></div>
+  <div class="stage">
+    <div>
+      <h1>Every step counts.</h1>
+      <svg class="line" viewBox="0 0 320 24" aria-hidden="true"><path d="M3 15c28-9 52-11 79-6s45 9 74 3 47-12 79-8 47 9 82 4" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>
+      <p class="lede">Walkful turns your daily walks into something meaningful, calmly and entirely on your phone.</p>
+      <div class="ij-store" data-ij-store="walkful" data-ij-store-locale="en">
+        <a class="ij-store-badge" href="https://apps.apple.com/app/id6781303837?pt=128512007&amp;ct=site&amp;mt=8">
+          <img src="../badges/app-store-black-en-us.svg" alt="Download on the App Store" width="120" height="40">
+        </a>
+        <p class="ij-store-facts">Free · iOS 18 or later</p>
+      </div>
+    </div>
+    <div class="phone"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/walkful@6071758543886c553cab87c1d34dc8fdeebccc27/docs/assets/today-light.png" alt="Walkful's Today screen" width="1206" height="2622" loading="lazy"></div>
+  </div>
+</section>
+
+<section class="hero news" id="newsreader" aria-label="Newsreader">
+  <div class="bar"><span class="wordmark">Walkful</span><span class="candidate">Newsreader</span></div>
+  <div class="stage">
+    <div>
+      <h1>Every step counts.</h1>
+      <svg class="line" viewBox="0 0 320 24" aria-hidden="true"><path d="M3 15c28-9 52-11 79-6s45 9 74 3 47-12 79-8 47 9 82 4" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>
+      <p class="lede">Walkful turns your daily walks into something meaningful, calmly and entirely on your phone.</p>
+      <div class="ij-store" data-ij-store="walkful" data-ij-store-locale="en">
+        <a class="ij-store-badge" href="https://apps.apple.com/app/id6781303837?pt=128512007&amp;ct=site&amp;mt=8">
+          <img src="../badges/app-store-black-en-us.svg" alt="Download on the App Store" width="120" height="40">
+        </a>
+        <p class="ij-store-facts">Free · iOS 18 or later</p>
+      </div>
+    </div>
+    <div class="phone"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/walkful@6071758543886c553cab87c1d34dc8fdeebccc27/docs/assets/today-light.png" alt="Walkful's Today screen" width="1206" height="2622" loading="lazy"></div>
+  </div>
+</section>
+
+<section class="about">
+  <h2>About this page</h2>
+  <p>Three candidates for Walkful's display face, for the owner to choose between (#65). Everything else is
+  the same in all three: the sand ground, charcoal text, one magenta line, the line under the headline from
+  Walkful's current site, the store button and the Today screen. The phone frame is a placeholder for the
+  owner's drawn frame, and the magenta line stands in for the drawings.</p>
+  <p>Files: Fraunces with its soft axis (62 KB), Young Serif in its one weight (27 KB) and Newsreader (58 KB),
+  all OFL-1.1 from Fontsource 5.3.0, in <code>fonts/</code>. The two not chosen leave before the release.</p>
+</section>
+
+</body>
+</html>

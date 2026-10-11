@@ -137,8 +137,17 @@ export async function launch(chromePath) {
           await call('Input.dispatchMouseEvent', { type, x, y, button: 'left', clickCount: 1 });
         }
       },
-      async viewport(width, height = 800) {
-        await call('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 1, mobile: false });
+      async viewport(width, height = 800, { scale = 1, mobile = false } = {}) {
+        await call('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: scale, mobile });
+      },
+      // A PNG or JPEG of the viewport, or of a clip in page coordinates, as a
+      // Buffer. For pictures a person has to judge, which a test cannot.
+      async screenshot({ clip, format = 'png', quality } = {}) {
+        const { data } = await call('Page.captureScreenshot', {
+          format, ...(quality ? { quality } : {}),
+          ...(clip ? { clip: { ...clip, scale: 1 }, captureBeyondViewport: true } : {}),
+        });
+        return Buffer.from(data, 'base64');
       },
       async media(features) {
         await call('Emulation.setEmulatedMedia', { features });
