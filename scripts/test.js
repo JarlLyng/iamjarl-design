@@ -630,7 +630,7 @@ check('an unknown app throws', (() => {
 
 // --- Display type ---
 const faces = fullTokens.brand.typography.display;
-check('three approved display faces', Object.keys(faces).length === 3);
+check('four approved display faces', Object.keys(faces).length === 4);
 check('every face records a licence and a real fallback', Object.values(faces).every(f =>
   f.licence && f.stack.includes(',') && /sans-serif|monospace|serif$/.test(f.stack.trim())),
   'a stack without a real fallback leaves a site unreadable until the file lands');
@@ -655,7 +655,7 @@ check('every sheet with a face emits its stack and says to self-host it', shippe
   }), 'a face that is declared but never emitted is the inert state this replaced');
 check('an unknown face name throws rather than emitting it', (() => {
   const probe2 = JSON.parse(JSON.stringify(registry));
-  probe2.categories.music.display = 'serif';
+  probe2.categories.music.display = 'blackletter';
   try { displayFor(probe2, 'tonvault', fullTokens); return false; } catch { return true; }
 })());
 check('a category face reaches its apps', (() => {
@@ -667,7 +667,7 @@ check('a category face reaches its apps', (() => {
 // family must be the name --ij-font-display asks for, and whose url must land
 // on the woff2 from wherever the sheet is loaded.
 for (const f of Object.values(faces)) {
-  const name = f.file.replace(/-latin-wght-normal\.woff2$/, '');
+  const name = f.file.replace(/-latin-[a-z0-9]+-normal\.woff2$/, '');
   const sheet = `dist/fonts/${name}.css`;
   const css = fs.existsSync(path.join(ROOT, sheet)) ? read(sheet) : '';
   check(`${f.name} ships with a font-face sheet that names it as the stack does`,
