@@ -119,6 +119,7 @@ const NAV_STYLE = `
   gap: var(--_gap);
   color: var(--_strong);
   font-family: var(--ij-font-display, inherit);
+  font-variation-settings: var(--ij-font-display-axes, normal);
   font-size: var(--ij-font-size-lg, 18px);
   font-weight: var(--ij-font-weight-bold, 700);
   line-height: var(--ij-line-height-lg, 28px);

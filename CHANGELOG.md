@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.22.0] — 2026-10-11
+
+Each app site gets its own personality, and the system gets a kit to build them with (#65). Side by side, twelve of the thirteen app sites were near-black, with the same accent, the same layout and a small product in a dark void, because each took one accent and one face per family. The owner decided on 2026-10-11 that every site gets its own; Walkful is the pilot, and Wean follows.
+
+### Added
+- **Per-app site identity** (#67). Each app declares its own `identity` in `apps.json`: `background`, `surface`, `text`, `accent`, `accentText`, `display`, and optionally `scheme` for a site with one mode. `dist/identity/<app>.css` sets only what an app declares, under the tokens' own names, plus `--ij-color-accent`, `--ij-color-on-accent`, `--ij-color-accent-text` and `--ij-font-display-axes`. A one-mode sheet holds every colour in its mode whatever the visitor's setting. The validator holds text to 7:1, the text-safe accent and both derived greys to AA on the ground and the cards, and the accent able to carry black or white.
+- **Walkful's identity:** light only, sand `#F5EFE6`, charcoal `#2B2825`, cards `#FFFCF7`, the icons' magenta `#F140FE` for strokes and fills and `#A80FB3` for text, Fraunces for headlines.
+- **Fraunces, soft,** as a fourth display face, `serif` (#66): 62 KB, OFL-1.1, from Fontsource 5.3.0. Its file carries the `SOFT` axis, which rests at the sharp end; the identity sheet carries `'SOFT' 100` and the kit and `<ij-nav>` apply it. The owner chose it over Young Serif and Newsreader after seeing all three on Walkful's hero; the comparison is on #65.
+- **The marketing scale** (#68), separate from the app scale: `--ij-mkt-*` for display (52 to 96 px), headline, title, lead, body (from 18 px), small, numeral and wordmark, the section rhythm and the content width (1,100 px). Fluid between a 375 and a 1280 px viewport, in rem. Web only.
+- **The marketing kit** (#68): `dist/kit/kit.css`, sections in plain HTML that read in full without JavaScript. A hero, split or centred; a straight phone, drawn in CSS until a site's drawn frame lands (never Apple's bezel: its licence forbids it); statements with one drawing each; frameless pieces in a bento or alternating rows; the phone that stays; where-it-works traits with one large number; privacy and price; a maker note; a dated source; a closing wordmark. No colour of its own.
+- **The kit's motion** (#69): `dist/kit/kit.js`, the system's own 3 KB module, no library. A muted screen recording plays while it is on screen; the phone that stays holds still while the feature texts scroll past and crossfades its screen with the motion tokens. Nothing animates in, nothing is dimmed, and under reduce motion, on a phone or without the module, the resting state is the whole page.
+- **Two demo pages,** `kit/walkful.html` and `kit/wean.html`: every section under Walkful's identity and under a sketched Wean identity (cool grey-blue, a humanist sans), shown live on the docs page with the whole scale.
+
+### Changed
+- **The family layer is gone.** Every family's accent and face were copied onto its apps, so the twelve other sheets carry exactly the values they had, and still set `--ij-color-accent-family`, now as the text-safe accent. `<ij-nav>` and `<ij-footer>` read the new names first and fall back to the old ones; the nav's CTA puts `--ij-color-on-accent` on the accent.
+- `scripts/browser.js` can set a scale factor and take a screenshot, for pictures a person has to judge.
+- MIGRATION.md's table, sorted in 1.21.0, now also covers the identity switch in its own section.
+
 ## [1.21.0] — 2026-10-11
 
 The store button after its first two pilots, Anvil Workout and Patternaut (#63). Most of the portfolio's sites have no build step, so they paste the fragment by hand, and anything the fragment left to JavaScript was wrong in the served HTML: the badge on an always-dark site, and the placement of every repeat.
@@ -720,6 +738,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.22.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.22.0
 [1.21.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.21.0
 [1.20.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.20.0
 [1.19.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.19.0

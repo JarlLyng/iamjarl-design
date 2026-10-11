@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.21.0)
+# IAMJARL Design System (v1.22.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -60,7 +60,7 @@ Two of the three were derived rather than chosen: JetBrains Mono is the only mon
 Named in each app's `identity` in `apps.json`, emitted as `--ij-font-display` in `dist/identity/<app>.css`. Every stack ends in a real fallback, so a site that has not loaded the file still reads correctly.
 
 #### The assignments
-Decided by the owner on 2026-10-03 (#50), per family; since 1.22.0 each app carries its own (#65), with the same values. Walkful's will change to the soft serif the owner chooses (#65).
+Decided by the owner on 2026-10-03 (#50), per family; since 1.22.0 each app carries its own (#65), with the same values. Walkful's became Fraunces, soft, when it got its own identity (#65).
 
 | Family | Face | Except |
 |---|---|---|
@@ -98,7 +98,7 @@ Each sheet is one generated `@font-face`. Its `font-family` is the name `--ij-fo
 
 The files are Fontsource's variable latin subsets (v5.3.0), and `tokens.json` records each one's source.
 
-**Fraunces is soft only when asked.** Its file carries the `SOFT` axis, which rounds the serifs and terminals off, but the axis rests at 0, the sharp end. Use it with `font-variation-settings: 'SOFT' 100`, which `tokens.json` records as the face's `axes`. The owner chose it for Walkful on 2026-10-11 over Young Serif (one heavy weight) and Newsreader (more editorial than warm); the comparison is on #65. A woff2 loaded from a sheet cannot carry `integrity` (a CSS `url()` has no attribute for it), so the sheet is pinned with a hash and the font is covered by the tag being immutable.
+**Fraunces is soft only when asked.** Its file carries the `SOFT` axis, which rounds the serifs and terminals off, but the axis rests at 0, the sharp end. Use it with `font-variation-settings: 'SOFT' 100`, which `tokens.json` records as the face's `axes`. An identity sheet whose face has axes sets them as `--ij-font-display-axes`, and the kit and `<ij-nav>` apply it, so a site gets the soft cut without writing it. The owner chose it for Walkful on 2026-10-11 over Young Serif (one heavy weight) and Newsreader (more editorial than warm); the comparison is on #65. A woff2 loaded from a sheet cannot carry `integrity` (a CSS `url()` has no attribute for it), so the sheet is pinned with a hash and the font is covered by the tag being immutable.
 
 ### Site identity (web only)
 Side by side, twelve of the thirteen app sites were near-black, with the same neon accent and the same layout. They inherited exactly what they were given: one primary, then from 1.12.0 one accent and from 1.16.0 one display face per *family*, shared by every site in it. The owner decided on 2026-10-11 that every app site gets its own personality (#65).
@@ -135,7 +135,7 @@ So each app declares its **identity** in `apps.json`: its own ground, text, acce
 
 | Site | Scheme | Ground and text | Accent (text) | Face |
 |---|---|---|---|---|
-| **Walkful** | light | sand `#F5EFE6`, charcoal `#2B2825`, cards `#FFFCF7` | `#F140FE` (`#A80FB3`) | Instrument Sans until the owner picks the serif (#65) |
+| **Walkful** | light | sand `#F5EFE6`, charcoal `#2B2825`, cards `#FFFCF7` | `#F140FE` (`#A80FB3`) | Fraunces, soft |
 | Anvil Workout, WODrounds, Wean | both | the tokens' | `#587114` / `#D0FF00` | JetBrains Mono; Wean Instrument Sans |
 | It's mono yo!, It's 404 yo!, Echolume, TonVault, Patternaut | both | the tokens' | `#177082` / `#23ACC7` | JetBrains Mono; Echolume Outfit |
 | BotLens, PageLens | both | the tokens' | `#217370` / `#35B6B2` | Outfit |

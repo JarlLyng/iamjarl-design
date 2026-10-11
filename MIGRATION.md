@@ -4,7 +4,7 @@ Step-by-step instructions for updating consumer projects between versions.
 
 ---
 
-## Per-app site identity (in the next release, #65)
+## v1.21 → v1.22: per-app site identity (#65)
 
 ### What changed
 Until 1.21.0 a site took its accent and display face from its **family**, the category it sits in
@@ -76,6 +76,7 @@ This table gets a row for every release, including the ones where the answer is 
 | **1.19.0** | `<ij-footer>` hover and focus ring follow the family accent, with primary as the fallback. Echolume is registered as a consumer | Nothing. A site with an identity sheet sees its accent on footer hover instead of the primary; without one, nothing changes. If your CSS has a global `a { color }`, scope it to `a:where(:not([slot]))` (README) |
 | **1.20.0** | `<ij-store-cta>` and the store fragments: badge, campaign link, `store-click` event and facts line from `apps.json`. Official badges ship in `badges/` | No — opt in. Replace a hand-written store link with `dist/store/<app>.<locale>.html`, and the nav's CTA with the `.nav.html` variant. The hub will file the adoption issues |
 | **1.21.0** | Store fragments per placement (`midpage`, `footer`) and fixed tone (`black`, `white`), and a JSON-LD `offer.json` per app and locale. The element's hash in the README and in every release's notes. No em-dash in any generated file | No. A site that pasted a fragment by hand can swap in the file for its spot and tone, and take its JSON-LD `offers` from `offer.json` |
+| **1.22.0** | Per-app site identity replaces the family layer: ground, cards, text, accent, a text-safe accent, the display face, one mode or both. Fraunces, soft, as a fourth face. The marketing scale (`--ij-mkt-*`), the marketing kit (`dist/kit/kit.css`, `dist/kit/kit.js`) | No, except Walkful: take the new identity sheet with the redesign, not before (see *v1.21 → v1.22* above). Every other sheet carries the values it had |
 
 ### Who needs to migrate
 - ✅ **Everyone** — bump the version. Nothing you use today changes value or name.

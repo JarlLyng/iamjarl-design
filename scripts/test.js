@@ -656,6 +656,13 @@ check('four approved display faces', Object.keys(faces).length === 4);
 check('every approved face records a licence and a real fallback', Object.values(faces).every(f =>
   f.licence && f.stack.includes(',') && /sans-serif|monospace|serif$/.test(f.stack.trim())),
   'a stack without a real fallback leaves a site unreadable until the file lands');
+check('a face with axes carries them in the sheet, and the kit and the nav apply them', shippedApps
+  .map(a => [a, identityFor(registry, a.id, fullTokens)]).filter(([, id]) => id.display?.face.axes)
+  .every(([a, id]) => read(`dist/identity/${a.id}.css`).includes(`--ij-font-display-axes: ${id.display.face.axes};`)) &&
+  identityFor(registry, 'walkful', fullTokens).display?.face.name === 'Fraunces' &&
+  /font-variation-settings: var\(--ij-font-display-axes, normal\)/.test(read('kit/kit.css')) &&
+  /font-variation-settings: var\(--ij-font-display-axes, normal\)/.test(read('components/ij-nav.js')),
+  "Fraunces rests at its sharp end; Walkful was shown it soft (#65)");
 check('every sheet with a face emits its stack and says to self-host it', shippedApps
   .map(a => [a, identityFor(registry, a.id, fullTokens)])
   .filter(([, id]) => id.display)
