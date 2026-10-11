@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en" class="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketing kit: Wean sketch</title>
+<meta name="description" content="An example page built from the IAMJARL marketing kit, with a sketched identity for Wean: cool grey-blue and a humanist sans.">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="../dist/css/tokens.css">
+<link rel="stylesheet" href="../dist/fonts/instrument-sans.css">
+<link rel="stylesheet" href="../dist/kit/kit.css">
+<!--
+  A sketch, not Wean's identity: the same kit under a cool, misty grey-blue and a
+  humanist sans, to show it assumes neither a serif nor a warm palette (#65).
+  Written the way a light-only identity sheet would set it, and held to the same
+  contrast rules: text 12.8:1, the text-safe blue 5.3:1. The misty blue itself is
+  for strokes and fills, like Walkful's magenta. Wean's real identity comes later.
+-->
+<style>
+  :root {
+    color-scheme: light;
+    --ij-color-bg-app: #E6ECEF;
+    --ij-color-bg-card: #F5F8F9;
+    --ij-color-surface-default: #F5F8F9;
+    --ij-color-text-primary: #1B2731;
+    --ij-color-text-secondary: #444E57;
+    --ij-color-text-tertiary: #58626A;
+    --ij-color-accent: #5B8FAD;
+    --ij-color-accent-rgb: 91, 143, 173;
+    --ij-color-on-accent: #000000;
+    --ij-color-accent-text: #2C6683;
+    --ij-color-accent-family: #2C6683;
+    --ij-color-accent-family-rgb: 44, 102, 131;
+    --ij-font-display: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --ij-display-weight: 500;
+  }
+</style>
+<script type="module" src="../dist/components/ij-nav.js"></script>
+<script type="module" src="../dist/components/ij-footer.js"></script>
+</head>
+<body class="ij-page">
+
+<ij-nav>
+  <a slot="brand" href="./wean.html">Wean</a>
+  <a slot="links" href="#how">How it works</a>
+  <a slot="cta" href="https://apps.apple.com/app/id6758867485?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="nav" data-umami-event-locale="en">Download</a>
+</ij-nav>
+
+<main id="main">
+
+  <!-- Hero, centred -->
+  <section class="ij-hero ij-hero--centred" id="hero">
+    <div class="ij-container ij-hero__inner">
+      <div class="ij-hero__text">
+        <h1 class="ij-display">A gentler way to quit nicotine.</h1>
+        <p class="ij-lede">Wean helps you reduce snus and nicotine pouches gradually, at your own pace, on your own device.</p>
+        <!-- dist/store/wean-nicotine.en.black.html -->
+        <div class="ij-store" data-ij-store="wean-nicotine" data-ij-store-locale="en">
+          <a class="ij-store-badge" href="https://apps.apple.com/app/id6758867485?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="hero" data-umami-event-locale="en">
+            <img src="../badges/app-store-black-en-us.svg" alt="Download on the App Store" width="120" height="40">
+          </a>
+          <p class="ij-store-facts">$2.99 once · iOS 15.1 or later</p>
+        </div>
+      </div>
+      <div class="ij-hero__media">
+        <div class="ij-phone" style="--ij-phone-width: 300px">
+          <div class="ij-phone__screen">
+            <img src="https://cdn.jsdelivr.net/gh/JarlLyng/wean-nicotine@391437d48600a3d81044f072b73f4805491729f5/website/public/screenshots/v1.2/05-today.png" alt="Wean's Today screen: a daily allowance of 16 pouches, 3 used" width="1179" height="2556" fetchpriority="high">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statements, one drawing each -->
+  <section class="ij-section ij-section--band" id="how" aria-labelledby="how-h">
+    <div class="ij-container">
+      <h2 class="ij-headline" id="how-h" style="margin-bottom: var(--ij-mkt-space-block)">Less, a little at a time.</h2>
+      <div class="ij-statements">
+        <div class="ij-statement">
+          <svg class="ij-drawing" viewBox="0 0 480 300" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <g style="stroke: var(--ij-color-text-tertiary)" stroke-width="2"><path d="M40 250h400"/><path d="M80 250c40-60 90-90 160-90s120 30 160 90"/></g>
+            <path d="M60 110c60 10 110 40 170 70s110 50 190 56" style="stroke: var(--ij-color-accent)" stroke-width="3"/>
+          </svg>
+          <div class="ij-statement__text">
+            <h3 class="ij-title">At your own pace.</h3>
+            <p>A daily allowance that steps down when you are ready, not on a schedule someone else set.</p>
+          </div>
+        </div>
+        <div class="ij-statement">
+          <svg class="ij-drawing" viewBox="0 0 480 300" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <g style="stroke: var(--ij-color-text-tertiary)" stroke-width="2"><rect x="170" y="40" width="140" height="230" rx="28"/></g>
+            <path d="M90 150c50-30 100-30 150 0s100 30 150 0" style="stroke: var(--ij-color-accent)" stroke-width="3"/>
+          </svg>
+          <div class="ij-statement__text">
+            <h3 class="ij-title">On your own device.</h3>
+            <p>No account to make. Your logs stay on your phone.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Frameless pieces, as alternating rows -->
+  <section class="ij-section" aria-labelledby="pieces-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="pieces-h">What the day looks like.</h2>
+      <div class="ij-rows">
+        <div class="ij-row">
+          <div class="ij-card"><div class="ij-card__piece"><p class="ij-numeral">3/16</p></div></div>
+          <div class="ij-row__text"><h3 class="ij-title">Today's allowance</h3><p>How many you have used, and how many are left, in one number.</p></div>
+        </div>
+        <div class="ij-row">
+          <div class="ij-card"><div class="ij-card__piece" aria-hidden="true">
+            <div style="display:flex; align-items:flex-end; gap:10px; height:120px">
+              <span style="width:22px; height:100%; background: var(--ij-color-accent); border-radius: var(--ij-radius-sm)"></span>
+              <span style="width:22px; height:86%; background: var(--ij-color-accent); border-radius: var(--ij-radius-sm)"></span>
+              <span style="width:22px; height:74%; background: var(--ij-color-accent); border-radius: var(--ij-radius-sm)"></span>
+              <span style="width:22px; height:60%; background: var(--ij-color-accent); border-radius: var(--ij-radius-sm)"></span>
+              <span style="width:22px; height:48%; background: var(--ij-color-accent); border-radius: var(--ij-radius-sm)"></span>
+              <span style="width:22px; height:36%; background: var(--ij-color-accent); border-radius: var(--ij-radius-sm)"></span>
+            </div>
+          </div></div>
+          <div class="ij-row__text"><h3 class="ij-title">A gradual plan</h3><p>The allowance steps down over weeks, so less never arrives all at once.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The phone that stays: resting state -->
+  <section class="ij-section ij-section--band" aria-labelledby="tour-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="tour-h">Three screens, all you need.</h2>
+      <div class="ij-tour">
+        <div class="ij-tour__screens">
+          <div class="ij-phone" data-step="1"><div class="ij-phone__screen"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/wean-nicotine@391437d48600a3d81044f072b73f4805491729f5/website/public/screenshots/v1.2/05-today.png" alt="Today" loading="lazy" decoding="async"></div></div>
+          <div class="ij-phone" data-step="2"><div class="ij-phone__screen"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/wean-nicotine@391437d48600a3d81044f072b73f4805491729f5/website/public/screenshots/v1.2/06-progress.png" alt="Progress" loading="lazy" decoding="async"></div></div>
+          <div class="ij-phone" data-step="3"><div class="ij-phone__screen"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/wean-nicotine@391437d48600a3d81044f072b73f4805491729f5/website/public/screenshots/v1.2/08-savings.png" alt="Savings" loading="lazy" decoding="async"></div></div>
+        </div>
+        <ol class="ij-tour__steps">
+          <li class="ij-tour__step" data-step="1"><h3 class="ij-title">Today</h3><p>Log a pouch, or a craving you resisted, in one tap.</p></li>
+          <li class="ij-tour__step" data-step="2"><h3 class="ij-title">Progress</h3><p>The weeks behind you, drawn as a line that goes down.</p></li>
+          <li class="ij-tour__step" data-step="3"><h3 class="ij-title">Savings</h3><p>What you have not spent, added up.</p></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Where it works: traits and one large number -->
+  <section class="ij-section" aria-labelledby="traits-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="traits-h">Nothing in the way.</h2>
+      <div class="ij-traits">
+        <div class="ij-trait ij-trait--number"><p class="ij-numeral">0</p><p>accounts, usage tracking or subscriptions.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Snus and pouches</h3><p>Built for the nicotine you use.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Your pace</h3><p>You decide when the next step comes.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Your device</h3><p>The logs stay with you.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Once</h3><p>One payment.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- A dated source: placeholder -->
+  <section class="ij-section ij-section--band" aria-labelledby="evidence-h">
+    <div class="ij-container ij-stack ij-measure">
+      <h2 class="ij-headline" id="evidence-h">Why gradually.</h2>
+      <figure class="ij-source">
+        <blockquote class="ij-source__fact ij-title">A cited finding goes here, worded as its source words it.</blockquote>
+        <figcaption class="ij-source__meta">The study's title, the journal, and the date it was published.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Privacy and price as features -->
+  <section class="ij-section" aria-labelledby="privacy-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="privacy-h">Private, and paid for once.</h2>
+      <div class="ij-assurances">
+        <div class="ij-assurance"><h3 class="ij-title">Your logs stay on your device</h3><p>No account, and nothing to sync.</p></div>
+        <div class="ij-assurance"><h3 class="ij-title">No usage tracking</h3><p>The app does not watch how you use it.</p></div>
+        <div class="ij-assurance"><h3 class="ij-title">No subscriptions</h3><p>One payment.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- A note from the maker -->
+  <section class="ij-section ij-section--band" aria-label="A note from the maker">
+    <div class="ij-container">
+      <div class="ij-maker">
+        <p>The maker's note goes here: three or four sentences in the first person, on why Wean exists. The owner writes it.</p>
+        <p class="ij-maker__sign">Jarl
+          <svg class="ij-drawing" viewBox="0 0 140 14" aria-hidden="true"><path d="M2 9c20-6 40-6 62-2s46 4 74-3" fill="none" style="stroke: var(--ij-color-accent)" stroke-width="2.4" stroke-linecap="round"/></svg>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing: the wordmark, large -->
+  <section class="ij-section" aria-label="Download Wean">
+    <div class="ij-container ij-closing">
+      <p class="ij-wordmark">Wean</p>
+      <div class="ij-store" data-ij-store="wean-nicotine" data-ij-store-locale="en">
+        <a class="ij-store-badge" href="https://apps.apple.com/app/id6758867485?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="footer" data-umami-event-locale="en">
+          <img src="../badges/app-store-black-en-us.svg" alt="Download on the App Store" width="120" height="40" loading="lazy">
+        </a>
+        <p class="ij-store-facts">$2.99 once · iOS 15.1 or later</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<ij-footer app="wean-nicotine">
+  <span slot="fineprint">An example page for the IAMJARL marketing kit (#65), with a sketched identity for Wean, not its own. The copy is from Wean's site where it could be; the drawings, the source and the maker's note are placeholders.</span>
+</ij-footer>
+
+</body>
+</html>

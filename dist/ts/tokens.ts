@@ -200,6 +200,8 @@ export function easingCss(name: keyof typeof motion.easing): string {
 
 export const container = {"sm":680,"md":900,"lg":1080,"xl":1400} as const;
 
+export const marketing = {"viewport":{"min":375,"max":1280},"type":{"display":{"min":52,"max":96,"leading":1.02,"tracking":-0.02},"headline":{"min":34,"max":56,"leading":1.08,"tracking":-0.015},"title":{"min":22,"max":28,"leading":1.25,"tracking":-0.005},"lead":{"min":19,"max":23,"leading":1.5,"tracking":0},"body":{"min":18,"max":19,"leading":1.6,"tracking":0},"small":{"min":15,"max":16,"leading":1.5,"tracking":0},"numeral":{"min":64,"max":128,"leading":1,"tracking":-0.03},"wordmark":{"min":76,"max":240,"leading":0.9,"tracking":-0.03}},"space":{"gutter":{"min":20,"max":64},"stack":{"min":20,"max":32},"block":{"min":48,"max":88},"section":{"min":88,"max":168}},"width":{"content":1100,"text":640,"narrow":760}} as const;
+
 export const breakpoints = {"popup":320,"sm":640,"md":768,"lg":1024,"xl":1280,"xxl":1536} as const;
 
 export const focus = {"width":2,"offset":2} as const;
@@ -227,6 +229,7 @@ export type Motion = typeof motion;
 export type DurationKey = keyof Motion["duration"];
 export type EasingKey = keyof Motion["easing"];
 export type Container = typeof container;
+export type Marketing = typeof marketing;
 export type Breakpoints = typeof breakpoints;
 export type BreakpointKey = keyof Breakpoints;
 export type Focus = typeof focus;

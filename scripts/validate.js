@@ -46,6 +46,7 @@ function validateStructure(tokens) {
 
   validateVersionCoherence(tokens.meta.version);
   validateNumerals(tokens);
+  validateMarketing(tokens);
   validateShippedFaces(tokens);
   validateFontStacks(tokens);
 
@@ -356,6 +357,28 @@ function validateShippedFaces(tokens) {
     if (!/^\d+ \d+$/.test(f.weights ?? '')) { fail(`display.${slot}: weights must be a range like "100 900"`); problems++; }
   }
   if (!problems) pass(`${faces.length} display faces ship, each a woff2 with its OFL licence`);
+}
+
+// The marketing scale (#65), separate from the app scale. What #65 asked of it
+// is held here: body text at 18 px or more, headlines from about 48 to 96 px,
+// and every size growing, never shrinking, as the viewport widens.
+function validateMarketing(tokens) {
+  const m = tokens.tokens?.marketing;
+  if (!m) { fail('tokens.marketing is missing'); return; }
+  let problems = 0;
+  const bad = msg => { fail(`marketing: ${msg}`); problems++; };
+  if (!(m.viewport?.min > 0 && m.viewport.max > m.viewport.min)) bad('viewport.min must be below viewport.max');
+  for (const [k, v] of Object.entries(m.type ?? {})) {
+    if (!(v.min > 0 && v.max >= v.min)) bad(`type.${k}: min must be positive and no larger than max`);
+    if (!(v.leading >= 0.8 && v.leading <= 2)) bad(`type.${k}: leading ${v.leading} is not a line height`);
+    if (typeof v.tracking !== 'number' || Math.abs(v.tracking) > 0.1) bad(`type.${k}: tracking must be a small em value`);
+  }
+  for (const k of ['display', 'headline', 'title', 'lead', 'body']) if (!m.type?.[k]) bad(`type.${k} is missing`);
+  if (m.type?.body?.min < 18) bad(`type.body starts at ${m.type.body.min} px; marketing body text is 18 px or more`);
+  if (m.type?.display && (m.type.display.min < 44 || m.type.display.max > 120)) bad('type.display must run within roughly 48 to 96 px');
+  for (const [k, v] of Object.entries(m.space ?? {})) if (!(v.min >= 0 && v.max >= v.min)) bad(`space.${k}: min must be no larger than max`);
+  if (!(m.width?.text < m.width?.content)) bad('width.text must be narrower than width.content');
+  if (!problems) pass(`marketing scale: ${Object.keys(m.type).length} type roles from ${m.type.body.min} px body to ${m.type.display.max} px display, ${Object.keys(m.space).length} spaces`);
 }
 
 // Numbers that are the interface. What sets them apart from text is how they

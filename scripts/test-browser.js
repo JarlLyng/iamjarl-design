@@ -134,7 +134,14 @@ function serve() {
       res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
       return res.end(FIXTURES[fx[1]]);
     }
-    const file = path.join(ROOT, path.normalize(url.pathname));
+    // /nojs/<path>: the repo's own page with every <script> removed, to read a
+    // page as a crawler, a link preview or a visitor without JavaScript does.
+    const nojs = url.pathname.startsWith('/nojs/');
+    const file = path.join(ROOT, path.normalize(nojs ? url.pathname.slice(5) : url.pathname));
+    if (nojs && file.endsWith('.html') && file.startsWith(ROOT) && fs.existsSync(file)) {
+      res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
+      return res.end(fs.readFileSync(file, 'utf-8').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ''));
+    }
     if (!file.startsWith(ROOT) || !fs.existsSync(file) || !fs.statSync(file).isFile()) {
       res.writeHead(404); return res.end();
     }
@@ -549,6 +556,56 @@ try {
   check('tone="white" pins the badge for an always-dark site', /app-store-white-en-us\.svg$/.test(el.pinSrc) && !el.pinSource, el.pinSrc);
   check('an app with no store entry renders nothing and says why', el.unknown === '' &&
     p.console.some(m => m.type === 'error' && m.text.includes('no store entry for app "nope"')));
+
+  // The marketing kit (#65): two demo pages, the same markup under two
+  // identities. Each must read in full at both ends of the scale, with nothing
+  // moving on load and no text below AA on whatever it sits on.
+  console.log('\nMarketing kit:');
+  const KIT_SECTIONS = ['.ij-hero', '.ij-phone', '.ij-statements', '.ij-card', '.ij-tour', '.ij-traits',
+    '.ij-assurances', '.ij-maker', '.ij-source', '.ij-closing'];
+  const kitProbe = `(() => {
+    const lum = c => { const m = c.match(/[\\d.]+/g).map(Number); const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+      return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]); };
+    const ground = el => { for (let n = el; n; n = n.parentElement) { const b = getComputedStyle(n).backgroundColor;
+      if (b && !/rgba\\(.*, 0\\)$/.test(b) && b !== 'transparent') return b; } return 'rgb(255, 255, 255)'; };
+    const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
+    const texts = [...document.querySelectorAll('main p, main h1, main h2, main h3, main blockquote, main figcaption')]
+      .filter(e => e.offsetParent && e.textContent.trim());
+    const low = texts.map(e => [e.textContent.trim().slice(0, 30), ratio(getComputedStyle(e).color, ground(e))]).filter(([, r]) => r < 4.5);
+    const missing = ${JSON.stringify(KIT_SECTIONS)}.filter(sel => !document.querySelector(sel) || !document.querySelector(sel).getBoundingClientRect().height);
+    const h1 = getComputedStyle(document.querySelector('h1'));
+    const body = parseFloat(getComputedStyle(document.querySelector('.ij-statement__text p, .ij-row__text p')).fontSize);
+    const imgs = [...document.querySelectorAll('main img')];
+    const hero = document.querySelector('.ij-hero');
+    const lazyWrong = imgs.filter(i => hero.contains(i) ? i.loading === 'lazy' : i.loading !== 'lazy').map(i => i.alt);
+    const screens = [...document.querySelectorAll('.ij-tour__screens > .ij-phone')].map(e => Math.round(e.getBoundingClientRect().top));
+    return { overflow: document.documentElement.scrollWidth - innerWidth, missing, low, h1: parseFloat(h1.fontSize),
+      face: h1.fontFamily, body, lazyWrong, animations: document.getAnimations().length,
+      screensInARow: screens.length > 1 && screens.every(t => t === screens[0]), bg: getComputedStyle(document.body).backgroundColor };
+  })()`;
+  for (const [demo, bg] of [['walkful', 'rgb(245, 239, 230)'], ['wean', 'rgb(230, 236, 239)']]) {
+    for (const [w, h, size] of [[1440, 900, 96], [375, 812, 52]]) {
+      await p.viewport(w, h);
+      await p.goto(`${base}/kit/${demo}.html`);
+      await p.eval(`document.fonts.ready`);
+      await p.settle(200);
+      const k = await p.eval(kitProbe);
+      check(`${demo} at ${w}: every section, no overflow, headline ${size} px in the site's face, body 18 px or more`,
+        k.missing.length === 0 && k.overflow <= 0 && Math.abs(k.h1 - size) < 1 && /Instrument Sans/.test(k.face) && k.body >= 18 && k.bg === bg,
+        JSON.stringify({ missing: k.missing, overflow: k.overflow, h1: k.h1, face: k.face, body: k.body, bg: k.bg }));
+      check(`${demo} at ${w}: every text at AA on what it sits on, nothing moving on load`,
+        k.low.length === 0 && k.animations === 0, JSON.stringify({ low: k.low, animations: k.animations }));
+      if (w === 1440) check(`${demo}: the hero loads at once, everything below it lazily`, k.lazyWrong.length === 0, k.lazyWrong.join(', '));
+    }
+    await p.viewport(1440, 900);
+    await p.goto(`${base}/nojs/kit/${demo}.html`);
+    await p.settle(200);
+    const n = await p.eval(kitProbe);
+    check(`${demo} without JavaScript: every section reads, and the phone that stays is a row of screens`,
+      n.missing.length === 0 && n.low.length === 0 && n.screensInARow && await p.eval(`document.scripts.length === 0`),
+      JSON.stringify({ missing: n.missing, low: n.low, row: n.screensInARow }));
+  }
+  await p.viewport(1024, 800);
 
   // Footer: the manual checks that have already caught real bugs.
   console.log('\n<ij-footer>:');

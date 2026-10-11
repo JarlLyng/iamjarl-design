@@ -143,6 +143,19 @@ So each app declares its **identity** in `apps.json`: its own ground, text, acce
 
 All but Walkful are the family values carried over, light / dark. Each will change when its site gets its own personality; Wean is next. The docs page renders this table live from `apps.json`, with every contrast.
 
+### Marketing pages (web only)
+Each app site has one job: show what the app is, quickly, and hand the visitor to the store. The owner compared the portfolio's sites with app sites they admire (#65), and what the good ones share is a short list. The kit in `dist/kit/kit.css` is built to make it the easy path:
+
+- **One ground, one display face, one accent and one visual language,** per site. The identity carries the first three; the drawings, or whatever the site's visual language is, are the fourth.
+- **The product big, straight and with plausible data.** A phone on the first screen, never tilted. Below it, features as frameless pieces: one number, one chart, one card from the app, shown large.
+- **One quiet block per feature.** A short headline and one sentence.
+- **Privacy and price stated as features,** and **a person behind the app:** a short note from the maker, signed.
+- **One thing that moves, and it is the product.** A short screen recording in the hero, and the phone that stays on screen while the features scroll past. Nothing animates in, and the resting state is always the whole page.
+- **Light pages.** Below the first screen everything loads lazily. A screen recording is encoded at display size, around 300 to 600 KB, with a poster frame.
+- **Hygiene.** Real headings in order, body text at 18 px or more, no unverifiable numbers (a privacy-first app cannot count its users), no urgency banners, no tilted or animated devices.
+
+**The marketing scale is separate from the app scale.** Headlines run from 52 px on a phone to 96 px from a 1280 px viewport up, body text from 18 px, content 1,100 px wide, and the sections far apart. All of it is fluid and in rem, as `--ij-mkt-*` in `tokens.css`; the docs page shows every value. Cards keep `radius.lg`: rule 6 holds on marketing pages too.
+
 ### Site navigation (web only)
 The top of the page is for intent. Implemented by `<ij-nav>` — see the README — and these rules hold whether a site uses the component or not.
 

@@ -683,6 +683,58 @@ check('the package ships fonts/ and exports the sheets',
 check('design.md tells sites to load the face from here, never from Google Fonts',
   /Load the face from the design system\. Do not link Google Fonts/.test(read('design.md')));
 
+// --- Marketing kit (#65) ---
+// A scale for marketing pages, separate from the app scale, and sections built
+// on it in plain HTML. What must hold: the scale says what #65 asked of it at
+// both ends, the kit takes every colour from the tokens and the identity, and
+// both demo pages compose every section, so each is shown under two identities.
+console.log('\nMarketing kit:');
+const mkt = fullTokens.tokens.marketing;
+const tokensCssText = read('dist/css/tokens.css');
+const mktVars = [...Object.keys(mkt.type).flatMap(k => [`--ij-mkt-${k}-size`, `--ij-mkt-${k}-leading`, `--ij-mkt-${k}-tracking`]),
+  ...Object.keys(mkt.space).map(k => `--ij-mkt-space-${k}`), ...Object.keys(mkt.width).map(k => `--ij-mkt-width-${k}`)];
+check(`tokens.css carries the whole marketing scale (${mktVars.length})`, mktVars.every(v => tokensCssText.includes(`${v}:`)),
+  mktVars.filter(v => !tokensCssText.includes(`${v}:`)).join(', '));
+const atViewport = (name, vw) => {
+  const m = tokensCssText.match(new RegExp(`${name}: clamp\\(([\\d.]+)rem, ([\\d.-]+)rem \\+ ([\\d.]+)vw, ([\\d.]+)rem\\)`));
+  if (!m) return NaN;
+  const [lo, b, slope, hi] = m.slice(1).map(Number);
+  return Math.min(Math.max(b * 16 + slope * vw / 100, lo * 16), hi * 16);
+};
+check('the fluid sizes land on their min and max at the two viewports', Object.entries(mkt.type).filter(([, v]) => v.min !== v.max)
+  .every(([k, v]) => Math.abs(atViewport(`--ij-mkt-${k}-size`, mkt.viewport.min) - v.min) < 0.1 &&
+    Math.abs(atViewport(`--ij-mkt-${k}-size`, mkt.viewport.max) - v.max) < 0.1 &&
+    Math.abs(atViewport(`--ij-mkt-${k}-size`, 2560) - v.max) < 0.1));
+check('#65 at both ends: body 18 px or more, display about 48 to 96 px', mkt.type.body.min >= 18 &&
+  mkt.type.display.min >= 48 && mkt.type.display.max <= 96 + 24);
+check('the Swift package has no marketing scale', !/marketing|--ij-mkt|mkt/i.test(
+  fs.readdirSync(path.join(ROOT, 'Sources/IAMJARLDesignTokens')).map(f => read(`Sources/IAMJARLDesignTokens/${f}`)).join('\n')),
+  'web only: an app has no landing page');
+const kitSrc = read('kit/kit.css');
+check('kit.css writes no colour of its own', !/#[0-9a-f]{3,8}\b|\brgba?\(|\bhsla?\(/i.test(kitSrc.replace(/\/\*[\s\S]*?\*\//g, '')),
+  'every colour comes from the tokens or the identity, so the same markup is any site');
+const KIT_HOOKS = ['--ij-phone-width', '--ij-display-weight'];
+const definedVars = new Set([tokensCssText, ...fs.readdirSync(identityDir).map(f => read(`dist/identity/${f}`))]
+  .flatMap(css => css.match(/--ij-[a-z0-9-]+(?=:)/g) ?? []));
+const kitUses = [...new Set(kitSrc.match(/var\(--ij-[a-z0-9-]+/g).map(v => v.slice(4)))];
+check(`every variable kit.css reads is a token, an identity value or a documented hook (${kitUses.length})`,
+  kitUses.every(v => definedVars.has(v) || KIT_HOOKS.includes(v)), kitUses.filter(v => !definedVars.has(v) && !KIT_HOOKS.includes(v)).join(', '));
+const kitDist = read('dist/kit/kit.css');
+check('dist/kit/kit.css is the source with its version on top, hashed and exported',
+  kitDist.startsWith(`/* IAMJARL marketing kit v${fullTokens.meta.version}:`) && kitDist.endsWith(kitSrc) &&
+  'dist/kit/kit.css' in JSON.parse(read('dist/sri.json')).files && JSON.parse(read('package.json')).exports['./kit/*'] === './dist/kit/*');
+const KIT_CLASSES = ['ij-hero--split', 'ij-hero--centred', 'ij-phone', 'ij-statement', 'ij-drawing', 'ij-card', 'ij-tour',
+  'ij-trait--number', 'ij-assurances', 'ij-maker', 'ij-source', 'ij-closing', 'ij-wordmark'];
+const demos = { walkful: read('kit/walkful.html'), wean: read('kit/wean.html') };
+const shownTwice = KIT_CLASSES.filter(c => ['ij-hero--split', 'ij-hero--centred'].includes(c) ||
+  Object.values(demos).every(html => new RegExp(`class="[^"]*\\b${c}\\b`).test(html)));
+check('both demos compose every section, so each is shown under two identities, and the two hero layouts between them',
+  shownTwice.length === KIT_CLASSES.length && demos.walkful.includes('ij-hero--split') && demos.wean.includes('ij-hero--centred'),
+  KIT_CLASSES.filter(c => !shownTwice.includes(c)).join(', '));
+check('the demos load nothing from Google, and no script but the system\'s components',
+  Object.values(demos).every(html => !/fonts\.googleapis|fonts\.gstatic/.test(html) &&
+    [...html.matchAll(/<script[^>]*src="([^"]+)"/g)].every(m => m[1].startsWith('../dist/components/'))));
+
 // --- Owner decisions, 2026-10-04 (#53) ---
 // Written down in the docs, and the one with code consequences asserted on the
 // code: the family accents are a web layer, so the Swift package must not

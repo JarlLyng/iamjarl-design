@@ -669,6 +669,13 @@ function generateCSS(tokens, scope = ':root') {
     w();
   }
 
+  // Marketing scale (#65): web only, fluid between two viewport widths
+  if (t.marketing) {
+    w('  /* Marketing scale (web only): fluid type and space for marketing pages */');
+    for (const line of marketingCssLines(t.marketing, '  ')) w(line);
+    w();
+  }
+
   // Focus
   if (t.focus) {
     w('  /* Focus ring */');
@@ -754,6 +761,31 @@ function gradientTextNote(value) {
     .filter(([, fg]) => stops.every(s => contrastRatio(fg, s) >= 4.5))
     .map(([n]) => n);
   return safe.length ? `text-safe: ${safe.join(' or ')}` : 'decorative only, no text colour clears AA';
+}
+
+// A size that grows with the viewport from min px at viewport.min to max px at
+// viewport.max, and holds outside it. In rem, so a visitor's own text size
+// still scales it.
+function fluid(min, max, { min: vmin, max: vmax }) {
+  if (min === max) return `${+(min / 16).toFixed(4)}rem`;
+  const slope = (max - min) / (vmax - vmin);
+  const intercept = min - slope * vmin;
+  const r = n => +n.toFixed(4);
+  return `clamp(${r(min / 16)}rem, ${r(intercept / 16)}rem + ${r(slope * 100)}vw, ${r(max / 16)}rem)`;
+}
+
+// The marketing scale (#65), separate from the app scale: a site's headlines,
+// body and section rhythm. Web only, so the Swift package has none of it.
+function marketingCssLines(m, indent) {
+  const lines = [];
+  for (const [k, v] of Object.entries(m.type)) {
+    lines.push(`${indent}--ij-mkt-${k}-size: ${fluid(v.min, v.max, m.viewport)};`);
+    lines.push(`${indent}--ij-mkt-${k}-leading: ${v.leading};`);
+    lines.push(`${indent}--ij-mkt-${k}-tracking: ${v.tracking}em;`);
+  }
+  for (const [k, v] of Object.entries(m.space)) lines.push(`${indent}--ij-mkt-space-${k}: ${fluid(v.min, v.max, m.viewport)};`);
+  for (const [k, v] of Object.entries(m.width)) lines.push(`${indent}--ij-mkt-width-${k}: ${v}px;`);
+  return lines;
 }
 
 function modeColorLines(mode, indent) {
@@ -877,6 +909,10 @@ function generateTS(tokens) {
     w(`export const container = ${JSON.stringify(t.container)} as const;`);
     w();
   }
+  if (t.marketing) {
+    w(`export const marketing = ${JSON.stringify(t.marketing)} as const;`);
+    w();
+  }
 
   // Breakpoints
   if (t.breakpoints) {
@@ -927,6 +963,9 @@ function generateTS(tokens) {
   }
   if (t.container) {
     w('export type Container = typeof container;');
+  }
+  if (t.marketing) {
+    w('export type Marketing = typeof marketing;');
   }
   if (t.breakpoints) {
     w('export type Breakpoints = typeof breakpoints;');
@@ -1008,6 +1047,10 @@ function generateJS(tokens) {
     w(`export const container = ${JSON.stringify(t.container)};`);
     w();
   }
+  if (t.marketing) {
+    w(`export const marketing = ${JSON.stringify(t.marketing)};`);
+    w();
+  }
   if (t.breakpoints) {
     w(`export const breakpoints = ${JSON.stringify(t.breakpoints)};`);
     w();
@@ -1076,6 +1119,9 @@ function generateDTS(tokens) {
   if (t.container) {
     w(`export declare const container: ${JSON.stringify(t.container)};`);
   }
+  if (t.marketing) {
+    w(`export declare const marketing: ${JSON.stringify(t.marketing)};`);
+  }
   if (t.breakpoints) {
     w(`export declare const breakpoints: ${JSON.stringify(t.breakpoints)};`);
   }
@@ -1113,6 +1159,9 @@ function generateDTS(tokens) {
   }
   if (t.container) {
     w('export type Container = typeof container;');
+  }
+  if (t.marketing) {
+    w('export type Marketing = typeof marketing;');
   }
   if (t.breakpoints) {
     w('export type Breakpoints = typeof breakpoints;');
@@ -1260,6 +1309,13 @@ async function generateStoreFragments(tokens) {
   return out;
 }
 
+// The marketing kit's stylesheet (#65), from kit/kit.css with the version on
+// top, so a pinned copy says which release it came from.
+function generateKitCss(tokens) {
+  const src = fs.readFileSync(path.join(ROOT, 'kit', 'kit.css'), 'utf-8');
+  return `/* IAMJARL marketing kit v${tokens.meta.version}: generated from kit/kit.css, do not edit */\n${src}`;
+}
+
 // The nav carries no registry: every link is the site's own, slotted in light
 // DOM, because a crawler that does not run JavaScript must still see them.
 function generateNav(tokens) {
@@ -1333,6 +1389,7 @@ const SRI_FILES = [
   'dist/components/ij-footer.js',
   'dist/components/ij-nav.js',
   'dist/components/ij-store-cta.js',
+  'dist/kit/kit.css',
 ];
 
 function computeSri(identityIds, fontNames = []) {
@@ -1584,6 +1641,7 @@ async function main() {
   writeFile(path.join(ROOT, 'dist', 'components', 'ij-footer.js'), generateComponent(tokens));
   writeFile(path.join(ROOT, 'dist', 'components', 'ij-nav.js'), generateNav(tokens));
   writeFile(path.join(ROOT, 'dist', 'components', 'ij-store-cta.js'), generateStoreCta(tokens));
+  writeFile(path.join(ROOT, 'dist', 'kit', 'kit.css'), generateKitCss(tokens));
   const storeFragments = await generateStoreFragments(tokens);
   const storeDir = path.join(ROOT, 'dist', 'store');
   const storeKeep = new Set(storeFragments.map(([f]) => f));
