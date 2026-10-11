@@ -46,13 +46,14 @@ Longer-form recipes that need more than a rule live in [`patterns/`](patterns/):
 ### Display type (web only)
 The tokens ship `system-ui` and `ui-monospace` and nothing else, so every site that wanted a voice went looking on its own. Four found four different answers; the rest fell back to Inter or the system stack. That is why nine sites read the same and four read like one-offs.
 
-**Three approved faces.** A family picks one. Body copy stays `--ij-font-ui` everywhere — this is the voice, not the text.
+**Four approved faces.** A family picks one. Body copy stays `--ij-font-ui` everywhere — this is the voice, not the text.
 
 | Slot | Face | Licence | For |
 |---|---|---|---|
 | `mono` | **JetBrains Mono** | OFL-1.1 | Gear, timers, data — where the number is the interface |
 | `geometric` | **Outfit** | OFL-1.1 | Tools, for products that present themselves as instruments |
 | `humanist` | **Instrument Sans** | OFL-1.1 | Health and calm, where a site should not read as an instrument |
+| `serif` | **Fraunces**, soft | OFL-1.1 | Calm and care: a soft serif for headlines, where a site should feel warm and unhurried |
 
 Two of the three were derived rather than chosen: JetBrains Mono is the only mono in production, and Outfit is on two sites where DM Sans is on one. **The humanist slot has no production evidence behind it and is therefore the most revisable of the three.**
 
@@ -75,7 +76,7 @@ iamjarl.com and Made by Human are outside the system and get no face.
 #### Load the face from the design system. Do not link Google Fonts.
 `fonts.googleapis.com` is a third-party request on every page view, and it carries the visitor's IP and referring page. This portfolio tells people it has no tracking and no third parties; loading a font from Google contradicts that on the one page making the claim.
 
-**Since 1.17.0 the three faces ship from here**, so a site loads them the way it already loads `tokens.css`: one pinned `<link>` with `integrity`, from the same place and the same tag. The README has it pinned to the current release.
+**Since 1.17.0 the faces ship from here**, so a site loads them the way it already loads `tokens.css`: one pinned `<link>` with `integrity`, from the same place and the same tag. The README has it pinned to the current release.
 
 ```html
 <link rel="stylesheet"
@@ -86,15 +87,18 @@ iamjarl.com and Made by Human are outside the system and get no face.
 Each sheet is one generated `@font-face`. Its `font-family` is the name `--ij-font-display` asks for, so the two cannot drift apart. It uses `font-display: swap`, so the fallback stack is readable until the file lands, and it covers the latin subset, which includes æ, ø and å. The woff2 sits in `fonts/` beside its OFL-1.1 licence, at the same tag. The relative url in the sheet finds it on jsDelivr and inside `node_modules` alike.
 
 - **A site with a build step** imports `@iamjarl/design-tokens/fonts/outfit.css`. The bundler serves the file from the site's own origin, with no CDN at all.
-- **A site that wants no CDN** copies `fonts/<face>-latin-wght-normal.woff2` and its `LICENSE-<face>.txt`, then writes the same `@font-face`. OFL-1.1 permits this as long as the licence goes with the file.
+- **A site that wants no CDN** copies `fonts/<face>-latin-*-normal.woff2` and its `LICENSE-<face>.txt`, then writes the same `@font-face`. OFL-1.1 permits this as long as the licence goes with the file.
 
 | Face | Sheet | File | Weights |
 |---|---|---|---|
 | JetBrains Mono | `dist/fonts/jetbrains-mono.css` | 40 KB | 100–800 |
 | Outfit | `dist/fonts/outfit.css` | 32 KB | 100–900 |
 | Instrument Sans | `dist/fonts/instrument-sans.css` | 30 KB | 400–700 |
+| Fraunces | `dist/fonts/fraunces.css` | 62 KB | 100–900, and the `SOFT` axis |
 
-The files are Fontsource's variable latin subsets (v5.3.0), and `tokens.json` records each one's source. A woff2 loaded from a sheet cannot carry `integrity` (a CSS `url()` has no attribute for it), so the sheet is pinned with a hash and the font is covered by the tag being immutable.
+The files are Fontsource's variable latin subsets (v5.3.0), and `tokens.json` records each one's source.
+
+**Fraunces is soft only when asked.** Its file carries the `SOFT` axis, which rounds the serifs and terminals off, but the axis rests at 0, the sharp end. Use it with `font-variation-settings: 'SOFT' 100`, which `tokens.json` records as the face's `axes`. The owner chose it for Walkful on 2026-10-11 over Young Serif (one heavy weight) and Newsreader (more editorial than warm); the comparison is on #65. A woff2 loaded from a sheet cannot carry `integrity` (a CSS `url()` has no attribute for it), so the sheet is pinned with a hash and the font is covered by the tag being immutable.
 
 ### Family accent (web only)
 The system defines one primary per mode. That is why thirteen of fifteen sites ended up black with the same lime pill — they inherited exactly what they were given, and there was no layer where they were allowed to differ.

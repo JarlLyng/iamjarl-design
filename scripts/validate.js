@@ -348,7 +348,7 @@ function validateShippedFaces(tokens) {
     if (!f.file || !fs.existsSync(path.join(dir, f.file))) { fail(`display.${slot}: fonts/${f.file} is missing`); problems++; continue; }
     const head = fs.readFileSync(path.join(dir, f.file)).subarray(0, 4).toString('latin1');
     if (head !== 'wOF2') { fail(`display.${slot}: fonts/${f.file} is not a woff2 file`); problems++; }
-    const licence = path.join(dir, `LICENSE-${f.file.replace(/-latin-wght-normal\.woff2$/, '')}.txt`);
+    const licence = path.join(dir, `LICENSE-${f.file.replace(/-latin-[a-z0-9]+-normal\.woff2$/, '')}.txt`);
     if (!fs.existsSync(licence) || !/SIL OPEN FONT LICENSE Version 1\.1/.test(fs.readFileSync(licence, 'utf-8'))) {
       fail(`display.${slot}: no OFL-1.1 licence beside fonts/${f.file}`); problems++;
     }

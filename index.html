@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="./dist/fonts/jetbrains-mono.css">
   <link rel="stylesheet" href="./dist/fonts/outfit.css">
   <link rel="stylesheet" href="./dist/fonts/instrument-sans.css">
+  <link rel="stylesheet" href="./dist/fonts/fraunces.css">
   <script type="module" src="./dist/components/ij-nav.js"></script>
   <script type="module" src="./dist/components/ij-footer.js"></script>
   <script type="module" src="./dist/components/ij-store-cta.js"></script>
@@ -513,14 +514,15 @@
         ...Object.entries(registry.categories).filter(([, c]) => c.display === slot).map(([id]) => `${id} family`),
         ...shipped.filter(a => a.display === slot).map(a => a.name),
       ];
-      const sheet = f.file.replace(/-latin-wght-normal\.woff2$/, '');
+      const sheet = f.file.replace(/-latin-[a-z0-9]+-normal\.woff2$/, '');
       $('faces').append(el('div', { class: 'card', 'data-token': `brand.typography.display.${slot}` },
-        el('p', { class: 'face-sample', style: `font-family: ${f.stack}`, text: f.name }),
-        el('p', { class: 'sample', style: `font-family: ${f.stack}; font-size: var(--ij-font-size-lg)`, text: 'Aa Ææ Øø Åå 0123456789' }),
+        el('p', { class: 'face-sample', style: `font-family: ${f.stack}; font-variation-settings: ${f.axes ?? 'normal'}`, text: f.name }),
+        el('p', { class: 'sample', style: `font-family: ${f.stack}; font-variation-settings: ${f.axes ?? 'normal'}; font-size: var(--ij-font-size-lg)`, text: 'Aa Ææ Øø Åå 0123456789' }),
         el('dl', { class: 'meta', style: 'margin-top: var(--ij-spacing-md)' },
           el('dt', { text: 'Slot' }), el('dd', {}, code(slot)),
           el('dt', { text: 'For' }), el('dd', { text: f.use }),
           el('dt', { text: 'Weights' }), el('dd', {}, code(f.weights)),
+          f.axes ? el('dt', { text: 'Axes' }) : null, f.axes ? el('dd', {}, code(`font-variation-settings: ${f.axes}`)) : null,
           el('dt', { text: 'Sheet' }), el('dd', {}, code(`dist/fonts/${sheet}.css`)),
           el('dt', { text: 'Licence' }), el('dd', {}, el('a', { href: `./fonts/LICENSE-${sheet}.txt`, text: f.licence })),
           el('dt', { text: 'Source' }), el('dd', {}, code(f.source)),

@@ -625,7 +625,7 @@ page. Echolume does exactly this.
   integrity="<from sri.json>" crossorigin="anonymous">
 ```
 
-`<face>` is `jetbrains-mono`, `outfit` or `instrument-sans` — whichever your family has (design.md, *The assignments*). With a build step, `import '@iamjarl/design-tokens/fonts/outfit.css'` serves it from your own origin instead. Then put it where your voice belongs: `h1, h2, h3 { font-family: var(--ij-font-display); }`. Never from Google Fonts — see design.md for why.
+`<face>` is `jetbrains-mono`, `outfit`, `instrument-sans` or `fraunces` — whichever your family has (design.md, *The assignments*). With a build step, `import '@iamjarl/design-tokens/fonts/outfit.css'` serves it from your own origin instead. Then put it where your voice belongs: `h1, h2, h3 { font-family: var(--ij-font-display); }`. Never from Google Fonts — see design.md for why.
 
 **Not listed in `sri.json`: the footer fragments.** You copy them into your own HTML at build time,
 and the browser never fetches them as a resource, so an `integrity` attribute has nothing to check.

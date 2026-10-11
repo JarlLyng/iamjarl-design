@@ -85,9 +85,11 @@ ${FULL_NAV.replace('<ij-nav>', '<ij-nav cta-after="#hero-cta">')}
 <link rel="stylesheet" href="/dist/fonts/jetbrains-mono.css">
 <link rel="stylesheet" href="/dist/fonts/outfit.css">
 <link rel="stylesheet" href="/dist/fonts/instrument-sans.css">
+<link rel="stylesheet" href="/dist/fonts/fraunces.css">
 <h1 style="font-family: 'JetBrains Mono', monospace">12:30</h1>
 <h1 style="font-family: 'Outfit', sans-serif">Echolume</h1>
-<h1 style="font-family: 'Instrument Sans', sans-serif">Walkful</h1>` }),
+<h1 style="font-family: 'Instrument Sans', sans-serif">Wean</h1>
+<h1 style="font-family: 'Fraunces', serif; font-variation-settings: 'SOFT' 100">Walkful</h1>` }),
 
   // Footer hover: the family accent under an identity sheet, primary without.
   'footer-accent': page({ nav: false, footer: true, identity: 'echolume', body: `
@@ -400,18 +402,18 @@ try {
   const faces = await p.eval(`(async () => {
     await document.fonts.ready;
     const out = {};
-    for (const fam of ['JetBrains Mono', 'Outfit', 'Instrument Sans']) {
+    for (const fam of ['JetBrains Mono', 'Outfit', 'Instrument Sans', 'Fraunces']) {
       const loaded = await document.fonts.load('700 32px "' + fam + '"', 'Aa');
       out[fam] = loaded.length > 0 && loaded.every(f => f.status === 'loaded');
     }
     out.files = performance.getEntriesByType('resource').map(r => r.name).filter(n => n.endsWith('.woff2')).map(n => n.split('/').pop()).sort();
     return out;
   })()`);
-  for (const fam of ['JetBrains Mono', 'Outfit', 'Instrument Sans']) {
+  for (const fam of ['JetBrains Mono', 'Outfit', 'Instrument Sans', 'Fraunces']) {
     check(`${fam} loads through its generated sheet`, faces[fam] === true, JSON.stringify(faces));
   }
   check('each woff2 is fetched from fonts/, by the relative url', JSON.stringify(faces.files) === JSON.stringify([
-    'instrument-sans-latin-wght-normal.woff2', 'jetbrains-mono-latin-wght-normal.woff2', 'outfit-latin-wght-normal.woff2']),
+    'fraunces-latin-soft-normal.woff2', 'instrument-sans-latin-wght-normal.woff2', 'jetbrains-mono-latin-wght-normal.woff2', 'outfit-latin-wght-normal.woff2']),
     faces.files.join(', '));
 
   // The docs page (index.html). It renders tokens.json live, but only what its
@@ -468,14 +470,14 @@ try {
     swiftShown.filter(n => !swiftExists(n)).join(', '));
 
   const loadedFaces = await p.eval(`(async () => { await document.fonts.ready;
-    return ['JetBrains Mono', 'Outfit', 'Instrument Sans'].filter(f => document.fonts.check('16px "' + f + '"')); })()`);
+    return ['JetBrains Mono', 'Outfit', 'Instrument Sans', 'Fraunces'].filter(f => document.fonts.check('16px "' + f + '"')); })()`);
   const requests = await p.eval(`performance.getEntriesByType('resource').map(r => r.name)`);
   check('a footer with its own links still shows their group', await p.eval(`(() => {
     const sr = document.querySelector('.card ij-footer').shadowRoot;
     return sr.querySelectorAll('.group').length === 2 && !!sr.querySelector('slot[name="links"]');
   })()`));
-  check('shows the three faces in themselves, and nothing comes from Google Fonts',
-    loadedFaces.length === 3 && !requests.some(u => /fonts\.(googleapis|gstatic)\.com/.test(u)), JSON.stringify(loadedFaces));
+  check('shows the four faces in themselves, and nothing comes from Google Fonts',
+    loadedFaces.length === 4 && !requests.some(u => /fonts\.(googleapis|gstatic)\.com/.test(u)), JSON.stringify(loadedFaces));
 
   await p.viewport(375, 812);
   await p.goto(`${base}/index.html?narrow`);
