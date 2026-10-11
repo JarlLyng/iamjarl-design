@@ -91,6 +91,13 @@ ${FULL_NAV.replace('<ij-nav>', '<ij-nav cta-after="#hero-cta">')}
 <h1 style="font-family: 'Instrument Sans', sans-serif">Wean</h1>
 <h1 style="font-family: 'Fraunces', serif; font-variation-settings: 'SOFT' 100">Walkful</h1>` }),
 
+  // A light-only identity (Walkful, #65) seen by a visitor in dark mode: the
+  // sheet must hold the page, the nav and the footer in its own colours.
+  'identity-light-only': page({ footer: true, identity: 'walkful', body: `
+<ij-nav><a slot="brand" href="./">Walkful</a><a slot="cta" href="#">Download</a></ij-nav>
+<main id="main"><h1>Every step counts.</h1><p class="sub">Calm.</p></main>
+<ij-footer app="walkful"><a slot="links" href="#">Privacy</a></ij-footer>` }),
+
   // Footer hover: the family accent under an identity sheet, primary without.
   'footer-accent': page({ nav: false, footer: true, identity: 'echolume', body: `
 <ij-footer app="echolume"><a slot="links" href="#">Privacy</a></ij-footer>` }),
@@ -445,17 +452,16 @@ try {
 
   const reg = JSON.parse(fs.readFileSync(path.join(ROOT, 'apps.json'), 'utf-8'));
   const appsShown = new Set(await p.eval(`[...document.querySelectorAll('[data-app]')].map(e => e.dataset.app)`));
-  const famShown = new Set(await p.eval(`[...document.querySelectorAll('[data-family]')].map(e => e.dataset.family)`));
   const shippedIds = reg.apps.filter(a => a.status === 'shipped').map(a => a.id);
-  const families = Object.entries(reg.categories).filter(([, c]) => c.accent || c.display).map(([id]) => id);
-  check('every shipped app and every family is on the page',
-    shippedIds.every(id => appsShown.has(id)) && families.every(id => famShown.has(id)),
-    `apps missing: ${shippedIds.filter(id => !appsShown.has(id)).join(', ')}; families missing: ${families.filter(id => !famShown.has(id)).join(', ')}`);
+  check('every shipped app is on the page, with its identity or in the list of those without',
+    shippedIds.every(id => appsShown.has(id)), `apps missing: ${shippedIds.filter(id => !appsShown.has(id)).join(', ')}`);
 
   const codes = await p.eval(`[...document.querySelectorAll('code')].map(c => c.textContent.trim())`);
-  const cssDefined = new Set(fs.readFileSync(path.join(ROOT, 'dist/css/tokens.css'), 'utf-8').match(/--ij-[a-z0-9-]+(?=:)/g));
+  const cssDefined = new Set([path.join(ROOT, 'dist/css/tokens.css'),
+    ...fs.readdirSync(path.join(ROOT, 'dist/identity')).map(f => path.join(ROOT, 'dist/identity', f))]
+    .flatMap(f => fs.readFileSync(f, 'utf-8').match(/--ij-[a-z0-9-]+(?=:)/g) ?? []));
   const cssShown = [...new Set(codes.filter(c => /^--ij-[a-z0-9-]+$/.test(c)))];
-  check(`every CSS variable it names exists in tokens.css (${cssShown.length})`, cssShown.every(v => cssDefined.has(v)),
+  check(`every CSS variable it names exists in tokens.css or an identity sheet (${cssShown.length})`, cssShown.every(v => cssDefined.has(v)),
     cssShown.filter(v => !cssDefined.has(v)).join(', '));
   const swiftSrc = ['DesignTokens.swift', 'DynamicType.swift', 'Adaptive.swift']
     .map(f => fs.readFileSync(path.join(ROOT, 'Sources/IAMJARLDesignTokens', f), 'utf-8')).join('\n');
@@ -574,6 +580,22 @@ try {
   check('footer hover is the family accent under an identity sheet, primary without',
     /^(#177082|rgb\(23, 112, 130\))$/i.test(hoverAccent) && /^(#A435D2|rgb\(164, 53, 210\))$/i.test(hoverPrimary),
     `with sheet ${hoverAccent}, without ${hoverPrimary}`);
+  await p.media([{ name: 'prefers-color-scheme', value: 'dark' }]);
+  await p.goto(`${base}/fixture/identity-light-only/index.html`);
+  await p.eval(`Promise.all(['ij-nav', 'ij-footer'].map(t => customElements.whenDefined(t)))`);
+  await p.settle(200);
+  const lightOnly = await p.eval(`(() => {
+    const nav = document.querySelector('ij-nav'), cta = nav.querySelector('[slot="cta"]');
+    return { bg: getComputedStyle(document.body).backgroundColor, text: getComputedStyle(document.body).color,
+      scheme: getComputedStyle(document.documentElement).colorScheme,
+      ctaBg: getComputedStyle(cta).backgroundColor, ctaText: getComputedStyle(cta).color,
+      hover: getComputedStyle(document.querySelector('ij-footer')).getPropertyValue('--_hover').trim() };
+  })()`);
+  check('a light-only identity holds a dark-mode visitor in its own colours: page, nav CTA, footer hover',
+    lightOnly.bg === 'rgb(245, 239, 230)' && lightOnly.text === 'rgb(43, 40, 37)' && lightOnly.scheme === 'light' &&
+    lightOnly.ctaBg === 'rgb(241, 64, 254)' && lightOnly.ctaText === 'rgb(0, 0, 0)' &&
+    /^(#A80FB3|rgb\(168, 15, 179\))$/i.test(lightOnly.hover), JSON.stringify(lightOnly));
+  await p.media([{ name: 'prefers-color-scheme', value: 'light' }]);
   await p.goto(`${base}/fixture/footer-justify/index.html`);
   await p.settle(150);
   check('--ij-footer-links-justify: center centres the row', gaps.left > 20 && Math.abs(gaps.left - gaps.right) < 2,

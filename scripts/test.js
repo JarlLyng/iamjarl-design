@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { parseHex, parseRgba, parseColor, contrastRatio } from './color.js';
 import { extractNotes, sriNotes } from './release-notes.js';
 import { selectLinks, categoryReach } from '../components/select-links.js';
-import { accentFor, displayFor } from '../components/identity.js';
+import { identityFor, mix, TEXT_MIX } from '../components/identity.js';
 import { NAV_ALPHA, NAV_COLLAPSE_BELOW, MAX_LINKS, currentIndex, heroOnScreen, navWarnings } from '../components/nav-rules.js';
 import { storeLink, factsLine, badgeFile, badgeHeight, smartBannerHtml, fragmentName, offer, PLACEMENTS, TONES } from '../components/store.js';
 
@@ -413,9 +413,9 @@ check('columns layout neutralises the horizontal justify',
   'a row value must not act on the vertical axis once the links stack');
 check('README documents the alignment hook',
   read('README.md').includes('--ij-footer-links-justify'));
-check('footer hover follows the family accent, with primary as the fallback',
-  (comp.match(/--_hover:\s*var\(--ij-color-accent-family, var\(--ij-color-primary,/g) || []).length === 2,
-  'both the light block and the no-token dark block (#57)');
+check('footer hover is the text-safe accent, then the family accent, then primary',
+  (comp.match(/--_hover:\s*var\(--ij-color-accent-text, var\(--ij-color-accent-family, var\(--ij-color-primary,/g) || []).length === 2,
+  'both blocks (#57); hover is text, so it takes accentText, and a pre-1.22 sheet still works (#65)');
 check('component honours a provided cross-links slot',
   comp.includes(`this.querySelector('[slot="cross-links"]')`) &&
   comp.includes('<slot name="cross-links">'));
@@ -541,9 +541,11 @@ const navDist = read('dist/components/ij-nav.js');
 check('the accent is never a text colour on the bar', !/(^|[^-])color:\s*var\(--_accent\)/m.test(navSrc),
   'over the worst case an accent falls below AA at this opacity; it may fill, not write');
 check('the focus ring is text.primary, not the accent', /outline:\s*var\(--_focus\) solid var\(--_strong\)/.test(navSrc));
-check('the CTA puts onPrimary on the accent',
+check('the CTA puts the identity\'s on-accent on the accent, falling back to onPrimary',
   /::slotted\(\[slot="cta"\]\) \{[^}]*background: var\(--_accent\);[^}]*color: var\(--_on-accent\)/.test(navSrc) &&
-  /--_on-accent:\s*var\(--ij-color-on-primary/.test(navSrc));
+  (navSrc.match(/--_on-accent:\s*var\(--ij-color-on-accent, var\(--ij-color-on-primary,/g) || []).length === 2 &&
+  (navSrc.match(/--_accent:\s*var\(--ij-color-accent, var\(--ij-color-accent-family, var\(--ij-color-primary,/g) || []).length === 2,
+  'on Walkful\'s sand, onPrimary on magenta would be 2.7:1; a pre-1.22 sheet has neither new name (#65)');
 const navCode = navSrc.replace(/^\s*\/\/.*$/gm, '');   // the usage comment shows slotted <a>s
 check('every link is slotted, none generated',
   (navCode.match(/<a /g) || []).length === 1 && navCode.includes('<a class="skip"'),
@@ -556,113 +558,111 @@ check('the bundle pulls in no stylesheet', !/@import|<link\b|adoptedStyleSheets/
   'theming comes from the host through custom properties; a stylesheet here would override the site');
 check('package.json exports it', JSON.parse(read('package.json')).exports['./components/nav'] === './dist/components/ij-nav.js');
 
-// --- Family accents ---
-//
-// The system defines one primary per mode, so thirteen of fifteen sites ended up
-// identical. A family accent lets a category differ without leaving the system.
-// Four families have declared one; the rest still inherit the primary, and that
-// half of the contract is what keeps opting in optional.
+// --- Site identity (#65) ---
+// Each app declares its own ground, text, accent and face. The family layer
+// that set them per category until 1.21.0 is gone; its values were copied onto
+// the apps, so what must hold is that a sheet built from them still says what
+// the old one said, under the old name too, and that a site with a ground of
+// its own gets text derived from it.
 
-console.log('\nFamily accents:');
+console.log('\nSite identity:');
 const fullTokens = JSON.parse(read('tokens.json'));
 const tokenTree = fullTokens.tokens;
 const shippedApps = registry.apps.filter(a => a.status === 'shipped');
 const identityDir = path.join(ROOT, 'dist/identity');
 const sheets = fs.existsSync(identityDir) ? fs.readdirSync(identityDir) : [];
+const hexOf = h => parseHex(h);
 
-check('every category carries a label', Object.values(registry.categories)
-  .every(c => typeof c?.label === 'string' && c.label.length > 0));
-check('a declared category accent reaches every app in it', shippedApps
-  .filter(a => registry.categories[a.category]?.accent)
-  .every(a => accentFor(registry, a.id, tokenTree).isFamilyAccent),
-  'a category that declared an accent must not leave one of its apps on the primary');
-check('an undeclared category still resolves to the shared primary', shippedApps
-  .filter(a => !a.accent && !registry.categories[a.category]?.accent)
-  .every(a => {
-    const acc = accentFor(registry, a.id, tokenTree);
-    return acc.light === tokenTree.colors.modes.light.primary &&
-           acc.dark === tokenTree.colors.modes.dark.primary &&
-           acc.isFamilyAccent === false;
-  }), 'opting in stays optional, so a site that declared nothing renders as before');
-// The README tells adopters to put onPrimary on the accent when it is a fill.
-// That is only safe because onPrimary IS background.app in both modes, so the
-// validator's ground check doubles as the fill check. If either token moves,
-// the advice silently stops being true — so the equivalence is held here.
-check('onPrimary is background.app in both modes, so it is every accent\'s on-colour',
-  ['light', 'dark'].every(m =>
-    tokenTree.colors.modes[m].onPrimary === tokenTree.colors.modes[m].background.app),
-  'README advises onPrimary for text on a family accent; that advice rests on this');
-check('every declared accent carries onPrimary at AA', Object.values(registry.categories)
-  .filter(c => c.accent)
-  .every(c => ['light', 'dark'].every(m =>
-    contrastRatio(parseHex(c.accent[m]), parseHex(tokenTree.colors.modes[m].onPrimary)) >= 4.5)));
-check('README documents adopting an identity sheet, with integrity', (() => {
-  const md = read('README.md');
-  const at = md.indexOf('## Family accent: `dist/identity/<app>.css`');
-  const sec = at === -1 ? '' : md.slice(at, md.indexOf('\n## ', at + 1));
-  return sec.includes('integrity=') && sec.includes('sri.json') && sec.includes('class="dark"');
-})(), 'the first adopter had to compute the hash by hand and find the dark-mode rule themselves');
-check('a sheet exists for every app that differs, and only for those', (() => {
-  const expected = shippedApps
-    .filter(a => accentFor(registry, a.id, tokenTree).isFamilyAccent ||
-                 displayFor(registry, a.id, fullTokens).face)
-    .map(a => `${a.id}.css`).sort();
+check('every category carries a label, and no longer an accent or a face', Object.values(registry.categories)
+  .every(c => typeof c?.label === 'string' && c.label.length > 0 && c.accent === undefined && c.display === undefined));
+check('a sheet exists for every app with an identity, and only for those', (() => {
+  const expected = shippedApps.filter(a => !identityFor(registry, a.id, fullTokens).isEmpty).map(a => `${a.id}.css`).sort();
   return expected.join() === [...sheets].sort().join();
-})(), 'an app matching the primary must not get a sheet repeating it');
+})(), 'an app with nothing of its own must not get a sheet restating the tokens');
+// Sites on 1.12 to 1.21 read --ij-color-accent-family, and <ij-nav> and
+// <ij-footer> fall back to it. It stays, as the text-safe accent.
+check('every sheet with an accent emits it, its on-colour, its text-safe variant, and the 1.21 name for that', shippedApps.every(a => {
+  const id = identityFor(registry, a.id, fullTokens);
+  if (!id.hasColour) return true;
+  const css = read(`dist/identity/${a.id}.css`);
+  return Object.values(id.modes).every(m => css.includes(`--ij-color-accent: ${m.accent};`) &&
+    css.includes(`--ij-color-on-accent: ${m.onAccent};`) && css.includes(`--ij-color-accent-text: ${m.accentText};`) &&
+    css.includes(`--ij-color-accent-family: ${m.accentText};`));
+}));
+// A sheet from before 1.22 has no --ij-color-on-accent, so <ij-nav>'s CTA falls
+// back to onPrimary on the family accent. That is only safe because onPrimary IS
+// background.app in both modes, which every family accent cleared at AA.
+check('onPrimary is background.app in both modes, so a pre-1.22 accent still carries it',
+  ['light', 'dark'].every(m => tokenTree.colors.modes[m].onPrimary === tokenTree.colors.modes[m].background.app));
+check('README documents adopting an identity sheet, with integrity and both mode rules', (() => {
+  const md = read('README.md');
+  const at = md.indexOf('## Site identity: `dist/identity/<app>.css`');
+  const sec = at === -1 ? '' : md.slice(at, md.indexOf('\n## ', at + 1));
+  return sec.includes('integrity=') && sec.includes('sri.json') && sec.includes('class="dark"') &&
+    sec.includes('"scheme": "light"') && sec.includes('--ij-color-accent-text') && sec.includes('--ij-color-on-accent');
+})(), 'the first adopter had to compute the hash by hand and find the dark-mode rule themselves');
+check('every on-accent is black or white and reads at AA on its accent', shippedApps.every(a =>
+  Object.values(identityFor(registry, a.id, fullTokens).modes).every(m =>
+    ['#000000', '#FFFFFF'].includes(m.onAccent) && contrastRatio(hexOf(m.onAccent), hexOf(m.accent)) >= 4.5)));
+const walkful = identityFor(registry, 'walkful', fullTokens);
+const walkfulCss = read('dist/identity/walkful.css');
+check('Walkful is light only: sand, charcoal, magenta for strokes and a deeper magenta for text', (() => {
+  const m = walkful.modes.light;
+  return walkful.scheme === 'light' && Object.keys(walkful.modes).join() === 'light' && m.accent === '#F140FE' &&
+    contrastRatio(hexOf(m.accent), hexOf(m.background)) < 3 && contrastRatio(hexOf(m.accentText), hexOf(m.background)) >= 4.5 &&
+    contrastRatio(hexOf(m.text), hexOf(m.background)) >= 7;
+})(), 'the magenta is for strokes; text takes accentText');
+check('a light-only sheet sets color-scheme and holds the light tokens in dark mode too', (() => {
+  const darkBlock = walkfulCss.split('@media (prefers-color-scheme: dark)')[1] ?? '';
+  const m = walkful.modes.light;
+  return walkfulCss.includes('color-scheme: light;') &&
+    darkBlock.includes(`--ij-color-bg-app: ${m.background};`) && darkBlock.includes(`--ij-color-text-primary: ${m.text};`) &&
+    darkBlock.includes(`--ij-color-state-error: ${tokenTree.colors.modes.light.state.error};`) &&
+    !walkfulCss.includes(`--ij-color-state-error: ${tokenTree.colors.modes.dark.state.error};`);
+})(), 'tokens.css switches every colour in dark mode; a light-only site must not get half of them');
 
-// Resolution order, checked against a registry built for the purpose rather
-// than against whatever the real one happens to hold today.
+// Resolution, checked against a registry built for the purpose rather than
+// against whatever the real one happens to hold today.
 const probe = JSON.parse(JSON.stringify(registry));
-probe.categories['web-tools'].accent = { light: '#0B6E4F', dark: '#37B6E9' };
-check('a category accent reaches its apps',
-  accentFor(probe, 'botlens', tokenTree).light === '#0B6E4F');
-check('the source is reported', accentFor(probe, 'botlens', tokenTree).source === 'category');
-probe.apps.find(a => a.id === 'botlens').accent = { light: '#A435D2', dark: '#D0FF00' };
-check('an app accent overrides its category',
-  accentFor(probe, 'botlens', tokenTree).light === '#A435D2' &&
-  accentFor(probe, 'pagelens', tokenTree).light === '#0B6E4F');
-check('an app matching the primary is not treated as a family accent',
-  accentFor(probe, 'botlens', tokenTree).isFamilyAccent === false,
-  'it resolves to the primary, so there is nothing to emit');
+const pb = probe.apps.find(a => a.id === 'botlens');
+check('with no identity, an app resolves to the tokens and gets nothing', (() => {
+  delete pb.identity;
+  const r = identityFor(probe, 'botlens', fullTokens);
+  return r.isEmpty && r.modes.light.accent === tokenTree.colors.modes.light.primary &&
+    r.modes.dark.background === tokenTree.colors.modes.dark.background.app && r.modes.light.textSecondary === null;
+})());
+check('accentText defaults to the accent', (() => {
+  pb.identity = { light: { accent: '#217370' }, dark: { accent: '#35B6B2' } };
+  return identityFor(probe, 'botlens', fullTokens).modes.light.accentText === '#217370';
+})());
+check("a ground of its own re-derives the secondary text from the site's own text", (() => {
+  pb.identity = { scheme: 'light', light: { background: '#E8EEF2', text: '#1F2A33' } };
+  const r = identityFor(probe, 'botlens', fullTokens);
+  return Object.keys(r.modes).join() === 'light' &&
+    r.modes.light.textSecondary === mix('#1F2A33', '#E8EEF2', TEXT_MIX.secondary) &&
+    r.modes.light.textTertiary === mix('#1F2A33', '#E8EEF2', TEXT_MIX.tertiary);
+})());
 check('an unknown app throws', (() => {
-  try { accentFor(registry, 'nope', tokenTree); return false; } catch { return true; }
+  try { identityFor(registry, 'nope', fullTokens); return false; } catch { return true; }
+})());
+check('an unknown face throws rather than emitting it', (() => {
+  pb.identity = { display: 'blackletter' };
+  try { identityFor(probe, 'botlens', fullTokens); return false; } catch { return true; }
 })());
 
 // --- Display type ---
 const faces = fullTokens.brand.typography.display;
 check('four approved display faces', Object.keys(faces).length === 4);
-check('every face records a licence and a real fallback', Object.values(faces).every(f =>
+check('every approved face records a licence and a real fallback', Object.values(faces).every(f =>
   f.licence && f.stack.includes(',') && /sans-serif|monospace|serif$/.test(f.stack.trim())),
   'a stack without a real fallback leaves a site unreadable until the file lands');
-// Faces are assigned (#50). What must hold from here on: a family's face reaches
-// every app in it unless the app names its own, an app outside a family gets
-// none, and every sheet that carries a face says how to load it.
-check('a family\'s face reaches its apps, and an app\'s own face wins', shippedApps.every(a => {
-  const want = a.display ?? registry.categories[a.category]?.display ?? null;
-  const got = displayFor(registry, a.id, fullTokens);
-  return want === null ? got.face === null : got.key === want;
-}));
-check('an app outside every family gets no face', shippedApps
-  .filter(a => !a.display && !registry.categories[a.category]?.display)
-  .every(a => !fs.existsSync(path.join(identityDir, `${a.id}.css`)) ||
-    !read(`dist/identity/${a.id}.css`).includes('--ij-font-display')));
 check('every sheet with a face emits its stack and says to self-host it', shippedApps
-  .map(a => [a, displayFor(registry, a.id, fullTokens)])
-  .filter(([, d]) => d.face)
-  .every(([a, d]) => {
+  .map(a => [a, identityFor(registry, a.id, fullTokens)])
+  .filter(([, id]) => id.display)
+  .every(([a, id]) => {
     const css = read(`dist/identity/${a.id}.css`);
-    return css.includes(`--ij-font-display: ${d.face.stack};`) && css.includes('Self-host it');
+    return css.includes(`--ij-font-display: ${id.display.face.stack};`) && css.includes('Self-host it');
   }), 'a face that is declared but never emitted is the inert state this replaced');
-check('an unknown face name throws rather than emitting it', (() => {
-  const probe2 = JSON.parse(JSON.stringify(registry));
-  probe2.categories.music.display = 'blackletter';
-  try { displayFor(probe2, 'tonvault', fullTokens); return false; } catch { return true; }
-})());
-check('a category face reaches its apps', (() => {
-  const probe2 = JSON.parse(JSON.stringify(registry));
-  probe2.categories.music.display = 'mono';
-  return displayFor(probe2, 'tonvault', fullTokens).face.name === 'JetBrains Mono';
-})());
 // The faces ship from here (1.17.0): one generated @font-face per face, whose
 // family must be the name --ij-font-display asks for, and whose url must land
 // on the woff2 from wherever the sheet is loaded.
@@ -696,10 +696,10 @@ check('tokens.json names both sets', fullTokens.brand.icons.library === 'phospho
 check('design.md: family accents on the sites only', /On the sites only, not inside the apps/.test(designMd));
 const swiftAll = fs.readdirSync(path.join(ROOT, 'Sources/IAMJARLDesignTokens'))
   .map(f => read(`Sources/IAMJARLDesignTokens/${f}`)).join('\n');
-const accentHexes = [...new Set(Object.values(registry.categories).filter(c => c.accent)
-  .flatMap(c => [c.accent.light, c.accent.dark]))]
+const accentHexes = [...new Set(registry.apps.filter(a => a.identity)
+  .flatMap(a => ['light', 'dark'].flatMap(m => [a.identity[m]?.accent, a.identity[m]?.accentText]).filter(Boolean)))]
   .filter(h => ![tokenTree.colors.modes.light.primary, tokenTree.colors.modes.dark.primary].includes(h));
-check('the Swift package carries no family accent',
+check('the Swift package carries no site accent',
   !/accent[-_]?family|familyAccent|accentFamily/i.test(swiftAll) && accentHexes.every(h => !swiftAll.toUpperCase().includes(h.toUpperCase())),
   'inside an app its colour belongs to its icon; the accents group products on the web (#53)');
 

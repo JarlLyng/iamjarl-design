@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IAMJARL Design System</title>
-  <meta name="description" content="Every token in the IAMJARL design system, rendered live from tokens.json and apps.json: colour in both modes, type, numerals, display faces, the families, scales and components.">
+  <meta name="description" content="Every token in the IAMJARL design system, rendered live from tokens.json and apps.json: colour in both modes, type, numerals, display faces, each site's identity, scales and components.">
 
   <!-- The page is a consumer of the system it documents: tokens, faces and
        components all come from this repository, at whatever commit is served. -->
@@ -140,7 +140,7 @@
         typed by hand, so it cannot fall behind the release.</p>
       <ul class="toc">
         <li><a href="#colour">Colour</a></li>
-        <li><a href="#families">Families</a></li>
+        <li><a href="#identities">Site identities</a></li>
         <li><a href="#type">Type</a></li>
         <li><a href="#scales">Scales</a></li>
         <li><a href="#components">Components</a></li>
@@ -179,12 +179,14 @@
       <div class="grid" id="gradients"></div>
     </section>
 
-    <section id="families" aria-labelledby="families-h">
-      <h2 id="families-h">Families</h2>
-      <p class="muted">A family accent and display face per category, overridable per app. Shipped apps only.
-        <strong>On the sites only:</strong> inside an app, its colour belongs to its icon, so the Swift package does not offer these.</p>
-      <div class="grid" id="family-grid"></div>
-      <div class="callout small" id="family-none"></div>
+    <section id="identities" aria-labelledby="identities-h">
+      <h2 id="identities-h">Site identities</h2>
+      <p class="muted">Each app site's own ground, text, accent and display face, from <code>apps.json</code>, shipped as
+        <code>dist/identity/&lt;app&gt;.css</code>. Shipped apps only. The accent is for strokes and fills; text takes the
+        text-safe variant beside it. <strong>On the sites only:</strong> inside an app, its colour belongs to its icon,
+        so the Swift package does not offer these.</p>
+      <div class="grid" id="identity-grid"></div>
+      <div class="callout small" id="identity-none"></div>
     </section>
 
     <section id="type" aria-labelledby="type-h">
@@ -303,6 +305,7 @@
 
   <script type="module">
     import { parseColor, contrastRatio } from './scripts/color.js';
+    import { identityFor } from './components/identity.js';
 
     // ---------- small helpers ----------
     const $ = id => document.getElementById(id);
@@ -455,36 +458,32 @@
       }
     }
 
-    // ---------- families ----------
+    // ---------- site identities ----------
     const faces = ty.display;
     const shipped = registry.apps.filter(a => a.status === 'shipped');
-    for (const [id, cat] of Object.entries(registry.categories)) {
-      if (!cat.accent && !cat.display) continue;
-      const members = shipped.filter(a => a.category === id);
-      const card = el('div', { class: 'card', 'data-family': id }, el('h3', { text: cat.label, style: 'margin-top:0' }), el('p', { class: 'small muted' }, code(id)));
-      if (cat.accent) {
-        const accents = el('div', { class: 'modes pair' });
-        for (const mode of ['light', 'dark']) {
-          const a = cat.accent[mode];
-          accents.append(el('div', { class: `mode-panel ${mode}` },
-            el('div', { class: 'fill', style: `background: ${a}; color: var(--ij-color-on-primary)` }, el('span', { text: mode }), el('span', { class: 'mono', text: a })),
-            el('p', { class: 'small', style: 'margin: var(--ij-spacing-sm) 0 0' }, 'As text: ', verdict(ratio(a, modes[mode].background.app)))));
-        }
-        card.append(accents);
+    const resolved = shipped.map(a => [a, identityFor(registry, a.id, tokens)]);
+    for (const [a, id] of resolved.filter(([, id]) => !id.isEmpty)) {
+      const card = el('div', { class: 'card', 'data-app': a.id },
+        el('h3', { text: a.name, style: 'margin-top:0' }),
+        el('p', { class: 'small muted' }, code(`dist/identity/${a.id}.css`), ' · ',
+          id.scheme ? `${cap(id.scheme)} only` : 'Follows the visitor'));
+      const panels = el('div', { class: 'modes pair' });
+      for (const [mode, m] of Object.entries(id.modes)) {
+        panels.append(el('div', { class: 'mode-panel', style: `background: ${m.background}; color: ${m.text}` },
+          el('p', { class: 'face-sample', style: `font-family: ${id.display?.face.stack ?? 'inherit'}; margin-top: 0`, text: a.name }),
+          el('div', { class: 'fill', style: `background: ${m.accent}; color: ${m.onAccent}` }, el('span', { text: 'accent' }), el('span', { class: 'mono', text: m.accent })),
+          el('p', { class: 'small', style: 'margin: var(--ij-spacing-sm) 0 0' },
+            el('span', { style: `color: ${m.accentText}; font-weight: 600`, text: m.accentText === m.accent ? 'As text' : `Text ${m.accentText}` }), ': ',
+            verdict(ratio(m.accentText, m.background))),
+          el('p', { class: 'small', style: `margin: var(--ij-spacing-xs) 0 0; color: ${m.textSecondary ?? 'inherit'}; opacity: ${m.textSecondary ? 1 : 0.7}`, text: `${mode} · text ${m.text} on ${m.background}` })));
       }
-      if (cat.display) {
-        const f = faces[cat.display];
-        card.append(el('p', { class: 'face-sample', style: `font-family: ${f.stack}`, text: f.name }));
-      }
-      card.append(el('ul', { class: 'chips' }, members.map(a => {
-        const face = a.display ? faces[a.display].name : null;
-        return el('li', { 'data-app': a.id, style: a.display ? `font-family: ${faces[a.display].stack}` : null }, a.name, face ? el('span', { class: 'muted', text: ` · ${face}` }) : null);
-      })));
-      $('family-grid').append(card);
+      card.append(panels);
+      if (id.display) card.append(el('p', { class: 'small', style: 'margin-top: var(--ij-spacing-sm)' }, 'Display face: ', el('strong', { text: id.display.face.name })));
+      $('identity-grid').append(card);
     }
-    const outside = shipped.filter(a => !registry.categories[a.category]?.accent && !registry.categories[a.category]?.display && !a.accent && !a.display);
-    $('family-none').append('Outside the families, on the shared primary and no display face: ',
-      ...outside.flatMap((a, i) => [i ? ', ' : '', el('span', { 'data-app': a.id, text: a.name })]), '.');
+    const plain = resolved.filter(([, id]) => id.isEmpty).map(([a]) => a);
+    $('identity-none').append('No identity of their own, so they render with the tokens and the shared primary: ',
+      ...plain.flatMap((a, i) => [i ? ', ' : '', el('span', { 'data-app': a.id, text: a.name })]), '.');
 
     // ---------- type ----------
     $('families-ui').append(
@@ -510,10 +509,7 @@
         el('p', { class: 'small', style: 'margin-top: var(--ij-spacing-sm)' }, code(`${k} ${n}`), ' · ', code(`--ij-font-size-numeral-${k}`), ' · ', code(`.ijNumeral(.${k})`))));
     }
     for (const [slot, f] of Object.entries(faces)) {
-      const users = [
-        ...Object.entries(registry.categories).filter(([, c]) => c.display === slot).map(([id]) => `${id} family`),
-        ...shipped.filter(a => a.display === slot).map(a => a.name),
-      ];
+      const users = resolved.filter(([, id]) => id.display?.key === slot).map(([a]) => a.name);
       const sheet = f.file.replace(/-latin-[a-z0-9]+-normal\.woff2$/, '');
       $('faces').append(el('div', { class: 'card', 'data-token': `brand.typography.display.${slot}` },
         el('p', { class: 'face-sample', style: `font-family: ${f.stack}; font-variation-settings: ${f.axes ?? 'normal'}`, text: f.name }),

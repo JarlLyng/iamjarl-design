@@ -4,6 +4,44 @@ Step-by-step instructions for updating consumer projects between versions.
 
 ---
 
+## Per-app site identity (in the next release, #65)
+
+### What changed
+Until 1.21.0 a site took its accent and display face from its **family**, the category it sits in
+within `apps.json`. Now each app declares its own **identity**: ground, text, accent, a text-safe
+accent and the display face. The family layer is gone.
+
+**Nothing breaks, and for twelve of the thirteen sites nothing changes.**
+- Every family's accent and face were copied onto its apps, so their identity sheets carry the same
+  values as before.
+- The sheets still set `--ij-color-accent-family`, now as the text-safe accent, with the same value
+  for every site that kept its family's.
+- `<ij-nav>` and `<ij-footer>` read the new names first and fall back to the old ones. A new
+  component under an old sheet, or an old one under a new sheet, renders as before.
+- A site pinned to an older tag keeps its files; jsDelivr's pinned tags never change.
+
+**Walkful is the exception.** Its identity is new: light only, a sand ground, charcoal text and the
+icons' magenta. Its 1.22 sheet turns the site light whatever the visitor's setting.
+
+### Who needs to migrate
+- ✅ **Every site except Walkful:** bump the identity sheet with the rest, tag and hash together.
+  Nothing renders differently.
+- ⚠️ **Walkful:** take the new identity sheet *with* the redesign (walkful#200), not before. Until
+  then, stay on 1.21's sheet, or the current dark page gets a sand ground.
+- ⚠️ **Anything that reads `apps.json` itself** and looked at `categories.<id>.accent` or `.display`:
+  they are gone. Read `apps.<app>.identity` instead. Nothing in the portfolio did, as far as this repo
+  knows.
+
+### New capabilities worth adopting
+- **`--ij-color-accent-text`** for links and small highlights, and **`--ij-color-accent`** for
+  strokes and fills. `--ij-color-accent-family` keeps working; it is the same as the first.
+- **`--ij-color-on-accent`** for text on an accent fill, in place of `onPrimary`. It is right for an
+  accent of any lightness.
+- **A one-mode site** can say so in its identity (`"scheme": "dark"`), and the sheet holds it in that
+  mode. Echolume could then drop its `class="dark"`.
+
+---
+
 ## v1.7.0 → any later 1.x
 
 Coming from 1.2.x? Read [the section below](#v12x--v170) first — it covers 1.3.0 to 1.7.0 — then this one.

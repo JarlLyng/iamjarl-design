@@ -26,8 +26,8 @@
 //
 // Theming is the two-tier pattern <ij-footer> uses: the host's tokens win, the
 // fallbacks are the system's own values. The dot beside the wordmark and the
-// CTA's fill use the family accent where the site has one, the primary
-// otherwise. The dot is omitted when the brand link carries its own mark (an
+// CTA's fill use the site's accent where its identity sheet has one, the
+// primary otherwise. The dot is omitted when the brand link carries its own mark (an
 // <svg> or <img>), so a site with a logo does not get two.
 //
 // Order is DOM order, so focus follows what the eye sees: brand, links, the
@@ -52,8 +52,8 @@ const NAV_STYLE = `
   --_border:    var(--ij-color-border-subtle,  rgba(0, 0, 0, 0.10));
   --_border-hi: var(--ij-color-border-default, rgba(0, 0, 0, 0.16));
   --_card:      var(--ij-color-bg-card,        rgba(0, 0, 0, 0.04));
-  --_accent:    var(--ij-color-accent-family, var(--ij-color-primary, #A435D2));
-  --_on-accent: var(--ij-color-on-primary,     #FFFFFF);
+  --_accent:    var(--ij-color-accent, var(--ij-color-accent-family, var(--ij-color-primary, #A435D2)));
+  --_on-accent: var(--ij-color-on-accent, var(--ij-color-on-primary, #FFFFFF));
   --_gap:       var(--ij-spacing-sm,    8px);
   --_gap-md:    var(--ij-spacing-lg,   16px);
   --_gap-lg:    var(--ij-spacing-xxxl, 32px);
@@ -80,8 +80,8 @@ const NAV_STYLE = `
     --_border:    var(--ij-color-border-subtle,  rgba(255, 255, 255, 0.12));
     --_border-hi: var(--ij-color-border-default, rgba(255, 255, 255, 0.18));
     --_card:      var(--ij-color-bg-card,        rgba(255, 255, 255, 0.05));
-    --_accent:    var(--ij-color-accent-family, var(--ij-color-primary, #D0FF00));
-    --_on-accent: var(--ij-color-on-primary,     #000000);
+    --_accent:    var(--ij-color-accent, var(--ij-color-accent-family, var(--ij-color-primary, #D0FF00)));
+    --_on-accent: var(--ij-color-on-accent, var(--ij-color-on-primary, #000000));
   }
 }
 
@@ -164,9 +164,10 @@ const NAV_STYLE = `
 }
 ::slotted([slot="secondary"]:hover) { border-color: var(--_border-hi); }
 
-/* design.md's primary button, on the family accent. onPrimary is its on-colour
-   in both modes because it IS background.app, and every accent clears 4.5:1
-   against that. A contract test holds the equivalence. */
+/* design.md's primary button, on the site's accent, with the on-colour its
+   identity sheet derives for it (#65). A sheet from before 1.22 has neither,
+   so the button falls back to the family accent and onPrimary, which is
+   background.app in both modes; every family accent cleared 4.5:1 on it. */
 .cta { display: flex; transition: opacity var(--ij-duration-normal, 250ms), visibility var(--ij-duration-normal, 250ms); }
 ::slotted([slot="cta"]) {
   display: inline-flex;

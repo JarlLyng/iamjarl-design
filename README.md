@@ -307,12 +307,12 @@ build time and regenerate every release &mdash; copy them from here, never from 
 
 <script type="module"
   src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.21.0/dist/components/ij-footer.js"
-  integrity="sha384-+GpWxeSPVSocAhBSRZXLPAe5Bkr34kHyNPA/EKW27X1E0D9BhQm1xH2mReqF1Kl5"
+  integrity="sha384-szgMYcOBefwYe6z8ir8g8eKMP9D8wGk99+ccPjyU8tEPw9b3t6a4qWo6Pc5kjWQi"
   crossorigin="anonymous"></script>
 
 <script type="module"
   src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.21.0/dist/components/ij-nav.js"
-  integrity="sha384-+OUSRJOoYUxFf0lFxfb1RJXNV5AeUdja2Sh3VywAqD6nasV6i9TRpgfFKjtft9gO"
+  integrity="sha384-RI3/2NtetD1311MZ+2dXg1vgVoqfyeSzdTSSMikd3WI7dnv2ZiwIScF9qKsuDfYO"
   crossorigin="anonymous"></script>
 
 <script type="module"
@@ -419,10 +419,10 @@ its parent. For the pinned-with-`integrity` version, use the SRI block above.
 
 | Slot | |
 | --- | --- |
-| `brand` | **Required.** Your wordmark, linking home. A dot in your family accent sits beside it, unless the link carries its own mark (an `<svg>` or `<img>`) |
+| `brand` | **Required.** Your wordmark, linking home. A dot in your site's accent sits beside it, unless the link carries its own mark (an `<svg>` or `<img>`) |
 | `links` | Up to three. The one for this page gets `aria-current="page"`, unless you set it yourself |
 | `secondary` | Optional, one. A quiet button — GitHub, a changelog |
-| `cta` | One. Your store link, filled with your family accent |
+| `cta` | One. Your store link, filled with your site's accent, with its on-accent text |
 
 | Attribute | |
 | --- | --- |
@@ -577,15 +577,17 @@ one issue here if they differ.
 
 ---
 
-## Family accent: `dist/identity/<app>.css`
+## Site identity: `dist/identity/<app>.css`
 
-A colour your site may lean on — its hero, its CTA, a headline mark — without leaving the system.
-It is declared per family in [`apps.json`](apps.json), and [design.md](design.md#the-declared-families)
-lists which families have one. `primary` does not change. If your app has no file in
-[`dist/identity/`](dist/identity), there is nothing to adopt, and your site keeps the primary.
+Your site's own ground, text, accent and display face, declared for your app in
+[`apps.json`](apps.json) under `identity` (#65), and listed live on the
+[docs page](https://jarllyng.github.io/iamjarl-design/#identities). It replaces the family accent of 1.12 to
+1.21: every app's accent and face were copied over unchanged, so loading the new sheet changes
+nothing on a site that did not ask for a new identity. If your app has no file in
+[`dist/identity/`](dist/identity), it has no identity of its own and renders with the tokens.
 
 ```html
-<!-- tokens.css first, from the SRI block above -->
+<!-- tokens.css first, from the SRI block above, then the identity sheet -->
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.21.0/dist/identity/<app>.css"
   integrity="<from sri.json, see below>"
@@ -602,20 +604,27 @@ curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.21.0/dist/sri.jso
 Each sheet carries the version in its header, so its hash changes every release. Move the tag and
 the hash together, as with `tokens.css`.
 
-**Using it:**
+**What the sheet sets.** Only what your identity declares, plus what follows from it:
 
-- **As text or an icon** on `background.app`: `color: var(--ij-color-accent-family)`. Every accent
-  clears 4.5:1 on its own ground; `validate.js` refuses one that does not.
-- **As a fill**, put `var(--ij-color-on-primary)` on it. That is not a coincidence: `onPrimary` is
-  the same colour as `background.app` in both modes, so an accent that clears 4.5:1 on its ground
-  clears 4.5:1 under `onPrimary` too. A contract test holds that equivalence in place.
-- **Translucent**: `color-mix(in srgb, var(--ij-color-accent-family) 15%, transparent)`, or the
-  `--ij-color-accent-family-rgb` triplet the sheet also sets.
+| Variable | For |
+| --- | --- |
+| `--ij-color-bg-app`, `--ij-color-bg-card`, `--ij-color-text-primary` | Your ground, your cards and your text, if your identity has its own. The tokens' names, so everything built on them, `<ij-nav>` and `<ij-footer>` included, follows |
+| `--ij-color-text-secondary`, `--ij-color-text-tertiary` | Mixed from your text toward your ground, so they keep its warmth or coolness. Both clear AA |
+| `--ij-color-accent` | Strokes, fills, the one line in a drawing. It may be too light to read as text: Walkful's magenta is 2.7:1 on its sand |
+| `--ij-color-on-accent` | Text on an accent fill: black or white, whichever reads, at AA at least |
+| `--ij-color-accent-text` | Links, small highlights, focus rings: at least 4.5:1 on your ground and your cards |
+| `--ij-color-accent-family` | The 1.12 to 1.21 name, now the same as `--ij-color-accent-text`. A site that uses it keeps working |
+| `--ij-font-display` | Your display face's stack |
 
-**A site that is always dark must say so.** The sheet sets the light value on `:root` and switches
-under `prefers-color-scheme: dark`, the same as `tokens.css`. A site that is dark regardless of the
-system needs `class="dark"` on `<html>`, or a visitor in light mode gets the light accent on a dark
-page. Echolume does exactly this.
+Translucent: `color-mix(in srgb, var(--ij-color-accent) 15%, transparent)`, or the
+`--ij-color-accent-rgb` triplet the sheet also sets.
+
+**A site with one mode is held in it.** If your identity says `"scheme": "light"` (Walkful) or
+`"dark"`, the sheet sets `color-scheme` and holds every colour in that mode, whatever the visitor's
+setting. Nothing to add to the page. A site that follows the visitor gets both modes, switched under
+`prefers-color-scheme` as in `tokens.css`. A site without a `scheme` that is nevertheless always dark
+needs `class="dark"` on `<html>`, or a visitor in light mode gets the light accent on a dark page.
+Echolume does exactly this today; giving it `"scheme": "dark"` would make the class unnecessary.
 
 **The display face comes from here too.** The sheet sets `--ij-font-display` to the face's stack; load the face itself from the same tag:
 
@@ -625,7 +634,7 @@ page. Echolume does exactly this.
   integrity="<from sri.json>" crossorigin="anonymous">
 ```
 
-`<face>` is `jetbrains-mono`, `outfit`, `instrument-sans` or `fraunces` — whichever your family has (design.md, *The assignments*). With a build step, `import '@iamjarl/design-tokens/fonts/outfit.css'` serves it from your own origin instead. Then put it where your voice belongs: `h1, h2, h3 { font-family: var(--ij-font-display); }`. Never from Google Fonts — see design.md for why.
+`<face>` is the one your identity names (the docs page lists them): `jetbrains-mono`, `outfit`, `instrument-sans` or `fraunces`. With a build step, `import '@iamjarl/design-tokens/fonts/outfit.css'` serves it from your own origin instead. Then put it where your voice belongs: `h1, h2, h3 { font-family: var(--ij-font-display); }`. Never from Google Fonts; design.md says why.
 
 **Not listed in `sri.json`: the footer fragments.** You copy them into your own HTML at build time,
 and the browser never fetches them as a resource, so an `integrity` attribute has nothing to check.
