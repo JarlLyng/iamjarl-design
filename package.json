@@ -24,6 +24,7 @@
     "./identity/*": "./dist/identity/*",
     "./fonts/*": "./dist/fonts/*",
     "./store/*": "./dist/store/*",
+    "./kit/*": "./dist/kit/*",
     "./badges/*": "./badges/*",
     "./apps.json": "./apps.json",
     "./sri.json": "./dist/sri.json",

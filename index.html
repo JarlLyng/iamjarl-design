@@ -117,6 +117,10 @@
     .frame-body .tall { height: 600px; }
     pre { overflow-x: auto; padding: var(--ij-spacing-md); background: var(--ij-color-bg-card); border-radius: var(--ij-radius-md); border: 1px solid var(--ij-color-border-subtle); }
     ul.plain { padding-left: var(--ij-spacing-lg); margin: 0; }
+    .kit-demos { display: grid; gap: var(--ij-spacing-lg); grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); margin: var(--ij-spacing-lg) 0; }
+    .kit-demos figure { margin: 0; padding: var(--ij-spacing-sm); }
+    .kit-demos iframe { display: block; width: 100%; height: 720px; border: 0; border-radius: var(--ij-radius-md); }
+    .kit-demos figcaption { margin-top: var(--ij-spacing-sm); }
     .chips { display: flex; flex-wrap: wrap; gap: var(--ij-spacing-xs); padding: 0; margin: var(--ij-spacing-sm) 0 0; list-style: none; }
     .chips li { padding: 0 var(--ij-spacing-sm); border: 1px solid var(--ij-color-border-subtle); border-radius: var(--ij-radius-sm); font-size: var(--ij-font-size-sm); }
     .page-foot { padding-top: var(--ij-spacing-xxl); padding-bottom: var(--ij-spacing-xxxl); border-top: 1px solid var(--ij-color-border-subtle); }
@@ -143,6 +147,7 @@
         <li><a href="#identities">Site identities</a></li>
         <li><a href="#type">Type</a></li>
         <li><a href="#scales">Scales</a></li>
+        <li><a href="#kit">Marketing kit</a></li>
         <li><a href="#components">Components</a></li>
         <li><a href="#icons">Icons</a></li>
         <li><a href="#guidance">Guidance</a></li>
@@ -226,6 +231,39 @@
         <thead><tr><th scope="col">Layer</th><th scope="col">z-index</th><th scope="col">CSS</th><th scope="col">Swift</th></tr></thead>
         <tbody></tbody>
       </table></div>
+    </section>
+
+    <section id="kit" aria-labelledby="kit-h">
+      <h2 id="kit-h">Marketing kit</h2>
+      <p class="muted">Web only (#65). Sections an app site composes, in plain HTML with the classes in
+        <code>dist/kit/kit.css</code>, on the marketing scale below. Every colour comes from the tokens and the site's
+        identity, so the same markup is two different sites. Each section reads in full without JavaScript.</p>
+      <div class="kit-demos">
+        <figure class="card"><iframe src="./kit/walkful.html" title="The kit with Walkful's identity" loading="lazy"></iframe>
+          <figcaption class="small"><a href="./kit/walkful.html">Walkful</a>: sand, charcoal, magenta, split hero</figcaption></figure>
+        <figure class="card"><iframe src="./kit/wean.html" title="The kit with a sketched identity for Wean" loading="lazy"></iframe>
+          <figcaption class="small"><a href="./kit/wean.html">Wean, a sketch</a>: cool grey-blue, a humanist sans, centred hero</figcaption></figure>
+      </div>
+      <div class="table-wrap"><table class="small" id="kit-sections">
+        <thead><tr><th>Section</th><th>Classes</th><th>Without JavaScript, or with reduced motion</th></tr></thead>
+        <tbody>
+          <tr><td>Hero, split or centred</td><td><code>.ij-hero--split</code> <code>.ij-hero--centred</code></td><td>Statement, line, store button and the phone, all in the served HTML</td></tr>
+          <tr><td>The phone</td><td><code>.ij-phone</code> <code>.ij-phone__screen</code> <code>.ij-phone__frame</code></td><td>Straight, never tilted. A generic CSS frame until the drawn one lands; a screen recording shows its poster</td></tr>
+          <tr><td>Statements, one drawing each</td><td><code>.ij-statements</code> <code>.ij-statement</code> <code>.ij-drawing</code></td><td>Static; the drawing is an SVG in the page</td></tr>
+          <tr><td>Frameless pieces</td><td><code>.ij-bento</code> <code>.ij-rows</code> <code>.ij-card</code></td><td>Static</td></tr>
+          <tr><td>The phone that stays</td><td><code>.ij-tour</code> <code>.ij-tour__screens</code> <code>.ij-tour__steps</code></td><td>The screens in a row, the texts below them</td></tr>
+          <tr><td>Where it works</td><td><code>.ij-traits</code> <code>.ij-trait--number</code> <code>.ij-numeral</code></td><td>Static</td></tr>
+          <tr><td>Privacy and price</td><td><code>.ij-assurances</code> <code>.ij-assurance--label</code></td><td>Static</td></tr>
+          <tr><td>A note from the maker</td><td><code>.ij-maker</code> <code>.ij-maker__sign</code></td><td>Static</td></tr>
+          <tr><td>A dated source</td><td><code>.ij-source</code> <code>.ij-source__meta</code></td><td>Static</td></tr>
+          <tr><td>Closing wordmark</td><td><code>.ij-closing</code> <code>.ij-wordmark</code></td><td>Static</td></tr>
+        </tbody>
+      </table></div>
+      <h3>The marketing scale</h3>
+      <p class="small muted">Fluid from a <span data-token="tokens.marketing.viewport.min" id="mkt-vmin"></span> to a
+        <span data-token="tokens.marketing.viewport.max" id="mkt-vmax"></span> viewport, in rem, so a visitor's own text size scales it.</p>
+      <div class="table-wrap"><table class="small" id="mkt-type"><thead><tr><th>Role</th><th>Size</th><th>Leading</th><th>Tracking</th><th>CSS</th></tr></thead><tbody></tbody></table></div>
+      <div class="table-wrap"><table class="small" id="mkt-space"><thead><tr><th>Space or width</th><th>Value</th><th>CSS</th></tr></thead><tbody></tbody></table></div>
     </section>
 
     <section id="components" aria-labelledby="components-h">
@@ -523,6 +561,29 @@
           el('dt', { text: 'Licence' }), el('dd', {}, el('a', { href: `./fonts/LICENSE-${sheet}.txt`, text: f.licence })),
           el('dt', { text: 'Source' }), el('dd', {}, code(f.source)),
           el('dt', { text: 'Used by' }), el('dd', { text: users.join(', ') || '—' }))));
+    }
+
+    // ---------- marketing scale ----------
+    const mkt = tokens.tokens.marketing;
+    $('mkt-vmin').textContent = `${mkt.viewport.min} px`;
+    $('mkt-vmax').textContent = `${mkt.viewport.max} px`;
+    for (const [k, v] of Object.entries(mkt.type)) {
+      $('mkt-type').tBodies[0].append(el('tr', {},
+        el('td', {}, el('p', { class: 'sample', style: `margin:0; font-size: min(var(--ij-mkt-${k}-size), 64px); line-height: var(--ij-mkt-${k}-leading); letter-spacing: var(--ij-mkt-${k}-tracking)`, text: cap(k) })),
+        el('td', {}, el('span', { 'data-token': `tokens.marketing.type.${k}.min`, text: `${v.min}` }), ' to ', el('span', { 'data-token': `tokens.marketing.type.${k}.max`, text: `${v.max} px` })),
+        el('td', { 'data-token': `tokens.marketing.type.${k}.leading` }, code(String(v.leading))),
+        el('td', { 'data-token': `tokens.marketing.type.${k}.tracking` }, code(`${v.tracking}em`)),
+        el('td', {}, code(`--ij-mkt-${k}-size`))));
+    }
+    for (const [k, v] of Object.entries(mkt.space)) {
+      $('mkt-space').tBodies[0].append(el('tr', {},
+        el('td', {}, el('div', { style: `height: 10px; width: var(--ij-mkt-space-${k}); background: var(--ij-color-primary); border-radius: var(--ij-radius-sm)`, 'aria-hidden': 'true' }), ` ${k}`),
+        el('td', {}, el('span', { 'data-token': `tokens.marketing.space.${k}.min`, text: `${v.min}` }), ' to ', el('span', { 'data-token': `tokens.marketing.space.${k}.max`, text: `${v.max} px` })),
+        el('td', {}, code(`--ij-mkt-space-${k}`))));
+    }
+    for (const [k, v] of Object.entries(mkt.width)) {
+      $('mkt-space').tBodies[0].append(el('tr', {},
+        el('td', { text: `width.${k}` }), el('td', { 'data-token': `tokens.marketing.width.${k}`, text: `${v} px` }), el('td', {}, code(`--ij-mkt-width-${k}`))));
     }
 
     // ---------- scales ----------

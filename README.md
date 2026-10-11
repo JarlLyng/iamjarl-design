@@ -302,7 +302,7 @@ build time and regenerate every release &mdash; copy them from here, never from 
 ```html
 <link rel="stylesheet"
   href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.21.0/dist/css/tokens.css"
-  integrity="sha384-iPMEFyvKaCGYBtCO7WjeiUbOvbqg6bdYoLG8PZ67uptuECMx8NrYhzOxme4GpFNL"
+  integrity="sha384-A1uhavbwiI53CGqiay2XJpcNv4W8q/iPgDYWYWY9pnaq0IY7dpvzZ5PM6euPiBLE"
   crossorigin="anonymous">
 
 <script type="module"
@@ -576,6 +576,67 @@ The facts come from `apps.json`, and a weekly workflow checks them against the A
 one issue here if they differ.
 
 ---
+
+## Marketing kit: `dist/kit/kit.css`
+
+Sections an app site composes, in plain HTML with these classes (#65). Every colour comes from
+`tokens.css` and your identity sheet, and every size from the marketing scale (`--ij-mkt-*`), so the
+same markup is Walkful's sand and magenta or a cool grey-blue. Each section reads in full without
+JavaScript. See the two live demos: [Walkful](https://jarllyng.github.io/iamjarl-design/kit/walkful.html)
+and [a Wean sketch](https://jarllyng.github.io/iamjarl-design/kit/wean.html).
+
+```html
+<link rel="stylesheet" href="…/dist/css/tokens.css" integrity="…" crossorigin="anonymous">
+<link rel="stylesheet" href="…/dist/identity/<app>.css" integrity="…" crossorigin="anonymous">
+<link rel="stylesheet" href="…/dist/fonts/<face>.css" integrity="…" crossorigin="anonymous">
+<link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.21.0/dist/kit/kit.css"
+  integrity="<from sri.json>" crossorigin="anonymous">
+
+<body class="ij-page">
+  <section class="ij-hero ij-hero--split">
+    <div class="ij-container ij-hero__inner">
+      <div class="ij-hero__text">
+        <h1 class="ij-display">Every step counts.</h1>
+        <p class="ij-lede">One line that carries the outcome.</p>
+        <!-- the store fragment, e.g. dist/store/walkful.en.black.html -->
+      </div>
+      <div class="ij-hero__media">
+        <div class="ij-phone"><div class="ij-phone__screen"><img src="today.png" alt="…" fetchpriority="high"></div></div>
+      </div>
+    </div>
+  </section>
+  <section class="ij-section">…</section>
+</body>
+```
+
+| Section | Classes | Without JavaScript |
+| --- | --- | --- |
+| Hero, split or centred | `.ij-hero--split`, `.ij-hero--centred`, `.ij-hero__text`, `.ij-hero__media` | Complete |
+| The phone, straight | `.ij-phone`, `.ij-phone__screen`, `.ij-phone__frame`, `.ij-phone--drawn` | Complete |
+| Statements, one drawing each | `.ij-statements`, `.ij-statement`, `.ij-drawing` | Complete |
+| Frameless pieces | `.ij-bento` with `.ij-card` (`--half`, `--wide`), or `.ij-rows` with `.ij-row` | Complete |
+| The phone that stays | `.ij-tour`, `.ij-tour__screens`, `.ij-tour__steps` | The screens in a row, the texts below |
+| Where it works | `.ij-traits`, `.ij-trait`, `.ij-trait--number`, `.ij-numeral` | Complete |
+| Privacy and price | `.ij-assurances`, `.ij-assurance`, `.ij-assurance--label` | Complete |
+| A note from the maker | `.ij-maker`, `.ij-maker__sign` | Complete |
+| A dated source | `.ij-source`, `.ij-source__fact`, `.ij-source__meta` | Complete |
+| Closing wordmark | `.ij-closing`, `.ij-wordmark` | Complete |
+
+Type roles: `.ij-display`, `.ij-headline`, `.ij-title`, `.ij-lede`, `.ij-small`, `.ij-numeral`,
+`.ij-wordmark`. Layout: `.ij-container`, `.ij-section`, `.ij-section--band` (a section on the card
+colour), `.ij-measure`, `.ij-stack`. Two hooks: `--ij-phone-width` and `--ij-display-weight` (for a face
+whose regular weight reads too light; Young Serif has only one, so the kit never synthesises bold).
+
+**The phone frame is drawn, never Apple's.** Apple's licence for its Design Resources forbids using
+them as website content or redistributing them, so no bezel ships from here. `.ij-phone` is a generic
+phone drawn in CSS until your drawn frame lands: put the SVG in `<img class="ij-phone__frame">` and
+add `.ij-phone--drawn`. Apple's marketing rules also say a drawn device must not carry details unique
+to its products, so the drawing has no island and no side buttons.
+
+**Load the first screen at once and everything else lazily.** The hero's image takes
+`fetchpriority="high"`; every image below it `loading="lazy"`. The browser tests hold both demos to
+it, and to every text reading at AA on whatever it sits on.
 
 ## Site identity: `dist/identity/<app>.css`
 
