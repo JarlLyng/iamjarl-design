@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.22.1)
+# IAMJARL Design System (v1.23.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -136,12 +136,13 @@ So each app declares its **identity** in `apps.json`: its own ground, text, acce
 | Site | Scheme | Ground and text | Accent (text) | Face |
 |---|---|---|---|---|
 | **Walkful** | light | sand `#F5EFE6`, charcoal `#2B2825`, cards `#FFFCF7` | `#F140FE` (`#A80FB3`) | Fraunces, soft |
-| Anvil Workout, WODrounds, Wean | both | the tokens' | `#587114` / `#D0FF00` | JetBrains Mono; Wean Instrument Sans |
+| **Wean** | light | misty grey-blue `#E6ECEF`, charcoal `#22292E`, cards `#F5F8F9` | `#F140FE` (`#A80FB3`) | Instrument Sans |
+| Anvil Workout, WODrounds | both | the tokens' | `#587114` / `#D0FF00` | JetBrains Mono |
 | It's mono yo!, It's 404 yo!, Echolume, TonVault, Patternaut | both | the tokens' | `#177082` / `#23ACC7` | JetBrains Mono; Echolume Outfit |
 | BotLens, PageLens | both | the tokens' | `#217370` / `#35B6B2` | Outfit |
 | TrimrPix, TrimrPix for iOS | both | the tokens' | `#B4401D` / `#DD5931` | Outfit |
 
-All but Walkful are the family values carried over, light / dark. Each will change when its site gets its own personality; Wean is next. The docs page renders this table live from `apps.json`, with every contrast.
+All but Walkful and Wean are the family values carried over, light / dark. Each will change when its site gets its own personality. Wean shares Walkful's magenta, the iPhone icons' line, and differs in ground and face: cool where Walkful is warm, a humanist sans where Walkful has a serif. The docs page renders this table live from `apps.json`, with every contrast.
 
 ### Marketing pages (web only)
 Each app site has one job: show what the app is, quickly, and hand the visitor to the store. The owner compared the portfolio's sites with app sites they admire (#65), and what the good ones share is a short list. The kit in `dist/kit/kit.css` is built to make it the easy path:
