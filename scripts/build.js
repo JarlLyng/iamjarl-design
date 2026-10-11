@@ -1316,6 +1316,12 @@ function generateKitCss(tokens) {
   return `/* IAMJARL marketing kit v${tokens.meta.version}: generated from kit/kit.css, do not edit */\n${src}`;
 }
 
+// The kit's motion, the same way: one small module, no dependencies.
+function generateKitJs(tokens) {
+  const src = fs.readFileSync(path.join(ROOT, 'kit', 'kit.js'), 'utf-8');
+  return `// IAMJARL marketing kit v${tokens.meta.version}: generated from kit/kit.js, do not edit\n${src}`;
+}
+
 // The nav carries no registry: every link is the site's own, slotted in light
 // DOM, because a crawler that does not run JavaScript must still see them.
 function generateNav(tokens) {
@@ -1390,6 +1396,7 @@ const SRI_FILES = [
   'dist/components/ij-nav.js',
   'dist/components/ij-store-cta.js',
   'dist/kit/kit.css',
+  'dist/kit/kit.js',
 ];
 
 function computeSri(identityIds, fontNames = []) {
@@ -1642,6 +1649,7 @@ async function main() {
   writeFile(path.join(ROOT, 'dist', 'components', 'ij-nav.js'), generateNav(tokens));
   writeFile(path.join(ROOT, 'dist', 'components', 'ij-store-cta.js'), generateStoreCta(tokens));
   writeFile(path.join(ROOT, 'dist', 'kit', 'kit.css'), generateKitCss(tokens));
+  writeFile(path.join(ROOT, 'dist', 'kit', 'kit.js'), generateKitJs(tokens));
   const storeFragments = await generateStoreFragments(tokens);
   const storeDir = path.join(ROOT, 'dist', 'store');
   const storeKeep = new Set(storeFragments.map(([f]) => f));

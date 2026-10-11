@@ -194,6 +194,57 @@ ij-store-cta { display: block; }
   .ij-tour__steps { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
 }
 
+/* The phone that stays, once kit.js has made it live (wide screens, motion
+   allowed): one phone holds still beside the feature texts, and its screen
+   crossfades with the text in the middle of the viewport. The texts are never
+   dimmed: every one stays readable, and the active one only gains a line. */
+.ij-tour.is-live { --ij-phone-width: 300px; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); align-items: start; }
+.ij-tour.is-live .ij-tour__screens {
+  position: sticky;
+  top: max(var(--ij-mkt-space-block), calc(50vh - var(--ij-phone-width) * 1.0833));
+  display: grid;
+  /* A definite track: a phone sized in % of a content-sized track has no width. */
+  grid-template-columns: minmax(0, var(--ij-phone-width));
+  justify-content: center;
+  overflow: visible;
+  padding: 0;
+}
+.ij-tour.is-live .ij-tour__screens > .ij-phone {
+  --ij-phone-width: inherit;
+  grid-area: 1 / 1;
+  opacity: 0;
+}
+.ij-tour.is-live .ij-tour__screens > .ij-phone.is-active { opacity: 1; }
+.ij-tour.is-live .ij-tour__steps {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  /* Room below the last text, so the phone still holds still while it is the
+     one in the middle: half the phone's height past the middle of the viewport. */
+  padding-bottom: max(0px, calc(var(--ij-phone-width) * 1.0833 - 35vh));
+}
+.ij-tour.is-live .ij-tour__step {
+  min-height: 70vh;
+  justify-content: center;
+  padding-left: var(--ij-mkt-space-stack);
+}
+/* The active text gains a short line beside its heading, and nothing else. */
+.ij-tour.is-live .ij-tour__step > :first-child { position: relative; }
+.ij-tour.is-live .ij-tour__step > :first-child::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--ij-mkt-space-stack) * -1);
+  top: 0.15em;
+  bottom: 0.15em;
+  width: 2px;
+  border-radius: 1px;
+  background: transparent;
+}
+.ij-tour.is-live .ij-tour__step.is-active > :first-child::before { background: var(--ij-color-accent); }
+/* Transitions only once the live state has settled, so becoming live on load
+   moves nothing: the first screen never animates. */
+.ij-tour.is-ready .ij-tour__screens > .ij-phone { transition: opacity var(--ij-duration-slow) var(--ij-easing-standard); }
+.ij-tour.is-ready .ij-tour__step > :first-child::before { transition: background-color var(--ij-duration-slow) var(--ij-easing-standard); }
+
 /* ---------- Where it works: short traits, one large number ---------- */
 
 .ij-traits { display: grid; gap: var(--ij-spacing-lg); grid-template-columns: minmax(0, 1fr); }

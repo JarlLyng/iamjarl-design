@@ -150,7 +150,7 @@ Each app site has one job: show what the app is, quickly, and hand the visitor t
 - **The product big, straight and with plausible data.** A phone on the first screen, never tilted. Below it, features as frameless pieces: one number, one chart, one card from the app, shown large.
 - **One quiet block per feature.** A short headline and one sentence.
 - **Privacy and price stated as features,** and **a person behind the app:** a short note from the maker, signed.
-- **One thing that moves, and it is the product.** A short screen recording in the hero, and the phone that stays on screen while the features scroll past. Nothing animates in, and the resting state is always the whole page.
+- **One thing that moves, and it is the product.** A short screen recording in the hero, and the phone that stays on screen while the features scroll past. Nothing animates in, and the resting state is always the whole page. Both are CSS with the motion tokens, switched by the kit's own module (`dist/kit/kit.js`, no library; the owner chose that over vendoring Motion, #65), and both stop under reduce motion.
 - **Light pages.** Below the first screen everything loads lazily. A screen recording is encoded at display size, around 300 to 600 KB, with a poster frame.
 - **Hygiene.** Real headings in order, body text at 18 px or more, no unverifiable numbers (a privacy-first app cannot count its users), no urgency banners, no tilted or animated devices.
 
