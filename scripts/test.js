@@ -738,6 +738,14 @@ const shownTwice = KIT_CLASSES.filter(c => ['ij-hero--split', 'ij-hero--centred'
 check('both demos compose every section, so each is shown under two identities, and the two hero layouts between them',
   shownTwice.length === KIT_CLASSES.length && demos.walkful.includes('ij-hero--split') && demos.wean.includes('ij-hero--centred'),
   KIT_CLASSES.filter(c => !shownTwice.includes(c)).join(', '));
+// The portfolio's standard (#71): no Made by Human badge and no AI-authorship
+// wording on an app site. A drawing credit is allowed, as one line in the
+// footer's fineprint and nowhere else.
+check('the demos carry no Made by Human badge and no AI wording outside the fineprint credit',
+  Object.values(demos).every(html => !/madebyhuman\.iamjarl\.com\/badges/i.test(html) &&
+    !/(co-created|made|built|written|generated) (with|by) AI/i.test(html) &&
+    !/\bAI\b/.test(html.replace(/<span slot="fineprint">[\s\S]*?<\/span>/g, ''))),
+  'the badge lives in the README; a drawing credit is one line in the fineprint');
 check('the demos load nothing from Google, and no script but the system\'s components',
   Object.values(demos).every(html => !/fonts\.googleapis|fonts\.gstatic/.test(html) &&
     [...html.matchAll(/<script[^>]*src="([^"]+)"/g)].every(m => m[1].startsWith('../dist/components/') || m[1] === '../dist/kit/kit.js')));

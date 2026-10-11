@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.22.0)
+# IAMJARL Design System (v1.22.1)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -153,6 +153,7 @@ Each app site has one job: show what the app is, quickly, and hand the visitor t
 - **One thing that moves, and it is the product.** A short screen recording in the hero, and the phone that stays on screen while the features scroll past. Nothing animates in, and the resting state is always the whole page. Both are CSS with the motion tokens, switched by the kit's own module (`dist/kit/kit.js`, no library; the owner chose that over vendoring Motion, #65), and both stop under reduce motion.
 - **Light pages.** Below the first screen everything loads lazily. A screen recording is encoded at display size, around 300 to 600 KB, with a poster frame.
 - **Hygiene.** Real headings in order, body text at 18 px or more, no unverifiable numbers (a privacy-first app cannot count its users), no urgency banners, no tilted or animated devices.
+- **No Made by Human badge and no AI-authorship wording on an app site** (the portfolio's standard; #71). The badge belongs in the repo's README. A site may link Made by Human as a sibling, labelled "Made by Human", as `<ij-footer>` does. There are two exceptions, both one plain line: a note on authorship on an editorial article, and, for drawings made with AI, a single credit in the footer's fineprint, such as "Illustrations drawn with AI, finished by hand" (decided by the owner on 2026-10-11). Never in the hero, the copy or the store text, never as a badge, and never as a claim that the drawings are hand-drawn.
 
 **The marketing scale is separate from the app scale.** Headlines run from 52 px on a phone to 96 px from a 1280 px viewport up, body text from 18 px, content 1,100 px wide, and the sections far apart. All of it is fluid and in rem, as `--ij-mkt-*` in `tokens.css`; the docs page shows every value. Cards keep `radius.lg`: rule 6 holds on marketing pages too.
 
