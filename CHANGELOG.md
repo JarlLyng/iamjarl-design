@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.23.0] — 2026-10-11
+
+Wean's identity, the second flagship after Walkful (#65).
+
+### Added
+- **Wean's identity**, from its site brief: light only, a misty grey-blue `#E6ECEF`, charcoal `#22292E` (12.4:1), cards `#F5F8F9`, the iPhone icons' magenta `#F140FE` for strokes and fills with black on it, `#A80FB3` for text (5.2:1 on the grey-blue), and Instrument Sans for headlines. It shares Walkful's magenta and differs in ground and face: cool where Walkful is warm, a humanist sans where Walkful has a serif.
+- The kit's Wean example now loads Wean's own identity sheet instead of the sketch it carried.
+
+### Note for Wean
+Its 1.23 identity sheet turns today's dark navy and lime site light. Take it with the redesign, not before.
+
 ## [1.22.1] — 2026-10-11
 
 What Walkful hit when it went live on the kit (#72, #71).
@@ -750,6 +761,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.23.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.23.0
 [1.22.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.22.1
 [1.22.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.22.0
 [1.21.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.21.0

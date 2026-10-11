@@ -164,12 +164,14 @@
       "listed": true,
       "consumes": false,
       "identity": {
+        "scheme": "light",
         "display": "humanist",
         "light": {
-          "accent": "#587114"
-        },
-        "dark": {
-          "accent": "#D0FF00"
+          "background": "#E6ECEF",
+          "surface": "#F5F8F9",
+          "text": "#22292E",
+          "accent": "#F140FE",
+          "accentText": "#A80FB3"
         }
       },
       "store": {
