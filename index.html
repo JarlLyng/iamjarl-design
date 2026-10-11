@@ -508,7 +508,7 @@
       const panels = el('div', { class: 'modes pair' });
       for (const [mode, m] of Object.entries(id.modes)) {
         panels.append(el('div', { class: 'mode-panel', style: `background: ${m.background}; color: ${m.text}` },
-          el('p', { class: 'face-sample', style: `font-family: ${id.display?.face.stack ?? 'inherit'}; margin-top: 0`, text: a.name }),
+          el('p', { class: 'face-sample', style: `font-family: ${id.display?.face.stack ?? 'inherit'}; font-variation-settings: ${id.display?.face.axes ?? 'normal'}; margin-top: 0`, text: a.name }),
           el('div', { class: 'fill', style: `background: ${m.accent}; color: ${m.onAccent}` }, el('span', { text: 'accent' }), el('span', { class: 'mono', text: m.accent })),
           el('p', { class: 'small', style: 'margin: var(--ij-spacing-sm) 0 0' },
             el('span', { style: `color: ${m.accentText}; font-weight: 600`, text: m.accentText === m.accent ? 'As text' : `Text ${m.accentText}` }), ': ',

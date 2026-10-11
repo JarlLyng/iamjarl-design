@@ -343,7 +343,7 @@
       "consumes": true,
       "identity": {
         "scheme": "light",
-        "display": "humanist",
+        "display": "serif",
         "light": {
           "background": "#F5EFE6",
           "surface": "#FFFCF7",

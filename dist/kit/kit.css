@@ -1,4 +1,4 @@
-/* IAMJARL marketing kit v1.21.0: generated from kit/kit.css, do not edit */
+/* IAMJARL marketing kit v1.22.0: generated from kit/kit.css, do not edit */
 /* The marketing page kit (#65): sections every app site can compose.
 
    Plain HTML with these classes. No JavaScript is needed to read any of it:
@@ -50,6 +50,7 @@
    one weight (Young Serif) must not be asked for bold, so the weight is a hook. */
 .ij-display, .ij-headline, .ij-title, .ij-numeral, .ij-wordmark {
   font-family: var(--ij-font-display, var(--ij-font-ui));
+  font-variation-settings: var(--ij-font-display-axes, normal);
   font-weight: var(--ij-display-weight, 400);
   font-synthesis: none;
   margin: 0;
@@ -277,7 +278,7 @@ ij-store-cta { display: block; }
 
 .ij-maker { max-width: var(--ij-mkt-width-narrow); margin-inline: auto; }
 .ij-maker p { font-size: var(--ij-mkt-lead-size); line-height: var(--ij-mkt-lead-leading); margin: 0 0 1em; }
-.ij-maker__sign { font-family: var(--ij-font-display, var(--ij-font-ui)); font-size: var(--ij-mkt-title-size); margin: 0; }
+.ij-maker__sign { font-family: var(--ij-font-display, var(--ij-font-ui)); font-variation-settings: var(--ij-font-display-axes, normal); font-size: var(--ij-mkt-title-size); margin: 0; }
 .ij-maker__sign .ij-drawing { width: 140px; margin-top: var(--ij-spacing-xs); }
 
 /* ---------- A dated source for a cited fact ---------- */

@@ -1,4 +1,4 @@
-// IAMJARL <ij-nav> v1.21.0: generated, do not edit
+// IAMJARL <ij-nav> v1.22.0: generated, do not edit
 // Sources: components/nav-rules.js, components/ij-nav.js
 
 // The rules <ij-nav> enforces, kept out of the DOM so they are covered by the
@@ -226,6 +226,7 @@ const NAV_STYLE = `
   gap: var(--_gap);
   color: var(--_strong);
   font-family: var(--ij-font-display, inherit);
+  font-variation-settings: var(--ij-font-display-axes, normal);
   font-size: var(--ij-font-size-lg, 18px);
   font-weight: var(--ij-font-weight-bold, 700);
   line-height: var(--ij-line-height-lg, 28px);

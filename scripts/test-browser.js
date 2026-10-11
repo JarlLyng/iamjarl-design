@@ -593,10 +593,10 @@ try {
     const lazyWrong = imgs.filter(i => hero.contains(i) ? i.loading === 'lazy' : i.loading !== 'lazy').map(i => i.alt);
     const screens = [...document.querySelectorAll('.ij-tour__screens > .ij-phone')].map(e => Math.round(e.getBoundingClientRect().top));
     return { overflow: document.documentElement.scrollWidth - innerWidth, missing, low, h1: parseFloat(h1.fontSize),
-      face: h1.fontFamily, body, lazyWrong, animations: document.getAnimations().length,
+      face: h1.fontFamily, axes: h1.fontVariationSettings, body, lazyWrong, animations: document.getAnimations().length,
       screensInARow: screens.length > 1 && screens.every(t => t === screens[0]), bg: getComputedStyle(document.body).backgroundColor };
   })()`;
-  for (const [demo, bg] of [['walkful', 'rgb(245, 239, 230)'], ['wean', 'rgb(230, 236, 239)']]) {
+  for (const [demo, bg, faceRe] of [['walkful', 'rgb(245, 239, 230)', /Fraunces/], ['wean', 'rgb(230, 236, 239)', /Instrument Sans/]]) {
     for (const [w, h, size] of [[1440, 900, 96], [375, 812, 52]]) {
       await p.viewport(w, h);
       await p.goto(`${base}/kit/${demo}.html`);
@@ -604,8 +604,9 @@ try {
       await p.settle(200);
       const k = await p.eval(kitProbe);
       check(`${demo} at ${w}: every section, no overflow, headline ${size} px in the site's face, body 18 px or more`,
-        k.missing.length === 0 && k.overflow <= 0 && Math.abs(k.h1 - size) < 1 && /Instrument Sans/.test(k.face) && k.body >= 18 && k.bg === bg,
-        JSON.stringify({ missing: k.missing, overflow: k.overflow, h1: k.h1, face: k.face, body: k.body, bg: k.bg }));
+        k.missing.length === 0 && k.overflow <= 0 && Math.abs(k.h1 - size) < 1 && faceRe.test(k.face) && k.body >= 18 && k.bg === bg &&
+        (demo !== 'walkful' || k.axes === '"SOFT" 100'),
+        JSON.stringify({ missing: k.missing, overflow: k.overflow, h1: k.h1, face: k.face, axes: k.axes, body: k.body, bg: k.bg }));
       check(`${demo} at ${w}: every text at AA on what it sits on, nothing moving on load`,
         k.low.length === 0 && k.animations === 0, JSON.stringify({ low: k.low, animations: k.animations }));
       if (w === 1440) check(`${demo}: the hero loads at once, everything below it lazily`, k.lazyWrong.length === 0, k.lazyWrong.join(', '));

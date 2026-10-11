@@ -1560,6 +1560,9 @@ async function generateIdentitySheets(tokens) {
       }
       // The face does not change with mode, so it goes in the :root block only.
       if (face && id.display) v('font-display', id.display.face.stack);
+      // A face whose character lives on an axis (Fraunces' SOFT) carries it
+      // here, so a site gets the face it was shown, not the axis's default.
+      if (face && id.display?.face.axes) v('font-display-axes', id.display.face.axes);
       return lines;
     };
 
