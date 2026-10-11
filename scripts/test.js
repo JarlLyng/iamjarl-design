@@ -733,7 +733,25 @@ check('both demos compose every section, so each is shown under two identities, 
   KIT_CLASSES.filter(c => !shownTwice.includes(c)).join(', '));
 check('the demos load nothing from Google, and no script but the system\'s components',
   Object.values(demos).every(html => !/fonts\.googleapis|fonts\.gstatic/.test(html) &&
-    [...html.matchAll(/<script[^>]*src="([^"]+)"/g)].every(m => m[1].startsWith('../dist/components/'))));
+    [...html.matchAll(/<script[^>]*src="([^"]+)"/g)].every(m => m[1].startsWith('../dist/components/') || m[1] === '../dist/kit/kit.js')));
+
+// Motion (#65): two things move, from one small module of the system's own.
+// The owner chose it over vendoring Motion, so it stays small and dependency
+// free, and it has to defer to reduce motion in both places it acts.
+const kitJsSrc = read('kit/kit.js');
+const kitJsDist = read('dist/kit/kit.js');
+check('kit.js is the system\'s own: no import, no dependency, under 4 KB',
+  !/^\s*import\s/m.test(kitJsSrc) && !/\bfrom\s+['"]/.test(kitJsSrc) && Buffer.byteLength(kitJsDist) < 4096,
+  `${Buffer.byteLength(kitJsDist)} bytes`);
+check('kit.js defers to reduce motion for the video and the tour, and steps back if it is turned on',
+  /prefers-reduced-motion: reduce/.test(kitJsSrc) && (kitJsSrc.match(/reduce\.addEventListener\('change'/g) || []).length === 2 &&
+  /e\.isIntersecting && !reduce\.matches/.test(kitJsSrc));
+check('dist/kit/kit.js is the source with its version on top, and hashed',
+  kitJsDist.startsWith(`// IAMJARL marketing kit v${fullTokens.meta.version}:`) && kitJsDist.endsWith(kitJsSrc) &&
+  'dist/kit/kit.js' in JSON.parse(read('dist/sri.json')).files);
+check('the crossfade uses the motion tokens, and only once the tour has settled',
+  /\.ij-tour\.is-ready [^{]*\{ transition: opacity var\(--ij-duration-slow\) var\(--ij-easing-standard\)/.test(kitSrc) &&
+  !/\.ij-tour\.is-live[^{]*\{[^}]*transition/.test(kitSrc));
 
 // --- Owner decisions, 2026-10-04 (#53) ---
 // Written down in the docs, and the one with code consequences asserted on the

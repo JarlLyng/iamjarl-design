@@ -98,6 +98,19 @@ ${FULL_NAV.replace('<ij-nav>', '<ij-nav cta-after="#hero-cta">')}
 <main id="main"><h1>Every step counts.</h1><p class="sub">Calm.</p></main>
 <ij-footer app="walkful"><a slot="links" href="#">Privacy</a></ij-footer>` }),
 
+  // The kit's screen recording (#65), with play and pause counted rather than
+  // played: the question is when the module asks, not whether a codec exists.
+  'kit-loop': page({ nav: false, body: `<script>
+  window.__plays = 0; window.__pauses = 0;
+  HTMLMediaElement.prototype.play = function () { window.__plays++; return Promise.resolve(); };
+  HTMLMediaElement.prototype.pause = function () { window.__pauses++; };
+</script>
+<link rel="stylesheet" href="/dist/kit/kit.css">
+<main class="ij-page"><div class="ij-phone"><div class="ij-phone__screen">
+  <video class="ij-loop" muted loop playsinline preload="none" poster="/badges/app-store-black-en-us.svg"></video>
+</div></div><div style="height: 3000px"></div></main>
+<script type="module" src="/dist/kit/kit.js"></script>` }),
+
   // Footer hover: the family accent under an identity sheet, primary without.
   'footer-accent': page({ nav: false, footer: true, identity: 'echolume', body: `
 <ij-footer app="echolume"><a slot="links" href="#">Privacy</a></ij-footer>` }),
@@ -605,6 +618,68 @@ try {
       n.missing.length === 0 && n.low.length === 0 && n.screensInARow && await p.eval(`document.scripts.length === 0`),
       JSON.stringify({ missing: n.missing, low: n.low, row: n.screensInARow }));
   }
+  // Motion (#65): two things move, and only when they may.
+  await p.viewport(1440, 900);
+  await p.media([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);
+  await p.goto(`${base}/fixture/kit-loop/index.html`);
+  await p.settle(300);
+  const played = await p.eval('window.__plays');
+  await p.eval('scrollTo(0, 2500)');
+  await p.settle(300);
+  check('a screen recording plays while it is on screen and pauses when it leaves',
+    played >= 1 && await p.eval('window.__pauses') >= 1, JSON.stringify({ played, paused: await p.eval('window.__pauses') }));
+  await p.media([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+  await p.goto(`${base}/fixture/kit-loop/index.html`);
+  await p.settle(300);
+  check('with reduce motion on, it never plays: the poster stays', await p.eval('window.__plays') === 0);
+  await p.media([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);
+  await p.goto(`${base}/fixture/kit-loop/index.html`);
+  await p.settle(300);
+  const before = await p.eval('window.__pauses');
+  await p.media([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+  await p.settle(200);
+  check('turning reduce motion on while it plays pauses it', await p.eval('window.__pauses') > before);
+  await p.media([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);
+
+  const tourState = `(() => {
+    const t = document.querySelector('.ij-tour'), sc = t.querySelector('.ij-tour__screens');
+    const ph = [...sc.querySelectorAll('.ij-phone')];
+    return { live: t.classList.contains('is-live'), ready: t.classList.contains('is-ready'), active: t.dataset.active ?? null,
+      position: getComputedStyle(sc).position, opacities: ph.map(e => getComputedStyle(e).opacity),
+      phoneTop: Math.round((ph.find(e => e.classList.contains('is-active')) ?? ph[0]).getBoundingClientRect().top),
+      phoneSize: (r => [Math.round(r.width), Math.round(r.height)])((ph.find(e => e.classList.contains('is-active')) ?? ph[0]).getBoundingClientRect()),
+      stepOpacity: [...t.querySelectorAll('.ij-tour__step')].map(e => getComputedStyle(e).opacity),
+      animations: document.getAnimations().length };
+  })()`;
+  await p.goto(`${base}/kit/walkful.html`);
+  await p.settle(300);
+  const atLoad = await p.eval(tourState);
+  check('nothing moves on load, though the tour has gone live', atLoad.live && atLoad.animations === 0, JSON.stringify(atLoad));
+  const at = async step => {
+    await p.eval(`document.querySelector('.ij-tour__step[data-step="${step}"]').scrollIntoView({ block: 'center' })`);
+    await p.settle(700);
+    return p.eval(tourState);
+  };
+  const one = await at(1), two = await at(2), three = await at(3);
+  // From the second text on, the phone has reached its place and holds it.
+  check('the phone that stays holds still and changes screen with the text in the middle',
+    one.position === 'sticky' && one.active === '1' && two.active === '2' && three.active === '3' && two.ready &&
+    two.opacities.join() === '0,1,0' && three.opacities.join() === '0,0,1' && Math.abs(two.phoneTop - three.phoneTop) <= 2 &&
+    two.phoneSize[0] >= 280 && two.phoneSize[1] >= 600,
+    JSON.stringify({ one, two, three }));
+  check('no feature text is ever dimmed', two.stepOpacity.every(o => o === '1'), two.stepOpacity.join());
+  await p.media([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+  await p.goto(`${base}/kit/walkful.html`);
+  await p.settle(300);
+  const still = await p.eval(tourState);
+  await p.media([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);
+  await p.viewport(375, 812);
+  await p.goto(`${base}/kit/walkful.html`);
+  await p.settle(300);
+  const narrow = await p.eval(tourState);
+  check('with reduce motion on, or on a phone, the tour stays a row of screens',
+    !still.live && still.opacities.every(o => o === '1') && !narrow.live, JSON.stringify({ still, narrow }));
+
   await p.viewport(1024, 800);
 
   // Footer: the manual checks that have already caught real bugs.

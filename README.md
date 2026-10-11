@@ -634,6 +634,37 @@ phone drawn in CSS until your drawn frame lands: put the SVG in `<img class="ij-
 add `.ij-phone--drawn`. Apple's marketing rules also say a drawn device must not carry details unique
 to its products, so the drawing has no island and no side buttons.
 
+**Two things move, from `dist/kit/kit.js`.** One small module of the system's own (3 KB, no
+dependencies), loaded after the page; nothing waits for it:
+
+```html
+<script type="module"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.21.0/dist/kit/kit.js"
+  integrity="<from sri.json>" crossorigin="anonymous"></script>
+```
+
+- **A screen recording in the phone** plays while it is on screen and pauses when it is not. Give it
+  no `autoplay`, so that without the module, and under reduce motion, it shows its poster:
+
+  ```html
+  <div class="ij-phone__screen">
+    <video class="ij-loop" muted loop playsinline preload="none"
+      poster="today-poster.jpg" width="1206" height="2622" aria-label="Walkful's Today screen">
+      <source src="today.mp4" type="video/mp4">
+    </video>
+  </div>
+  ```
+
+  Encode it at the size it is shown, around 300 to 600 KB, and keep it to the hero: a poster loads
+  with the page wherever the video is.
+- **The phone that stays.** On a wide screen with motion allowed, `.ij-tour` becomes one phone that
+  holds still while the feature texts scroll past, and its screen crossfades to the one whose text is
+  in the middle. The texts are never dimmed. On a phone, under reduce motion, or without the module,
+  the screens sit in a row.
+
+Nothing else animates, and nothing animates in. There is no motion library: the crossfade is CSS
+with the motion tokens, and the module only decides when.
+
 **Load the first screen at once and everything else lazily.** The hero's image takes
 `fetchpriority="high"`; every image below it `loading="lazy"`. The browser tests hold both demos to
 it, and to every text reading at AA on whatever it sits on.
