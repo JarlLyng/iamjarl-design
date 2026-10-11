@@ -1462,7 +1462,7 @@ function generateFontFaces(tokens) {
 
 async function generateIdentitySheets(tokens) {
   const registry = JSON.parse(fs.readFileSync(path.join(ROOT, 'apps.json'), 'utf-8'));
-  const { accentFor, displayFor } = await import(
+  const { identityFor } = await import(
     pathToFileURL(path.join(ROOT, 'components', 'identity.js')).href
   );
 
@@ -1470,50 +1470,82 @@ async function generateIdentitySheets(tokens) {
   const out = [];
 
   for (const app of registry.apps.filter(a => a.status === 'shipped')) {
-    const accent = accentFor(registry, app.id, tokens.tokens);
-    const display = displayFor(registry, app.id, tokens);
-    if (!accent.isFamilyAccent && !display.face) continue;
+    const id = identityFor(registry, app.id, tokens);
+    if (id.isEmpty) continue;
 
-    const vars = (mode, indent) => {
+    // One mode's variables: only what the app declared, plus what follows from
+    // it. A new ground re-derives the secondary text; an accent brings its
+    // on-colour and its text-safe variant. --ij-color-accent-family is the name
+    // sites on 1.12 to 1.21 read, kept as the text-safe accent.
+    const vars = (mode, indent, { face = false } = {}) => {
+      const m = id.modes[mode];
+      const d = m.declared;
       const lines = [];
-      if (accent.isFamilyAccent) {
-        lines.push(`${indent}--ij-color-accent-family: ${accent[mode]};`);
-        lines.push(`${indent}--ij-color-accent-family-rgb: ${rgb(accent[mode])};`);
+      const v = (name, value) => lines.push(`${indent}--ij-${name}: ${value};`);
+      if (d.background) v('color-bg-app', m.background);
+      if (d.surface) { v('color-bg-card', m.surface); v('color-surface-default', m.surface); }
+      if (d.text) v('color-text-primary', m.text);
+      if (m.textSecondary) { v('color-text-secondary', m.textSecondary); v('color-text-tertiary', m.textTertiary); }
+      if (d.accent || d.accentText) {
+        v('color-accent', m.accent);
+        v('color-accent-rgb', rgb(m.accent));
+        v('color-on-accent', m.onAccent);
+        v('color-accent-text', m.accentText);
+        v('color-accent-family', m.accentText);
+        v('color-accent-family-rgb', rgb(m.accentText));
       }
-      // The display face does not change with mode, so it is emitted once, in
-      // the :root block only.
-      if (display.face && mode === 'light') {
-        lines.push(`${indent}--ij-font-display: ${display.face.stack};`);
-      }
-      return lines.join('\n');
+      // The face does not change with mode, so it goes in the :root block only.
+      if (face && id.display) v('font-display', id.display.face.stack);
+      return lines;
     };
 
     const body = [
       `/* IAMJARL identity for ${app.name}: generated, do not edit */`,
-      `/* design system v${tokens.meta.version}, family: ${app.category ?? 'none'} */`,
-      display.face
-        ? `/* Display face: ${display.face.name} (${display.face.licence}). Self-host it; see design.md. */`
-        : null,
-      accent.isFamilyAccent
-        ? `/* Primary is unchanged and still the brand thread; the accent is what this site may lean on. */`
+      `/* design system v${tokens.meta.version}. ${id.scheme ? `${id.scheme === 'light' ? 'Light' : 'Dark'} only: this sheet holds the site in that mode whatever the visitor's setting.` : 'Follows the visitor\'s light or dark setting.'} */`,
+      id.display
+        ? `/* Display face: ${id.display.face.name} (${id.display.face.licence}). Self-host it; see design.md. */`
         : null,
       '',
       ':root {',
-      vars('light', '  '),
+      id.scheme ? `  color-scheme: ${id.scheme};` : null,
+      ...vars(id.scheme ?? 'light', '  ', { face: true }),
       '}',
     ];
 
-    if (accent.isFamilyAccent) {
+    if (id.scheme) {
+      // One mode only. tokens.css switches every colour in the other mode, so
+      // the sheet puts back the whole set for its own mode, then its identity.
+      const other = id.scheme === 'light' ? 'dark' : 'light';
+      body.push(
+        '',
+        `@media (prefers-color-scheme: ${other}) {`,
+        '  :root {',
+        ...modeColorLines(tokens.tokens.colors.modes[id.scheme], '    '),
+        ...vars(id.scheme, '    '),
+        '  }',
+        '}',
+        '',
+        `.${other} {`,
+        ...modeColorLines(tokens.tokens.colors.modes[id.scheme], '  '),
+        ...vars(id.scheme, '  '),
+        '}',
+      );
+    } else if (id.hasColour) {
       body.push(
         '',
         '@media (prefers-color-scheme: dark) {',
         '  :root:not(.light) {',
-        vars('dark', '    '),
+        ...vars('dark', '    '),
         '  }',
         '}',
         '',
-        `.light { --ij-color-accent-family: ${accent.light}; --ij-color-accent-family-rgb: ${rgb(accent.light)}; }`,
-        `.dark { --ij-color-accent-family: ${accent.dark}; --ij-color-accent-family-rgb: ${rgb(accent.dark)}; }`
+        '.light {',
+        ...vars('light', '  '),
+        '}',
+        '',
+        '.dark {',
+        ...vars('dark', '  '),
+        '}',
       );
     }
     body.push('');

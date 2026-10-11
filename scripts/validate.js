@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseColor, contrastRatio } from './color.js';
 import { LOCALES, badgeFile, factsLine, offer, storeLink } from '../components/store.js';
+import { identityFor, MODES, COLOR_FIELDS } from '../components/identity.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -464,72 +465,20 @@ function validateApps(tokensRef) {
     pass(`${apps.length} apps, ${categories.length} categories, ids unique`);
   }
 
-  // Family accents. An accent that works on one ground only is not an accent,
-  // it is a second primary — so both modes are required and each is held to the
-  // same bar the shared primary already clears: legible as text on its own
-  // ground, and able to carry black or white when used as a fill.
-  const grounds = {
-    light: tokensRef?.tokens?.colors?.modes?.light?.background?.app,
-    dark: tokensRef?.tokens?.colors?.modes?.dark?.background?.app,
-  };
-  const accentSources = [
-    ...Object.entries(registry.categories ?? {}).map(([k, v]) => [`category "${k}"`, v.accent]),
-    ...apps.map(a => [`app "${a.id}"`, a.accent]),
-  ].filter(([, acc]) => acc);
-
-  let accentProblems = 0;
-  for (const [where, acc] of accentSources) {
-    for (const mode of ['light', 'dark']) {
-      const hex = acc[mode];
-      if (!hex) {
-        fail(`${where}: accent is missing "${mode}" — an accent that works on one ground only is a second primary`);
-        accentProblems++;
-        continue;
-      }
-      const c = parseColor(hex);
-      const ground = parseColor(grounds[mode]);
-      if (!c) { fail(`${where}: accent.${mode} "${hex}" is not a color`); accentProblems++; continue; }
-
-      const onGround = contrastRatio(c, ground);
-      if (onGround < 4.5) {
-        fail(`${where}: accent.${mode} is ${onGround.toFixed(2)}:1 on ${mode} background.app — below AA, so it cannot be used as text`);
-        accentProblems++;
-      }
-      const carries = [['black', '#000000'], ['white', '#FFFFFF']]
-        .filter(([, fg]) => contrastRatio(parseColor(fg), c) >= 4.5).map(([n]) => n);
-      if (!carries.length) {
-        fail(`${where}: accent.${mode} carries neither black nor white at AA, so it cannot be used as a fill`);
-        accentProblems++;
-      }
+  // Site identity (#65). Each app declares its own ground, text, accent and
+  // face; the family layer that set them per category until 1.21.0 is gone,
+  // and a value left on a category would silently do nothing, so it fails.
+  for (const [k, c] of Object.entries(registry.categories ?? {})) {
+    for (const field of ['accent', 'display']) {
+      if (c[field] !== undefined) fail(`category "${k}": "${field}" moved to each app's identity in 1.22.0 (#65); set it there`);
     }
   }
-  if (accentSources.length && !accentProblems) {
-    pass(`${accentSources.length} family accent(s), each AA on its ground and able to carry text`);
-  } else if (!accentSources.length) {
-    pass('no family accents declared — every app inherits the shared primary');
-  }
-
-  // Display faces. The approved set lives in tokens.json; a family only names
-  // one. An unknown name must fail here rather than emit a --ij-font-display
-  // pointing at a face nobody approved or licensed.
-  const faces = Object.keys(tokensRef?.brand?.typography?.display ?? {});
-  const displaySources = [
-    ...Object.entries(registry.categories ?? {}).map(([k, v]) => [`category "${k}"`, v.display]),
-    ...apps.map(a => [`app "${a.id}"`, a.display]),
-  ].filter(([, d]) => d);
-
-  let displayProblems = 0;
-  for (const [where, key] of displaySources) {
-    if (!faces.includes(key)) {
-      fail(`${where}: display "${key}" is not in the approved set (${faces.join(', ') || 'none declared'})`);
-      displayProblems++;
+  for (const a of apps) {
+    for (const field of ['accent', 'display']) {
+      if (a[field] !== undefined) fail(`app "${a.id}": "${field}" now lives under "identity" (#65)`);
     }
   }
-  if (displaySources.length && !displayProblems) {
-    pass(`${displaySources.length} display assignment(s), all from the approved set`);
-  } else if (!displaySources.length) {
-    pass(`no display faces assigned — ${faces.length} approved and waiting`);
-  }
+  validateIdentities(apps, tokensRef);
 
   const always = apps.filter(a => a.always === true);
   if (!always.length) fail('no always-links — every footer would lack a portfolio link');
@@ -540,6 +489,69 @@ function validateApps(tokensRef) {
   else pass(`${consumers.length} component consumer(s): ${consumers.map(a => a.name).join(', ')}`);
 
   validateStores(apps);
+}
+
+// Every colour an identity declares is held to what its role needs, on every
+// ground it can land on: text at 7:1, because it is the body copy of a
+// marketing page; the text-safe accent and both derived greys at AA; the accent
+// able to carry black or white, so it can be a button. The accent itself may be
+// too light to read (Walkful's magenta is 2.7:1 on sand), which is what
+// accentText is for, and why nothing else checks it as text.
+function validateIdentities(apps, tokensRef) {
+  const faces = Object.keys(tokensRef?.brand?.typography?.display ?? {});
+  const withIdentity = apps.filter(a => a.identity);
+  let problems = 0;
+  const bad = (a, msg) => { fail(`app "${a.id}".identity: ${msg}`); problems++; };
+  const ratio = (fg, bg) => contrastRatio(parseColor(fg), parseColor(bg));
+  for (const a of withIdentity) {
+    const id = a.identity;
+    const known = ['scheme', 'display', ...MODES];
+    for (const k of Object.keys(id)) if (!known.includes(k)) bad(a, `unknown field "${k}"`);
+    if (id.scheme !== undefined && !MODES.includes(id.scheme)) bad(a, `scheme must be "light" or "dark", not "${id.scheme}"`);
+    if (id.display !== undefined && !faces.includes(id.display)) {
+      bad(a, `display "${id.display}" is not in the approved set (${faces.join(', ')})`);
+    }
+    if (id.scheme) {
+      const other = id.scheme === 'light' ? 'dark' : 'light';
+      if (id[other]) bad(a, `a ${id.scheme}-only site declares no ${other} colours`);
+    } else {
+      // A site that follows the visitor needs each colour in both modes, or it
+      // would carry a light-mode accent onto a dark page.
+      for (const f of COLOR_FIELDS) {
+        if (Boolean(id.light?.[f]) !== Boolean(id.dark?.[f])) bad(a, `"${f}" is declared for one mode only; a site that follows the visitor needs both`);
+      }
+    }
+    for (const mode of MODES) {
+      const own = id[mode];
+      if (!own) continue;
+      for (const k of Object.keys(own)) if (!COLOR_FIELDS.includes(k)) bad(a, `${mode}: unknown colour "${k}"`);
+      if (Object.entries(own).some(([k, v]) => COLOR_FIELDS.includes(k) && !parseColor(v))) { bad(a, `${mode}: a colour is not a colour`); continue; }
+      if (Boolean(own.background) !== Boolean(own.text)) bad(a, `${mode}: background and text are declared together, or the tokens' text lands on the new ground`);
+    }
+    if (problems) continue;
+    let r;
+    try { r = identityFor({ apps }, a.id, tokensRef); } catch (e) { bad(a, e.message); continue; }
+    for (const [mode, m] of Object.entries(r.modes)) {
+      const grounds = [['background', m.background], ...(m.surface ? [['surface', m.surface]] : [])];
+      for (const [gname, g] of grounds) {
+        if (m.declared.text || m.declared.background) {
+          if (ratio(m.text, g) < 7) bad(a, `${mode}: text is ${ratio(m.text, g).toFixed(2)}:1 on ${gname}, below 7:1`);
+          for (const [n, c] of [['secondary text', m.textSecondary], ['tertiary text', m.textTertiary]]) {
+            if (ratio(c, g) < 4.5) bad(a, `${mode}: ${n} (${c}) is ${ratio(c, g).toFixed(2)}:1 on ${gname}, below AA`);
+          }
+        }
+        if (m.declared.accent || m.declared.accentText) {
+          if (ratio(m.accentText, g) < 4.5) {
+            bad(a, `${mode}: accent${m.declared.accentText ? 'Text' : ''} is ${ratio(m.accentText, g).toFixed(2)}:1 on ${gname}, below AA, so it cannot be used as text${m.declared.accentText ? '' : '; declare an accentText'}`);
+          }
+        }
+      }
+      if (m.declared.accent && ratio(m.onAccent, m.accent) < 4.5) {
+        bad(a, `${mode}: accent carries neither black nor white at AA, so it cannot be used as a fill`);
+      }
+    }
+  }
+  if (!problems) pass(`${withIdentity.length} site identities: text at 7:1, accents readable as text or carried by a text-safe variant, every face approved`);
 }
 
 // Store facts (#58). Everything the store button prints comes from here, so a
