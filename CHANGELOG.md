@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.22.1] — 2026-10-11
+
+What Walkful hit when it went live on the kit (#72, #71).
+
+### Fixed
+- **The kit's link rule reached into the components** (#72). `.ij-page a` coloured every link on the page, including the ones slotted into `<ij-nav>` and `<ij-footer>`, because a page rule beats a component's `::slotted` rule whatever its specificity. So the nav's Download button had deep magenta text on its magenta fill, about 2:1 where the nav means black at 6.9:1, and the nav's and the footer's links turned magenta. The rule now leaves anything with a `slot`, and anything inside one, to the component. Before the components are defined, as without JavaScript, their links take text colours.
+- **`<ij-footer>` started at the window's edge** in a kit page, being a block with no width of its own. Placed straight under `.ij-page`, it now takes the content width.
+- The kit's own tests missed both: the contrast check read only `main`, and the nav's CTA was tested on a page without the kit. Both demos are now checked at 1440 and 375 px for the CTA's text against its fill, for no accent text in the nav, and for the footer lining up with the content. Run against 1.22.0's stylesheet, the new check fails on all three.
+
+### Added
+- **The rule on Made by Human and AI wording, where sites read it** (#71). No badge and no AI-authorship wording on an app site; the badge belongs in the README. Two exceptions, one line each: an authorship note on an editorial article, and a credit for drawings made with AI in the footer's fineprint, such as "Illustrations drawn with AI, finished by hand" (the owner's decision). A contract test holds the demos to it.
+
 ## [1.22.0] — 2026-10-11
 
 Each app site gets its own personality, and the system gets a kit to build them with (#65). Side by side, twelve of the thirteen app sites were near-black, with the same accent, the same layout and a small product in a dark void, because each took one accent and one face per family. The owner decided on 2026-10-11 that every site gets its own; Walkful is the pilot, and Wean follows.
@@ -738,6 +750,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.22.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.22.1
 [1.22.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.22.0
 [1.21.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.21.0
 [1.20.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.20.0

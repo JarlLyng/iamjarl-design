@@ -592,9 +592,19 @@ try {
     const hero = document.querySelector('.ij-hero');
     const lazyWrong = imgs.filter(i => hero.contains(i) ? i.loading === 'lazy' : i.loading !== 'lazy').map(i => i.alt);
     const screens = [...document.querySelectorAll('.ij-tour__screens > .ij-phone')].map(e => Math.round(e.getBoundingClientRect().top));
+    // The page's own rules must not reach into the components (#72): the nav's
+    // CTA keeps its on-accent text, its links keep text colours, and the footer
+    // lines up with the content.
+    const swatch = v => { const i = document.createElement('i'); i.style.color = 'var(' + v + ')'; document.body.append(i); const c = getComputedStyle(i).color; i.remove(); return c; };
+    const cta = document.querySelector('ij-nav a[slot="cta"]');
+    const navLinks = [...document.querySelectorAll('ij-nav a[slot="brand"], ij-nav a[slot="links"]')].map(a => getComputedStyle(a).color);
+    const ft = document.querySelector('ij-footer').getBoundingClientRect(), ct = document.querySelector('main .ij-container').getBoundingClientRect();
     return { overflow: document.documentElement.scrollWidth - innerWidth, missing, low, h1: parseFloat(h1.fontSize),
       face: h1.fontFamily, axes: h1.fontVariationSettings, body, lazyWrong, animations: document.getAnimations().length,
-      screensInARow: screens.length > 1 && screens.every(t => t === screens[0]), bg: getComputedStyle(document.body).backgroundColor };
+      screensInARow: screens.length > 1 && screens.every(t => t === screens[0]), bg: getComputedStyle(document.body).backgroundColor,
+      ctaRatio: ratio(getComputedStyle(cta).color, getComputedStyle(cta).backgroundColor),
+      navNoAccent: !navLinks.includes(swatch('--ij-color-accent-text')),
+      footerAligned: Math.abs(ft.left - ct.left) <= 1 && Math.abs(ft.width - ct.width) <= 1 };
   })()`;
   for (const [demo, bg, faceRe] of [['walkful', 'rgb(245, 239, 230)', /Fraunces/], ['wean', 'rgb(230, 236, 239)', /Instrument Sans/]]) {
     for (const [w, h, size] of [[1440, 900, 96], [375, 812, 52]]) {
@@ -610,6 +620,8 @@ try {
       check(`${demo} at ${w}: every text at AA on what it sits on, nothing moving on load`,
         k.low.length === 0 && k.animations === 0, JSON.stringify({ low: k.low, animations: k.animations }));
       if (w === 1440) check(`${demo}: the hero loads at once, everything below it lazily`, k.lazyWrong.length === 0, k.lazyWrong.join(', '));
+      check(`${demo} at ${w}: the nav keeps its own colours (CTA at AA on its fill, no accent text) and the footer lines up with the content`,
+        k.ctaRatio >= 4.5 && k.navNoAccent && k.footerAligned, JSON.stringify({ cta: k.ctaRatio, navNoAccent: k.navNoAccent, footer: k.footerAligned }));
     }
     await p.viewport(1440, 900);
     await p.goto(`${base}/nojs/kit/${demo}.html`);

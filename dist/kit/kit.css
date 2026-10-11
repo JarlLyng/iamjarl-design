@@ -1,4 +1,4 @@
-/* IAMJARL marketing kit v1.22.0: generated from kit/kit.css, do not edit */
+/* IAMJARL marketing kit v1.22.1: generated from kit/kit.css, do not edit */
 /* The marketing page kit (#65): sections every app site can compose.
 
    Plain HTML with these classes. No JavaScript is needed to read any of it:
@@ -23,8 +23,15 @@
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
-.ij-page a { color: var(--ij-color-accent-text); text-underline-offset: 0.2em; }
-.ij-page :focus-visible {
+/* Content links take the text-safe accent, and nothing else does. A link
+   slotted into <ij-nav> or <ij-footer> lives in the page's DOM, and a page
+   rule beats a component's ::slotted rule whatever its specificity, so these
+   rules leave anything with a slot, and anything inside one, to the
+   component: the nav's CTA keeps its on-accent text, its links stay text
+   colours, the footer's links stay secondary (#72). */
+.ij-page a:not([slot], [slot] *) { color: var(--ij-color-accent-text); text-underline-offset: 0.2em; }
+.ij-page :is(ij-nav, ij-footer):not(:defined) a { color: var(--ij-color-text-secondary); }
+.ij-page :focus-visible:not([slot], [slot] *) {
   outline: var(--ij-focus-width) solid var(--ij-color-accent-text);
   outline-offset: var(--ij-focus-offset);
   border-radius: var(--ij-radius-sm);
@@ -36,6 +43,14 @@
   margin-inline: auto;
 }
 .ij-section { padding-block: var(--ij-mkt-space-section); }
+/* <ij-footer> placed straight in the page lines up with the content, as a
+   section would. It is display: block with no width of its own (#72). */
+.ij-page > ij-footer {
+  display: block;
+  width: min(100% - 2 * var(--ij-mkt-space-gutter), var(--ij-mkt-width-content));
+  margin-inline: auto;
+  padding-block: var(--ij-mkt-space-block);
+}
 /* A band on the card colour, for a section that should read as its own room.
    Cards on a band swap to the page colour, so they still read as cards. */
 .ij-section--band { background: var(--ij-color-bg-card); }
