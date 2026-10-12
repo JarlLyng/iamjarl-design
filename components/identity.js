@@ -10,6 +10,8 @@
 //   "identity": {
 //     "scheme": "light",            one mode only; absent means it follows the visitor
 //     "display": "humanist",        a face from tokens.json's approved set
+//     "panels": "bordered",         cards drawn with a thin border, as in a
+//                                   hardware manual; absent means flat (#83)
 //     "light": { "background", "surface", "text", "accent", "accentText" },
 //     "dark":  { … }                every field optional
 //   }
@@ -30,6 +32,9 @@ export const COLOR_FIELDS = ['background', 'surface', 'text', 'accent', 'accentT
 // they keep the text's warmth or coolness instead of the tokens' neutral grey.
 // The validator holds both to AA on every ground they can land on.
 export const TEXT_MIX = { secondary: 0.80, tertiary: 0.70 };
+
+// How a site draws its cards. Flat is the kit's default: a card is its colour.
+export const PANELS = ['flat', 'bordered'];
 
 const hex = ({ r, g, b }) => '#' + [r, g, b].map(v => Math.round(v).toString(16).padStart(2, '0')).join('').toUpperCase();
 
@@ -79,5 +84,6 @@ export function identityFor(registry, appId, tokens) {
   }
 
   const hasColour = Object.values(modes).some(m => Object.keys(m.declared).length);
-  return { app, scheme, display, modes, hasColour, isEmpty: !hasColour && !display && !scheme };
+  const panels = id?.panels ?? null;
+  return { app, scheme, display, panels, modes, hasColour, isEmpty: !hasColour && !display && !scheme && !panels };
 }

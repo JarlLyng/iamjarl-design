@@ -51,7 +51,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.27.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.28.0")
 ]
 ```
 
@@ -235,7 +235,7 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.27.0/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -283,7 +283,7 @@ a build step, install it instead.**
 | Needs `integrity`? | yes, worth it | no — nothing crosses an origin |
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.27.0
+npm install github:jarllyng/iamjarl-design#v1.28.0
 ```
 
 ```js
@@ -309,23 +309,23 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.27.0/dist/css/tokens.css"
-  integrity="sha384-lUfvcrapc06S2TYGgD2xqH12RmcJvhF0n6Y2wVLZ/Ic9Sz5bi3ae0sX9Fcr9frJR"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/css/tokens.css"
+  integrity="sha384-zPPplkvMY3ErYeN1dyCOI2FG+YtuseyrhsRFtKkLeLYRY8pnojJwY3+U04Cjz7gL"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.27.0/dist/components/ij-footer.js"
-  integrity="sha384-gGA1tzED68MBs2FjWMsSnbeXPkJwayCkjkx44b7+M3okCSWg2noj1cfiS+tQGQQL"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/components/ij-footer.js"
+  integrity="sha384-dQtV7fegfDt8q0tcbakmZlwgQsCoXmCFSMlRKoT6uTUGGW4RPNHsF9gtIREU9UQm"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.27.0/dist/components/ij-nav.js"
-  integrity="sha384-rfFGyLCJO1I5Wc7UzQnbwvLcMfb4dlYwUkFyZgPA1hhbpeEwA4RDVoxIVqage5sQ"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/components/ij-nav.js"
+  integrity="sha384-UJRqnPz4QKMkyACi38YWalGFxJtj65pjhT1AkZVLXrvQN7bAlCimJA3ue2USV6zA"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.27.0/dist/components/ij-store-cta.js"
-  integrity="sha384-ZhSw6qnSVmd96/XHYyk3Z/TM2XHWwTYJ0rTZ+MTBZ2lK5GpqN83CCQLi6WFaVO1V"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/components/ij-store-cta.js"
+  integrity="sha384-owZmD21bU3s3HD+BwU4/b9G9iIR/3IKjjUQ19Bmh3WZJ7z+8PHRoVKVjd5Cf/0sl"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
@@ -357,7 +357,7 @@ The component builds the cross-links at runtime, so crawlers that do not execute
 pre-rendered fragment for your app and the component will slot it instead of regenerating:
 
 ```bash
-curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.27.0/dist/footers/botlens.html
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/footers/botlens.html
 ```
 
 ```html
@@ -408,7 +408,7 @@ it supplies the landmark, the sticky translucent bar, the phone layout and the k
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.27.0/dist/components/ij-nav.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/components/ij-nav.js"></script>
 
 <ij-nav>
   <a slot="brand" href="/">Echolume</a>
@@ -566,7 +566,7 @@ reuse. Left empty, the element renders the fragment itself from the registry, wh
 without a build step, but crawlers will not see that copy:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.27.0/dist/components/ij-store-cta.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/components/ij-store-cta.js"></script>
 <ij-store-cta app="wodrounds" placement="midpage" tone="white">…fragment…</ij-store-cta>
 ```
 
@@ -590,16 +590,17 @@ one issue here if they differ.
 Sections an app site composes, in plain HTML with these classes (#65). Every colour comes from
 `tokens.css` and your identity sheet, and every size from the marketing scale (`--ij-mkt-*`), so the
 same markup is Walkful's sand and magenta or a cool grey-blue. Each section reads in full without
-JavaScript. See the three live demos: [Walkful](https://jarllyng.github.io/iamjarl-design/kit/walkful.html),
+JavaScript. See the four live demos: [Walkful](https://jarllyng.github.io/iamjarl-design/kit/walkful.html),
 [Wean](https://jarllyng.github.io/iamjarl-design/kit/wean.html) and, dark,
-[WODrounds](https://jarllyng.github.io/iamjarl-design/kit/wodrounds.html).
+[WODrounds](https://jarllyng.github.io/iamjarl-design/kit/wodrounds.html) and, for a Mac app,
+[It's mono](https://jarllyng.github.io/iamjarl-design/kit/its-mono-yo.html).
 
 ```html
 <link rel="stylesheet" href="…/dist/css/tokens.css" integrity="…" crossorigin="anonymous">
 <link rel="stylesheet" href="…/dist/identity/<app>.css" integrity="…" crossorigin="anonymous">
 <link rel="stylesheet" href="…/dist/fonts/<face>.css" integrity="…" crossorigin="anonymous">
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.27.0/dist/kit/kit.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/kit/kit.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 
 <body class="ij-page">
@@ -624,10 +625,12 @@ JavaScript. See the three live demos: [Walkful](https://jarllyng.github.io/iamja
 | Hero, split or centred | `.ij-hero--split`, `.ij-hero--centred`, `.ij-hero__text`, `.ij-hero__media` | Complete |
 | The phone, straight | `.ij-phone`, `.ij-phone__screen`, `.ij-phone__frame`, `.ij-phone--drawn` | Complete |
 | Apple TV and Watch | `.ij-tv`, `.ij-tv__screen`, `.ij-watch`, `.ij-watch__screen` | Complete |
+| A Mac window | `.ij-window` around the capture's `<img>` or `<video class="ij-loop">` | Complete; the video shows its poster |
+| Reviews, set as type | `.ij-reviews`, `.ij-review` (a `figure` with a `blockquote` and a `figcaption`) | Complete |
 | Statements, one drawing each | `.ij-statements`, `.ij-statement`, `.ij-drawing` | Complete |
 | Frameless pieces | `.ij-bento` with `.ij-card` (`--half`, `--wide`), or `.ij-rows` with `.ij-row` | Complete |
-| The phone that stays | `.ij-tour`, `.ij-tour__screens`, `.ij-tour__steps` | The screens in a row, the texts below |
-| Where it works | `.ij-traits`, `.ij-trait`, `.ij-trait--number`, `.ij-trait--wide`, `.ij-numeral` | Complete |
+| The phone that stays | `.ij-tour`, `.ij-tour__screens`, `.ij-tour__steps`; `.ij-tour--window` with windows in place of phones | The screens in a row, the texts below |
+| Where it works | `.ij-traits`, `.ij-trait`, `.ij-trait--number`, `.ij-trait--wide`, `.ij-numeral`; `.ij-traits--pairs` for many short ones, two a row on a phone | Complete |
 | Privacy and price | `.ij-assurances`, `.ij-assurance`, `.ij-assurance--label` | Complete |
 | A note from the maker | `.ij-maker`, `.ij-maker__sign` | Complete |
 | A dated source | `.ij-source`, `.ij-source__fact`, `.ij-source__meta` | Complete |
@@ -641,7 +644,7 @@ link rule leaves it alone, and a page's own skip link under that rule came out l
 
 Type roles: `.ij-display`, `.ij-headline`, `.ij-title`, `.ij-lede`, `.ij-small`, `.ij-numeral`,
 `.ij-wordmark`. Layout: `.ij-container`, `.ij-section`, `.ij-section--band` (a section on the card
-colour), `.ij-measure`, `.ij-stack`. Six hooks: `--ij-phone-width`, `--ij-tv-width` and `--ij-watch-width`; `--ij-scene-height`, a photo band's height; `--ij-display-weight`, for a face
+colour), `.ij-measure`, `.ij-stack`. Seven hooks: `--ij-phone-width`, `--ij-tv-width`, `--ij-watch-width` and `--ij-window-width`; `--ij-scene-height`, a photo band's height; `--ij-display-weight`, for a face
 whose regular weight reads too light (the kit never synthesises bold, since a face like Young Serif has
 only one); and `--ij-wordmark-em`, the closing wordmark's width in em. The wordmark grows to the scale's
 size but never past its column, which a long name or a wide face would otherwise run over: set it to
@@ -676,6 +679,21 @@ with the border colour's edge and no crown or button. In a `.ij-traits` grid, gi
 
 Or show the screen frameless, as a piece in a `.ij-card`.
 
+**A Mac window needs no frame** (#83): a Mac capture carries its own window chrome. `.ij-window`
+clips the capture to the window's own corners, at 2% of its width, a hair over macOS's own, so a video
+whose corners are masked to black never shows black against your ground, and a still's transparent
+corners match. It adds your border colour's edge and a soft shadow. `--ij-window-width` sets its width,
+900px by default, a capture's width in points. A screen recording in it is a `video.ij-loop`, as in a
+phone. For "the window that stays", give the tour `.ij-tour--window` and put windows where the phones go:
+the window takes the wider column and holds still while the texts pass.
+
+```html
+<div class="ij-window">
+  <video class="ij-loop" muted playsinline loop preload="none" width="1260" height="896"
+    poster="hero-poster-1260.png" aria-label="…"><source src="hero-loop-1260.mp4" type="video/mp4"></video>
+</div>
+```
+
 **A photo scene sets a site's mood, never its content** (#81). `.ij-scene` lays a photo across the page:
 on its own between two sections, with nothing on it, or behind a section's words, such as the closing
 wordmark and the store button. The kit turns the photo black and white, so your accent stays the only
@@ -708,7 +726,7 @@ dependencies), loaded after the page; nothing waits for it:
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.27.0/dist/kit/kit.js"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/kit/kit.js"
   integrity="<from sri.json>" crossorigin="anonymous"></script>
 ```
 
@@ -772,7 +790,7 @@ nothing on a site that did not ask for a new identity. If your app has no file i
 ```html
 <!-- tokens.css first, from the SRI block above, then the identity sheet -->
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.27.0/dist/identity/<app>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/identity/<app>.css"
   integrity="<from sri.json, see below>"
   crossorigin="anonymous">
 ```
@@ -781,7 +799,7 @@ nothing on a site that did not ask for a new identity. If your app has no file i
 yours:
 
 ```bash
-curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.27.0/dist/sri.json | grep 'identity/<app>.css'
+curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/sri.json | grep 'identity/<app>.css'
 ```
 
 Each sheet carries the version in its header, so its hash changes every release. Move the tag and
@@ -799,6 +817,7 @@ the hash together, as with `tokens.css`.
 | `--ij-color-accent-family` | The 1.12 to 1.21 name, now the same as `--ij-color-accent-text`. A site that uses it keeps working |
 | `--ij-font-display` | Your display face's stack |
 | `--ij-font-display-axes` | The face's variation settings, if it has any: Fraunces is soft only at `'SOFT' 100`. Put `font-variation-settings: var(--ij-font-display-axes, normal)` beside your `font-family`; the kit and `<ij-nav>` already do |
+| `--ij-panel-border` | Set when your identity says `"panels": "bordered"` (It's mono): a thin line in your border colour, which the kit draws around its cards, traits and reviews, as in a hardware manual. Absent, the cards are flat |
 
 Translucent: `color-mix(in srgb, var(--ij-color-accent) 15%, transparent)`, or the
 `--ij-color-accent-rgb` triplet the sheet also sets.
@@ -814,7 +833,7 @@ Echolume does exactly this today; giving it `"scheme": "dark"` would make the cl
 
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.27.0/dist/fonts/<face>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/fonts/<face>.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 ```
 
