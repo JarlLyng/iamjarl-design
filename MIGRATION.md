@@ -83,6 +83,7 @@ This table gets a row for every release, including the ones where the answer is 
 | **1.24.1** | The kit on a dark site: the phone keeps an edge, the closing wordmark never runs past its column (`--ij-wordmark-em` for a long name or a wide face), and a dark example | No. A site whose wordmark is long or in a mono face can set `--ij-wordmark-em` |
 | **1.25.0** | WODrounds' identity: dark only, near-black, the app's lime, JetBrains Mono. `.ij-tv` and `.ij-watch` frames, `.ij-trait--wide`, and the WODrounds example replacing the dark sketch | No, except WODrounds: take the new identity sheet with the redesign, not before. It turns the site dark, whatever the visitor's setting |
 | **1.26.0** | `.ij-scene`: a photo across the page for a site's mood, black and white, dimmed toward the ground, with words on it held at AA over any photo. `--ij-scene-height` | No. WODrounds adds its two gym photos with it; see the release notes |
+| **1.27.0** | The tour's row starts at the edge on a phone; `<ij-footer>` without JavaScript shows a fallback once; `.ij-skip`, the kit's skip link; `<ij-nav>` leaves out its own skip link when the page has one before it | No, but worth it on a kit site: bump, and put `.ij-skip` first in the body in place of your own skip link. A non-kit page with its own skip link before `<ij-nav>` now gets one stop instead of two |
 
 ### Who needs to migrate
 - ✅ **Everyone** — bump the version. Nothing you use today changes value or name.

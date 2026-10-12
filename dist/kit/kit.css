@@ -1,4 +1,4 @@
-/* IAMJARL marketing kit v1.26.0: generated from kit/kit.css, do not edit */
+/* IAMJARL marketing kit v1.27.0: generated from kit/kit.css, do not edit */
 /* The marketing page kit (#65): sections every app site can compose.
 
    Plain HTML with these classes. No JavaScript is needed to read any of it:
@@ -29,7 +29,7 @@
    rules leave anything with a slot, and anything inside one, to the
    component: the nav's CTA keeps its on-accent text, its links stay text
    colours, the footer's links stay secondary (#72). */
-.ij-page a:not([slot], [slot] *) { color: var(--ij-color-accent-text); text-underline-offset: 0.2em; }
+.ij-page a:not([slot], [slot] *, .ij-skip) { color: var(--ij-color-accent-text); text-underline-offset: 0.2em; }
 .ij-page :is(ij-nav, ij-footer):not(:defined) a { color: var(--ij-color-text-secondary); }
 .ij-page :focus-visible:not([slot], [slot] *) {
   outline: var(--ij-focus-width) solid var(--ij-color-accent-text);
@@ -37,6 +37,31 @@
   border-radius: var(--ij-radius-sm);
 }
 .ij-page img, .ij-page video, .ij-page svg { max-width: 100%; }
+
+/* The skip link (#84): first in the body, so it works without JavaScript,
+   hidden until it takes focus, then above the sticky <ij-nav> in the accent
+   with its on-accent text, which validate.js holds to AA. The link rule above
+   leaves it alone, and <ij-nav> leaves out its own when the page has one. */
+.ij-skip {
+  position: fixed;
+  top: var(--ij-spacing-sm);
+  left: var(--ij-spacing-lg);
+  z-index: var(--ij-z-popover);
+  padding: var(--ij-spacing-sm) var(--ij-spacing-lg);
+  border-radius: var(--ij-radius-md);
+  background: var(--ij-color-accent);
+  color: var(--ij-color-on-accent);
+  font-weight: var(--ij-font-weight-semibold);
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+.ij-skip:focus { transform: none; }
+
+/* <ij-footer> without JavaScript, or before it upgrades, shows its children.
+   A footer with a hand-written fallback (anything in no slot) shows that
+   alone; the slotted links and fineprint would otherwise repeat it (#84).
+   A footer with no fallback shows its slotted content. */
+.ij-page ij-footer:not(:defined):has(> :not([slot])) > [slot] { display: none; }
 
 .ij-container {
   width: min(100% - 2 * var(--ij-mkt-space-gutter), var(--ij-mkt-width-content));
@@ -289,6 +314,13 @@ ij-store-cta { display: block; }
   scroll-snap-type: x mandatory;
 }
 .ij-tour__screens > .ij-phone { --ij-phone-width: 220px; scroll-snap-align: center; }
+/* A centred row wider than its scroller overflows on both sides, and the part
+   past the start can't be scrolled to: on a phone the first screen sat half
+   off the edge (#80). Auto margins centre the row when it fits and start it at
+   the edge when it doesn't. */
+.ij-tour:not(.is-live) .ij-tour__screens { justify-content: flex-start; }
+.ij-tour:not(.is-live) .ij-tour__screens > :first-child { margin-inline-start: auto; }
+.ij-tour:not(.is-live) .ij-tour__screens > :last-child { margin-inline-end: auto; }
 .ij-tour__steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--ij-mkt-space-stack); }
 .ij-tour__step { display: flex; flex-direction: column; gap: var(--ij-spacing-sm); }
 .ij-tour__step p { margin: 0; color: var(--ij-color-text-secondary); max-width: 40ch; }

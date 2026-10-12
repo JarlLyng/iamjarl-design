@@ -786,6 +786,9 @@ check('the kit\'s scenes: at most two a page, none in the hero, every photo deco
       photos.every(t => / alt=""/.test(t) && / loading="lazy"/.test(t));
   }) && /class="ij-scene"/.test(pages[0]) && /grayscale\(1\)/.test(scene) && !/animation|transition|background-attachment|transform/.test(scene);
 })());
+check('every kit example starts its body with the kit\'s skip link, and kit.css keeps the link rule off it (#84)',
+  [read('kit/wodrounds.html'), ...Object.values(demos)].every(html => /<body class="ij-page">\s*<a class="ij-skip" href="#main">/.test(html)) &&
+  /\.ij-page a:not\([^)]*\.ij-skip\)/.test(kitSrc));
 check('the demos load nothing from Google, and no script but the system\'s components',
   Object.values(demos).every(html => !/fonts\.googleapis|fonts\.gstatic/.test(html) &&
     [...html.matchAll(/<script[^>]*src="([^"]+)"/g)].every(m => m[1].startsWith('../dist/components/') || m[1] === '../dist/kit/kit.js')));

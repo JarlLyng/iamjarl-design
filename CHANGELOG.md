@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.27.0] — 2026-10-12
+
+Three kit fixes found on the live sites (#80, #84), before It's mono's page is built on the kit (#83).
+
+### Fixed
+- **The tour's row of screens hid its first screen on a phone** (#80). The row was centred, and a centred row wider than its scroller overflows on both sides. The part past the start edge can't be scrolled to. At 375 px the first screen sat 182 px past the edge on Walkful and WODrounds, as Today and EMOM setup. Now the row starts at the edge when it overflows and stays centred when it fits.
+- **`<ij-footer>` without JavaScript showed its links twice** (#84). Before a custom element upgrades, the browser shows all its children. That included the slotted links and fineprint as well as the hand-written fallback, so the cross-links and "© 2026 IAMJARL." appeared twice. `kit.css` now hides the slotted children of a footer that has a fallback, until it upgrades. A footer without a fallback still shows its slotted content. The README has the one rule for a site without the kit.
+- **The kit's WODrounds example showed marks on its gym photos:** lettering on the wrist wraps, logos on the shorts and the waistband, and a beard. The hub's review on WODrounds#182 found them, and WODrounds#190 cleaned WODrounds' own copies. The example now loads those, pinned to the merge commit, with the new 1280 px step. The barbell is cropped to 1920 × 1164.
+- **The kit's link rule took over a page's skip link** (#84). It coloured every link in the accent, which beat the page's own `.skip-link`. On WODrounds the focused skip link was lime on lime, under the sticky nav.
+
+### Added
+- **`.ij-skip`, the kit's skip link.** Put it first in the body: `<a class="ij-skip" href="#main">Skip to content</a>`.
+  - It works without JavaScript.
+  - It stays hidden until it takes focus, then shows above `<ij-nav>`.
+  - It is drawn in the accent with its on-accent text, which the validator already holds to AA.
+  - The link rule leaves it alone.
+- **`<ij-nav>` leaves out its own skip link** when the page has one to the same target before the nav. Then there is one stop, not two. A page without one keeps the nav's.
+- **The browser tests** check, at 375 px on all three examples, that the row starts at the edge. With reduce motion at 1440 px, they check that it stays centred. They check that the first Tab lands on `.ij-skip`, above the nav and at AA, with no second skip link. They check that a footer renders once with and without JavaScript. Run against 1.26.0, all of these fail.
+
+### What Walkful, Wean and WODrounds change
+- **Walkful,** on 1.22.0 today:
+  - move every file to `@v1.27.0`, `ij-nav.js` and `ij-footer.js` included, with the hashes below. Nothing between 1.22 and 1.27 changes its page except fixes, and its `site.css` workaround for the link rule (1.22.1) can go;
+  - add `<a class="ij-skip" href="#main">Skip to content</a>` first in the body. Today its only skip link is the nav's, which needs JavaScript;
+  - the tour and the footer are fixed by the version bump.
+- **Wean,** building its page (wean-nicotine#397):
+  - build on `@v1.27.0`;
+  - remove the three-line tour workaround (`.ij-tour:not(.is-live) .ij-tour__screens …`), since the kit does it now;
+  - replace its `.skip-link` and the CSS for it with `.ij-skip`.
+- **WODrounds,** on 1.26.0:
+  - move every file to `@v1.27.0`;
+  - replace `<a class="skip-link" href="#main">` with `<a class="ij-skip" href="#main">`, and delete the `.skip-link` CSS;
+  - its footer's fallback line then shows once without JavaScript, and the tour starts at the edge, with no change on the page.
+
 ## [1.26.0] — 2026-10-12
 
 A photo scene for a site's mood (#81), first for WODrounds' gym photos. The owner brought them back on 2026-10-12: the numbers stay the picture, and the photos set the mood around them.
@@ -856,6 +889,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.27.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.27.0
 [1.26.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.26.0
 [1.25.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.25.0
 [1.24.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.24.1
