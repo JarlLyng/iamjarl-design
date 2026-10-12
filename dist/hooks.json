@@ -1,0 +1,68 @@
+{
+  "version": "1.29.0",
+  "description": "The custom properties a site may set that are not tokens (#80). The kit and the components read them with a default, so a site sets one only to change that default. A check for counterfeit tokens reads this list, and the identity names in dist/hooks.json, before it reports a name tokens.css does not define.",
+  "hooks": [
+    {
+      "name": "--ij-phone-width",
+      "in": "kit.css",
+      "default": "320px",
+      "for": "The phone's width (.ij-phone)"
+    },
+    {
+      "name": "--ij-tv-width",
+      "in": "kit.css",
+      "default": "560px",
+      "for": "The television's width (.ij-tv)"
+    },
+    {
+      "name": "--ij-watch-width",
+      "in": "kit.css",
+      "default": "170px",
+      "for": "The watch's width (.ij-watch)"
+    },
+    {
+      "name": "--ij-window-width",
+      "in": "kit.css",
+      "default": "900px",
+      "for": "A Mac window's width (.ij-window)"
+    },
+    {
+      "name": "--ij-scene-height",
+      "in": "kit.css",
+      "default": "clamp(280px, 50vw, 640px)",
+      "for": "A photo band's height (.ij-scene)"
+    },
+    {
+      "name": "--ij-display-weight",
+      "in": "kit.css",
+      "default": "400",
+      "for": "The display face's weight, for a face whose regular weight reads too light"
+    },
+    {
+      "name": "--ij-wordmark-em",
+      "in": "kit.css",
+      "default": "4",
+      "for": "The closing wordmark's width in em, so it never runs past its column"
+    },
+    {
+      "name": "--ij-footer-links-justify",
+      "in": "ij-footer",
+      "default": "flex-start",
+      "for": "How the footer's link rows align"
+    }
+  ],
+  "identity": {
+    "description": "Set by the identity sheets in dist/identity/. A site loads its sheet and does not write these itself.",
+    "names": [
+      "--ij-color-accent",
+      "--ij-color-accent-family",
+      "--ij-color-accent-family-rgb",
+      "--ij-color-accent-rgb",
+      "--ij-color-accent-text",
+      "--ij-color-on-accent",
+      "--ij-font-display",
+      "--ij-font-display-axes",
+      "--ij-panel-border"
+    ]
+  }
+}

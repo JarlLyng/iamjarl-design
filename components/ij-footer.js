@@ -24,8 +24,10 @@
 // groups with links stacked under each heading.
 //
 // links-label names the group holding the site's OWN links (slot="links") and
-// defaults to the app's name. The cross-links heading, "More from IAMJARL", is
-// fixed; setting links-label to it prints the string twice.
+// defaults to the app's name. The cross-links heading, "More from IAMJARL", and
+// the portfolio link, "All projects", follow the page's language (nearest lang
+// attribute, components/labels.js), or more-label and projects-label (#80);
+// setting links-label to the heading prints it twice.
 //
 // Alignment follows the page. Labels, tagline and fineprint inherit text-align
 // through the shadow boundary; the link rows are flex and cannot, so they take
@@ -38,6 +40,7 @@
 
 import { selectLinks } from './select-links.js';
 import { REGISTRY } from './registry.js';
+import { labelsFor, langOf, PROJECTS_ID } from './labels.js';
 
 const STYLE = `
 :host {
@@ -133,10 +136,10 @@ const escape = s => String(s).replace(/[&<>"]/g, c =>
 
 // Name only. Neither reference footer annotates links with a platform, and the
 // suffix turned a scannable list into noise.
-const linkHtml = app => `<a href="${escape(app.url)}">${escape(app.name)}</a>`;
+const linkHtml = (app, projects) => `<a href="${escape(app.url)}">${escape(app.id === PROJECTS_ID ? projects : app.name)}</a>`;
 
 export class IjFooter extends HTMLElement {
-  static observedAttributes = ['app', 'tagline', 'layout', 'links-label'];
+  static observedAttributes = ['app', 'tagline', 'layout', 'links-label', 'more-label', 'projects-label'];
 
   connectedCallback() {
     this.render();
@@ -174,6 +177,10 @@ export class IjFooter extends HTMLElement {
     const provided = this.querySelector('[slot="cross-links"]') !== null;
     const tagline = this.getAttribute('tagline');
     const ownLabel = this.getAttribute('links-label') ?? self.name;
+    // The heading and the portfolio link in the page's language (#80).
+    const words = labelsFor(langOf(this));
+    const moreLabel = this.getAttribute('more-label') || words.more;
+    const projectsLabel = this.getAttribute('projects-label') || words.projects;
     // A site with no links of its own gets no group for them. Rendered anyway,
     // it was a label above an empty row. It's mono set links-label="" to hide
     // the label and still got the empty row and its gap.
@@ -189,10 +196,10 @@ export class IjFooter extends HTMLElement {
             <div class="links"><slot name="links"></slot></div>
           </div>` : ''}
           <nav class="group" aria-labelledby="more">
-            <p class="label" id="more">More from IAMJARL</p>
+            <p class="label" id="more">${escape(moreLabel)}</p>
             <div class="links">${provided
               ? '<slot name="cross-links"></slot>'
-              : related.map(linkHtml).join('')}</div>
+              : related.map(app => linkHtml(app, projectsLabel)).join('')}</div>
           </nav>
         </div>
         <div class="fineprint"><slot name="fineprint"></slot></div>

@@ -14,6 +14,9 @@
 // JavaScript it is a row of plain links.
 //
 // What the component owns:
+//   - its own words in the page's language: the skip link's and the menu
+//     button's, from the nearest lang attribute (components/labels.js), or
+//     from skip-label and menu-label (#80)
 //   - a <nav> landmark (aria-label from `label`, default "Main") and a skip link
 //     to #main (or the id in `skip-to`), rendered only if that target exists
 //     and the page has no skip link of its own: a link to the same target
@@ -38,6 +41,7 @@
 // disclosure button, so Tab goes from the button into the menu it opened.
 
 import { NAV_ALPHA, NAV_COLLAPSE_BELOW, currentIndex, heroOnScreen, navWarnings } from './nav-rules.js';
+import { labelsFor, langOf } from './labels.js';
 
 const NARROW = `(max-width: ${NAV_COLLAPSE_BELOW - 0.02}px)`;
 
@@ -277,7 +281,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 export class IjNav extends HTMLElement {
-  static observedAttributes = ['label', 'skip-to', 'cta-after'];
+  static observedAttributes = ['label', 'skip-to', 'cta-after', 'skip-label', 'menu-label'];
 
   constructor() {
     super();
@@ -327,6 +331,10 @@ export class IjNav extends HTMLElement {
     const secondary = this._slotted('secondary');
 
     const label = this.getAttribute('label') || 'Main';
+    // Its own words in the page's language (#80), unless the site sets them.
+    const words = labelsFor(langOf(this));
+    const skipLabel = this.getAttribute('skip-label') || words.skip;
+    const menuLabel = this.getAttribute('menu-label') || words.menu;
     const skipId = this.getAttribute('skip-to') || 'main';
     const skipTarget = document.getElementById(skipId);
     const pageSkips = skipTarget && [...document.querySelectorAll('a[href]')].some(a =>
@@ -336,7 +344,7 @@ export class IjNav extends HTMLElement {
 
     this.shadowRoot.innerHTML = `
       <style>${NAV_STYLE}</style>
-      ${skipTarget && !pageSkips ? '<a class="skip" href="#' + esc(skipId) + '">Skip to content</a>' : ''}
+      ${skipTarget && !pageSkips ? '<a class="skip" href="#' + esc(skipId) + '">' + esc(skipLabel) + '</a>' : ''}
       <nav class="bar" aria-label="${esc(label)}">
         <div class="brand">${ownMark ? '' : '<span class="dot" aria-hidden="true"></span>'}<slot name="brand"></slot></div>
         ${folds ? `
@@ -349,7 +357,7 @@ export class IjNav extends HTMLElement {
         <button class="toggle" type="button" aria-expanded="false" aria-controls="menu">
           <svg class="when-closed" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">${ICON_LIST}</svg>
           <svg class="when-open" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">${ICON_X}</svg>
-          <span class="visually-hidden">Menu</span>
+          <span class="visually-hidden">${esc(menuLabel)}</span>
         </button>` : ''}
       </nav>`;
 

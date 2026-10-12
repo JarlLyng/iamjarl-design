@@ -51,7 +51,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.28.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.29.0")
 ]
 ```
 
@@ -235,7 +235,7 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -263,7 +263,14 @@ ij-footer:not(:defined):has(> :not([slot])) > [slot] { display: none; }
 | `app` | **Required.** An `id` from `apps.json` |
 | `tagline` | Optional line above the links |
 | `layout` | `stacked` (default, the WODrounds shape) or `columns` (the Wean Nicotine shape) |
-| `links-label` | Heading above your own `slot="links"` links; defaults to the app's name. With no `slot="links"` there is no group and no heading. The cross-links heading, "More from IAMJARL", is fixed |
+| `links-label` | Heading above your own `slot="links"` links; defaults to the app's name. With no `slot="links"` there is no group and no heading |
+| `more-label`, `projects-label` | The cross-links heading, "More from IAMJARL", and the portfolio link, "All projects". Both follow the page's language on their own (below); set these only for another language or your own phrasing |
+
+**In the page's language.** The footer and `<ij-nav>` print a few words of their own: "More from
+IAMJARL", "All projects", "Skip to content" and "Menu". They read the language from the nearest `lang`
+attribute and say them in English, Danish, German, Spanish, French, Norwegian or Swedish, the languages
+the sites are written in (#80). A Danish page with `<html lang="da">` gets "Mere fra IAMJARL" and
+"Alle projekter" without setting anything. Any other language falls back to English.
 
 | Custom property | |
 | --- | --- |
@@ -283,7 +290,7 @@ a build step, install it instead.**
 | Needs `integrity`? | yes, worth it | no — nothing crosses an origin |
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.28.0
+npm install github:jarllyng/iamjarl-design#v1.29.0
 ```
 
 ```js
@@ -309,23 +316,23 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/css/tokens.css"
-  integrity="sha384-zPPplkvMY3ErYeN1dyCOI2FG+YtuseyrhsRFtKkLeLYRY8pnojJwY3+U04Cjz7gL"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/css/tokens.css"
+  integrity="sha384-PjJvOjBQ0JFKQk+XkQpRor6o7qw/Fs5mDKKoTQ3rwuBLuj5GtXpd6FDUOeE402G6"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/components/ij-footer.js"
-  integrity="sha384-dQtV7fegfDt8q0tcbakmZlwgQsCoXmCFSMlRKoT6uTUGGW4RPNHsF9gtIREU9UQm"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/components/ij-footer.js"
+  integrity="sha384-QEFi85RQoD6M+uZCO28j7rQKSTfQo7OJ0g7l0uenR8ftNJPqHrCRzM0+6v+Tb95/"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/components/ij-nav.js"
-  integrity="sha384-UJRqnPz4QKMkyACi38YWalGFxJtj65pjhT1AkZVLXrvQN7bAlCimJA3ue2USV6zA"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/components/ij-nav.js"
+  integrity="sha384-XecJFMR93u4krdBam99rEdklN0rvMJmbYP41OX02IZbs9wlp6hjdEBgXczMg3jiE"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/components/ij-store-cta.js"
-  integrity="sha384-owZmD21bU3s3HD+BwU4/b9G9iIR/3IKjjUQ19Bmh3WZJ7z+8PHRoVKVjd5Cf/0sl"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/components/ij-store-cta.js"
+  integrity="sha384-6Xo9Hb0Ycn4VyHRLB9+inv178MVMIBiuqPS1SujAklbpMM3P8PJ8TxszwHz53vzt"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
@@ -357,7 +364,7 @@ The component builds the cross-links at runtime, so crawlers that do not execute
 pre-rendered fragment for your app and the component will slot it instead of regenerating:
 
 ```bash
-curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/footers/botlens.html
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/footers/botlens.html
 ```
 
 ```html
@@ -368,6 +375,10 @@ curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/footer
   <a slot="cross-links" href="https://tonvault.iamjarl.com">TonVault</a>
 </ij-footer>
 ```
+
+**A translated page takes the fragment in its language:** `dist/footers/<app>.<locale>.html`, one for
+each language your store listing has, where "All projects" is translated. App names stay as they are.
+English is `<app>.html`.
 
 Both paths come from the same registry and the same selection rule, so they render the same links.
 The difference is freshness: a fragment is a snapshot that refreshes when you rebuild, where the
@@ -408,7 +419,7 @@ it supplies the landmark, the sticky translucent bar, the phone layout and the k
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/components/ij-nav.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/components/ij-nav.js"></script>
 
 <ij-nav>
   <a slot="brand" href="/">Echolume</a>
@@ -436,6 +447,7 @@ its parent. For the pinned-with-`integrity` version, use the SRI block above.
 | --- | --- |
 | `label` | The landmark's `aria-label`. Default `Main` |
 | `skip-to` | The id the skip link jumps to. Default `main`. No element with that id, no skip link — and a console warning. A page with its own skip link to it, before the nav (such as the kit's `.ij-skip`), gets none from the nav, so there is one stop |
+| `skip-label`, `menu-label` | The skip link's words and the menu button's hidden label. Both follow the page's language on their own, like the footer's; set these only for another language or your own phrasing |
 | `cta-after` | A selector for your hero's CTA. While it is on screen, the nav's CTA waits, so there is one call to action above the fold |
 
 **What it does for you:**
@@ -566,7 +578,7 @@ reuse. Left empty, the element renders the fragment itself from the registry, wh
 without a build step, but crawlers will not see that copy:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/components/ij-store-cta.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/components/ij-store-cta.js"></script>
 <ij-store-cta app="wodrounds" placement="midpage" tone="white">…fragment…</ij-store-cta>
 ```
 
@@ -600,7 +612,7 @@ JavaScript. See the four live demos: [Walkful](https://jarllyng.github.io/iamjar
 <link rel="stylesheet" href="…/dist/identity/<app>.css" integrity="…" crossorigin="anonymous">
 <link rel="stylesheet" href="…/dist/fonts/<face>.css" integrity="…" crossorigin="anonymous">
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/kit/kit.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/kit/kit.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 
 <body class="ij-page">
@@ -644,7 +656,7 @@ link rule leaves it alone, and a page's own skip link under that rule came out l
 
 Type roles: `.ij-display`, `.ij-headline`, `.ij-title`, `.ij-lede`, `.ij-small`, `.ij-numeral`,
 `.ij-wordmark`. Layout: `.ij-container`, `.ij-section`, `.ij-section--band` (a section on the card
-colour), `.ij-measure`, `.ij-stack`. Seven hooks: `--ij-phone-width`, `--ij-tv-width`, `--ij-watch-width` and `--ij-window-width`; `--ij-scene-height`, a photo band's height; `--ij-display-weight`, for a face
+colour), `.ij-measure`, `.ij-stack`. Seven hooks, listed with their defaults in [`hooks.json`](hooks.json) and in `dist/hooks.json`, which a check for counterfeit tokens can read (#80): `--ij-phone-width`, `--ij-tv-width`, `--ij-watch-width` and `--ij-window-width`; `--ij-scene-height`, a photo band's height; `--ij-display-weight`, for a face
 whose regular weight reads too light (the kit never synthesises bold, since a face like Young Serif has
 only one); and `--ij-wordmark-em`, the closing wordmark's width in em. The wordmark grows to the scale's
 size but never past its column, which a long name or a wide face would otherwise run over: set it to
@@ -726,7 +738,7 @@ dependencies), loaded after the page; nothing waits for it:
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/kit/kit.js"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/kit/kit.js"
   integrity="<from sri.json>" crossorigin="anonymous"></script>
 ```
 
@@ -790,7 +802,7 @@ nothing on a site that did not ask for a new identity. If your app has no file i
 ```html
 <!-- tokens.css first, from the SRI block above, then the identity sheet -->
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/identity/<app>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/identity/<app>.css"
   integrity="<from sri.json, see below>"
   crossorigin="anonymous">
 ```
@@ -799,7 +811,7 @@ nothing on a site that did not ask for a new identity. If your app has no file i
 yours:
 
 ```bash
-curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/sri.json | grep 'identity/<app>.css'
+curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/sri.json | grep 'identity/<app>.css'
 ```
 
 Each sheet carries the version in its header, so its hash changes every release. Move the tag and
@@ -833,7 +845,7 @@ Echolume does exactly this today; giving it `"scheme": "dark"` would make the cl
 
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.28.0/dist/fonts/<face>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/fonts/<face>.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 ```
 

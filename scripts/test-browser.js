@@ -95,6 +95,12 @@ ${FULL_NAV.replace('<ij-nav>', '<ij-nav cta-after="#hero-cta">')}
 </ij-footer>
 </main>` })])),
 
+  // A Swedish page (#80): the nav and the footer print their own words in it,
+  // read from the nearest lang attribute; an attribute still overrides a word.
+  'labels-sv': page({ identity: 'wodrounds', footer: true, body: `<div lang="sv">${FULL_NAV}<main id="main"><h1>Svenska</h1></main>
+<ij-footer id="sv-footer" app="wodrounds"></ij-footer>
+<ij-footer id="own-words" app="wodrounds" more-label="Fler appar"></ij-footer></div>` }),
+
   'footer-unknown': page({ nav: false, footer: true, body: `
 <ij-footer app="does-not-exist"><p id="fallback">© 2026 Fallback</p></ij-footer>` }),
 
@@ -982,6 +988,21 @@ try {
       sk.cls === 'ij-skip' && sk.inView && sk.top && sk.ratio >= 4.5 && !sk.navSkip, JSON.stringify(sk));
   }
 
+  await p.viewport(1024, 800);
+
+  // The components' own words in the page's language (#80).
+  await p.viewport(375, 812);
+  await p.goto(`${base}/fixture/labels-sv/index.html`);
+  await p.eval(`Promise.all([customElements.whenDefined('ij-nav'), customElements.whenDefined('ij-footer')])`);
+  await p.settle(150);
+  const sv = await p.eval(`(() => { const nav = document.querySelector('ij-nav').shadowRoot, f = document.getElementById('sv-footer').shadowRoot,
+    own = document.getElementById('own-words').shadowRoot;
+    return { skip: nav.querySelector('.skip')?.textContent, menu: nav.querySelector('.toggle .visually-hidden')?.textContent,
+      more: f.querySelector('#more')?.textContent, projects: f.querySelector('a[href="https://iamjarl.com"]')?.textContent,
+      override: own.querySelector('#more')?.textContent }; })()`);
+  check('on a Swedish page the nav and the footer speak Swedish, and an attribute still overrides a word',
+    sv.skip === 'Till innehållet' && sv.menu === 'Meny' && sv.more === 'Mer från IAMJARL' && sv.projects === 'Alla projekt' && sv.override === 'Fler appar',
+    JSON.stringify(sv));
   await p.viewport(1024, 800);
 
   // Footer: the manual checks that have already caught real bugs.

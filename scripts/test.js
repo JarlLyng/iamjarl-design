@@ -16,7 +16,8 @@ import { identitySheetCss } from './css-modes.js';
 import { WEAN_DRAWINGS } from '../kit/drawings/wean.js';
 import { ITS_MONO_DRAWINGS } from '../kit/drawings/its-mono-yo.js';
 import { NAV_ALPHA, NAV_COLLAPSE_BELOW, MAX_LINKS, currentIndex, heroOnScreen, navWarnings } from '../components/nav-rules.js';
-import { storeLink, factsLine, badgeFile, badgeHeight, smartBannerHtml, fragmentName, offer, PLACEMENTS, TONES } from '../components/store.js';
+import { storeLink, factsLine, badgeFile, badgeHeight, smartBannerHtml, fragmentName, offer, PLACEMENTS, TONES, LOCALES } from '../components/store.js';
+import { LABELS, labelsFor, PROJECTS_ID } from '../components/labels.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -739,12 +740,52 @@ check('the Swift package has no marketing scale', !/marketing|--ij-mkt|mkt/i.tes
 const kitSrc = read('kit/kit.css');
 check('kit.css writes no colour of its own', !/#[0-9a-f]{3,8}\b|\brgba?\(|\bhsla?\(/i.test(kitSrc.replace(/\/\*[\s\S]*?\*\//g, '')),
   'every colour comes from the tokens or the identity, so the same markup is any site');
-const KIT_HOOKS = ['--ij-phone-width', '--ij-tv-width', '--ij-watch-width', '--ij-display-weight', '--ij-wordmark-em', '--ij-scene-height', '--ij-window-width'];
+// The hooks a site may set live in hooks.json (#80), so a check for
+// counterfeit tokens can read them; this list is that file.
+const HOOKS = JSON.parse(read('hooks.json')).hooks;
+const KIT_HOOKS = HOOKS.map(h => h.name);
 const definedVars = new Set([tokensCssText, ...fs.readdirSync(identityDir).map(f => read(`dist/identity/${f}`))]
   .flatMap(css => css.match(/--ij-[a-z0-9-]+(?=:)/g) ?? []));
 const kitUses = [...new Set(kitSrc.match(/var\(--ij-[a-z0-9-]+/g).map(v => v.slice(4)))];
 check(`every variable kit.css reads is a token, an identity value or a documented hook (${kitUses.length})`,
   kitUses.every(v => definedVars.has(v) || KIT_HOOKS.includes(v)), kitUses.filter(v => !definedVars.has(v) && !KIT_HOOKS.includes(v)).join(', '));
+// Every hook in hooks.json is read where it says, with the default it states,
+// and dist/hooks.json carries the hooks and every name an identity sheet sets
+// that tokens.css does not, so the list cannot fall behind the sheets (#80).
+const componentsSrc = fs.readdirSync(path.join(ROOT, 'components')).filter(f => f.endsWith('.js')).map(f => read(`components/${f}`)).join('\n');
+check('every hook in hooks.json is read where it says, with the default it states',
+  HOOKS.every(h => (h.in === 'kit.css' ? kitSrc : componentsSrc).includes(`var(${h.name}, ${h.default})`)),
+  HOOKS.filter(h => !(h.in === 'kit.css' ? kitSrc : componentsSrc).includes(`var(${h.name}, ${h.default})`)).map(h => h.name).join(', '));
+const componentUses = [...new Set((componentsSrc.match(/var\(--ij-[a-z0-9-]+/g) ?? []).map(v => v.slice(4)))];
+check('every variable the components read is a token, an identity value or a hook in hooks.json',
+  componentUses.every(v => definedVars.has(v) || KIT_HOOKS.includes(v)), componentUses.filter(v => !definedVars.has(v) && !KIT_HOOKS.includes(v)).join(', '));
+const hooksDist = JSON.parse(read('dist/hooks.json'));
+const identityOnly = [...new Set(fs.readdirSync(identityDir).flatMap(f => read(`dist/identity/${f}`).match(/--ij-[a-z0-9-]+(?=:)/g) ?? []))]
+  .filter(n => !new Set(tokensCssText.match(/--ij-[a-z0-9-]+(?=:)/g)).has(n)).sort();
+check('dist/hooks.json is current: the hooks, and every name an identity sheet sets that tokens.css does not, exported',
+  hooksDist.version === fullTokens.meta.version && JSON.stringify(hooksDist.hooks) === JSON.stringify(HOOKS) &&
+  JSON.stringify(hooksDist.identity.names) === JSON.stringify(identityOnly) && hooksDist.identity.names.includes('--ij-font-display-axes') &&
+  JSON.parse(read('package.json')).exports['./hooks.json'] === './dist/hooks.json');
+
+// The components' own words in each language a site is written in (#80).
+const WORDS = ['skip', 'menu', 'more', 'projects'];
+check('every store language has the components\' four words, and an unknown one falls back to English',
+  Object.keys(LOCALES).every(l => (l === 'en' || labelsFor(l) !== LABELS.en) && WORDS.every(w => labelsFor(l)[w]?.length > 0)) &&
+  labelsFor('xx').more === 'More from IAMJARL' && labelsFor('nb-NO').menu === 'Meny' && labelsFor('no').projects === 'Alle prosjekter' &&
+  labelsFor('da-DK').skip === 'Gå til indhold');
+check('the nav and footer bundles carry the words and print none of them hard-coded',
+  /const LABELS = /.test(read('dist/components/ij-nav.js')) && /const LABELS = /.test(read('dist/components/ij-footer.js')) &&
+  !/>Skip to content<|>Menu<\/span>/.test(read('components/ij-nav.js')) && !/>More from IAMJARL</.test(read('components/ij-footer.js')));
+const shippedWithStore = registry.apps.filter(a => a.status === 'shipped');
+check('a cross-link fragment per store language, the same links with only the portfolio link translated',
+  shippedWithStore.every(a => (a.store?.locales ?? ['en']).every(l => {
+    const f = `dist/footers/${l === 'en' ? a.id : `${a.id}.${l}`}.html`;
+    if (!fs.existsSync(path.join(ROOT, f))) return false;
+    const en = read(`dist/footers/${a.id}.html`).split('\n').filter(x => x.startsWith('<a ')), here = read(f).split('\n').filter(x => x.startsWith('<a '));
+    const portfolio = registry.apps.find(x => x.id === PROJECTS_ID);
+    return en.length === here.length && here.every((line, i) => line.includes(`href="${portfolio.url}"`)
+      ? line.endsWith(`>${labelsFor(l).projects}</a>`) : line === en[i]);
+  })) && read('dist/footers/wodrounds.da.html').includes('>Alle projekter</a>'));
 const kitDist = read('dist/kit/kit.css');
 check('dist/kit/kit.css is the source with its version on top, hashed and exported',
   kitDist.startsWith(`/* IAMJARL marketing kit v${fullTokens.meta.version}:`) && kitDist.endsWith(kitSrc) &&

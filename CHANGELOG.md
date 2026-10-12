@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.29.0] — 2026-10-12
+
+The last two findings from Wean's page (#80): the components speak the page's language, and the hooks are listed where a check can read them.
+
+### Added
+- **`<ij-nav>` and `<ij-footer>` print their own words in the page's language.** The four words are "Skip to content", "Menu", "More from IAMJARL" and "All projects". They were English on every page: Wean's Danish, Swedish and Norwegian pages and WODrounds' six translations all said "Menu" and "More from IAMJARL".
+  - They now follow the nearest `lang` attribute in English, Danish, German, Spanish, French, Norwegian and Swedish, the languages the sites are written in. "no" and "nn" take Bokmål's words. Any other language falls back to English.
+  - Attributes override a word: `skip-label` and `menu-label` on the nav, `more-label` and `projects-label` on the footer.
+  - The table is `components/labels.js`.
+- **A cross-link fragment per store language,** `dist/footers/<app>.<locale>.html`, with the portfolio link translated. App names stay as they are. English stays `<app>.html`.
+- **`hooks.json` and `dist/hooks.json`: the names a site may meet that `tokens.css` does not define.** The hub's adoption check reported `--ij-display-weight` as a counterfeit token, because only `tokens.css` was there to read.
+  - **`hooks`:** the eight a site may set, each with where it is read, its default and what it is for.
+  - **`identity`:** the nine an identity sheet sets, read from the sheets as they are written, so the list cannot fall behind them.
+
+  The package exports it as `@iamjarl/design-tokens/hooks.json`.
+- **Tests:**
+  - every store language has the four words, and an unknown one falls back to English;
+  - the nav and footer bundles carry the table, and none of the words is hard-coded;
+  - each language's fragment differs from the English one only in the portfolio link;
+  - every hook in `hooks.json` is read where it says, with the default it states;
+  - every variable the kit or a component reads is a token, an identity name or a listed hook;
+  - in the browser, a Swedish page gets Swedish from both components, and an attribute still wins.
+
+### What the sites change
+- **WODrounds** (seven languages):
+  - move `ij-nav.js` and `ij-footer.js` to `@v1.29.0`, with the hashes below. The other files may follow;
+  - on each translated page, take the cross-link fragment in that page's language, `dist/footers/wodrounds.<locale>.html`, in place of the English one;
+  - every page already has its `lang`, so nothing else is needed.
+- **Wean** (English, Danish, Norwegian, Swedish): the same, with `wean-nicotine.<locale>.html`. Its Norwegian pages may carry `lang="no"` or `lang="nb"`; both get the Norwegian words.
+- **Walkful:** its Danish page gets Danish words with the same bump, and `walkful.da.html` for its cross-links.
+- **The hub's adoption check:** read `dist/hooks.json` before reporting a name that `tokens.css` does not define. A name in `hooks` is a site's to set; a name in `identity` comes from the site's identity sheet.
+
 ## [1.28.0] — 2026-10-12
 
 It's mono's identity, its sampler drawings and a Mac window for the kit (#83). It's mono is the first Mac app on the kit.
@@ -943,6 +975,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.29.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.29.0
 [1.28.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.28.0
 [1.27.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.27.0
 [1.26.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.26.0
