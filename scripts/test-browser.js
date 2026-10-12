@@ -77,6 +77,24 @@ ${FULL_NAV.replace('<ij-nav>', '<ij-nav cta-after="#hero-cta">')}
 
   noscript: page({ nav: false, body: `${FULL_NAV}<main id="main"></main>` }),
 
+  // A footer as WODrounds' homes have it: its own links, the cross-links and
+  // the fineprint in slots, and a hand-written fallback line in none (#84).
+  // The second has no fallback. Served with and without the component.
+  ...Object.fromEntries([['footer-nojs', false], ['footer-js', true]].map(([name, footer]) => [name, page({ nav: false, footer, identity: 'wodrounds', body: `
+<link rel="stylesheet" href="/dist/kit/kit.css">
+<main class="ij-page">
+<ij-footer id="with-fallback" app="wodrounds">
+  <a slot="links" href="#">Privacy</a>
+  <a slot="cross-links" href="https://walkful.iamjarl.com">Walkful</a>
+  <p slot="fineprint">© 2026 IAMJARL.</p>
+  <p id="fallback"><a href="#">Privacy</a> · © 2026 IAMJARL.</p>
+</ij-footer>
+<ij-footer id="no-fallback" app="wodrounds">
+  <a slot="links" href="#">Support</a>
+  <p slot="fineprint">© 2026 IAMJARL.</p>
+</ij-footer>
+</main>` })])),
+
   'footer-unknown': page({ nav: false, footer: true, body: `
 <ij-footer app="does-not-exist"><p id="fallback">© 2026 Fallback</p></ij-footer>` }),
 
@@ -867,10 +885,74 @@ try {
   check('with reduce motion on, or on a phone, the tour stays a row of screens',
     !still.live && still.opacities.every(o => o === '1') && !narrow.live, JSON.stringify({ still, narrow }));
 
+  // The row of screens (#80): a centred row wider than its scroller hid the
+  // first screen past the start edge on a phone, where nothing could scroll to
+  // it. It must start at the edge when it overflows, and stay centred when it fits.
+  const rowProbe = `(() => { const sc = document.querySelector('.ij-tour__screens'), ph = [...sc.children];
+    const r = sc.getBoundingClientRect(), first = ph[0].getBoundingClientRect(), last = ph.at(-1).getBoundingClientRect();
+    return { overflows: sc.scrollWidth > sc.clientWidth + 1, start: Math.round(first.left - r.left), end: Math.round(r.right - last.right) }; })()`;
+  for (const demo of ['walkful', 'wean', 'wodrounds']) {
+    await p.viewport(375, 812);
+    await p.goto(`${base}/kit/${demo}.html`);
+    await p.settle(200);
+    const row = await p.eval(rowProbe);
+    check(`${demo} at 375: the row of screens starts at the edge, so the first screen can be seen`,
+      row.overflows && row.start >= 0, JSON.stringify(row));
+  }
+  await p.media([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+  await p.viewport(1440, 900);
+  await p.goto(`${base}/kit/walkful.html`);
+  await p.settle(200);
+  const fits = await p.eval(rowProbe);
+  await p.media([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);
+  check('with reduce motion at 1440, the row fits and stays centred', !fits.overflows && Math.abs(fits.start - fits.end) <= 2, JSON.stringify(fits));
+
+  // The kit's skip link (#84): the link rule had turned a page's own skip link
+  // into lime on lime, under the sticky nav. .ij-skip is the first stop, reads
+  // at AA in the accent with its on-accent text, nothing covers it, and the nav
+  // leaves out its own so there is one.
+  for (const [demo, w, h] of [['wodrounds', 1440, 900], ['wodrounds', 375, 812], ['walkful', 1440, 900]]) {
+    await p.viewport(w, h);
+    await p.goto(`${base}/kit/${demo}.html`);
+    await p.eval(`customElements.whenDefined('ij-nav')`);
+    await p.settle(150);
+    await p.key('Tab');
+    const sk = await p.eval(`(() => {
+      const a = document.activeElement, r = a.getBoundingClientRect(), cs = getComputedStyle(a);
+      const lum = c => { const m = c.match(/[\\d.]+/g).map(Number); const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+        return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]); };
+      const bg = /rgba\\(.*, 0\\)$|transparent/.test(cs.backgroundColor) ? getComputedStyle(document.body).backgroundColor : cs.backgroundColor;
+      const [x, y] = [lum(cs.color), lum(bg)].sort((m, n) => n - m);
+      return { cls: a.className, inView: r.top >= 0 && r.bottom <= innerHeight, top: document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2) === a,
+        ratio: +((x + 0.05) / (y + 0.05)).toFixed(2), navSkip: !!document.querySelector('ij-nav').shadowRoot.querySelector('.skip') };
+    })()`);
+    check(`${demo} at ${w}: the first Tab lands on the kit's skip link, on top of the nav, at AA, and the nav adds no second one`,
+      sk.cls === 'ij-skip' && sk.inView && sk.top && sk.ratio >= 4.5 && !sk.navSkip, JSON.stringify(sk));
+  }
+
   await p.viewport(1024, 800);
 
   // Footer: the manual checks that have already caught real bugs.
   console.log('\n<ij-footer>:');
+  // Without JavaScript (#84): a footer with a fallback showed it and its
+  // slotted links and fineprint, so the copyright line came twice.
+  for (const name of ['footer-nojs', 'footer-js']) {
+    await p.goto(`${base}/fixture/${name}/index.html`);
+    if (name === 'footer-js') await p.eval(`customElements.whenDefined('ij-footer')`);
+    await p.settle(150);
+    const ft = await p.eval(`(() => {
+      const shown = e => e.getClientRects().length > 0;
+      const a = document.getElementById('with-fallback'), b = document.getElementById('no-fallback');
+      return { fallback: shown(document.getElementById('fallback')), slottedA: [...a.children].filter(c => c.slot && shown(c)).length,
+        slottedB: [...b.children].filter(c => c.slot && shown(c)).length };
+    })()`);
+    check(name === 'footer-nojs'
+      ? 'without JavaScript, a footer with a fallback shows only the fallback, and one without shows its slotted links'
+      : 'with JavaScript, the footer shows its slotted links and not the fallback',
+      name === 'footer-nojs' ? ft.fallback && ft.slottedA === 0 && ft.slottedB === 2 : !ft.fallback && ft.slottedA === 3 && ft.slottedB === 2,
+      JSON.stringify(ft));
+  }
+
   await p.goto(`${base}/fixture/footer-unknown/index.html`);
   await p.settle(150);
   check('an unknown app keeps the fallback visible and logs why', await p.eval(`
