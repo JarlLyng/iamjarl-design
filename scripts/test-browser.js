@@ -575,7 +575,10 @@ try {
   // moving on load and no text below AA on whatever it sits on.
   console.log('\nMarketing kit:');
   const KIT_SECTIONS = ['.ij-hero', '.ij-phone', '.ij-statements', '.ij-card', '.ij-tour', '.ij-traits',
-    '.ij-assurances', '.ij-maker', '.ij-source', '.ij-closing'];
+    '.ij-assurances', '.ij-maker', '.ij-source', '.ij-staircase', '.ij-closing'];
+  // Walkful cites a dated source; Wean has none by its brief and shows its
+  // taper staircase in that place instead (wean-nicotine#396, #75).
+  const notOn = { walkful: ['.ij-staircase'], wean: ['.ij-source'] };
   const kitProbe = `(() => {
     const lum = c => { const m = c.match(/[\\d.]+/g).map(Number); const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
       return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]); };
@@ -613,6 +616,7 @@ try {
       await p.eval(`document.fonts.ready`);
       await p.settle(200);
       const k = await p.eval(kitProbe);
+      k.missing = k.missing.filter(sel => !notOn[demo].includes(sel));
       check(`${demo} at ${w}: every section, no overflow, headline ${size} px in the site's face, body 18 px or more`,
         k.missing.length === 0 && k.overflow <= 0 && Math.abs(k.h1 - size) < 1 && faceRe.test(k.face) && k.body >= 18 && k.bg === bg &&
         (demo !== 'walkful' || k.axes === '"SOFT" 100'),
@@ -627,10 +631,32 @@ try {
     await p.goto(`${base}/nojs/kit/${demo}.html`);
     await p.settle(200);
     const n = await p.eval(kitProbe);
+    n.missing = n.missing.filter(sel => !notOn[demo].includes(sel));
     check(`${demo} without JavaScript: every section reads, and the phone that stays is a row of screens`,
       n.missing.length === 0 && n.low.length === 0 && n.screensInARow && await p.eval(`document.scripts.length === 0`),
       JSON.stringify({ missing: n.missing, low: n.low, row: n.screensInARow }));
   }
+  // Wean's drawings (#75) at phone width: every one on screen at a readable
+  // size, its strokes kept at their width, the waterline and the staircase in
+  // the accent, and the staircase's text in the served HTML.
+  await p.viewport(375, 812);
+  await p.goto(`${base}/nojs/kit/wean.html`);
+  await p.settle(200);
+  const dr = await p.eval(`(() => {
+    const ds = [...document.querySelectorAll('svg[class*="ij-drawing--wean-"]')];
+    const mark = ds.map(d => d.querySelector('.ij-mark'));
+    const stairs = document.querySelector('.ij-staircase .ij-loose');
+    return { count: ds.length, narrowest: Math.min(...ds.map(d => Math.round(d.getBoundingClientRect().width))),
+      marks: [...new Set(mark.map(m => getComputedStyle(m).stroke))], effect: [...new Set(mark.map(m => getComputedStyle(m).vectorEffect))],
+      stairs: stairs && [getComputedStyle(stairs).stroke, getComputedStyle(stairs).vectorEffect, Math.round(stairs.getBoundingClientRect().width)],
+      text: document.querySelector('#wean-stairs-text')?.textContent.trim().slice(0, 40) };
+  })()`);
+  check('Wean\'s eight drawings at 375 px: all on screen at 120 px or more, strokes held, waterline and staircase in the accent',
+    dr.count === 8 && dr.narrowest >= 120 && dr.marks.join() === 'rgb(241, 64, 254)' && dr.effect.join() === 'non-scaling-stroke' &&
+    dr.stairs?.[0] === 'rgb(241, 64, 254)' && dr.stairs?.[1] === 'non-scaling-stroke' && dr.stairs?.[2] >= 280 &&
+    dr.text.startsWith('An example, not a plan'), JSON.stringify(dr));
+  await p.viewport(1440, 900);
+
   // Motion (#65): two things move, and only when they may.
   await p.viewport(1440, 900);
   await p.media([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);

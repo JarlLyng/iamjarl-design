@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.24.0] — 2026-10-12
+
+Wean's drawings, and a loose stroke for a line drawn from data (#75).
+
+### Added
+- **Eight drawings on one theme, coast and tide,** a misty morning with the tide going out. In each, the waterline is the one magenta line and it steps down from left to right, as Wean's allowance does. Everything else is charcoal, with no faces and nothing of what Wean helps you cut down. In `dist/drawings/wean/`:
+
+  | File | Drawing | For |
+  |---|---|---|
+  | `shoreline.svg` | A low shoreline in morning mist | The hero, under the headline |
+  | `flat-rocks.svg` | The tide going out over flat rocks, in steps | Less, a little at a time |
+  | `stones.svg` | One wave reaching a little higher up the stones while the tide still falls | A day over is met with calm |
+  | `mooring-post.svg` | A mooring post with tide marks, the water at a lower mark | Your pace, your plan |
+  | `harbour-steps.svg` | Harbour steps going down into still water | Beside the taper staircase |
+  | `breakwater.svg` | A breakwater, rough sea beyond it and calm water behind | The tour step for the craving tools |
+  | `boat.svg` | A small boat pulled up on the sand, its rope to a post | Privacy and price |
+  | `low-tide.svg` | The open shore at low tide, wide and quiet | The closing, above the wordmark |
+
+  They are written as SVG from descriptions in `kit/drawings/wean.js`, all through one loose stroke, so they share a hand. 60 KB together, 25 KB gzipped. The colours are tokens only: the magenta is `--ij-color-accent`, the ink `--ij-color-text-primary`.
+- **`kit/loose.js`**, published as `dist/kit/loose.js` with an SRI entry: `loosePath(points, { seed })` draws a line in the drawings' hand, and `stairsPoints(values, box)` turns a run of values into a staircase. Deterministic, so a page builds the same every time, and pure, so it runs at build time with no JavaScript shipped. `kit.css` adds `.ij-loose` for the line (the accent, 3 px, kept at that width at any size), `.ij-staircase` for its SVG, and keeps every drawing's strokes at their width on screen.
+- **The kit's Wean example** shows the eight drawings in their places and the taper staircase. The staircase is computed with Wean's own maths for 10 a day at 10% a week, in whole pouches: 24 weeks, big steps first and a long run at one a day. Its values are in the page as text. The example's copy now follows Wean's page brief.
+
+### What Wean loads
+All from `@v1.24.0`, with the hashes below:
+- `dist/css/tokens.css`, `dist/identity/wean-nicotine.css` (with the redesign, not before), `dist/fonts/instrument-sans.css`, `dist/kit/kit.css` and `dist/kit/kit.js`, as for Walkful.
+- **The eight drawings, inlined** in the page from `dist/drawings/wean/*.svg`, each in the place the table above names. Not as `<img>`, or they lose the tokens.
+- **The staircase:** `loosePath(stairsPoints(values, …), { seed })` from `kit/loose.js`, run at build time on the values from `lib/taper-plan.ts`, in an `<svg class="ij-staircase">` with a `<path class="ij-loose">`. Put the values in the page as text too.
+- The credit stays one plain line in the footer's fineprint, "Illustrations drawn with AI", and no badge (#71).
+
 ## [1.23.0] — 2026-10-11
 
 Wean's identity, the second flagship after Walkful (#65).
@@ -761,6 +790,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.24.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.24.0
 [1.23.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.23.0
 [1.22.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.22.1
 [1.22.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.22.0

@@ -1322,6 +1322,64 @@ function generateKitJs(tokens) {
   return `// IAMJARL marketing kit v${tokens.meta.version}: generated from kit/kit.js, do not edit\n${src}`;
 }
 
+// The drawings (#75), from their descriptions in kit/drawings/: one SVG file
+// each in dist/drawings/<app>/, to inline in a page, and the same SVG written
+// into the kit's example page, so the files and the page cannot drift apart.
+async function generateDrawings(tokens) {
+  const { renderDrawing } = await import(pathToFileURL(path.join(ROOT, 'kit', 'drawings', 'render.js')).href);
+  const { WEAN_DRAWINGS } = await import(pathToFileURL(path.join(ROOT, 'kit', 'drawings', 'wean.js')).href);
+  const { loosePath, stairsPoints } = await import(pathToFileURL(path.join(ROOT, 'kit', 'loose.js')).href);
+  const files = [], inline = {};
+  for (const d of WEAN_DRAWINGS) {
+    const svg = renderDrawing(d);
+    files.push([`wean/${d.id.replace(/^wean-/, '')}.svg`,
+      `<!-- IAMJARL drawing for Wean: ${d.title}. For ${d.use.charAt(0).toLowerCase()}${d.use.slice(1)}. ` +
+      `Generated from kit/drawings/wean.js, v${tokens.meta.version}. Inline it in the page; do not edit. -->\n${svg}\n`]);
+    inline[`drawing:${d.id}`] = svg;
+  }
+  // The example staircase on the Wean page: Wean's own taper maths for 10 a day
+  // at 10% a week (lib/taper-plan.ts: one-decimal rounding, then the whole-pouch
+  // floor), drawn through the loose stroke. Wean draws its own from the app.
+  const values = weanTaperExample(10, 10);
+  const d = loosePath(stairsPoints(values, { x: 16, y: 14, width: 608, height: 176, max: 10 }), { seed: 7, wobble: 1.2, step: 12 });
+  inline['staircase:wean-example'] = [
+    `<svg class="ij-staircase" viewBox="0 0 640 210" fill="none" role="img" aria-labelledby="wean-stairs-text">`,
+    `  <path class="ij-loose" d="${d}"/>`,
+    `</svg>`,
+  ].join('\n');
+  inline['staircase:wean-example-text'] = `An example, not a plan: 10 a day at 10% a week, in whole pouches. ` +
+    `Week by week: ${values.join(', ')}.`;
+  return { files, inline };
+}
+
+// Wean's taper for the example, as lib/taper-plan.ts computes it.
+function weanTaperExample(baseline, percent) {
+  const out = [];
+  for (let week = 0; week < 520; week++) {
+    const allowance = Math.max(0, Math.min(baseline, Math.round(baseline * (1 - percent / 100) ** week * 10) / 10));
+    const shown = Math.floor(allowance);
+    out.push(shown);
+    if (shown === 0) break;
+  }
+  return out;
+}
+
+// Writes generated pieces into a hand-written page between markers:
+// <!-- name -->…<!-- /name -->, the same way the README's pins are kept true.
+function writeExamplePage(file, pieces) {
+  const html = fs.readFileSync(file, 'utf-8');
+  let next = html;
+  for (const [name, content] of Object.entries(pieces)) {
+    const [kind] = name.split(':');
+    const re = new RegExp(`(<!-- ${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} -->)[\\s\\S]*?(<!-- /${kind} -->)`, 'g');
+    next = next.replace(re, `$1${content.includes('\n') ? `\n${content}\n` : content}$2`);
+  }
+  if (next !== html) {
+    fs.writeFileSync(file, next, 'utf-8');
+    console.log(`  ✓ ${path.relative(ROOT, file)} (drawings)`);
+  }
+}
+
 // The nav carries no registry: every link is the site's own, slotted in light
 // DOM, because a crawler that does not run JavaScript must still see them.
 function generateNav(tokens) {
@@ -1397,6 +1455,7 @@ const SRI_FILES = [
   'dist/components/ij-store-cta.js',
   'dist/kit/kit.css',
   'dist/kit/kit.js',
+  'dist/kit/loose.js',
 ];
 
 function computeSri(identityIds, fontNames = []) {
@@ -1653,6 +1712,13 @@ async function main() {
   writeFile(path.join(ROOT, 'dist', 'components', 'ij-store-cta.js'), generateStoreCta(tokens));
   writeFile(path.join(ROOT, 'dist', 'kit', 'kit.css'), generateKitCss(tokens));
   writeFile(path.join(ROOT, 'dist', 'kit', 'kit.js'), generateKitJs(tokens));
+  writeFile(path.join(ROOT, 'dist', 'kit', 'loose.js'),
+    `// IAMJARL marketing kit v${tokens.meta.version}: generated from kit/loose.js, do not edit\n${fs.readFileSync(path.join(ROOT, 'kit', 'loose.js'), 'utf-8')}`);
+  const drawings = await generateDrawings(tokens);
+  const drawingsDir = path.join(ROOT, 'dist', 'drawings');
+  if (fs.existsSync(drawingsDir)) fs.rmSync(drawingsDir, { recursive: true });
+  for (const [f, svg] of drawings.files) writeFile(path.join(drawingsDir, f), svg);
+  writeExamplePage(path.join(ROOT, 'kit', 'wean.html'), drawings.inline);
   const storeFragments = await generateStoreFragments(tokens);
   const storeDir = path.join(ROOT, 'dist', 'store');
   const storeKeep = new Set(storeFragments.map(([f]) => f));
