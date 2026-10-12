@@ -12,6 +12,7 @@ Three kit fixes found on the live sites (#80, #84), before It's mono's page is b
 ### Fixed
 - **The tour's row of screens hid its first screen on a phone** (#80). The row was centred, and a centred row wider than its scroller overflows on both sides. The part past the start edge can't be scrolled to. At 375 px the first screen sat 182 px past the edge on Walkful and WODrounds, as Today and EMOM setup. Now the row starts at the edge when it overflows and stays centred when it fits.
 - **`<ij-footer>` without JavaScript showed its links twice** (#84). Before a custom element upgrades, the browser shows all its children. That included the slotted links and fineprint as well as the hand-written fallback, so the cross-links and "© 2026 IAMJARL." appeared twice. `kit.css` now hides the slotted children of a footer that has a fallback, until it upgrades. A footer without a fallback still shows its slotted content. The README has the one rule for a site without the kit.
+- **The kit's WODrounds example showed marks on its gym photos:** lettering on the wrist wraps, logos on the shorts and the waistband, and a beard. The hub's review on WODrounds#182 found them, and WODrounds#190 cleaned WODrounds' own copies. The example now loads those, pinned to the merge commit, with the new 1280 px step. The barbell is cropped to 1920 × 1164.
 - **The kit's link rule took over a page's skip link** (#84). It coloured every link in the accent, which beat the page's own `.skip-link`. On WODrounds the focused skip link was lime on lime, under the sticky nav.
 
 ### Added
