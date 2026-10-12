@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketing kit: in the dark</title>
+<meta name="description" content="An example page built from the IAMJARL marketing kit with a sketched identity that is dark whatever the visitor's setting.">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="../dist/css/tokens.css">
+<link rel="stylesheet" href="../dist/fonts/jetbrains-mono.css">
+<link rel="stylesheet" href="../dist/kit/kit.css">
+<!-- The kit on a site that is dark whatever the visitor's setting. The sheet between
+     the markers is written by the build from kit/sketches.js with the same code as
+     an app's identity sheet; edit the sketch, not this. It is not WODrounds'
+     identity: that comes from its brief. The copy is from WODrounds' own site. -->
+<!-- identity:dark-sketch -->
+<style>
+/* IAMJARL identity for Dark sketch: generated, do not edit */
+/* design system v1.24.1. Dark only: this sheet holds the site in that mode whatever the visitor's setting. */
+/* Display face: JetBrains Mono (OFL-1.1). Self-host it; see design.md. */
+
+:root {
+  color-scheme: dark;
+  --ij-color-bg-app: #101315;
+  --ij-color-bg-card: #1A1E21;
+  --ij-color-surface-default: #1A1E21;
+  --ij-color-text-primary: #EEF0EE;
+  --ij-color-text-secondary: #C2C4C3;
+  --ij-color-text-tertiary: #ABAEAD;
+  --ij-color-accent: #F140FE;
+  --ij-color-accent-rgb: 241, 64, 254;
+  --ij-color-on-accent: #000000;
+  --ij-color-accent-text: #F140FE;
+  --ij-color-accent-family: #F140FE;
+  --ij-color-accent-family-rgb: 241, 64, 254;
+  --ij-font-display: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --ij-color-primary-rgb: 208, 255, 0; /* deprecated, use color-mix() */
+    --ij-gradient-primary: linear-gradient(135deg, #D0FF00, #5DE0A6, #37B6E9); /* text-safe: black */
+    --ij-gradient-brand: linear-gradient(135deg, #A435D2, #D0FF00); /* decorative only, no text colour clears AA */
+    --ij-color-primary: #D0FF00;
+    --ij-color-on-primary: #000000;
+    --ij-color-primary-hover: #B8E000;
+    --ij-color-primary-pressed: #A0C400;
+    --ij-color-primary-subtle: rgba(208, 255, 0, 0.15);
+    --ij-color-text-primary: #FFFFFF;
+    --ij-color-text-secondary: rgba(255, 255, 255, 0.75);
+    --ij-color-text-tertiary: rgba(255, 255, 255, 0.60);
+    --ij-color-text-disabled: rgba(255, 255, 255, 0.35);
+    --ij-color-text-inverse: #000000;
+    --ij-color-bg-app: #000000;
+    --ij-color-bg-muted: rgba(255, 255, 255, 0.05);
+    --ij-color-bg-card: rgba(255, 255, 255, 0.05);
+    --ij-color-bg-disabled: rgba(255, 255, 255, 0.07);
+    --ij-color-surface-default: #000000;
+    --ij-color-surface-raised: rgba(255, 255, 255, 0.03);
+    --ij-color-border-subtle: rgba(255, 255, 255, 0.12);
+    --ij-color-border-default: rgba(255, 255, 255, 0.18);
+    --ij-color-state-success: #4CAF50;
+    --ij-color-state-warning: #FF6B35;
+    --ij-color-state-error: #FF453A;
+    --ij-color-bg-app: #101315;
+    --ij-color-bg-card: #1A1E21;
+    --ij-color-surface-default: #1A1E21;
+    --ij-color-text-primary: #EEF0EE;
+    --ij-color-text-secondary: #C2C4C3;
+    --ij-color-text-tertiary: #ABAEAD;
+    --ij-color-accent: #F140FE;
+    --ij-color-accent-rgb: 241, 64, 254;
+    --ij-color-on-accent: #000000;
+    --ij-color-accent-text: #F140FE;
+    --ij-color-accent-family: #F140FE;
+    --ij-color-accent-family-rgb: 241, 64, 254;
+  }
+}
+
+.light {
+  --ij-color-primary-rgb: 208, 255, 0; /* deprecated, use color-mix() */
+  --ij-gradient-primary: linear-gradient(135deg, #D0FF00, #5DE0A6, #37B6E9); /* text-safe: black */
+  --ij-gradient-brand: linear-gradient(135deg, #A435D2, #D0FF00); /* decorative only, no text colour clears AA */
+  --ij-color-primary: #D0FF00;
+  --ij-color-on-primary: #000000;
+  --ij-color-primary-hover: #B8E000;
+  --ij-color-primary-pressed: #A0C400;
+  --ij-color-primary-subtle: rgba(208, 255, 0, 0.15);
+  --ij-color-text-primary: #FFFFFF;
+  --ij-color-text-secondary: rgba(255, 255, 255, 0.75);
+  --ij-color-text-tertiary: rgba(255, 255, 255, 0.60);
+  --ij-color-text-disabled: rgba(255, 255, 255, 0.35);
+  --ij-color-text-inverse: #000000;
+  --ij-color-bg-app: #000000;
+  --ij-color-bg-muted: rgba(255, 255, 255, 0.05);
+  --ij-color-bg-card: rgba(255, 255, 255, 0.05);
+  --ij-color-bg-disabled: rgba(255, 255, 255, 0.07);
+  --ij-color-surface-default: #000000;
+  --ij-color-surface-raised: rgba(255, 255, 255, 0.03);
+  --ij-color-border-subtle: rgba(255, 255, 255, 0.12);
+  --ij-color-border-default: rgba(255, 255, 255, 0.18);
+  --ij-color-state-success: #4CAF50;
+  --ij-color-state-warning: #FF6B35;
+  --ij-color-state-error: #FF453A;
+  --ij-color-bg-app: #101315;
+  --ij-color-bg-card: #1A1E21;
+  --ij-color-surface-default: #1A1E21;
+  --ij-color-text-primary: #EEF0EE;
+  --ij-color-text-secondary: #C2C4C3;
+  --ij-color-text-tertiary: #ABAEAD;
+  --ij-color-accent: #F140FE;
+  --ij-color-accent-rgb: 241, 64, 254;
+  --ij-color-on-accent: #000000;
+  --ij-color-accent-text: #F140FE;
+  --ij-color-accent-family: #F140FE;
+  --ij-color-accent-family-rgb: 241, 64, 254;
+}
+</style>
+<!-- /identity -->
+<script type="module" src="../dist/components/ij-nav.js"></script>
+<script type="module" src="../dist/components/ij-footer.js"></script>
+<script type="module" src="../dist/kit/kit.js"></script>
+</head>
+<body class="ij-page">
+
+<ij-nav>
+  <a slot="brand" href="./dark.html">WODrounds</a>
+  <a slot="links" href="#how">How it works</a>
+  <a slot="cta" href="https://apps.apple.com/app/id6759229877?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="nav" data-umami-event-locale="en">Download</a>
+</ij-nav>
+
+<main id="main">
+
+  <!-- Hero, split -->
+  <section class="ij-hero ij-hero--split" id="hero">
+    <div class="ij-container ij-hero__inner">
+      <div class="ij-hero__text">
+        <h1 class="ij-display">Built for the workout.</h1>
+        <p class="ij-lede">For CrossFit, HIIT and Tabata. Start on iPhone, follow on Apple Watch. Zero setup, zero accounts, zero noise.</p>
+        <!-- dist/store/wodrounds.en.white.html: the white badge, for a site that is always dark -->
+        <div class="ij-store" data-ij-store="wodrounds" data-ij-store-locale="en">
+          <a class="ij-store-badge" href="https://apps.apple.com/app/id6759229877?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="hero" data-umami-event-locale="en">
+            <img src="../badges/app-store-white-en-us.svg" alt="Download on the App Store" width="120" height="40">
+          </a>
+          <p class="ij-store-facts">$2.99 once · iOS 16 or later</p>
+        </div>
+      </div>
+      <div class="ij-hero__media">
+        <div class="ij-phone" style="--ij-phone-width: 320px">
+          <div class="ij-phone__screen">
+            <img src="https://cdn.jsdelivr.net/gh/JarlLyng/WODrounds@5bd936708f8ef759f922609aa40f95b352a2eae1/docs/images/iphone-emom.jpg" alt="WODrounds' EMOM timer running" fetchpriority="high">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statements, each with a piece of the app as its picture -->
+  <section class="ij-section ij-section--band" id="how" aria-labelledby="how-h">
+    <div class="ij-container">
+      <h2 class="ij-headline" id="how-h" style="margin-bottom: var(--ij-mkt-space-block)">A tool, not a feed.</h2>
+      <div class="ij-statements">
+        <div class="ij-statement">
+          <div class="ij-card"><div class="ij-card__piece"><p class="ij-numeral">12:00</p></div></div>
+          <div class="ij-statement__text">
+            <h3 class="ij-title">EMOM, intervals or for time.</h3>
+            <p>Set the workout once and start. The timer does the counting.</p>
+          </div>
+        </div>
+        <div class="ij-statement">
+          <div class="ij-card"><div class="ij-card__piece"><p class="ij-numeral">3/10</p></div></div>
+          <div class="ij-statement__text">
+            <h3 class="ij-title">Rounds you can read mid-set.</h3>
+            <p>The round and the time left, large enough to catch at a glance.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Frameless pieces in a bento -->
+  <section class="ij-section" aria-labelledby="pieces-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="pieces-h">Every screen. Same timer.</h2>
+      <div class="ij-bento">
+        <div class="ij-card ij-card--wide"><div class="ij-card__piece"><p class="ij-numeral">0:42</p></div><h3 class="ij-title">iPhone and Apple Watch</h3><p>Start on the phone, follow on your wrist.</p></div>
+        <div class="ij-card"><div class="ij-card__piece"><p class="ij-numeral">R3</p></div><h3 class="ij-title">On the wrist</h3><p>The round you are in, where you can see it.</p></div>
+        <div class="ij-card ij-card--half"><h3 class="ij-title">Mac, iPad, Apple TV</h3><p>Or train from the big screen.</p></div>
+        <div class="ij-card ij-card--half"><h3 class="ij-title">Apple Health</h3><p>Workouts saved where you keep the rest.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The phone that stays -->
+  <section class="ij-section ij-section--band" aria-labelledby="tour-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="tour-h">From setup to the last round.</h2>
+      <div class="ij-tour">
+        <div class="ij-tour__screens">
+          <div class="ij-phone" data-step="1"><div class="ij-phone__screen"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/WODrounds@5bd936708f8ef759f922609aa40f95b352a2eae1/docs/images/iphone-setup.jpg" alt="Setting up a workout" loading="lazy" decoding="async"></div></div>
+          <div class="ij-phone" data-step="2"><div class="ij-phone__screen"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/WODrounds@5bd936708f8ef759f922609aa40f95b352a2eae1/docs/images/iphone-intervals.jpg" alt="An interval timer" loading="lazy" decoding="async"></div></div>
+          <div class="ij-phone" data-step="3"><div class="ij-phone__screen"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/WODrounds@5bd936708f8ef759f922609aa40f95b352a2eae1/docs/images/iphone-fortime-running.jpg" alt="A for-time workout running" loading="lazy" decoding="async"></div></div>
+        </div>
+        <ol class="ij-tour__steps">
+          <li class="ij-tour__step" data-step="1"><h3 class="ij-title">Set it up</h3><p>Pick the format and the times.</p></li>
+          <li class="ij-tour__step" data-step="2"><h3 class="ij-title">Work and rest</h3><p>The interval in front of you, the next one on its way.</p></li>
+          <li class="ij-tour__step" data-step="3"><h3 class="ij-title">For time</h3><p>The clock running until you stop it.</p></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Where it works -->
+  <section class="ij-section" aria-labelledby="traits-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="traits-h">Built for the box.</h2>
+      <div class="ij-traits">
+        <div class="ij-trait ij-trait--number"><p class="ij-numeral">4:21</p><p>The time left, large enough to read mid-set.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Zero setup</h3><p>Open it and start.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Zero accounts</h3><p>Nothing to sign up for.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Zero noise</h3><p>No feed, no ads.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Once</h3><p>One payment.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- A dated source: placeholder -->
+  <section class="ij-section ij-section--band" aria-labelledby="source-h">
+    <div class="ij-container ij-stack ij-measure">
+      <h2 class="ij-headline" id="source-h">A cited fact.</h2>
+      <figure class="ij-source">
+        <blockquote class="ij-source__fact ij-title">A cited finding goes here, worded as its source words it.</blockquote>
+        <figcaption class="ij-source__meta">The study's title, where it appeared, and the date it was published.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Privacy and price -->
+  <section class="ij-section" aria-labelledby="privacy-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="privacy-h">Pay once. That's it.</h2>
+      <div class="ij-assurances">
+        <div class="ij-assurance"><h3 class="ij-title">No subscription</h3><p>One payment.</p></div>
+        <div class="ij-assurance"><h3 class="ij-title">No ads</h3><p>Nothing between you and the clock.</p></div>
+        <div class="ij-assurance"><h3 class="ij-title">No account</h3><p>Nothing to sign in to.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- A note from the maker -->
+  <section class="ij-section ij-section--band" aria-label="A note from the maker">
+    <div class="ij-container">
+      <div class="ij-maker">
+        <p>The maker's note goes here: three or four sentences in the first person. The owner writes it.</p>
+        <p class="ij-maker__sign">Jarl</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing -->
+  <section class="ij-section" aria-label="Download WODrounds">
+    <div class="ij-container ij-closing">
+      <p class="ij-wordmark" style="--ij-wordmark-em: 5.2">WODrounds</p>
+      <div class="ij-store" data-ij-store="wodrounds" data-ij-store-locale="en">
+        <a class="ij-store-badge" href="https://apps.apple.com/app/id6759229877?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="footer" data-umami-event-locale="en">
+          <img src="../badges/app-store-white-en-us.svg" alt="Download on the App Store" width="120" height="40" loading="lazy">
+        </a>
+        <p class="ij-store-facts">$2.99 once · iOS 16 or later</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<ij-footer app="wodrounds">
+  <span slot="fineprint">An example page for the IAMJARL marketing kit (#65), trying it in the dark with a sketched identity, not WODrounds' own. The copy is from WODrounds' site; the source and the maker's note are placeholders.</span>
+</ij-footer>
+
+</body>
+</html>

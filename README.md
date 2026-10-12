@@ -51,7 +51,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.24.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.24.1")
 ]
 ```
 
@@ -235,7 +235,7 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.0/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.1/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -275,7 +275,7 @@ a build step, install it instead.**
 | Needs `integrity`? | yes, worth it | no — nothing crosses an origin |
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.24.0
+npm install github:jarllyng/iamjarl-design#v1.24.1
 ```
 
 ```js
@@ -301,23 +301,23 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.0/dist/css/tokens.css"
-  integrity="sha384-bQzLtgGZbfzv/Bo00Rn8td3vCK9MTdBWxGWN8aR80KDOmo+m6Ep/skOS4dM8thLH"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.1/dist/css/tokens.css"
+  integrity="sha384-Gs60ZorhS7DWCut13sw/6Gow0fNT1bp2Gbj2IbNZWGM+YF6CCOtIam8sp1/zsL55"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.0/dist/components/ij-footer.js"
-  integrity="sha384-rehLcOe2qw0ysHeoHPII40GYcUvDRrj7KRia0b1t74jjpAgOAEdoDtavfP1zhTZk"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.1/dist/components/ij-footer.js"
+  integrity="sha384-3p/05c3ci8zheE8FYBJuNjyyJX2wyPvT9tFFJH+Je9WzY/gZz+UTEQFn4NJqWSPf"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.0/dist/components/ij-nav.js"
-  integrity="sha384-n7h/DogghN6To644TosINKpmfjmPWN+Fqznt2xa/XGGYz3644BW1d8m7x37ovpGE"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.1/dist/components/ij-nav.js"
+  integrity="sha384-OzqFGnxRSeO1JFrDYYKNluovwh35dD5hHwtzcVfeRVPKylcJ3l+kzjne8lWG4w3L"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.0/dist/components/ij-store-cta.js"
-  integrity="sha384-dZt7bTx5ECmz2p6VuYIFSFjA8HrG9WQFJtm/zwyoF04bpUz/gvmbK95e0ofv5lox"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.1/dist/components/ij-store-cta.js"
+  integrity="sha384-KnVqsb3Q9I8t+ikilTMzL5u2jG8A1rD/52lHfcNddEkuoGirBD/dcW3Wf++hp+aQ"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
@@ -349,7 +349,7 @@ The component builds the cross-links at runtime, so crawlers that do not execute
 pre-rendered fragment for your app and the component will slot it instead of regenerating:
 
 ```bash
-curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.0/dist/footers/botlens.html
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.1/dist/footers/botlens.html
 ```
 
 ```html
@@ -400,7 +400,7 @@ it supplies the landmark, the sticky translucent bar, the phone layout and the k
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.0/dist/components/ij-nav.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.1/dist/components/ij-nav.js"></script>
 
 <ij-nav>
   <a slot="brand" href="/">Echolume</a>
@@ -558,7 +558,7 @@ reuse. Left empty, the element renders the fragment itself from the registry, wh
 without a build step, but crawlers will not see that copy:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.0/dist/components/ij-store-cta.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.1/dist/components/ij-store-cta.js"></script>
 <ij-store-cta app="wodrounds" placement="midpage" tone="white">…fragment…</ij-store-cta>
 ```
 
@@ -590,7 +590,7 @@ and [Wean](https://jarllyng.github.io/iamjarl-design/kit/wean.html).
 <link rel="stylesheet" href="…/dist/identity/<app>.css" integrity="…" crossorigin="anonymous">
 <link rel="stylesheet" href="…/dist/fonts/<face>.css" integrity="…" crossorigin="anonymous">
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.0/dist/kit/kit.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.1/dist/kit/kit.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 
 <body class="ij-page">
@@ -625,8 +625,18 @@ and [Wean](https://jarllyng.github.io/iamjarl-design/kit/wean.html).
 
 Type roles: `.ij-display`, `.ij-headline`, `.ij-title`, `.ij-lede`, `.ij-small`, `.ij-numeral`,
 `.ij-wordmark`. Layout: `.ij-container`, `.ij-section`, `.ij-section--band` (a section on the card
-colour), `.ij-measure`, `.ij-stack`. Two hooks: `--ij-phone-width` and `--ij-display-weight` (for a face
-whose regular weight reads too light; Young Serif has only one, so the kit never synthesises bold).
+colour), `.ij-measure`, `.ij-stack`. Three hooks: `--ij-phone-width`; `--ij-display-weight`, for a face
+whose regular weight reads too light (the kit never synthesises bold, since a face like Young Serif has
+only one); and `--ij-wordmark-em`, the closing wordmark's width in em. The wordmark grows to the scale's
+size but never past its column, which a long name or a wide face would otherwise run over: set it to
+about 5.2 for "WODrounds" in JetBrains Mono. The default, 4, suits a name of six or seven letters in a
+proportional face.
+
+**A site that is dark whatever the visitor's setting** gives its identity `"scheme": "dark"`, and the
+sheet holds every colour in dark mode. Use the `.white` store fragments, and the kit does the rest: the
+phone takes an edge from `--ij-color-border-default`, so it doesn't vanish into the ground, and a drawing's
+ink follows `--ij-color-text-primary` to light. The [dark example](https://jarllyng.github.io/iamjarl-design/kit/dark.html)
+runs every section that way, tested for a visitor in light and in dark mode.
 
 **The phone frame is drawn, never Apple's.** Apple's licence for its Design Resources forbids using
 them as website content or redistributing them, so no bezel ships from here. `.ij-phone` is a generic
@@ -639,7 +649,7 @@ dependencies), loaded after the page; nothing waits for it:
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.0/dist/kit/kit.js"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.1/dist/kit/kit.js"
   integrity="<from sri.json>" crossorigin="anonymous"></script>
 ```
 
@@ -703,7 +713,7 @@ nothing on a site that did not ask for a new identity. If your app has no file i
 ```html
 <!-- tokens.css first, from the SRI block above, then the identity sheet -->
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.0/dist/identity/<app>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.1/dist/identity/<app>.css"
   integrity="<from sri.json, see below>"
   crossorigin="anonymous">
 ```
@@ -712,7 +722,7 @@ nothing on a site that did not ask for a new identity. If your app has no file i
 yours:
 
 ```bash
-curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.0/dist/sri.json | grep 'identity/<app>.css'
+curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.1/dist/sri.json | grep 'identity/<app>.css'
 ```
 
 Each sheet carries the version in its header, so its hash changes every release. Move the tag and
@@ -745,7 +755,7 @@ Echolume does exactly this today; giving it `"scheme": "dark"` would make the cl
 
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.0/dist/fonts/<face>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.24.1/dist/fonts/<face>.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 ```
 

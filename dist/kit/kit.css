@@ -1,4 +1,4 @@
-/* IAMJARL marketing kit v1.24.0: generated from kit/kit.css, do not edit */
+/* IAMJARL marketing kit v1.24.1: generated from kit/kit.css, do not edit */
 /* The marketing page kit (#65): sections every app site can compose.
 
    Plain HTML with these classes. No JavaScript is needed to read any of it:
@@ -127,8 +127,11 @@ ij-store-cta { display: block; }
   aspect-ratio: 9 / 19.5;
   border-radius: var(--_r);
   background: var(--ij-color-black);
+  /* The edge comes from the page's own border colour: invisible against a
+     light page, and what keeps a black phone from vanishing into a dark one. */
   box-shadow:
     inset 0 0 0 1.5px color-mix(in srgb, var(--ij-color-white) 14%, transparent),
+    0 0 0 1px var(--ij-color-border-default),
     0 40px 80px -40px color-mix(in srgb, var(--ij-color-black) 45%, transparent);
 }
 .ij-phone__screen {
@@ -324,6 +327,12 @@ ij-store-cta { display: block; }
 
 /* ---------- Closing: the wordmark, large ---------- */
 
-.ij-closing { text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--ij-mkt-space-stack); }
+.ij-closing { text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--ij-mkt-space-stack); container-type: inline-size; }
+/* The wordmark as large as the scale allows, and never wider than its column.
+   --ij-wordmark-em is the word's width in em: about 3.5 for "Walkful" in
+   Fraunces, 5.1 for "WODrounds" in JetBrains Mono. The default suits a name of
+   six or seven letters in a proportional face; set it for a longer name or a
+   wide face, or the word runs past the column (found in the dark example). */
+.ij-closing .ij-wordmark { font-size: min(var(--ij-mkt-wordmark-size), 100cqi / var(--ij-wordmark-em, 4)); white-space: nowrap; }
 .ij-closing .ij-store { align-items: center; }
 .ij-closing .ij-drawing { width: min(100%, 760px); }

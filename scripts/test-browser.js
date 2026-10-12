@@ -111,6 +111,12 @@ ${FULL_NAV.replace('<ij-nav>', '<ij-nav cta-after="#hero-cta">')}
 </div></div><div style="height: 3000px"></div></main>
 <script type="module" src="/dist/kit/kit.js"></script>` }),
 
+  // A drawing under the dark sketch's identity (kit/dark.html's generated sheet).
+  'kit-dark-drawing': page({ nav: false, body: `${
+    (fs.readFileSync(path.join(ROOT, 'kit/dark.html'), 'utf-8').match(/<style>\n\/\* IAMJARL identity for Dark sketch[\s\S]*?<\/style>/) || [''])[0]}
+<link rel="stylesheet" href="/dist/kit/kit.css">
+<main class="ij-page" style="padding: 24px">${fs.readFileSync(path.join(ROOT, 'dist/drawings/wean/low-tide.svg'), 'utf-8')}</main>` }),
+
   // Footer hover: the family accent under an identity sheet, primary without.
   'footer-accent': page({ nav: false, footer: true, identity: 'echolume', body: `
 <ij-footer app="echolume"><a slot="links" href="#">Privacy</a></ij-footer>` }),
@@ -578,7 +584,7 @@ try {
     '.ij-assurances', '.ij-maker', '.ij-source', '.ij-staircase', '.ij-closing'];
   // Walkful cites a dated source; Wean has none by its brief and shows its
   // taper staircase in that place instead (wean-nicotine#396, #75).
-  const notOn = { walkful: ['.ij-staircase'], wean: ['.ij-source'] };
+  const notOn = { walkful: ['.ij-staircase'], wean: ['.ij-source'], dark: ['.ij-staircase'] };
   const kitProbe = `(() => {
     const lum = c => { const m = c.match(/[\\d.]+/g).map(Number); const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
       return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]); };
@@ -607,9 +613,12 @@ try {
       screensInARow: screens.length > 1 && screens.every(t => t === screens[0]), bg: getComputedStyle(document.body).backgroundColor,
       ctaRatio: ratio(getComputedStyle(cta).color, getComputedStyle(cta).backgroundColor),
       navNoAccent: !navLinks.includes(swatch('--ij-color-accent-text')),
-      footerAligned: Math.abs(ft.left - ct.left) <= 1 && Math.abs(ft.width - ct.width) <= 1 };
+      footerAligned: Math.abs(ft.left - ct.left) <= 1 && Math.abs(ft.width - ct.width) <= 1,
+      wordmarkFits: (() => { const wm = document.querySelector('.ij-wordmark'), r = document.createRange(); r.selectNodeContents(wm);
+        return r.getBoundingClientRect().width <= wm.closest('.ij-closing').getBoundingClientRect().width + 1; })() };
   })()`;
-  for (const [demo, bg, faceRe] of [['walkful', 'rgb(245, 239, 230)', /Fraunces/], ['wean', 'rgb(230, 236, 239)', /Instrument Sans/]]) {
+  for (const [demo, bg, faceRe] of [['walkful', 'rgb(245, 239, 230)', /Fraunces/], ['wean', 'rgb(230, 236, 239)', /Instrument Sans/],
+    ['dark', 'rgb(16, 19, 21)', /JetBrains Mono/]]) {
     for (const [w, h, size] of [[1440, 900, 96], [375, 812, 52]]) {
       await p.viewport(w, h);
       await p.goto(`${base}/kit/${demo}.html`);
@@ -625,7 +634,8 @@ try {
         k.low.length === 0 && k.animations === 0, JSON.stringify({ low: k.low, animations: k.animations }));
       if (w === 1440) check(`${demo}: the hero loads at once, everything below it lazily`, k.lazyWrong.length === 0, k.lazyWrong.join(', '));
       check(`${demo} at ${w}: the nav keeps its own colours (CTA at AA on its fill, no accent text) and the footer lines up with the content`,
-        k.ctaRatio >= 4.5 && k.navNoAccent && k.footerAligned, JSON.stringify({ cta: k.ctaRatio, navNoAccent: k.navNoAccent, footer: k.footerAligned }));
+        k.ctaRatio >= 4.5 && k.navNoAccent && k.footerAligned && k.wordmarkFits,
+        JSON.stringify({ cta: k.ctaRatio, navNoAccent: k.navNoAccent, footer: k.footerAligned, wordmark: k.wordmarkFits }));
     }
     await p.viewport(1440, 900);
     await p.goto(`${base}/nojs/kit/${demo}.html`);
@@ -636,6 +646,28 @@ try {
       n.missing.length === 0 && n.low.length === 0 && n.screensInARow && await p.eval(`document.scripts.length === 0`),
       JSON.stringify({ missing: n.missing, low: n.low, row: n.screensInARow }));
   }
+  // The kit in the dark, for a visitor whose system is dark too: the probe
+  // above ran it for a light one. Nothing may change but the system's mode.
+  await p.media([{ name: 'prefers-color-scheme', value: 'dark' }]);
+  await p.viewport(1440, 900);
+  await p.goto(`${base}/kit/dark.html`);
+  await p.eval('document.fonts.ready');
+  await p.settle(200);
+  const dk = await p.eval(kitProbe);
+  dk.missing = dk.missing.filter(sel => !notOn.dark.includes(sel));
+  const badge = await p.eval(`[...document.querySelectorAll('.ij-store-badge img')].every(i => /app-store-white-/.test(i.src))`);
+  check('the dark example reads the same for a visitor in dark mode: every section, every text at AA, the white badge',
+    dk.missing.length === 0 && dk.low.length === 0 && dk.bg === 'rgb(16, 19, 21)' && dk.ctaRatio >= 4.5 && dk.wordmarkFits && badge,
+    JSON.stringify({ missing: dk.missing, low: dk.low, bg: dk.bg, cta: dk.ctaRatio, badge }));
+  await p.media([{ name: 'prefers-color-scheme', value: 'light' }]);
+  await p.goto(`${base}/fixture/kit-dark-drawing/index.html`);
+  await p.settle(150);
+  const dd = await p.eval(`(() => { const svg = document.querySelector('.ij-drawing');
+    return { ink: getComputedStyle(svg.querySelector('g:last-of-type path')).stroke, mark: getComputedStyle(svg.querySelector('.ij-mark')).stroke,
+      bg: getComputedStyle(document.body).backgroundColor, edge: getComputedStyle(document.documentElement).getPropertyValue('--ij-color-border-default').trim() }; })()`);
+  check('a drawing on a dark site takes the light ink and keeps its magenta waterline; the phone\'s edge is the dark border colour',
+    dd.ink === 'rgb(238, 240, 238)' && dd.mark === 'rgb(241, 64, 254)' && dd.bg === 'rgb(16, 19, 21)' && /255, 255, 255/.test(dd.edge), JSON.stringify(dd));
+
   // Wean's drawings (#75) at phone width: every one on screen at a readable
   // size, its strokes kept at their width, the waterline and the staircase in
   // the accent, and the staircase's text in the served HTML.
