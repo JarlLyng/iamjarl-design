@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.25.0] — 2026-10-12
+
+WODrounds' identity, the first dark site, and frames for Apple TV and Watch (#78).
+
+### Added
+- **WODrounds' identity**, from its site brief: dark whatever the visitor's setting, near-black `#0B0C0D` with cards `#17191B`, off-white `#F2F3EF` for text (17.6:1), the app's lime `#D0FF00` for the accent with black on it (18:1), and JetBrains Mono for headlines and numbers. The lime reads as text on the near-black (16.8:1), so it is its own text-safe accent. No drawings: the numbers are the picture.
+- **`.ij-tv` and `.ij-watch`,** an Apple TV and an Apple Watch framed the way `.ij-phone` frames a phone: generic and black, with an edge from `--ij-color-border-default` so they stand out on a dark ground, and nothing unique to Apple's hardware. The TV stands on a short foot and the watch has two plain straps. They are sized by `--ij-tv-width` (560 px by default) and `--ij-watch-width` (170 px). A screen can also go frameless as a piece in a card. `.ij-trait--wide` lets a trait, such as the TV's, span two columns on a wide screen.
+- **The kit's WODrounds example,** `kit/wodrounds.html`, shows every section in WODrounds' dark identity with its public screenshots and copy: the hero phone, the timers as frameless pieces, the tour, the platforms with the Watch and TV frames, privacy and price, and the closing wordmark. The browser tests run it at 1440 and 375 px for a visitor in light and in dark mode, and check that `.ij-numeral`'s digits are tabular (all ten measure the same in JetBrains Mono) and that the frames keep their shape and their edge.
+
+### Changed
+- The dark sketch from 1.24.1 (`kit/dark.html`, `kit/sketches.js`) is retired: WODrounds' real identity replaces it, in the example, the tests and the docs page.
+
+### What WODrounds loads
+All from `@v1.25.0`, with the hashes below:
+- `dist/css/tokens.css`, `dist/identity/wodrounds.css` (with the redesign, not before: it turns the site dark only), `dist/fonts/jetbrains-mono.css`, `dist/kit/kit.css` and `dist/kit/kit.js`.
+- **The `.white` store fragments,** since the ground is always dark: `dist/store/wodrounds.<locale>.white.html` in the hero, and `.midpage.white.html` and `.footer.white.html` further down, for each of its seven languages.
+- **`--ij-wordmark-em: 5.2`** on the closing wordmark, for "WODrounds" in JetBrains Mono.
+- **`.ij-tv` and `.ij-watch`** for the Apple TV and Watch screenshots, or the screens frameless in cards.
+- No drawings, and so no credit line in the footer.
+
 ## [1.24.1] — 2026-10-12
 
 The kit, made ready for a site that is dark, before the first one asks (#65). Neither flagship is dark, but WODrounds, whose brief is being written, may be, and so may the Mac sites. Trying the kit in the dark found two things.
@@ -803,6 +823,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.25.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.25.0
 [1.24.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.24.1
 [1.24.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.24.0
 [1.23.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.23.0
