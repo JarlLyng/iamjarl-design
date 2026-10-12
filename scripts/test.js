@@ -10,6 +10,9 @@ import { parseHex, parseRgba, parseColor, contrastRatio } from './color.js';
 import { extractNotes, sriNotes } from './release-notes.js';
 import { selectLinks, categoryReach } from '../components/select-links.js';
 import { identityFor, mix, TEXT_MIX } from '../components/identity.js';
+import { loosePath, stairsPoints } from '../kit/loose.js';
+import { renderDrawing } from '../kit/drawings/render.js';
+import { WEAN_DRAWINGS } from '../kit/drawings/wean.js';
 import { NAV_ALPHA, NAV_COLLAPSE_BELOW, MAX_LINKS, currentIndex, heroOnScreen, navWarnings } from '../components/nav-rules.js';
 import { storeLink, factsLine, badgeFile, badgeHeight, smartBannerHtml, fragmentName, offer, PLACEMENTS, TONES } from '../components/store.js';
 
@@ -731,12 +734,15 @@ check('dist/kit/kit.css is the source with its version on top, hashed and export
   kitDist.startsWith(`/* IAMJARL marketing kit v${fullTokens.meta.version}:`) && kitDist.endsWith(kitSrc) &&
   'dist/kit/kit.css' in JSON.parse(read('dist/sri.json')).files && JSON.parse(read('package.json')).exports['./kit/*'] === './dist/kit/*');
 const KIT_CLASSES = ['ij-hero--split', 'ij-hero--centred', 'ij-phone', 'ij-statement', 'ij-drawing', 'ij-card', 'ij-tour',
-  'ij-trait--number', 'ij-assurances', 'ij-maker', 'ij-source', 'ij-closing', 'ij-wordmark'];
+  'ij-trait--number', 'ij-assurances', 'ij-maker', 'ij-closing', 'ij-wordmark'];
 const demos = { walkful: read('kit/walkful.html'), wean: read('kit/wean.html') };
+// Wean's page has no cited fact by its brief (wean-nicotine#396), so the dated
+// source card is shown under Walkful only; every other section under both.
 const shownTwice = KIT_CLASSES.filter(c => ['ij-hero--split', 'ij-hero--centred'].includes(c) ||
   Object.values(demos).every(html => new RegExp(`class="[^"]*\\b${c}\\b`).test(html)));
 check('both demos compose every section, so each is shown under two identities, and the two hero layouts between them',
-  shownTwice.length === KIT_CLASSES.length && demos.walkful.includes('ij-hero--split') && demos.wean.includes('ij-hero--centred'),
+  shownTwice.length === KIT_CLASSES.length && demos.walkful.includes('ij-hero--split') && demos.wean.includes('ij-hero--centred') &&
+  demos.walkful.includes('class="ij-source"'),
   KIT_CLASSES.filter(c => !shownTwice.includes(c)).join(', '));
 // The portfolio's standard (#71): no Made by Human badge and no AI-authorship
 // wording on an app site. A drawing credit is allowed, as one line in the
@@ -767,6 +773,55 @@ check('dist/kit/kit.js is the source with its version on top, and hashed',
 check('the crossfade uses the motion tokens, and only once the tour has settled',
   /\.ij-tour\.is-ready [^{]*\{ transition: opacity var\(--ij-duration-slow\) var\(--ij-easing-standard\)/.test(kitSrc) &&
   !/\.ij-tour\.is-live[^{]*\{[^}]*transition/.test(kitSrc));
+
+// --- Drawings and the loose stroke (#75) ---
+// Wean's drawings are generated from their descriptions, so what must hold is
+// the rule they are drawn by: one magenta waterline each, taking the accent
+// token and stepping down left to right, nothing hard-coded, and the files and
+// the example page carrying exactly what the descriptions draw.
+console.log('\nDrawings:');
+check('the loose stroke is deterministic, and differs with its seed',
+  loosePath([[0, 0], [100, 0], [100, 40]], { seed: 3 }) === loosePath([[0, 0], [100, 0], [100, 40]], { seed: 3 }) &&
+  loosePath([[0, 0], [100, 0]], { seed: 3 }) !== loosePath([[0, 0], [100, 0]], { seed: 4 }));
+check('a staircase is a tread per value, joined by risers', JSON.stringify(stairsPoints([2, 1], { width: 20, height: 10, max: 2 })) ===
+  JSON.stringify([[0, 0], [10, 0], [10, 5], [20, 5]]));
+check('eight drawings, on coast and tide, each with an id of its own', WEAN_DRAWINGS.length === 8 &&
+  new Set(WEAN_DRAWINGS.map(d => d.id)).size === 8);
+const marksDown = WEAN_DRAWINGS.filter(d => {
+  const m = d.strokes.filter(st => st.kind === 'mark');
+  if (m.length !== 1) return false;
+  const pts = (m[0].parts ?? [m[0].points]).flat();
+  return pts.every((p, i) => i === 0 || (p[0] >= pts[i - 1][0] - 0.01 && p[1] >= pts[i - 1][1] - 0.01)) && pts.at(-1)[1] > pts[0][1];
+});
+check('each has exactly one magenta waterline, and it only ever steps down, left to right', marksDown.length === 8,
+  WEAN_DRAWINGS.filter(d => !marksDown.includes(d)).map(d => d.id).join(', '));
+const svgs = WEAN_DRAWINGS.map(renderDrawing);
+check('every colour is a token: the mark the accent, the rest the text colour, no literal anywhere',
+  svgs.every(svg => (svg.match(/class="ij-mark" style="stroke: var\(--ij-color-accent\)"/g) || []).length === 1 &&
+    !/#[0-9a-f]{3,8}\b|\brgba?\(|\bhsla?\(/i.test(svg) && /var\(--ij-color-text-primary\)/.test(svg)));
+check('each drawing ships as a file in dist/drawings/wean/, and the example page shows the same SVG', WEAN_DRAWINGS.every((d, i) => {
+  const f = `dist/drawings/wean/${d.id.replace(/^wean-/, '')}.svg`;
+  return fs.existsSync(path.join(ROOT, f)) && read(f).includes(svgs[i]) && read('kit/wean.html').includes(svgs[i]);
+}));
+check('the drawings stay light: each under 16 KB before compression', svgs.every(svg => Buffer.byteLength(svg) < 16384),
+  svgs.map(svg => Buffer.byteLength(svg)).join(', '));
+check('kit.css keeps a drawing\'s strokes readable at any size, and gives a data line the accent in the same hand',
+  /\.ij-drawing path \{ vector-effect: non-scaling-stroke; \}/.test(read('kit/kit.css')) &&
+  /\.ij-loose \{[^}]*stroke: var\(--ij-color-accent\);[^}]*vector-effect: non-scaling-stroke;/.test(read('kit/kit.css')));
+// The example staircase follows Wean's own maths (lib/taper-plan.ts): a
+// one-decimal allowance, shown as whole pouches, until it shows none.
+const taper = [];
+for (let w = 0; w < 520; w++) {
+  const a = Math.max(0, Math.min(10, Math.round(10 * 0.9 ** w * 10) / 10));
+  taper.push(Math.floor(a));
+  if (Math.floor(a) === 0) break;
+}
+check(`the Wean example's staircase is Wean's taper for 10 a day at 10% a week (${taper.length} weeks), with a text version`,
+  read('kit/wean.html').includes(`Week by week: ${taper.join(', ')}.`) && /<path class="ij-loose" d="/.test(read('kit/wean.html')) &&
+  taper.slice(0, 6).join() === '10,9,8,7,6,5' && taper.at(-2) === 1 && taper.at(-1) === 0);
+check('dist/kit/loose.js is the source with its version on top, hashed, and the drawings are exported',
+  read('dist/kit/loose.js').endsWith(read('kit/loose.js')) && 'dist/kit/loose.js' in JSON.parse(read('dist/sri.json')).files &&
+  JSON.parse(read('package.json')).exports['./drawings/*'] === './dist/drawings/*');
 
 // --- Owner decisions, 2026-10-04 (#53) ---
 // Written down in the docs, and the one with code consequences asserted on the
