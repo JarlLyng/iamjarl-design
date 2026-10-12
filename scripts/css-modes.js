@@ -99,6 +99,9 @@ export function identitySheetCss(app, id, tokens) {
     // A face whose character lives on an axis (Fraunces' SOFT) carries it
     // here, so a site gets the face it was shown, not the axis's default.
     if (face && id.display?.face.axes) v('font-display-axes', id.display.face.axes);
+    // Bordered panels (#83) don't change with mode either: the border colour
+    // they name is the mode's own.
+    if (face && id.panels === 'bordered') v('panel-border', '1px solid var(--ij-color-border-default)');
     return lines;
   };
 

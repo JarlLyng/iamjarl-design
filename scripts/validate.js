@@ -5,7 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseColor, contrastRatio } from './color.js';
 import { LOCALES, badgeFile, factsLine, offer, storeLink } from '../components/store.js';
-import { identityFor, MODES, COLOR_FIELDS } from '../components/identity.js';
+import { identityFor, MODES, COLOR_FIELDS, PANELS } from '../components/identity.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -528,9 +528,10 @@ function validateIdentities(apps, tokensRef, one = 'site identity', many = 'site
   const ratio = (fg, bg) => contrastRatio(parseColor(fg), parseColor(bg));
   for (const a of withIdentity) {
     const id = a.identity;
-    const known = ['scheme', 'display', ...MODES];
+    const known = ['scheme', 'display', 'panels', ...MODES];
     for (const k of Object.keys(id)) if (!known.includes(k)) bad(a, `unknown field "${k}"`);
     if (id.scheme !== undefined && !MODES.includes(id.scheme)) bad(a, `scheme must be "light" or "dark", not "${id.scheme}"`);
+    if (id.panels !== undefined && !PANELS.includes(id.panels)) bad(a, `panels must be ${PANELS.map(p => `"${p}"`).join(' or ')}, not "${id.panels}"`);
     if (id.display !== undefined && !faces.includes(id.display)) {
       bad(a, `display "${id.display}" is not in the approved set (${faces.join(', ')})`);
     }

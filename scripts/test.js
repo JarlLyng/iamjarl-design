@@ -14,6 +14,7 @@ import { loosePath, stairsPoints } from '../kit/loose.js';
 import { renderDrawing } from '../kit/drawings/render.js';
 import { identitySheetCss } from './css-modes.js';
 import { WEAN_DRAWINGS } from '../kit/drawings/wean.js';
+import { ITS_MONO_DRAWINGS } from '../kit/drawings/its-mono-yo.js';
 import { NAV_ALPHA, NAV_COLLAPSE_BELOW, MAX_LINKS, currentIndex, heroOnScreen, navWarnings } from '../components/nav-rules.js';
 import { storeLink, factsLine, badgeFile, badgeHeight, smartBannerHtml, fragmentName, offer, PLACEMENTS, TONES } from '../components/store.js';
 
@@ -738,7 +739,7 @@ check('the Swift package has no marketing scale', !/marketing|--ij-mkt|mkt/i.tes
 const kitSrc = read('kit/kit.css');
 check('kit.css writes no colour of its own', !/#[0-9a-f]{3,8}\b|\brgba?\(|\bhsla?\(/i.test(kitSrc.replace(/\/\*[\s\S]*?\*\//g, '')),
   'every colour comes from the tokens or the identity, so the same markup is any site');
-const KIT_HOOKS = ['--ij-phone-width', '--ij-tv-width', '--ij-watch-width', '--ij-display-weight', '--ij-wordmark-em', '--ij-scene-height'];
+const KIT_HOOKS = ['--ij-phone-width', '--ij-tv-width', '--ij-watch-width', '--ij-display-weight', '--ij-wordmark-em', '--ij-scene-height', '--ij-window-width'];
 const definedVars = new Set([tokensCssText, ...fs.readdirSync(identityDir).map(f => read(`dist/identity/${f}`))]
   .flatMap(css => css.match(/--ij-[a-z0-9-]+(?=:)/g) ?? []));
 const kitUses = [...new Set(kitSrc.match(/var\(--ij-[a-z0-9-]+/g).map(v => v.slice(4)))];
@@ -856,6 +857,32 @@ for (let w = 0; w < 520; w++) {
 check(`the Wean example's staircase is Wean's taper for 10 a day at 10% a week (${taper.length} weeks), with a text version`,
   read('kit/wean.html').includes(`Week by week: ${taper.join(', ')}.`) && /<path class="ij-loose" d="/.test(read('kit/wean.html')) &&
   taper.slice(0, 6).join() === '10,9,8,7,6,5' && taper.at(-2) === 1 && taper.at(-1) === 0);
+// It's mono's (#83): sampler types, not models. Eight machines, one per guide,
+// and three close-ups for the statements (the owner chose eleven over reusing
+// three). One lime line in each, the mono signal; no text in any of them, so
+// no name or logo can get in; the files and the example page the same SVG.
+console.log('\nIt\'s mono\'s drawings:');
+const monoSvgs = ITS_MONO_DRAWINGS.map(renderDrawing);
+check('eleven drawings, each with an id of its own: eight machines for the guides, three close-ups for the statements',
+  ITS_MONO_DRAWINGS.length === 11 && new Set(ITS_MONO_DRAWINGS.map(d => d.id)).size === 11 &&
+  ITS_MONO_DRAWINGS.filter(d => d.use.startsWith('Where it works')).length === 8 &&
+  ITS_MONO_DRAWINGS.filter(d => d.use.startsWith('Statement')).length === 3);
+check('each has exactly one lime line, every colour a token, and no text that could carry a name or a logo',
+  monoSvgs.every(svg => (svg.match(/class="ij-mark" style="stroke: var\(--ij-color-accent\)"/g) || []).length === 1 &&
+    !/#[0-9a-f]{3,8}\b|\brgba?\(|\bhsla?\(/i.test(svg) && !/<text|<image|<use|font-/i.test(svg)));
+// Machines have more parts than a shore: 24 KB each, 140 KB together, before compression.
+check('each ships as a file in dist/drawings/its-mono-yo/, under 24 KB (140 KB together), and the example page shows the same SVG',
+  ITS_MONO_DRAWINGS.every((d, i) => {
+    const f = `dist/drawings/its-mono-yo/${d.id.replace(/^its-mono-yo-/, '')}.svg`;
+    return fs.existsSync(path.join(ROOT, f)) && read(f).includes(monoSvgs[i]) && read('kit/its-mono-yo.html').includes(monoSvgs[i]) &&
+      Buffer.byteLength(monoSvgs[i]) < 24576;
+  }) && monoSvgs.reduce((n, svg) => n + Buffer.byteLength(svg), 0) < 140 * 1024, monoSvgs.map(svg => Buffer.byteLength(svg)).join(', '));
+const monoPage = read('kit/its-mono-yo.html');
+check('the It\'s mono example: the one credit line in the fineprint, no badge, no other AI wording, nothing from Google',
+  /<span slot="fineprint">Illustrations drawn with AI\./.test(monoPage) && !/madebyhuman\.iamjarl\.com\/badges|fonts\.googleapis|fonts\.gstatic/i.test(monoPage) &&
+  !/\bAI\b/.test(monoPage.replace(/<span slot="fineprint">[\s\S]*?<\/span>/g, '')) &&
+  [...monoPage.matchAll(/<script[^>]*src="([^"]+)"/g)].every(m => m[1].startsWith('../dist/components/') || m[1] === '../dist/kit/kit.js') &&
+  /not affiliated with Roland, Elektron, Erica Synths, Polyend or Akai/.test(monoPage));
 check('dist/kit/loose.js is the source with its version on top, hashed, and the drawings are exported',
   read('dist/kit/loose.js').endsWith(read('kit/loose.js')) && 'dist/kit/loose.js' in JSON.parse(read('dist/sri.json')).files &&
   JSON.parse(read('package.json')).exports['./drawings/*'] === './dist/drawings/*');

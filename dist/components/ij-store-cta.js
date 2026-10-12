@@ -1,4 +1,4 @@
-// IAMJARL <ij-store-cta> v1.27.0: generated, do not edit
+// IAMJARL <ij-store-cta> v1.28.0: generated, do not edit
 // Sources: components/store.js, components/ij-store-cta.js, apps.json, badges/
 
 const REGISTRY = {

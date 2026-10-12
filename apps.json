@@ -31,12 +31,14 @@
       "listed": true,
       "consumes": true,
       "identity": {
+        "scheme": "dark",
         "display": "mono",
-        "light": {
-          "accent": "#177082"
-        },
+        "panels": "bordered",
         "dark": {
-          "accent": "#23ACC7"
+          "background": "#0D0F13",
+          "surface": "#161A21",
+          "text": "#EDEFF2",
+          "accent": "#D0FF00"
         }
       },
       "store": {

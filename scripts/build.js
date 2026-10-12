@@ -1267,14 +1267,18 @@ function generateKitJs(tokens) {
 async function generateDrawings(tokens) {
   const { renderDrawing } = await import(pathToFileURL(path.join(ROOT, 'kit', 'drawings', 'render.js')).href);
   const { WEAN_DRAWINGS } = await import(pathToFileURL(path.join(ROOT, 'kit', 'drawings', 'wean.js')).href);
+  const { ITS_MONO_DRAWINGS } = await import(pathToFileURL(path.join(ROOT, 'kit', 'drawings', 'its-mono-yo.js')).href);
   const { loosePath, stairsPoints } = await import(pathToFileURL(path.join(ROOT, 'kit', 'loose.js')).href);
   const files = [], inline = {};
-  for (const d of WEAN_DRAWINGS) {
-    const svg = renderDrawing(d);
-    files.push([`wean/${d.id.replace(/^wean-/, '')}.svg`,
-      `<!-- IAMJARL drawing for Wean: ${d.title}. For ${d.use.charAt(0).toLowerCase()}${d.use.slice(1)}. ` +
-      `Generated from kit/drawings/wean.js, v${tokens.meta.version}. Inline it in the page; do not edit. -->\n${svg}\n`]);
-    inline[`drawing:${d.id}`] = svg;
+  // One set per app: its files in dist/drawings/<app>/, named without the prefix.
+  for (const [app, name, source, set] of [['wean', 'Wean', 'wean.js', WEAN_DRAWINGS], ['its-mono-yo', 'It\'s mono', 'its-mono-yo.js', ITS_MONO_DRAWINGS]]) {
+    for (const d of set) {
+      const svg = renderDrawing(d);
+      files.push([`${app}/${d.id.replace(new RegExp(`^${app}-`), '')}.svg`,
+        `<!-- IAMJARL drawing for ${name}: ${d.title}. For ${d.use.charAt(0).toLowerCase()}${d.use.slice(1)}. ` +
+        `Generated from kit/drawings/${source}, v${tokens.meta.version}. Inline it in the page; do not edit. -->\n${svg}\n`]);
+      inline[`drawing:${d.id}`] = svg;
+    }
   }
   // The example staircase on the Wean page: Wean's own taper maths for 10 a day
   // at 10% a week (lib/taper-plan.ts: one-decimal rounding, then the whole-pouch
@@ -1577,6 +1581,7 @@ async function main() {
   if (fs.existsSync(drawingsDir)) fs.rmSync(drawingsDir, { recursive: true });
   for (const [f, svg] of drawings.files) writeFile(path.join(drawingsDir, f), svg);
   writeExamplePage(path.join(ROOT, 'kit', 'wean.html'), drawings.inline);
+  writeExamplePage(path.join(ROOT, 'kit', 'its-mono-yo.html'), drawings.inline);
   const storeFragments = await generateStoreFragments(tokens);
   const storeDir = path.join(ROOT, 'dist', 'store');
   const storeKeep = new Set(storeFragments.map(([f]) => f));

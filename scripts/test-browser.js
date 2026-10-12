@@ -279,9 +279,9 @@ if (!chrome) {
 
 // A hung browser must fail the run, not stall CI until the job times out.
 const deadline = setTimeout(() => {
-  console.error('\n❌ Browser tests did not finish within 90s.');
+  console.error('\n❌ Browser tests did not finish within 150s.');
   process.exit(1);
-}, 90000);
+}, 150000);
 deadline.unref();
 
 const server = await serve();
@@ -646,11 +646,14 @@ try {
   // moving on load and no text below AA on whatever it sits on.
   console.log('\nMarketing kit:');
   const KIT_SECTIONS = ['.ij-hero', '.ij-phone', '.ij-statements', '.ij-card', '.ij-tour', '.ij-traits',
-    '.ij-assurances', '.ij-maker', '.ij-source', '.ij-staircase', '.ij-scene', '.ij-closing'];
+    '.ij-assurances', '.ij-maker', '.ij-source', '.ij-staircase', '.ij-scene', '.ij-window', '.ij-reviews', '.ij-closing'];
   // Walkful cites a dated source; Wean has none by its brief and shows its
   // taper staircase in that place instead (wean-nicotine#396, #75).
   // WODrounds alone sets its mood with photos (#81).
-  const notOn = { walkful: ['.ij-staircase', '.ij-scene'], wean: ['.ij-source', '.ij-scene'], wodrounds: ['.ij-staircase', '.ij-source', '.ij-statements'] };
+  // It's mono (#83) is a Mac app: a window, not a phone, and reviews set as type.
+  const PHONE = ['.ij-window', '.ij-reviews'];
+  const notOn = { walkful: ['.ij-staircase', '.ij-scene', ...PHONE], wean: ['.ij-source', '.ij-scene', ...PHONE],
+    wodrounds: ['.ij-staircase', '.ij-source', '.ij-statements', ...PHONE], 'its-mono-yo': ['.ij-phone', '.ij-source', '.ij-staircase', '.ij-scene'] };
   const kitProbe = `(() => {
     const lum = c => { const m = c.match(/[\\d.]+/g).map(Number); const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
       return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]); };
@@ -666,7 +669,7 @@ try {
     const imgs = [...document.querySelectorAll('main img')];
     const hero = document.querySelector('.ij-hero');
     const lazyWrong = imgs.filter(i => hero.contains(i) ? i.loading === 'lazy' : i.loading !== 'lazy').map(i => i.alt);
-    const screens = [...document.querySelectorAll('.ij-tour__screens > .ij-phone')].map(e => Math.round(e.getBoundingClientRect().top));
+    const screens = [...document.querySelectorAll('.ij-tour__screens > [data-step]')].map(e => Math.round(e.getBoundingClientRect().top));
     // The page's own rules must not reach into the components (#72): the nav's
     // CTA keeps its on-accent text, its links keep text colours, and the footer
     // lines up with the content.
@@ -684,7 +687,7 @@ try {
         return r.getBoundingClientRect().width <= wm.closest('.ij-closing').getBoundingClientRect().width + 1; })() };
   })()`;
   for (const [demo, bg, faceRe] of [['walkful', 'rgb(245, 239, 230)', /Fraunces/], ['wean', 'rgb(230, 236, 239)', /Instrument Sans/],
-    ['wodrounds', 'rgb(11, 12, 13)', /JetBrains Mono/]]) {
+    ['wodrounds', 'rgb(11, 12, 13)', /JetBrains Mono/], ['its-mono-yo', 'rgb(13, 15, 19)', /JetBrains Mono/]]) {
     for (const [w, h, size] of [[1440, 900, 96], [375, 812, 52]]) {
       await p.viewport(w, h);
       await p.goto(`${base}/kit/${demo}.html`);
@@ -802,6 +805,35 @@ try {
   }
   await p.viewport(1440, 900);
 
+  // It's mono (#83): a Mac window clipped to its own corners, at a hair over
+  // the captures' 1.9% so a video's black-masked corners never show, with the
+  // border colour's edge; cards drawn as bordered panels on this site only; and
+  // the eleven drawings readable at phone width, each with its one lime line.
+  for (const [w, h] of [[1440, 900], [375, 812]]) {
+    await p.viewport(w, h);
+    await p.goto(`${base}/kit/its-mono-yo.html`);
+    await p.settle(200);
+    const mono = await p.eval(`(() => {
+      const edge = getComputedStyle(document.documentElement).getPropertyValue('--ij-color-border-default').trim();
+      const media = [...document.querySelectorAll('.ij-window > img, .ij-window > video')].filter(m => m.getClientRects().length);
+      const clip = media.map(m => { const r = m.getBoundingClientRect(), rad = parseFloat(getComputedStyle(m).borderTopLeftRadius);
+        return +(rad / r.width).toFixed(4); });
+      const panels = ['.ij-card', '.ij-trait', '.ij-review'].map(sel => { const cs = getComputedStyle(document.querySelector(sel));
+        return cs.borderTopWidth === '1px' && cs.borderTopStyle === 'solid'; });
+      const ds = [...document.querySelectorAll('svg[class*="ij-drawing--its-mono-yo-"]')];
+      const spill = [...document.querySelectorAll('.ij-trait')].filter(t => t.scrollWidth > t.clientWidth + 1).length;
+      return { clip, edge: media.every(m => getComputedStyle(m).boxShadow.includes(edge)), panels, spill,
+        drawings: ds.length, narrowest: Math.min(...ds.map(d => Math.round(d.getBoundingClientRect().width))),
+        marks: [...new Set(ds.map(d => getComputedStyle(d.querySelector('.ij-mark')).stroke))], ink: getComputedStyle(ds[0].querySelector('g:last-of-type path')).stroke };
+    })()`);
+    check(`It's mono at ${w}: every window clipped at 2% of its width with an edge, the cards bordered, eleven drawings readable, one lime line each, nothing past its card`,
+      mono.clip.length >= 2 && mono.clip.every(c => c >= 0.0193 && c <= 0.021) && mono.edge && mono.panels.every(Boolean) &&
+      mono.drawings === 11 && mono.narrowest >= 120 && mono.spill === 0 && mono.marks.join() === 'rgb(208, 255, 0)' && mono.ink === 'rgb(237, 239, 242)', JSON.stringify(mono));
+  }
+  await p.goto(`${base}/kit/walkful.html`);
+  await p.settle(100);
+  check('a site without bordered panels keeps its cards flat', await p.eval(`getComputedStyle(document.querySelector('.ij-card')).borderTopWidth === '0px'`));
+
   // Wean's drawings (#75) at phone width: every one on screen at a readable
   // size, its strokes kept at their width, the waterline and the staircase in
   // the accent, and the staircase's text in the served HTML.
@@ -848,7 +880,7 @@ try {
 
   const tourState = `(() => {
     const t = document.querySelector('.ij-tour'), sc = t.querySelector('.ij-tour__screens');
-    const ph = [...sc.querySelectorAll('.ij-phone')];
+    const ph = [...sc.querySelectorAll(':scope > [data-step]')];
     return { live: t.classList.contains('is-live'), ready: t.classList.contains('is-ready'), active: t.dataset.active ?? null,
       position: getComputedStyle(sc).position, opacities: ph.map(e => getComputedStyle(e).opacity),
       phoneTop: Math.round((ph.find(e => e.classList.contains('is-active')) ?? ph[0]).getBoundingClientRect().top),
@@ -885,13 +917,33 @@ try {
   check('with reduce motion on, or on a phone, the tour stays a row of screens',
     !still.live && still.opacities.every(o => o === '1') && !narrow.live, JSON.stringify({ still, narrow }));
 
+  // The window that stays: the same tour with a window in the wider column,
+  // holding still while the texts pass, and changing with the one in the middle.
+  await p.viewport(1440, 900);
+  await p.goto(`${base}/kit/its-mono-yo.html`);
+  await p.settle(300);
+  const wAt = async step => {
+    await p.eval(`document.querySelector('.ij-tour__step[data-step="${step}"]').scrollIntoView({ block: 'center' })`);
+    await p.settle(300);
+    // Read it at rest: a crossfade still running reads as neither screen.
+    await p.eval(`Promise.all(document.getAnimations().map(a => a.finished.catch(() => {})))`);
+    await p.settle(50);
+    return p.eval(tourState);
+  };
+  const w1 = await wAt(1), w2 = await wAt(2), w3 = await wAt(3);
+  check('the window that stays holds still, changes with the text in the middle, and takes the wider column',
+    w1.live && w1.position === 'sticky' && w2.active === '2' && w3.active === '3' && w3.opacities.join() === '0,0,1' &&
+    Math.abs(w2.phoneTop - w3.phoneTop) <= 2 && w2.phoneSize[0] >= 560 && Math.abs(w2.phoneSize[1] / w2.phoneSize[0] - 1280 / 1800) < 0.02,
+    JSON.stringify({ w1, w2, w3 }));
+  await p.viewport(1440, 900);
+
   // The row of screens (#80): a centred row wider than its scroller hid the
   // first screen past the start edge on a phone, where nothing could scroll to
   // it. It must start at the edge when it overflows, and stay centred when it fits.
   const rowProbe = `(() => { const sc = document.querySelector('.ij-tour__screens'), ph = [...sc.children];
     const r = sc.getBoundingClientRect(), first = ph[0].getBoundingClientRect(), last = ph.at(-1).getBoundingClientRect();
     return { overflows: sc.scrollWidth > sc.clientWidth + 1, start: Math.round(first.left - r.left), end: Math.round(r.right - last.right) }; })()`;
-  for (const demo of ['walkful', 'wean', 'wodrounds']) {
+  for (const demo of ['walkful', 'wean', 'wodrounds', 'its-mono-yo']) {
     await p.viewport(375, 812);
     await p.goto(`${base}/kit/${demo}.html`);
     await p.settle(200);

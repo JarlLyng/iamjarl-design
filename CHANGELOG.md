@@ -5,6 +5,60 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.28.0] — 2026-10-12
+
+It's mono's identity, its sampler drawings and a Mac window for the kit (#83). It's mono is the first Mac app on the kit.
+
+### Added
+- **It's mono's identity:** dark whatever the visitor's setting.
+  - **Ground and cards:** a blue-black desk at night, `#0D0F13`, with cards `#161A21`.
+  - **Text:** off-white `#EDEFF2` (16.7:1).
+  - **Accent:** the app's lime `#D0FF00`, with black on it (18:1). The lime is its own text-safe accent (16.4:1).
+  - **Face:** JetBrains Mono for headlines and every technical value.
+  - **Bordered panels:** a new identity field, `"panels": "bordered"`, draws the kit's cards, traits and reviews with a thin line in the border colour, as in a hardware manual. The sheet sets `--ij-panel-border`, and a site without it keeps flat cards. The validator knows the field.
+
+  It shares WODrounds' lime, the app's own, and is kept from reading as its template by the blue-black ground, the bordered panels and the drawings.
+- **Eleven drawings in `dist/drawings/its-mono-yo/`:** eight sampler types, one beside each guide, and three close-ups for the statements. The owner chose eleven over reusing three.
+  - **Types, never models:** no logo, no name, no text of any kind, and no detail that belongs to one machine. The tests refuse any text in them.
+  - **One lime line in each,** the mono signal going in. Everything else is off-white.
+  - Drawn through the loose stroke like Wean's: 133 KB together, 43 KB gzipped.
+
+  | File | Drawing | For |
+  |---|---|---|
+  | `summed.svg` | Two channels summed into one line | Statement: correct mono |
+  | `folder.svg` | A folder of samples going in whole | Statement: a whole folder at once |
+  | `input.svg` | A plug in a sampler's input, on its back panel | Statement: the format your sampler wants |
+  | `eurorack-module.svg` | A drum module in a modular rack | The Sample Drum guide |
+  | `groovebox.svg` | A groovebox with a row of step buttons | The Digitakt guide |
+  | `pad-sampler.svg` | A pad sampler | The SP-404 guide |
+  | `eurorack-rack.svg` | A modular rack of sampler modules | The Eurorack samplers guide |
+  | `crossfader.svg` | A larger groovebox with a crossfader | The Octatrack guide |
+  | `drum-box.svg` | A small drum box | The Model:Samples guide |
+  | `tracker.svg` | A tracker-style groovebox | The Polyend Tracker guide |
+  | `pad-box.svg` | A box of large pads, with a big screen | The MPC guide |
+- **`.ij-window`, a Mac window.** A Mac capture carries its own chrome, so the kit draws no frame. It clips the capture to the window's own corners at 2% of its width, a hair over the 1.9% measured on It's mono's captures, so the hero video's black-masked corners never show. It adds the border colour's edge. `--ij-window-width` sets its width.
+- **`.ij-tour--window`, the window that stays.** The tour with windows in place of phones: the window takes the wider column and holds still while the texts pass. Under "reduce motion", or on a phone, it rests as a row.
+- **`.ij-reviews` and `.ij-review`:** real reviews set as type, word for word, with name and country. No stars and no avatars. A card beside them can say what backs them.
+- **`.ij-traits--pairs`** stands many short traits two a row on a phone, instead of one long column. A long title in a trait now wraps inside its card.
+- **The kit's It's mono example,** `kit/its-mono-yo.html`, shows every section in that identity with the app's current captures and public copy. It is on the docs page beside the other three. The browser tests run it at 1440 and 375 px and check:
+  - the window's clip and edge, and the bordered panels;
+  - the eleven drawings at a readable size, with one lime line each;
+  - the window that stays;
+  - that nothing spills past its card.
+
+### What It's mono loads
+All from `@v1.28.0`, with the hashes below:
+- **The files:** `dist/css/tokens.css`, `dist/identity/its-mono-yo.css`, `dist/fonts/jetbrains-mono.css`, `dist/kit/kit.css`, `dist/kit/kit.js`, `dist/components/ij-nav.js` and `ij-footer.js`. Take the identity sheet with the redesign, not before: it turns the site dark only, and today's theme toggle goes.
+- **The `.white` Mac App Store fragments:** `dist/store/its-mono-yo.en.white.html` in the hero and `.footer.white.html` at the close, plus `its-mono-yo.en.offer.json` for the JSON-LD.
+- **The eleven drawings, inlined** from `dist/drawings/its-mono-yo/`, each in the place the table above names, beside the guide link that names the model in text. Not as `<img>`, or they lose the tokens.
+- **The window:** `.ij-window` around the hero's `video.ij-loop`, with its poster, and `.ij-tour--window` for the tour's three captures.
+- **The rest of the page:**
+  - `.ij-reviews` for the two reviews;
+  - `.ij-traits--pairs` for the 8 and the samplers;
+  - `--ij-wordmark-em: 8.6` on the closing "It's mono, yo!";
+  - `.ij-skip` first in the body (1.27.0).
+- **The credit line:** one plain line in the footer's fineprint, "Illustrations drawn with AI". No badge (#71).
+
 ## [1.27.0] — 2026-10-12
 
 Three kit fixes found on the live sites (#80, #84), before It's mono's page is built on the kit (#83).
@@ -889,6 +943,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.28.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.28.0
 [1.27.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.27.0
 [1.26.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.26.0
 [1.25.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.25.0
