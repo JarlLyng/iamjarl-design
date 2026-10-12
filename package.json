@@ -1,6 +1,6 @@
 {
   "name": "@iamjarl/design-tokens",
-  "version": "1.28.0",
+  "version": "1.29.0",
   "description": "IAMJARL Design System tokens for web and React Native",
   "type": "module",
   "engines": {
@@ -25,6 +25,7 @@
     "./fonts/*": "./dist/fonts/*",
     "./store/*": "./dist/store/*",
     "./kit/*": "./dist/kit/*",
+    "./hooks.json": "./dist/hooks.json",
     "./drawings/*": "./dist/drawings/*",
     "./badges/*": "./badges/*",
     "./apps.json": "./apps.json",

@@ -1159,11 +1159,13 @@ function generateComponent(tokens) {
   const registry = JSON.parse(fs.readFileSync(path.join(ROOT, 'apps.json'), 'utf-8'));
   return [
     `// IAMJARL <ij-footer> v${tokens.meta.version}: generated, do not edit`,
-    `// Sources: components/select-links.js, components/ij-footer.js, apps.json`,
+    `// Sources: components/select-links.js, components/labels.js, components/ij-footer.js, apps.json`,
     '',
     `const REGISTRY = ${JSON.stringify(footerRegistry(registry), null, 2)};`,
     '',
     inline(componentSrc('select-links.js')).trim(),
+    '',
+    inline(componentSrc('labels.js')).trim(),
     '',
     inline(componentSrc('ij-footer.js')).trim(),
     '',
@@ -1328,9 +1330,11 @@ function writeExamplePage(file, pieces) {
 function generateNav(tokens) {
   return [
     `// IAMJARL <ij-nav> v${tokens.meta.version}: generated, do not edit`,
-    `// Sources: components/nav-rules.js, components/ij-nav.js`,
+    `// Sources: components/nav-rules.js, components/labels.js, components/ij-nav.js`,
     '',
     inline(componentSrc('nav-rules.js')).trim(),
+    '',
+    inline(componentSrc('labels.js')).trim(),
     '',
     inline(componentSrc('ij-nav.js')).trim(),
     '',
@@ -1351,6 +1355,7 @@ async function generateFooterFragments(tokens) {
   const { selectLinks } = await import(
     pathToFileURL(path.join(ROOT, 'components', 'select-links.js')).href
   );
+  const { labelsFor, PROJECTS_ID } = await import(pathToFileURL(path.join(ROOT, 'components', 'labels.js')).href);
 
   const esc = str => String(str).replace(/[&<>"]/g, c =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -1358,19 +1363,25 @@ async function generateFooterFragments(tokens) {
   const out = [];
   for (const app of registry.apps.filter(a => a.status === 'shipped')) {
     const { links } = selectLinks(registry, app.id);
-    const body = links
-      .map(l => `<a slot="cross-links" href="${esc(l.url)}">${esc(l.name)}</a>`)
-      .join('\n');
-    out.push([
-      app.id,
-      [
-        `<!-- IAMJARL cross-links for ${esc(app.name)}: generated, do not edit -->`,
-        `<!-- design system v${tokens.meta.version}, registry updated ${esc(registry.meta.updated)} -->`,
-        `<!-- Paste inside <ij-footer app="${esc(app.id)}">. Rebuild to refresh. -->`,
-        body,
-        '',
-      ].join('\n'),
-    ]);
+    // One per language the app's store page is in (#80): the portfolio link is
+    // a phrase, "All projects", and a Danish page says it in Danish. English
+    // keeps the plain name, <app>.html.
+    for (const locale of app.store?.locales ?? ['en']) {
+      const words = labelsFor(locale);
+      const body = links
+        .map(l => `<a slot="cross-links" href="${esc(l.url)}">${esc(l.id === PROJECTS_ID ? words.projects : l.name)}</a>`)
+        .join('\n');
+      out.push([
+        locale === 'en' ? app.id : `${app.id}.${locale}`,
+        [
+          `<!-- IAMJARL cross-links for ${esc(app.name)}${locale === 'en' ? '' : ` (${locale})`}: generated, do not edit -->`,
+          `<!-- design system v${tokens.meta.version}, registry updated ${esc(registry.meta.updated)} -->`,
+          `<!-- Paste inside <ij-footer app="${esc(app.id)}">. Rebuild to refresh. -->`,
+          body,
+          '',
+        ].join('\n'),
+      ]);
+    }
   }
   return out;
 }
@@ -1400,6 +1411,25 @@ const SRI_FILES = [
   'dist/kit/kit.js',
   'dist/kit/loose.js',
 ];
+
+// The names a site may meet that tokens.css does not define (#80): the hooks
+// from hooks.json, which a site sets, and the names the identity sheets set,
+// which a site loads. A check for counterfeit tokens reads this before it
+// reports one. The identity names are read from the sheets as written, so the
+// list cannot fall behind them.
+function generateHooks(tokens) {
+  const source = JSON.parse(fs.readFileSync(path.join(ROOT, 'hooks.json'), 'utf-8'));
+  const defined = new Set(fs.readFileSync(path.join(ROOT, 'dist', 'css', 'tokens.css'), 'utf-8').match(/--ij-[a-z0-9-]+(?=:)/g));
+  const dir = path.join(ROOT, 'dist', 'identity');
+  const identity = [...new Set(fs.readdirSync(dir).flatMap(f => fs.readFileSync(path.join(dir, f), 'utf-8').match(/--ij-[a-z0-9-]+(?=:)/g) ?? []))]
+    .filter(n => !defined.has(n)).sort();
+  return JSON.stringify({
+    version: tokens.meta.version,
+    description: source.description,
+    hooks: source.hooks,
+    identity: { description: 'Set by the identity sheets in dist/identity/. A site loads its sheet and does not write these itself.', names: identity },
+  }, null, 2) + '\n';
+}
 
 function computeSri(identityIds, fontNames = []) {
   const out = {};
@@ -1621,6 +1651,7 @@ async function main() {
   }
 
   // Integrity hashes, computed AFTER the files they cover are written
+  writeFile(path.join(ROOT, 'dist', 'hooks.json'), generateHooks(tokens));
   const hashes = computeSri(identity.map(([id]) => id), fontFaces.map(([name]) => name));
   writeFile(
     path.join(ROOT, 'dist', 'sri.json'),

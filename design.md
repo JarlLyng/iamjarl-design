@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.28.0)
+# IAMJARL Design System (v1.29.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -176,6 +176,7 @@ The top of the page is for intent. Implemented by `<ij-nav>` — see the README 
 - **One row on a phone.** Brand and CTA stay; the links fold behind a disclosure button. A header that stacks into rows and stays sticky takes a large share of a small screen.
 - **The accent is a dot and a fill, never the link text** — see *Text on a translucent surface* above. Links are `text.secondary`, and go to `text.primary` on hover and for the current page, which is also underlined so colour is not the only signal.
 - **Order is brand, links, secondary, CTA** — in the DOM as well as on screen, so focus follows what the eye sees.
+- **The page's language, not English** (#80). The few words `<ij-nav>` and `<ij-footer>` print themselves ("Skip to content", "Menu", "More from IAMJARL", "All projects") follow the page's `lang` in the seven languages the sites are written in. App names are names and stay as they are.
 
 ### Store buttons (web only)
 The link to the store is the most important link on a site that sells an app. Before `<ij-store-cta>` every site wrote its own, and they drifted: campaign parameters missing on four sites, the click event on two, a price wrong on one and an OS requirement on another. Now every fact comes from `apps.json`, and these rules travel with it.
