@@ -51,7 +51,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.29.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.29.1")
 ]
 ```
 
@@ -235,7 +235,7 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.1/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -290,7 +290,7 @@ a build step, install it instead.**
 | Needs `integrity`? | yes, worth it | no — nothing crosses an origin |
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.29.0
+npm install github:jarllyng/iamjarl-design#v1.29.1
 ```
 
 ```js
@@ -316,23 +316,23 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/css/tokens.css"
-  integrity="sha384-PjJvOjBQ0JFKQk+XkQpRor6o7qw/Fs5mDKKoTQ3rwuBLuj5GtXpd6FDUOeE402G6"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.1/dist/css/tokens.css"
+  integrity="sha384-vobrBahZ7qeJ74LCQ/Q0e7jif8UTO/CGtv7PYdmZNRYk8A75O0IdZOyqtkfN/Yd6"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/components/ij-footer.js"
-  integrity="sha384-QEFi85RQoD6M+uZCO28j7rQKSTfQo7OJ0g7l0uenR8ftNJPqHrCRzM0+6v+Tb95/"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.1/dist/components/ij-footer.js"
+  integrity="sha384-AgojJpwfV8Vqm/RF8oRImW+9cKnbde+z+aP1Hq2KgThJ6fJz9h2FMwPs5s0tR/hK"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/components/ij-nav.js"
-  integrity="sha384-XecJFMR93u4krdBam99rEdklN0rvMJmbYP41OX02IZbs9wlp6hjdEBgXczMg3jiE"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.1/dist/components/ij-nav.js"
+  integrity="sha384-x9Fn+y7Ku1i8bH8paRIcRE9kTRIkbDLhnD1WBw3YBMsYEpuqaTwwaUAfxUK/guk4"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/components/ij-store-cta.js"
-  integrity="sha384-6Xo9Hb0Ycn4VyHRLB9+inv178MVMIBiuqPS1SujAklbpMM3P8PJ8TxszwHz53vzt"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.1/dist/components/ij-store-cta.js"
+  integrity="sha384-XwDTcrol8u7gHrwIKy+VqvZ1caEqGh+ZX4lpjnRz7q4u6Ts4rCISzy6Dpzx0U0qB"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
@@ -364,7 +364,7 @@ The component builds the cross-links at runtime, so crawlers that do not execute
 pre-rendered fragment for your app and the component will slot it instead of regenerating:
 
 ```bash
-curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/footers/botlens.html
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.1/dist/footers/botlens.html
 ```
 
 ```html
@@ -419,7 +419,7 @@ it supplies the landmark, the sticky translucent bar, the phone layout and the k
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/components/ij-nav.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.1/dist/components/ij-nav.js"></script>
 
 <ij-nav>
   <a slot="brand" href="/">Echolume</a>
@@ -445,7 +445,7 @@ its parent. For the pinned-with-`integrity` version, use the SRI block above.
 
 | Attribute | |
 | --- | --- |
-| `label` | The landmark's `aria-label`. Default `Main` |
+| `label` | The landmark's `aria-label`. Default `Main`, in the page's language ("Hovedmenu" on a Danish page) |
 | `skip-to` | The id the skip link jumps to. Default `main`. No element with that id, no skip link — and a console warning. A page with its own skip link to it, before the nav (such as the kit's `.ij-skip`), gets none from the nav, so there is one stop |
 | `skip-label`, `menu-label` | The skip link's words and the menu button's hidden label. Both follow the page's language on their own, like the footer's; set these only for another language or your own phrasing |
 | `cta-after` | A selector for your hero's CTA. While it is on screen, the nav's CTA waits, so there is one call to action above the fold |
@@ -578,7 +578,7 @@ reuse. Left empty, the element renders the fragment itself from the registry, wh
 without a build step, but crawlers will not see that copy:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/components/ij-store-cta.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.1/dist/components/ij-store-cta.js"></script>
 <ij-store-cta app="wodrounds" placement="midpage" tone="white">…fragment…</ij-store-cta>
 ```
 
@@ -612,7 +612,7 @@ JavaScript. See the four live demos: [Walkful](https://jarllyng.github.io/iamjar
 <link rel="stylesheet" href="…/dist/identity/<app>.css" integrity="…" crossorigin="anonymous">
 <link rel="stylesheet" href="…/dist/fonts/<face>.css" integrity="…" crossorigin="anonymous">
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/kit/kit.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.1/dist/kit/kit.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 
 <body class="ij-page">
@@ -738,7 +738,7 @@ dependencies), loaded after the page; nothing waits for it:
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/kit/kit.js"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.1/dist/kit/kit.js"
   integrity="<from sri.json>" crossorigin="anonymous"></script>
 ```
 
@@ -802,7 +802,7 @@ nothing on a site that did not ask for a new identity. If your app has no file i
 ```html
 <!-- tokens.css first, from the SRI block above, then the identity sheet -->
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/identity/<app>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.1/dist/identity/<app>.css"
   integrity="<from sri.json, see below>"
   crossorigin="anonymous">
 ```
@@ -811,7 +811,7 @@ nothing on a site that did not ask for a new identity. If your app has no file i
 yours:
 
 ```bash
-curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/sri.json | grep 'identity/<app>.css'
+curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.1/dist/sri.json | grep 'identity/<app>.css'
 ```
 
 Each sheet carries the version in its header, so its hash changes every release. Move the tag and
@@ -845,7 +845,7 @@ Echolume does exactly this today; giving it `"scheme": "dark"` would make the cl
 
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.0/dist/fonts/<face>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.29.1/dist/fonts/<face>.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 ```
 

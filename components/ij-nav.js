@@ -17,7 +17,8 @@
 //   - its own words in the page's language: the skip link's and the menu
 //     button's, from the nearest lang attribute (components/labels.js), or
 //     from skip-label and menu-label (#80)
-//   - a <nav> landmark (aria-label from `label`, default "Main") and a skip link
+//   - a <nav> landmark (aria-label from `label`, default "Main" in the page's
+//     language) and a skip link
 //     to #main (or the id in `skip-to`), rendered only if that target exists
 //     and the page has no skip link of its own: a link to the same target
 //     before the nav, such as the kit's .ij-skip, which works without
@@ -330,9 +331,10 @@ export class IjNav extends HTMLElement {
     const cta = this._slotted('cta');
     const secondary = this._slotted('secondary');
 
-    const label = this.getAttribute('label') || 'Main';
-    // Its own words in the page's language (#80), unless the site sets them.
+    // Its own words in the page's language (#80), the landmark's name too
+    // (#88), unless the site sets them.
     const words = labelsFor(langOf(this));
+    const label = this.getAttribute('label') || words.nav;
     const skipLabel = this.getAttribute('skip-label') || words.skip;
     const menuLabel = this.getAttribute('menu-label') || words.menu;
     const skipId = this.getAttribute('skip-to') || 'main';

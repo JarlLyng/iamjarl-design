@@ -768,14 +768,14 @@ check('dist/hooks.json is current: the hooks, and every name an identity sheet s
   JSON.parse(read('package.json')).exports['./hooks.json'] === './dist/hooks.json');
 
 // The components' own words in each language a site is written in (#80).
-const WORDS = ['skip', 'menu', 'more', 'projects'];
-check('every store language has the components\' four words, and an unknown one falls back to English',
+const WORDS = ['nav', 'skip', 'menu', 'more', 'projects'];
+check('every store language has the components\' five words, and an unknown one falls back to English',
   Object.keys(LOCALES).every(l => (l === 'en' || labelsFor(l) !== LABELS.en) && WORDS.every(w => labelsFor(l)[w]?.length > 0)) &&
   labelsFor('xx').more === 'More from IAMJARL' && labelsFor('nb-NO').menu === 'Meny' && labelsFor('no').projects === 'Alle prosjekter' &&
   labelsFor('da-DK').skip === 'Gå til indhold');
 check('the nav and footer bundles carry the words and print none of them hard-coded',
   /const LABELS = /.test(read('dist/components/ij-nav.js')) && /const LABELS = /.test(read('dist/components/ij-footer.js')) &&
-  !/>Skip to content<|>Menu<\/span>/.test(read('components/ij-nav.js')) && !/>More from IAMJARL</.test(read('components/ij-footer.js')));
+  !/>Skip to content<|>Menu<\/span>|\|\| 'Main'/.test(read('components/ij-nav.js')) && !/>More from IAMJARL</.test(read('components/ij-footer.js')));
 const shippedWithStore = registry.apps.filter(a => a.status === 'shipped');
 check('a cross-link fragment per store language, the same links with only the portfolio link translated',
   shippedWithStore.every(a => (a.store?.locales ?? ['en']).every(l => {
