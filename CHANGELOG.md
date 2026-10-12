@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.29.1] — 2026-10-12
+
+Two findings from Walkful's move to 1.29.0 (#88).
+
+### Fixed
+- **A stack lost its spacing to the kit's own margin resets.** `.ij-stack > * + *` spaces a stack's children. The type roles (`.ij-display`, `.ij-headline`, `.ij-title`, `.ij-numeral`, `.ij-wordmark`, `.ij-lede`), `.ij-source` and `.ij-review` each reset their own margin later in `kit.css`, as specifically, so the reset won.
+  - **Where it showed:** a source card in a stack sat flush on its heading (Walkful works around it), and a second headline in a stack sat flush on what came before it (Wean's example).
+  - **The fix:** the resets are now one rule, `.ij-page :where(…)`, placed just before the stack, so the stack wins. A site's own `h2 { margin }` still doesn't reach the kit's headings. `.ij-card` is in the rule too, so a `<figure>` can be a card without an inline `margin: 0`.
+  - **The test:** checks that every later child of a stack, on all four examples, keeps the stack's spacing. Run against 1.29.0, it fails on Walkful's source card and Wean's second headline.
+- **`<ij-nav>`'s landmark name stayed English.** Its `aria-label` defaulted to "Main" on every page. It now follows the page's language like the four words in 1.29.0: "Hovedmenu", "Hauptmenü", "Menú principal", "Menu principal", "Hovedmeny", "Huvudmeny". `label` still overrides it.
+
+### What the sites change
+- **Walkful** (walkful#205):
+  - move `kit.css` and `ij-nav.js` to `@v1.29.1`;
+  - its `.ij-stack > * + .ij-source` rule in `site.css` can go;
+  - its `label="Hovednavigation"` may stay, since `label` still wins, or go, to take "Hovedmenu".
+- **Wean:** take the same two files. If a card or source in a stack carries `margin: 0` of its own, drop it.
+- **WODrounds:** the same two files. Its translated pages then name the nav landmark in their language.
+
 ## [1.29.0] — 2026-10-12
 
 The last two findings from Wean's page (#80): the components speak the page's language, and the hooks are listed where a check can read them.
@@ -975,6 +994,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.29.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.29.1
 [1.29.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.29.0
 [1.28.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.28.0
 [1.27.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.27.0

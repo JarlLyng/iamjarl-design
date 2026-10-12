@@ -86,6 +86,7 @@ This table gets a row for every release, including the ones where the answer is 
 | **1.27.0** | The tour's row starts at the edge on a phone; `<ij-footer>` without JavaScript shows a fallback once; `.ij-skip`, the kit's skip link; `<ij-nav>` leaves out its own skip link when the page has one before it | No, but worth it on a kit site: bump, and put `.ij-skip` first in the body in place of your own skip link. A non-kit page with its own skip link before `<ij-nav>` now gets one stop instead of two |
 | **1.28.0** | It's mono's identity (dark only, blue-black, lime, bordered panels) and eleven sampler drawings; `.ij-window` and `.ij-tour--window` for a Mac app; `.ij-reviews`; `.ij-traits--pairs`; the identity field `panels` | No, except It's mono: take the new identity sheet with the redesign, not before. It turns the site dark, whatever the visitor's setting |
 | **1.29.0** | `<ij-nav>` and `<ij-footer>` print their own words in the page's language; a cross-link fragment per store language; `hooks.json` lists the hooks and identity names a check can read | No. A translated page gets its own words when it moves its nav and footer to 1.29.0; it can also take the cross-link fragment in its language |
+| **1.29.1** | A stack keeps its spacing whatever its children are; `<ij-nav>`'s landmark name follows the page's language | No. A site that worked around a flush source card or set the nav's `label` for its language can drop that |
 
 ### Who needs to migrate
 - ✅ **Everyone** — bump the version. Nothing you use today changes value or name.

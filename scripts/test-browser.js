@@ -943,6 +943,22 @@ try {
     JSON.stringify({ w1, w2, w3 }));
   await p.viewport(1440, 900);
 
+  // A stack spaces every child after the first (#88). Kit classes that reset
+  // their own margin, later in kit.css and as specific, used to win: a source
+  // card sat flush on its heading. Every later child of a stack, on every
+  // example, must keep the stack's spacing.
+  for (const demo of ['walkful', 'wean', 'wodrounds', 'its-mono-yo']) {
+    await p.viewport(1440, 900);
+    await p.goto(`${base}/kit/${demo}.html`);
+    await p.settle(100);
+    const flush = await p.eval(`(() => { const want = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ij-mkt-space-stack')) || 0;
+      const kids = [...document.querySelectorAll('.ij-stack > * + *')];
+      const space = parseFloat(getComputedStyle(kids[0]).marginTop);
+      return { n: kids.length, space, flush: kids.filter(k => Math.abs(parseFloat(getComputedStyle(k).marginTop) - space) > 0.5)
+        .map(k => k.className || k.tagName) }; })()`);
+    check(`${demo}: every later child of a stack keeps the stack's spacing`, flush.n > 0 && flush.space >= 16 && flush.flush.length === 0, JSON.stringify(flush));
+  }
+
   // The row of screens (#80): a centred row wider than its scroller hid the
   // first screen past the start edge on a phone, where nothing could scroll to
   // it. It must start at the edge when it overflows, and stay centred when it fits.
@@ -997,11 +1013,11 @@ try {
   await p.settle(150);
   const sv = await p.eval(`(() => { const nav = document.querySelector('ij-nav').shadowRoot, f = document.getElementById('sv-footer').shadowRoot,
     own = document.getElementById('own-words').shadowRoot;
-    return { skip: nav.querySelector('.skip')?.textContent, menu: nav.querySelector('.toggle .visually-hidden')?.textContent,
+    return { landmark: nav.querySelector('nav')?.getAttribute('aria-label'), skip: nav.querySelector('.skip')?.textContent, menu: nav.querySelector('.toggle .visually-hidden')?.textContent,
       more: f.querySelector('#more')?.textContent, projects: f.querySelector('a[href="https://iamjarl.com"]')?.textContent,
       override: own.querySelector('#more')?.textContent }; })()`);
-  check('on a Swedish page the nav and the footer speak Swedish, and an attribute still overrides a word',
-    sv.skip === 'Till innehållet' && sv.menu === 'Meny' && sv.more === 'Mer från IAMJARL' && sv.projects === 'Alla projekt' && sv.override === 'Fler appar',
+  check('on a Swedish page the nav (its landmark too) and the footer speak Swedish, and an attribute still overrides a word',
+    sv.landmark === 'Huvudmeny' && sv.skip === 'Till innehållet' && sv.menu === 'Meny' && sv.more === 'Mer från IAMJARL' && sv.projects === 'Alla projekt' && sv.override === 'Fler appar',
     JSON.stringify(sv));
   await p.viewport(1024, 800);
 
