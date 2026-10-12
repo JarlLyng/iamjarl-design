@@ -146,6 +146,69 @@ ij-store-cta { display: block; }
 .ij-phone__frame { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .ij-phone--drawn { background: none; box-shadow: none; }
 
+/* ---------- A television and a watch, in the same spirit (#78) ----------
+
+   Plain frames for a capture from Apple TV and from Apple Watch: a screen with
+   a thin bezel on a small foot, and a watch face between two strap ends. No
+   logo, no crown, no buttons: Apple's marketing rules let a drawn device carry
+   nothing unique to its products, and its own frames never ship from here.
+   The screen fills with the capture: <img> or <video> in the __screen. */
+
+.ij-tv {
+  --_w: var(--ij-tv-width, 560px);
+  position: relative;
+  box-sizing: border-box;
+  width: min(var(--_w), 100%);
+  padding: calc(min(var(--_w), 100%) * 0.018);
+  margin-bottom: 14px;
+  border-radius: calc(min(var(--_w), 100%) * 0.022);
+  background: var(--ij-color-black);
+  box-shadow:
+    inset 0 0 0 1.5px color-mix(in srgb, var(--ij-color-white) 12%, transparent),
+    0 0 0 1px var(--ij-color-border-default);
+}
+.ij-tv__screen { aspect-ratio: 16 / 9; overflow: hidden; border-radius: 3px; background: var(--ij-color-bg-card); }
+.ij-tv__screen > img, .ij-tv__screen > video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ij-tv::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 16%;
+  height: 10px;
+  transform: translateX(-50%);
+  border-radius: 0 0 4px 4px;
+  background: var(--ij-color-border-default);
+}
+
+.ij-watch {
+  --_w: var(--ij-watch-width, 170px);
+  position: relative;
+  box-sizing: border-box;
+  width: min(var(--_w), 100%);
+  padding: calc(min(var(--_w), 100%) * 0.075);
+  margin-block: calc(min(var(--_w), 100%) * 0.32);
+  border-radius: calc(min(var(--_w), 100%) * 0.26);
+  background: var(--ij-color-black);
+  box-shadow:
+    inset 0 0 0 1.5px color-mix(in srgb, var(--ij-color-white) 12%, transparent),
+    0 0 0 1px var(--ij-color-border-default);
+}
+.ij-watch__screen { aspect-ratio: 416 / 496; overflow: hidden; border-radius: 22%; background: var(--ij-color-bg-card); }
+.ij-watch__screen > img, .ij-watch__screen > video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ij-watch::before, .ij-watch::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 64%;
+  height: calc(min(var(--_w), 100%) * 0.34);
+  transform: translateX(-50%);
+  background: var(--ij-color-bg-card);
+  box-shadow: 0 0 0 1px var(--ij-color-border-default);
+}
+.ij-watch::before { bottom: 100%; border-radius: 10px 10px 0 0; }
+.ij-watch::after { top: 100%; border-radius: 0 0 10px 10px; }
+
 /* ---------- A drawing per statement ---------- */
 
 .ij-drawing { display: block; width: 100%; height: auto; color: var(--ij-color-accent); }
@@ -290,9 +353,12 @@ ij-store-cta { display: block; }
             padding: var(--ij-mkt-space-stack); background: var(--ij-color-bg-card); border-radius: var(--ij-radius-lg); }
 .ij-trait p { margin: 0; color: var(--ij-color-text-secondary); }
 .ij-trait .ij-numeral { color: var(--ij-color-text-primary); }
+/* A trait can show its device: a television or a watch above its words. */
+.ij-trait > .ij-tv, .ij-trait > .ij-watch { align-self: center; }
 @media (min-width: 768px) {
   .ij-traits { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .ij-trait--number { grid-column: span 2; grid-row: span 2; }
+  .ij-trait--wide { grid-column: span 2; }
 }
 
 /* ---------- Privacy and price, stated as features ---------- */

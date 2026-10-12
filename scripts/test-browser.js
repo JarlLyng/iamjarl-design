@@ -111,9 +111,9 @@ ${FULL_NAV.replace('<ij-nav>', '<ij-nav cta-after="#hero-cta">')}
 </div></div><div style="height: 3000px"></div></main>
 <script type="module" src="/dist/kit/kit.js"></script>` }),
 
-  // A drawing under the dark sketch's identity (kit/dark.html's generated sheet).
-  'kit-dark-drawing': page({ nav: false, body: `${
-    (fs.readFileSync(path.join(ROOT, 'kit/dark.html'), 'utf-8').match(/<style>\n\/\* IAMJARL identity for Dark sketch[\s\S]*?<\/style>/) || [''])[0]}
+  // A drawing under a dark-only identity (WODrounds', the first): the kit must
+  // hold for any dark site that has drawings, though WODrounds itself has none.
+  'kit-dark-drawing': page({ nav: false, identity: 'wodrounds', body: `
 <link rel="stylesheet" href="/dist/kit/kit.css">
 <main class="ij-page" style="padding: 24px">${fs.readFileSync(path.join(ROOT, 'dist/drawings/wean/low-tide.svg'), 'utf-8')}</main>` }),
 
@@ -584,7 +584,7 @@ try {
     '.ij-assurances', '.ij-maker', '.ij-source', '.ij-staircase', '.ij-closing'];
   // Walkful cites a dated source; Wean has none by its brief and shows its
   // taper staircase in that place instead (wean-nicotine#396, #75).
-  const notOn = { walkful: ['.ij-staircase'], wean: ['.ij-source'], dark: ['.ij-staircase'] };
+  const notOn = { walkful: ['.ij-staircase'], wean: ['.ij-source'], wodrounds: ['.ij-staircase', '.ij-source', '.ij-statements'] };
   const kitProbe = `(() => {
     const lum = c => { const m = c.match(/[\\d.]+/g).map(Number); const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
       return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]); };
@@ -596,7 +596,7 @@ try {
     const low = texts.map(e => [e.textContent.trim().slice(0, 30), ratio(getComputedStyle(e).color, ground(e))]).filter(([, r]) => r < 4.5);
     const missing = ${JSON.stringify(KIT_SECTIONS)}.filter(sel => !document.querySelector(sel) || !document.querySelector(sel).getBoundingClientRect().height);
     const h1 = getComputedStyle(document.querySelector('h1'));
-    const body = parseFloat(getComputedStyle(document.querySelector('.ij-statement__text p, .ij-row__text p')).fontSize);
+    const body = parseFloat(getComputedStyle(document.querySelector('.ij-statement__text p, .ij-row__text p, .ij-card p, .ij-trait p')).fontSize);
     const imgs = [...document.querySelectorAll('main img')];
     const hero = document.querySelector('.ij-hero');
     const lazyWrong = imgs.filter(i => hero.contains(i) ? i.loading === 'lazy' : i.loading !== 'lazy').map(i => i.alt);
@@ -618,7 +618,7 @@ try {
         return r.getBoundingClientRect().width <= wm.closest('.ij-closing').getBoundingClientRect().width + 1; })() };
   })()`;
   for (const [demo, bg, faceRe] of [['walkful', 'rgb(245, 239, 230)', /Fraunces/], ['wean', 'rgb(230, 236, 239)', /Instrument Sans/],
-    ['dark', 'rgb(16, 19, 21)', /JetBrains Mono/]]) {
+    ['wodrounds', 'rgb(11, 12, 13)', /JetBrains Mono/]]) {
     for (const [w, h, size] of [[1440, 900, 96], [375, 812, 52]]) {
       await p.viewport(w, h);
       await p.goto(`${base}/kit/${demo}.html`);
@@ -650,14 +650,14 @@ try {
   // above ran it for a light one. Nothing may change but the system's mode.
   await p.media([{ name: 'prefers-color-scheme', value: 'dark' }]);
   await p.viewport(1440, 900);
-  await p.goto(`${base}/kit/dark.html`);
+  await p.goto(`${base}/kit/wodrounds.html`);
   await p.eval('document.fonts.ready');
   await p.settle(200);
   const dk = await p.eval(kitProbe);
-  dk.missing = dk.missing.filter(sel => !notOn.dark.includes(sel));
+  dk.missing = dk.missing.filter(sel => !notOn.wodrounds.includes(sel));
   const badge = await p.eval(`[...document.querySelectorAll('.ij-store-badge img')].every(i => /app-store-white-/.test(i.src))`);
-  check('the dark example reads the same for a visitor in dark mode: every section, every text at AA, the white badge',
-    dk.missing.length === 0 && dk.low.length === 0 && dk.bg === 'rgb(16, 19, 21)' && dk.ctaRatio >= 4.5 && dk.wordmarkFits && badge,
+  check('the WODrounds example reads the same for a visitor in dark mode: every section, every text at AA, the white badge',
+    dk.missing.length === 0 && dk.low.length === 0 && dk.bg === 'rgb(11, 12, 13)' && dk.ctaRatio >= 4.5 && dk.wordmarkFits && badge,
     JSON.stringify({ missing: dk.missing, low: dk.low, bg: dk.bg, cta: dk.ctaRatio, badge }));
   await p.media([{ name: 'prefers-color-scheme', value: 'light' }]);
   await p.goto(`${base}/fixture/kit-dark-drawing/index.html`);
@@ -666,7 +666,35 @@ try {
     return { ink: getComputedStyle(svg.querySelector('g:last-of-type path')).stroke, mark: getComputedStyle(svg.querySelector('.ij-mark')).stroke,
       bg: getComputedStyle(document.body).backgroundColor, edge: getComputedStyle(document.documentElement).getPropertyValue('--ij-color-border-default').trim() }; })()`);
   check('a drawing on a dark site takes the light ink and keeps its magenta waterline; the phone\'s edge is the dark border colour',
-    dd.ink === 'rgb(238, 240, 238)' && dd.mark === 'rgb(241, 64, 254)' && dd.bg === 'rgb(16, 19, 21)' && /255, 255, 255/.test(dd.edge), JSON.stringify(dd));
+    dd.ink === 'rgb(242, 243, 239)' && dd.mark === 'rgb(208, 255, 0)' && dd.bg === 'rgb(11, 12, 13)' && /255, 255, 255/.test(dd.edge), JSON.stringify(dd));
+
+  // WODrounds (#78): a timer's digits must not shift, so .ij-numeral sets
+  // tabular figures and, in the face the page uses, every digit is as wide as
+  // the next; and the television and the watch stand framed at both widths.
+  for (const [w, h] of [[1440, 900], [375, 812]]) {
+    await p.viewport(w, h);
+    await p.goto(`${base}/kit/wodrounds.html`);
+    await p.eval('document.fonts.ready');
+    await p.settle(150);
+    const wd = await p.eval(`(() => {
+      const n = document.querySelector('.ij-numeral'), cs = getComputedStyle(n);
+      const ctx = document.createElement('canvas').getContext('2d');
+      ctx.font = cs.fontWeight + ' 100px ' + cs.fontFamily;
+      const widths = [...'0123456789'].map(d => +ctx.measureText(d).width.toFixed(2));
+      const box = sel => { const e = document.querySelector(sel), r = e.getBoundingClientRect(); return { w: Math.round(r.width), h: Math.round(r.height) }; };
+      const tv = document.querySelector('.ij-tv'), watch = document.querySelector('.ij-watch');
+      return { numeric: cs.fontVariantNumeric, face: cs.fontFamily, digits: new Set(widths).size,
+        tv: box('.ij-tv'), tvScreen: box('.ij-tv__screen'), watch: box('.ij-watch'), watchScreen: box('.ij-watch__screen'),
+        foot: getComputedStyle(tv, '::after').content !== 'none', straps: getComputedStyle(watch, '::before').content !== 'none' && getComputedStyle(watch, '::after').content !== 'none',
+        edge: [tv, watch].every(e => getComputedStyle(e).boxShadow.includes(getComputedStyle(document.documentElement).getPropertyValue('--ij-color-border-default').trim())) };
+    })()`);
+    if (w === 1440) check('WODrounds\' numerals set tabular figures, and every digit of JetBrains Mono is as wide as the next',
+      /tabular-nums/.test(wd.numeric) && /JetBrains Mono/.test(wd.face) && wd.digits === 1, JSON.stringify({ numeric: wd.numeric, digits: wd.digits }));
+    check(`at ${w}: the television and the watch stand framed, with an edge, the TV on a foot, the watch between its straps`,
+      wd.tv.w >= 200 && Math.abs(wd.tvScreen.h / wd.tvScreen.w - 9 / 16) < 0.02 && wd.watch.w >= 100 &&
+      Math.abs(wd.watchScreen.h / wd.watchScreen.w - 496 / 416) < 0.03 && wd.foot && wd.straps && wd.edge, JSON.stringify(wd));
+  }
+  await p.viewport(1440, 900);
 
   // Wean's drawings (#75) at phone width: every one on screen at a readable
   // size, its strokes kept at their width, the waterline and the staircase in

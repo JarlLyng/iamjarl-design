@@ -13,7 +13,6 @@ import { identityFor, mix, TEXT_MIX } from '../components/identity.js';
 import { loosePath, stairsPoints } from '../kit/loose.js';
 import { renderDrawing } from '../kit/drawings/render.js';
 import { identitySheetCss } from './css-modes.js';
-import { SKETCHES } from '../kit/sketches.js';
 import { WEAN_DRAWINGS } from '../kit/drawings/wean.js';
 import { NAV_ALPHA, NAV_COLLAPSE_BELOW, MAX_LINKS, currentIndex, heroOnScreen, navWarnings } from '../components/nav-rules.js';
 import { storeLink, factsLine, badgeFile, badgeHeight, smartBannerHtml, fragmentName, offer, PLACEMENTS, TONES } from '../components/store.js';
@@ -629,16 +628,15 @@ check('a light-only sheet sets color-scheme and holds the light tokens in dark m
 check('scripts/css-modes.js writes exactly the sheets the build ships', shippedApps
   .map(a => [a, identityFor(registry, a.id, fullTokens)]).filter(([, id]) => !id.isEmpty)
   .every(([a, id]) => identitySheetCss(a, id, fullTokens) === read(`dist/identity/${a.id}.css`)));
-// No app is dark-only yet, so the kit's dark sketch is what checks that path:
-// in a light visitor's browser, its sheet must put back every dark colour.
-check('a dark-only sheet sets color-scheme and holds the dark tokens for a visitor in light mode too', (() => {
-  const sk = SKETCHES.find(x => x.id === 'dark-sketch');
-  const css = identitySheetCss(sk, identityFor({ apps: SKETCHES }, sk.id, fullTokens), fullTokens);
+// WODrounds is the first dark-only site (#78): in a light visitor's browser,
+// its sheet must put back every dark colour, not only its own.
+check('a dark-only sheet (WODrounds) sets color-scheme and holds the dark tokens for a visitor in light mode too', (() => {
+  const css = read('dist/identity/wodrounds.css');
   const lightBlock = css.split('@media (prefers-color-scheme: light)')[1] ?? '';
-  return css.includes('color-scheme: dark;') && lightBlock.includes('--ij-color-bg-app: #101315;') &&
+  return css.includes('color-scheme: dark;') && lightBlock.includes('--ij-color-bg-app: #0B0C0D;') &&
     lightBlock.includes(`--ij-color-state-error: ${tokenTree.colors.modes.dark.state.error};`) &&
     lightBlock.includes(`--ij-color-border-default: ${tokenTree.colors.modes.dark.border.default};`) &&
-    read('kit/dark.html').includes(css);
+    !css.includes('#587114');
 })(), 'a dark site must not get the light half of the tokens on a light system');
 
 // Resolution, checked against a registry built for the purpose rather than
@@ -740,7 +738,7 @@ check('the Swift package has no marketing scale', !/marketing|--ij-mkt|mkt/i.tes
 const kitSrc = read('kit/kit.css');
 check('kit.css writes no colour of its own', !/#[0-9a-f]{3,8}\b|\brgba?\(|\bhsla?\(/i.test(kitSrc.replace(/\/\*[\s\S]*?\*\//g, '')),
   'every colour comes from the tokens or the identity, so the same markup is any site');
-const KIT_HOOKS = ['--ij-phone-width', '--ij-display-weight', '--ij-wordmark-em'];
+const KIT_HOOKS = ['--ij-phone-width', '--ij-tv-width', '--ij-watch-width', '--ij-display-weight', '--ij-wordmark-em'];
 const definedVars = new Set([tokensCssText, ...fs.readdirSync(identityDir).map(f => read(`dist/identity/${f}`))]
   .flatMap(css => css.match(/--ij-[a-z0-9-]+(?=:)/g) ?? []));
 const kitUses = [...new Set(kitSrc.match(/var\(--ij-[a-z0-9-]+/g).map(v => v.slice(4)))];
@@ -769,8 +767,8 @@ check('the demos carry no Made by Human badge and no AI wording outside the fine
     !/(co-created|made|built|written|generated) (with|by) AI/i.test(html) &&
     !/\bAI\b/.test(html.replace(/<span slot="fineprint">[\s\S]*?<\/span>/g, ''))),
   'the badge lives in the README; a drawing credit is one line in the fineprint');
-check('the dark example, too, carries no badge or AI wording and loads nothing from Google', (() => {
-  const html = read('kit/dark.html');
+check('the WODrounds example, too, carries no badge or AI wording and loads nothing from Google', (() => {
+  const html = read('kit/wodrounds.html');
   return !/madebyhuman\.iamjarl\.com\/badges|fonts\.googleapis|fonts\.gstatic/i.test(html) &&
     !/\bAI\b/.test(html.replace(/<span slot="fineprint">[\s\S]*?<\/span>/g, '')) &&
     [...html.matchAll(/<script[^>]*src="([^"]+)"/g)].every(m => m[1].startsWith('../dist/components/') || m[1] === '../dist/kit/kit.js');

@@ -1291,19 +1291,6 @@ async function generateDrawings(tokens) {
   return { files, inline };
 }
 
-// The kit's sketch identities (kit/sketches.js), written by the same code as
-// an app's sheet and inlined into their example page.
-async function generateSketchSheets(tokens) {
-  const { identityFor } = await import(pathToFileURL(path.join(ROOT, 'components', 'identity.js')).href);
-  const { SKETCHES } = await import(pathToFileURL(path.join(ROOT, 'kit', 'sketches.js')).href);
-  const out = {};
-  for (const app of SKETCHES) {
-    const css = identitySheetCss(app, identityFor({ apps: SKETCHES }, app.id, tokens), tokens);
-    out[`identity:${app.id}`] = `<style>\n${css}</style>`;
-  }
-  return out;
-}
-
 // Wean's taper for the example, as lib/taper-plan.ts computes it.
 function weanTaperExample(baseline, percent) {
   const out = [];
@@ -1590,7 +1577,6 @@ async function main() {
   if (fs.existsSync(drawingsDir)) fs.rmSync(drawingsDir, { recursive: true });
   for (const [f, svg] of drawings.files) writeFile(path.join(drawingsDir, f), svg);
   writeExamplePage(path.join(ROOT, 'kit', 'wean.html'), drawings.inline);
-  writeExamplePage(path.join(ROOT, 'kit', 'dark.html'), await generateSketchSheets(tokens));
   const storeFragments = await generateStoreFragments(tokens);
   const storeDir = path.join(ROOT, 'dist', 'store');
   const storeKeep = new Set(storeFragments.map(([f]) => f));

@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketing kit: WODrounds example</title>
+<meta name="description" content="An example page built from the IAMJARL marketing kit with WODrounds' identity: dark only, lime, JetBrains Mono, the numbers as the picture.">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="../dist/css/tokens.css">
+<link rel="stylesheet" href="../dist/identity/wodrounds.css">
+<link rel="stylesheet" href="../dist/fonts/jetbrains-mono.css">
+<link rel="stylesheet" href="../dist/kit/kit.css">
+<!-- WODrounds' identity (#78): dark whatever the visitor's setting, lime on near-black,
+     JetBrains Mono for the headlines and every number. No drawings: the numbers are the
+     picture. The copy follows WODrounds' page brief where it is public. -->
+<script type="module" src="../dist/components/ij-nav.js"></script>
+<script type="module" src="../dist/components/ij-footer.js"></script>
+<script type="module" src="../dist/kit/kit.js"></script>
+</head>
+<body class="ij-page">
+
+<ij-nav>
+  <a slot="brand" href="./wodrounds.html">WODrounds</a>
+  <a slot="links" href="#timers">Timers</a>
+  <a slot="links" href="#where">Where it works</a>
+  <a slot="cta" href="https://apps.apple.com/app/id6759229877?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="nav" data-umami-event-locale="en">Download</a>
+</ij-nav>
+
+<main id="main">
+
+  <!-- Hero, split: on a phone the words and the button come before the device -->
+  <section class="ij-hero ij-hero--split" id="hero">
+    <div class="ij-container ij-hero__inner">
+      <div class="ij-hero__text">
+        <h1 class="ij-display">The only WOD timer you need.</h1>
+        <p class="ij-lede">EMOM, intervals and For Time, readable mid-set on iPhone and Apple Watch. Paid for once.</p>
+        <!-- dist/store/wodrounds.en.white.html -->
+        <div class="ij-store" data-ij-store="wodrounds" data-ij-store-locale="en">
+          <a class="ij-store-badge" href="https://apps.apple.com/app/id6759229877?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="hero" data-umami-event-locale="en">
+            <img src="../badges/app-store-white-en-us.svg" alt="Download on the App Store" width="120" height="40">
+          </a>
+          <p class="ij-store-facts">$2.99 once · iOS 16 or later</p>
+        </div>
+      </div>
+      <div class="ij-hero__media">
+        <div class="ij-phone" style="--ij-phone-width: 320px">
+          <div class="ij-phone__screen">
+            <img src="https://cdn.jsdelivr.net/gh/JarlLyng/WODrounds@5bd936708f8ef759f922609aa40f95b352a2eae1/appstore/raw/iphone-intervals-running-en.png" alt="WODrounds' Intervals timer running: the ring draining and the digits counting down" width="1320" height="2868" fetchpriority="high">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Frameless pieces of the app, each linking to its timer -->
+  <section class="ij-section ij-section--band" id="timers" aria-labelledby="timers-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="timers-h">Built for the workout.</h2>
+      <div class="ij-bento">
+        <div class="ij-card ij-card--half">
+          <div class="ij-card__piece" aria-hidden="true">
+            <svg viewBox="0 0 160 160" width="160" height="160">
+              <circle cx="80" cy="80" r="64" fill="none" style="stroke: var(--ij-color-border-default)" stroke-width="10"/>
+              <circle cx="80" cy="80" r="64" fill="none" style="stroke: var(--ij-color-accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="281 402" transform="rotate(-90 80 80)"/>
+              <text x="80" y="88" text-anchor="middle" style="font: 400 30px var(--ij-font-display); fill: var(--ij-color-text-primary); font-variant-numeric: tabular-nums">0:14</text>
+              <text x="80" y="112" text-anchor="middle" style="font: 500 11px var(--ij-font-display); fill: var(--ij-color-accent); letter-spacing: 0.12em">WORK</text>
+            </svg>
+          </div>
+          <h3 class="ij-title">The ring drains.</h3>
+          <p>Work and rest at a glance, from across the room. <a href="#">The interval timer</a></p>
+        </div>
+        <div class="ij-card ij-card--half">
+          <div class="ij-card__piece"><p class="ij-numeral">3/10</p></div>
+          <h3 class="ij-title">Every round, counted.</h3>
+          <p>The EMOM round you are in, and how many are left. <a href="#">The EMOM timer</a></p>
+        </div>
+        <div class="ij-card ij-card--half">
+          <div class="ij-card__piece"><p class="ij-numeral">12:34</p></div>
+          <h3 class="ij-title">Finished in.</h3>
+          <p>For Time keeps running until you stop it, then shows your time. <a href="#">The For Time timer</a></p>
+        </div>
+        <div class="ij-card ij-card--half">
+          <div class="ij-card__piece"><p class="ij-numeral">10</p></div>
+          <h3 class="ij-title">A count-in first.</h3>
+          <p>Ten seconds to get to the bar before the clock starts. <a href="#">The Tabata timer</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The phone that stays -->
+  <section class="ij-section" aria-labelledby="tour-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="tour-h">From setup to the last round.</h2>
+      <div class="ij-tour">
+        <div class="ij-tour__screens">
+          <div class="ij-phone" data-step="1"><div class="ij-phone__screen"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/WODrounds@5bd936708f8ef759f922609aa40f95b352a2eae1/docs/images/iphone-setup.jpg" alt="Setting up an EMOM" loading="lazy" decoding="async"></div></div>
+          <div class="ij-phone" data-step="2"><div class="ij-phone__screen"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/WODrounds@5bd936708f8ef759f922609aa40f95b352a2eae1/docs/images/iphone-intervals.jpg" alt="Intervals with the ring" loading="lazy" decoding="async"></div></div>
+          <div class="ij-phone" data-step="3"><div class="ij-phone__screen"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/WODrounds@5bd936708f8ef759f922609aa40f95b352a2eae1/docs/images/iphone-fortime-running.jpg" alt="For Time running" loading="lazy" decoding="async"></div></div>
+        </div>
+        <ol class="ij-tour__steps">
+          <li class="ij-tour__step" data-step="1"><h3 class="ij-title">EMOM setup</h3><p>Rounds and length, then start.</p></li>
+          <li class="ij-tour__step" data-step="2"><h3 class="ij-title">Intervals</h3><p>The ring for work and rest, the digits counting down.</p></li>
+          <li class="ij-tour__step" data-step="3"><h3 class="ij-title">For Time, and done</h3><p>The clock runs until you stop it.</p></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Where it works: one big number, then the platforms -->
+  <section class="ij-section ij-section--band" id="where" aria-labelledby="where-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="where-h">Where it works.</h2>
+      <div class="ij-traits">
+        <div class="ij-trait ij-trait--number"><p class="ij-numeral" style="font-size: var(--ij-mkt-wordmark-size); color: var(--ij-color-accent)">5</p><p>Apple platforms, one payment.</p></div>
+        <div class="ij-trait">
+          <div class="ij-watch" style="--ij-watch-width: 120px"><div class="ij-watch__screen"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/WODrounds@5bd936708f8ef759f922609aa40f95b352a2eae1/appstore/raw/watch-1.png" alt="WODrounds on Apple Watch: EMOM, 10 rounds of 1:00" width="416" height="496" loading="lazy" decoding="async"></div></div>
+          <h3 class="ij-title">On your wrist</h3><p>The Watch follows the iPhone live, or runs EMOM and Intervals on its own.</p>
+        </div>
+        <div class="ij-trait"><h3 class="ij-title">Sound and haptics</h3><p>Sound on iPhone, iPad and Apple TV; haptics on iPhone and Watch.</p></div>
+        <div class="ij-trait ij-trait--wide">
+          <div class="ij-tv" style="--ij-tv-width: 420px"><div class="ij-tv__screen"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/WODrounds@5bd936708f8ef759f922609aa40f95b352a2eae1/docs/images/appletv-running.jpg" alt="WODrounds on Apple TV: 00:44 left, round 1 of 10" width="1600" height="900" loading="lazy" decoding="async"></div></div>
+          <h3 class="ij-title">Readable across the room</h3><p>Apple TV in a home gym, the digits big enough to read from the bar.</p>
+        </div>
+        <div class="ij-trait"><h3 class="ij-title">Mac and iPad</h3><p>The same timers on the screens you already have.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy and price -->
+  <section class="ij-section" aria-labelledby="privacy-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="privacy-h">Paid for once.</h2>
+      <div class="ij-assurances">
+        <div class="ij-assurance"><h3 class="ij-title">No account</h3><p>Nothing to sign up for.</p></div>
+        <div class="ij-assurance"><h3 class="ij-title">Paid for once</h3><p>No subscription, no in-app purchases, no ads.</p></div>
+        <div class="ij-assurance"><h3 class="ij-title">Works offline</h3><p>The timer needs nothing but the device.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- A note from the maker -->
+  <section class="ij-section ij-section--band" aria-label="A note from the maker">
+    <div class="ij-container">
+      <div class="ij-maker">
+        <p>The maker's note goes here: three or four sentences in the first person. The owner writes it.</p>
+        <p class="ij-maker__sign">Jarl</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing: the wordmark, sized to its column -->
+  <section class="ij-section" aria-label="Download WODrounds">
+    <div class="ij-container ij-closing">
+      <p class="ij-wordmark" style="--ij-wordmark-em: 5.2">WODrounds</p>
+      <div class="ij-store" data-ij-store="wodrounds" data-ij-store-locale="en">
+        <a class="ij-store-badge" href="https://apps.apple.com/app/id6759229877?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="footer" data-umami-event-locale="en">
+          <img src="../badges/app-store-white-en-us.svg" alt="Download on the App Store" width="120" height="40" loading="lazy">
+        </a>
+        <p class="ij-store-facts">$2.99 once · iOS 16 or later</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<ij-footer app="wodrounds">
+  <span slot="fineprint">An example page for the IAMJARL marketing kit, with WODrounds' identity (#78). The copy follows WODrounds' page brief; the maker's note is a placeholder.</span>
+</ij-footer>
+
+</body>
+</html>

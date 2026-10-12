@@ -6,7 +6,6 @@ import { fileURLToPath } from 'node:url';
 import { parseColor, contrastRatio } from './color.js';
 import { LOCALES, badgeFile, factsLine, offer, storeLink } from '../components/store.js';
 import { identityFor, MODES, COLOR_FIELDS } from '../components/identity.js';
-import { SKETCHES } from '../kit/sketches.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -503,7 +502,6 @@ function validateApps(tokensRef) {
     }
   }
   validateIdentities(apps, tokensRef);
-  validateIdentities(SKETCHES, tokensRef, 'sketch identity for the kit\'s examples', 'sketch identities for the kit\'s examples');
 
   const always = apps.filter(a => a.always === true);
   if (!always.length) fail('no always-links — every footer would lack a portfolio link');
