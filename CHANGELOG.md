@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.24.1] — 2026-10-12
+
+The kit, made ready for a site that is dark, before the first one asks (#65). Neither flagship is dark, but WODrounds, whose brief is being written, may be, and so may the Mac sites. Trying the kit in the dark found two things.
+
+### Fixed
+- **The phone vanished into a dark ground.** Its black frame had no edge against near-black. It now takes one from `--ij-color-border-default`, which is invisible on a light page and draws the phone out of a dark one.
+- **The closing wordmark could run past its column.** "WODrounds" in JetBrains Mono is 5.1 em wide: 1,231 px on a 1,100 px column on a desktop, and 404 px on a 390 px phone, where it pushed the page sideways. The wordmark now grows to the scale's size but never wider than its column. A site with a long name or a wide face sets `--ij-wordmark-em`, the word's width in em (about 5.2 for that one). The default, 4, suits a name of six or seven letters in a proportional face, and Walkful's and Wean's wordmarks are unchanged.
+
+### Added
+- **A dark example,** `kit/dark.html`: every section under a sketched identity that is dark whatever the visitor's setting, with a mono face and WODrounds' public copy. It is not WODrounds' identity, which comes from its brief. The sketch lives in `kit/sketches.js`. The validator holds it to an app's rules, and its sheet is written by the same code as an app's. The browser tests run it at 1440 and 375 px for a visitor in light and in dark mode, and check that a drawing on it takes the light ink and keeps its magenta waterline.
+- **`scripts/css-modes.js`:** the CSS for a mode's colours and for an identity sheet, moved out of `build.js` unchanged (every file in `dist/` is byte for byte the same). The tests can now generate and check a sheet no app has yet, such as a dark-only one.
+- A third hook, `--ij-wordmark-em`, documented with the other two.
+
 ## [1.24.0] — 2026-10-12
 
 Wean's drawings, and a loose stroke for a line drawn from data (#75).
@@ -790,6 +803,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.24.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.24.1
 [1.24.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.24.0
 [1.23.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.23.0
 [1.22.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.22.1

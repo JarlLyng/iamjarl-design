@@ -80,6 +80,7 @@ This table gets a row for every release, including the ones where the answer is 
 | **1.22.1** | `kit.css` no longer colours the links slotted into `<ij-nav>` and `<ij-footer>`, and gives a footer placed straight in the page the content width. The rule on Made by Human and AI wording on app sites is written down | No. A site that worked around either (Walkful's `site.css`) can drop the workaround when it moves to 1.22.1 |
 | **1.23.0** | Wean's identity: light, a misty grey-blue, charcoal, the icons' magenta, Instrument Sans | No, except Wean: take the new identity sheet with its redesign, not before. It turns today's dark navy and lime site light, whatever the visitor's setting |
 | **1.24.0** | Wean's eight drawings, coast and tide, in `dist/drawings/wean/`; the loose stroke for a data line, `dist/kit/loose.js` and `.ij-loose` | No. Wean takes them with its redesign; see the release notes |
+| **1.24.1** | The kit on a dark site: the phone keeps an edge, the closing wordmark never runs past its column (`--ij-wordmark-em` for a long name or a wide face), and a dark example | No. A site whose wordmark is long or in a mono face can set `--ij-wordmark-em` |
 
 ### Who needs to migrate
 - ✅ **Everyone** — bump the version. Nothing you use today changes value or name.

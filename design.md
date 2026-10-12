@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.24.0)
+# IAMJARL Design System (v1.24.1)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -152,6 +152,7 @@ Each app site has one job: show what the app is, quickly, and hand the visitor t
 - **One quiet block per feature.** A short headline and one sentence.
 - **Privacy and price stated as features,** and **a person behind the app:** a short note from the maker, signed.
 - **One thing that moves, and it is the product.** A short screen recording in the hero, and the phone that stays on screen while the features scroll past. Nothing animates in, and the resting state is always the whole page. Both are CSS with the motion tokens, switched by the kit's own module (`dist/kit/kit.js`, no library; the owner chose that over vendoring Motion, #65), and both stop under reduce motion.
+- **Dark is as good as light.** A site may be dark whatever the visitor's setting (`"scheme": "dark"`): the sheet holds every colour, the phone takes an edge from the border colour, a drawing's ink turns light, and the store button takes its `.white` fragment. The kit's dark example is tested in both of a visitor's modes. A long name or a wide face sets `--ij-wordmark-em`, so the closing wordmark never runs past its column.
 - **Light pages.** Below the first screen everything loads lazily. A screen recording is encoded at display size, around 300 to 600 KB, with a poster frame.
 - **Hygiene.** Real headings in order, body text at 18 px or more, no unverifiable numbers (a privacy-first app cannot count its users), no urgency banners, no tilted or animated devices.
 - **One visual language per site, drawn once, here.** Walkful's is paths and trees; Wean's (#75) is coast and tide, a misty morning with the tide going out, where the waterline is always the one magenta line and always steps down from left to right, as Wean's allowance does. The drawings are written as SVG from descriptions in `kit/drawings/`, so a site inlines them and they take its tokens. A line drawn from data, like Wean's taper staircase, goes through the same loose stroke (`kit/loose.js`, `.ij-loose`) and reads as a drawing, not a chart. No faces, and nothing of what an app helps you cut down.

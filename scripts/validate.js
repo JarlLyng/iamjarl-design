@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { parseColor, contrastRatio } from './color.js';
 import { LOCALES, badgeFile, factsLine, offer, storeLink } from '../components/store.js';
 import { identityFor, MODES, COLOR_FIELDS } from '../components/identity.js';
+import { SKETCHES } from '../kit/sketches.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -502,6 +503,7 @@ function validateApps(tokensRef) {
     }
   }
   validateIdentities(apps, tokensRef);
+  validateIdentities(SKETCHES, tokensRef, 'sketch identity for the kit\'s examples', 'sketch identities for the kit\'s examples');
 
   const always = apps.filter(a => a.always === true);
   if (!always.length) fail('no always-links — every footer would lack a portfolio link');
@@ -520,7 +522,7 @@ function validateApps(tokensRef) {
 // able to carry black or white, so it can be a button. The accent itself may be
 // too light to read (Walkful's magenta is 2.7:1 on sand), which is what
 // accentText is for, and why nothing else checks it as text.
-function validateIdentities(apps, tokensRef) {
+function validateIdentities(apps, tokensRef, one = 'site identity', many = 'site identities') {
   const faces = Object.keys(tokensRef?.brand?.typography?.display ?? {});
   const withIdentity = apps.filter(a => a.identity);
   let problems = 0;
@@ -574,7 +576,7 @@ function validateIdentities(apps, tokensRef) {
       }
     }
   }
-  if (!problems) pass(`${withIdentity.length} site identities: text at 7:1, accents readable as text or carried by a text-safe variant, every face approved`);
+  if (!problems) pass(`${withIdentity.length} ${withIdentity.length === 1 ? one : many}: text at 7:1, accents readable as text or carried by a text-safe variant, every face approved`);
 }
 
 // Store facts (#58). Everything the store button prints comes from here, so a
