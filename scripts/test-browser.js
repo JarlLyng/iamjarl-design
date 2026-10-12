@@ -7,6 +7,7 @@
 // Without Chrome this skips locally and fails in CI, where it must run.
 
 import http from 'node:http';
+import zlib from 'node:zlib';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -117,6 +118,25 @@ ${FULL_NAV.replace('<ij-nav>', '<ij-nav cta-after="#hero-cta">')}
 <link rel="stylesheet" href="/dist/kit/kit.css">
 <main class="ij-page" style="padding: 24px">${fs.readFileSync(path.join(ROOT, 'dist/drawings/wean/low-tide.svg'), 'utf-8')}</main>` }),
 
+  // A scene (#81) at its worst: a white photo on a dark site, a black one on a
+  // light site. Every kind of text a scene may carry, and a long line that
+  // wraps at phone width, so the scrim has to follow the words.
+  ...Object.fromEntries([['kit-scene-dark', 'wodrounds', 'white'], ['kit-scene-light', 'walkful', 'black']].map(([name, identity, fill]) =>
+    [name, page({ nav: false, identity, body: `
+<link rel="stylesheet" href="/dist/kit/kit.css">
+<main class="ij-page">
+  <section class="ij-section"><div class="ij-container"><h2 class="ij-headline">Before the scene.</h2></div></section>
+  <section class="ij-scene">
+    <img class="ij-scene__photo" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' preserveAspectRatio='none'%3E%3Crect width='16' height='16' fill='${fill}'/%3E%3C/svg%3E">
+    <div class="ij-container ij-closing">
+      <h2 class="ij-headline">A headline on the photo.</h2>
+      <p class="ij-wordmark" style="--ij-wordmark-em: 5.2">WODrounds</p>
+      <p>A sentence in the secondary colour that runs long enough to wrap over two or three lines on a phone, with <a href="#">a link</a> in it.</p>
+      <div class="ij-store"><p class="ij-store-facts">$2.99 once · iOS 16 or later</p></div>
+    </div>
+  </section>
+</main>` })])),
+
   // Footer hover: the family accent under an identity sheet, primary without.
   'footer-accent': page({ nav: false, footer: true, identity: 'echolume', body: `
 <ij-footer app="echolume"><a slot="links" href="#">Privacy</a></ij-footer>` }),
@@ -187,6 +207,33 @@ const shown = sel => `(el => !!el && el.getClientRects().length > 0 && getComput
 const slotted = (slot, text) =>
   `[...document.querySelectorAll('ij-nav > [slot="${slot}"]')].find(a => a.textContent.trim() === ${JSON.stringify(text)})`;
 const alphaOf = `(c => { const m = c.match(/\\/\\s*([\\d.]+)\\)$/) || c.match(/^rgba\\((?:[^,]+,){3}\\s*([\\d.]+)\\)$/); return m ? Number(m[1]) : 1; })`;
+
+// A PNG screenshot as pixels, so a test can read what was painted: Chrome's
+// are 8-bit RGB or RGBA, not interlaced. No dependency, only zlib.
+function pngPixels(buf) {
+  const width = buf.readUInt32BE(16), height = buf.readUInt32BE(20), channels = buf[25] === 6 ? 4 : 3;
+  const idat = [];
+  for (let o = 8; o < buf.length;) {
+    const len = buf.readUInt32BE(o), type = buf.toString('ascii', o + 4, o + 8);
+    if (type === 'IDAT') idat.push(buf.subarray(o + 8, o + 8 + len));
+    o += 12 + len;
+  }
+  const raw = zlib.inflateSync(Buffer.concat(idat)), stride = width * channels, out = Buffer.alloc(height * stride);
+  for (let y = 0; y < height; y++) {
+    const f = raw[y * (stride + 1)], row = raw.subarray(y * (stride + 1) + 1, (y + 1) * (stride + 1));
+    for (let x = 0; x < stride; x++) {
+      const a = x >= channels ? out[y * stride + x - channels] : 0, b = y ? out[(y - 1) * stride + x] : 0,
+        c = x >= channels && y ? out[(y - 1) * stride + x - channels] : 0;
+      const pa = Math.abs(b - c), pb = Math.abs(a - c), pc = Math.abs(a + b - 2 * c);
+      const pred = [0, a, b, (a + b) >> 1, pa <= pb && pa <= pc ? a : pb <= pc ? b : c][f];
+      out[y * stride + x] = (row[x] + pred) & 255;
+    }
+  }
+  return { width, height, channels, data: out };
+}
+const luminance = ([r, g, b]) => [r, g, b].map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; })
+  .reduce((sum, v, i) => sum + v * [0.2126, 0.7152, 0.0722][i], 0);
+const contrast = (a, b) => { const [x, y] = [luminance(a), luminance(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
 
 async function tabs(p, n) {
   const seen = [];
@@ -581,10 +628,11 @@ try {
   // moving on load and no text below AA on whatever it sits on.
   console.log('\nMarketing kit:');
   const KIT_SECTIONS = ['.ij-hero', '.ij-phone', '.ij-statements', '.ij-card', '.ij-tour', '.ij-traits',
-    '.ij-assurances', '.ij-maker', '.ij-source', '.ij-staircase', '.ij-closing'];
+    '.ij-assurances', '.ij-maker', '.ij-source', '.ij-staircase', '.ij-scene', '.ij-closing'];
   // Walkful cites a dated source; Wean has none by its brief and shows its
   // taper staircase in that place instead (wean-nicotine#396, #75).
-  const notOn = { walkful: ['.ij-staircase'], wean: ['.ij-source'], wodrounds: ['.ij-staircase', '.ij-source', '.ij-statements'] };
+  // WODrounds alone sets its mood with photos (#81).
+  const notOn = { walkful: ['.ij-staircase', '.ij-scene'], wean: ['.ij-source', '.ij-scene'], wodrounds: ['.ij-staircase', '.ij-source', '.ij-statements'] };
   const kitProbe = `(() => {
     const lum = c => { const m = c.match(/[\\d.]+/g).map(Number); const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
       return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]); };
@@ -693,6 +741,46 @@ try {
     check(`at ${w}: the television and the watch stand framed, with an edge, the TV on a foot, the watch between its straps`,
       wd.tv.w >= 200 && Math.abs(wd.tvScreen.h / wd.tvScreen.w - 9 / 16) < 0.02 && wd.watch.w >= 100 &&
       Math.abs(wd.watchScreen.h / wd.watchScreen.w - 496 / 416) < 0.03 && wd.foot && wd.straps && wd.edge, JSON.stringify(wd));
+  }
+  await p.viewport(1440, 900);
+
+  // A scene (#81): words on a photo read at AA whatever the photo is. Paint
+  // the worst one, white under a dark site's light text and black under a
+  // light site's dark text, hide the words, and read every pixel they would
+  // sit on; the lowest contrast with each text's colour must still be 4.5:1.
+  // The photo must still show above the words, or the scene is only a ground.
+  for (const [name, label] of [['kit-scene-dark', 'a white photo on a dark site'], ['kit-scene-light', 'a black photo on a light site']]) {
+    for (const [w, h] of [[1440, 900], [375, 812]]) {
+      await p.viewport(w, h);
+      await p.goto(`${base}/fixture/${name}/index.html`);
+      await p.settle(150);
+      const texts = await p.eval(`(() => {
+        const rgb = c => c.match(/[\\d.]+/g).slice(0, 3).map(Number);
+        const scene = document.querySelector('.ij-scene').getBoundingClientRect();
+        const out = [...document.querySelectorAll('.ij-scene :is(h2, p, a)')].map(e => { const r = e.getBoundingClientRect();
+          return { text: e.textContent.trim().slice(0, 24), color: rgb(getComputedStyle(e).color),
+            clip: { x: Math.max(0, r.left), y: r.top + scrollY, width: Math.min(r.width, innerWidth - Math.max(0, r.left)), height: r.height } }; });
+        const s = document.createElement('style'); s.textContent = '.ij-scene * { color: transparent !important; text-decoration-color: transparent !important; }';
+        document.head.append(s);
+        return { out, top: { x: 0, y: scene.top + scrollY, width: innerWidth, height: 24 },
+          ground: rgb(getComputedStyle(document.querySelector('.ij-page')).backgroundColor), overflow: document.documentElement.scrollWidth - innerWidth };
+      })()`);
+      await p.settle(50);
+      const worst = [];
+      for (const t of texts.out) {
+        const px = pngPixels(await p.screenshot({ clip: t.clip }));
+        let min = Infinity;
+        for (let i = 0; i < px.data.length; i += px.channels) min = Math.min(min, contrast(t.color, [px.data[i], px.data[i + 1], px.data[i + 2]]));
+        worst.push([t.text, +min.toFixed(2)]);
+      }
+      const top = pngPixels(await p.screenshot({ clip: texts.top }));
+      const mid = (12 * top.width + (top.width >> 1)) * top.channels;
+      const shows = contrast([top.data[mid], top.data[mid + 1], top.data[mid + 2]], texts.ground) >= 3;
+      const low = worst.filter(([, r]) => r < 4.5);
+      check(`a scene at ${w}, ${label}: every text at AA on what is painted under it, the photo showing above the words`,
+        low.length === 0 && worst.length === 5 && shows && texts.overflow <= 0,
+        JSON.stringify({ worst, shows, overflow: texts.overflow }));
+    }
   }
   await p.viewport(1440, 900);
 

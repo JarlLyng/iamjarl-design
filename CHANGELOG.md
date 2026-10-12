@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.26.0] — 2026-10-12
+
+A photo scene for a site's mood (#81), first for WODrounds' gym photos. The owner brought them back on 2026-10-12: the numbers stay the picture, and the photos set the mood around them.
+
+### Added
+- **`.ij-scene` in `kit.css`** lays a photo across the page:
+  - **as a band of its own between sections,** with nothing written on it;
+  - **or behind a section's words,** such as the closing wordmark and store button.
+
+  The photo goes black and white, so the site's accent stays the only colour. It is dimmed toward the ground and fades into it at the foot, so the scene meets the next section without a seam.
+
+  Words on a scene keep the photo's room above them, sit on a scrim of the ground that follows them, and all take the primary text colour. So they read at AA over any photo. The browser tests paint the worst case: a white photo under a dark site and a black one under a light site. They hide the words, read every pixel under them, and need 4.5:1. With the scene they measure at least 8.5:1; without the scrim the test fails at 2.5:1.
+
+  One new hook, `--ij-scene-height`, sets a band's height.
+- **Rules the contract tests hold to:**
+  - never in the hero;
+  - at most two on a page;
+  - every photo decorative (`alt=""`) and loaded lazily;
+  - nothing that moves.
+- **The WODrounds example shows two scenes,** both from WODrounds' own repo:
+  - the barbell on a chalked floor, as a band between the timers and the tour;
+  - the kettlebell, behind the closing wordmark and store button.
+
+### What WODrounds loads
+- **`dist/kit/kit.css` from `@v1.26.0`,** with the hash below. Move the other files to `@v1.26.0` too, so the page loads one version. Only `kit.css` changes what the page does.
+- **Two scenes at most,** with photos from WODrounds' own repo. The photos are not shipped from here. The old site's `docs/images/unsplash/`, in its git history, has them:
+  - `victor-freitas-qZ-U9z4TQ6A` (the barbell), 77 KB at 960 px and 268 KB at 1920;
+  - `ambitious-studio-rick-barrett-0tQLfwcr5-M` (the kettlebell), 48 and 206 KB.
+
+  Use `srcset` with both widths, `loading="lazy"` and `alt=""`. Leave out the plank, whose rower shows its brand.
+- **The markup** is in the README and in `kit/wodrounds.html`.
+- **The brief** in WODrounds#182 said the gym photo goes. The owner's decision on 2026-10-12 brings two back, for the mood.
+
 ## [1.25.0] — 2026-10-12
 
 WODrounds' identity, the first dark site, and frames for Apple TV and Watch (#78).
@@ -823,6 +856,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.26.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.26.0
 [1.25.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.25.0
 [1.24.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.24.1
 [1.24.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.24.0

@@ -738,7 +738,7 @@ check('the Swift package has no marketing scale', !/marketing|--ij-mkt|mkt/i.tes
 const kitSrc = read('kit/kit.css');
 check('kit.css writes no colour of its own', !/#[0-9a-f]{3,8}\b|\brgba?\(|\bhsla?\(/i.test(kitSrc.replace(/\/\*[\s\S]*?\*\//g, '')),
   'every colour comes from the tokens or the identity, so the same markup is any site');
-const KIT_HOOKS = ['--ij-phone-width', '--ij-tv-width', '--ij-watch-width', '--ij-display-weight', '--ij-wordmark-em'];
+const KIT_HOOKS = ['--ij-phone-width', '--ij-tv-width', '--ij-watch-width', '--ij-display-weight', '--ij-wordmark-em', '--ij-scene-height'];
 const definedVars = new Set([tokensCssText, ...fs.readdirSync(identityDir).map(f => read(`dist/identity/${f}`))]
   .flatMap(css => css.match(/--ij-[a-z0-9-]+(?=:)/g) ?? []));
 const kitUses = [...new Set(kitSrc.match(/var\(--ij-[a-z0-9-]+/g).map(v => v.slice(4)))];
@@ -772,6 +772,19 @@ check('the WODrounds example, too, carries no badge or AI wording and loads noth
   return !/madebyhuman\.iamjarl\.com\/badges|fonts\.googleapis|fonts\.gstatic/i.test(html) &&
     !/\bAI\b/.test(html.replace(/<span slot="fineprint">[\s\S]*?<\/span>/g, '')) &&
     [...html.matchAll(/<script[^>]*src="([^"]+)"/g)].every(m => m[1].startsWith('../dist/components/') || m[1] === '../dist/kit/kit.js');
+})());
+// A scene (#81) sets the mood and never carries the content: at most two on a
+// page, none in the hero, each photo decorative (alt="") and loaded lazily,
+// and nothing in kit.css that moves it.
+check('the kit\'s scenes: at most two a page, none in the hero, every photo decorative and lazy, nothing that moves', (() => {
+  const pages = [read('kit/wodrounds.html'), ...Object.values(demos)];
+  const scene = kitSrc.slice(kitSrc.indexOf('/* ---------- A scene'), kitSrc.indexOf('/* ---------- Closing'));
+  return pages.every(html => {
+    const hero = html.slice(html.indexOf('class="ij-hero'), html.indexOf('</section>', html.indexOf('class="ij-hero')));
+    const photos = [...html.matchAll(/<img class="ij-scene__photo"[^>]*>/g)].map(m => m[0]);
+    return (html.match(/class="ij-scene"/g) ?? []).length <= 2 && !hero.includes('ij-scene') &&
+      photos.every(t => / alt=""/.test(t) && / loading="lazy"/.test(t));
+  }) && /class="ij-scene"/.test(pages[0]) && /grayscale\(1\)/.test(scene) && !/animation|transition|background-attachment|transform/.test(scene);
 })());
 check('the demos load nothing from Google, and no script but the system\'s components',
   Object.values(demos).every(html => !/fonts\.googleapis|fonts\.gstatic/.test(html) &&
