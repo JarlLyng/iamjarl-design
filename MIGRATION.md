@@ -88,6 +88,7 @@ This table gets a row for every release, including the ones where the answer is 
 | **1.29.0** | `<ij-nav>` and `<ij-footer>` print their own words in the page's language; a cross-link fragment per store language; `hooks.json` lists the hooks and identity names a check can read | No. A translated page gets its own words when it moves its nav and footer to 1.29.0; it can also take the cross-link fragment in its language |
 | **1.29.1** | A stack keeps its spacing whatever its children are; `<ij-nav>`'s landmark name follows the page's language | No. A site that worked around a flush source card or set the nav's `label` for its language can drop that |
 | **1.30.0** | Anvil Workout's and TonVault's identities, both light; the identity field `numerals`; `dist/kit/wave.js` (`peaksOf`, `wavePath`) and `.ij-wave`; `.ij-data`, `<mark>`/`.ij-highlight`, `.ij-label`; a numeral never breaks | No, except Anvil and TonVault: take the new identity sheet with the redesign, not before. Each turns its site light, whatever the visitor's setting |
+| **1.31.0** | Wean and Walkful get photo scenes with their one magenta line (`.ij-scene__line`, `dist/scenes/<app>/`, `.ij-scene__photo--mirrored`); Wean's drawings (`dist/drawings/wean/`) are removed; statements stand without drawings | **Wean:** `dist/drawings/wean/` is gone; nothing on its pages uses it. **Walkful:** take the scenes and drop the placeholder drawings and underlines. Others: no |
 
 ### Who needs to migrate
 - ✅ **Everyone** — bump the version. Nothing you use today changes value or name.

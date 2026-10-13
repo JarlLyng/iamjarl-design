@@ -14,7 +14,7 @@ import { loosePath, stairsPoints } from '../kit/loose.js';
 import { peaksOf, wavePath } from '../kit/wave.js';
 import { renderDrawing } from '../kit/drawings/render.js';
 import { identitySheetCss } from './css-modes.js';
-import { WEAN_DRAWINGS } from '../kit/drawings/wean.js';
+import { SCENES } from '../kit/scenes.js';
 import { ITS_MONO_DRAWINGS } from '../kit/drawings/its-mono-yo.js';
 import { NAV_ALPHA, NAV_COLLAPSE_BELOW, MAX_LINKS, currentIndex, heroOnScreen, navWarnings } from '../components/nav-rules.js';
 import { storeLink, factsLine, badgeFile, badgeHeight, smartBannerHtml, fragmentName, offer, PLACEMENTS, TONES, LOCALES } from '../components/store.js';
@@ -791,7 +791,7 @@ const kitDist = read('dist/kit/kit.css');
 check('dist/kit/kit.css is the source with its version on top, hashed and exported',
   kitDist.startsWith(`/* IAMJARL marketing kit v${fullTokens.meta.version}:`) && kitDist.endsWith(kitSrc) &&
   'dist/kit/kit.css' in JSON.parse(read('dist/sri.json')).files && JSON.parse(read('package.json')).exports['./kit/*'] === './dist/kit/*');
-const KIT_CLASSES = ['ij-hero--split', 'ij-hero--centred', 'ij-phone', 'ij-statement', 'ij-drawing', 'ij-card', 'ij-tour',
+const KIT_CLASSES = ['ij-hero--split', 'ij-hero--centred', 'ij-phone', 'ij-statement', 'ij-scene', 'ij-card', 'ij-tour',
   'ij-trait--number', 'ij-assurances', 'ij-maker', 'ij-closing', 'ij-wordmark'];
 const demos = { walkful: read('kit/walkful.html'), wean: read('kit/wean.html') };
 // Wean's page has no cited fact by its brief (wean-nicotine#396), so the dated
@@ -824,10 +824,11 @@ check('the kit\'s scenes: at most two a page, none in the hero, every photo deco
   const scene = kitSrc.slice(kitSrc.indexOf('/* ---------- A scene'), kitSrc.indexOf('/* ---------- Closing'));
   return pages.every(html => {
     const hero = html.slice(html.indexOf('class="ij-hero'), html.indexOf('</section>', html.indexOf('class="ij-hero')));
-    const photos = [...html.matchAll(/<img class="ij-scene__photo"[^>]*>/g)].map(m => m[0]);
+    const photos = [...html.matchAll(/<img class="ij-scene__photo[^"]*"[^>]*>/g)].map(m => m[0]);
     return (html.match(/class="ij-scene"/g) ?? []).length <= 2 && !hero.includes('ij-scene') &&
       photos.every(t => / alt=""/.test(t) && / loading="lazy"/.test(t));
-  }) && /class="ij-scene"/.test(pages[0]) && /grayscale\(1\)/.test(scene) && !/animation|transition|background-attachment|transform/.test(scene);
+  }) && /class="ij-scene"/.test(pages[0]) && /grayscale\(1\)/.test(scene) && !/animation|transition|background-attachment/.test(scene) &&
+    (scene.match(/transform:[^;]*/g) ?? []).every(t => t === 'transform: scaleX(-1)');
 })());
 check('every kit example starts its body with the kit\'s skip link, and kit.css keeps the link rule off it (#84)',
   [read('kit/wodrounds.html'), ...Object.values(demos)].every(html => /<body class="ij-page">\s*<a class="ij-skip" href="#main">/.test(html)) &&
@@ -854,41 +855,41 @@ check('the crossfade uses the motion tokens, and only once the tour has settled'
   /\.ij-tour\.is-ready [^{]*\{ transition: opacity var\(--ij-duration-slow\) var\(--ij-easing-standard\)/.test(kitSrc) &&
   !/\.ij-tour\.is-live[^{]*\{[^}]*transition/.test(kitSrc));
 
-// --- Drawings and the loose stroke (#75) ---
-// Wean's drawings are generated from their descriptions, so what must hold is
-// the rule they are drawn by: one magenta waterline each, taking the accent
-// token and stepping down left to right, nothing hard-coded, and the files and
-// the example page carrying exactly what the descriptions draw.
+// --- The loose stroke (#75) ---
 console.log('\nDrawings:');
 check('the loose stroke is deterministic, and differs with its seed',
   loosePath([[0, 0], [100, 0], [100, 40]], { seed: 3 }) === loosePath([[0, 0], [100, 0], [100, 40]], { seed: 3 }) &&
   loosePath([[0, 0], [100, 0]], { seed: 3 }) !== loosePath([[0, 0], [100, 0]], { seed: 4 }));
 check('a staircase is a tread per value, joined by risers', JSON.stringify(stairsPoints([2, 1], { width: 20, height: 10, max: 2 })) ===
   JSON.stringify([[0, 0], [10, 0], [10, 5], [20, 5]]));
-check('eight drawings, on coast and tide, each with an id of its own', WEAN_DRAWINGS.length === 8 &&
-  new Set(WEAN_DRAWINGS.map(d => d.id)).size === 8);
-const marksDown = WEAN_DRAWINGS.filter(d => {
-  const m = d.strokes.filter(st => st.kind === 'mark');
-  if (m.length !== 1) return false;
-  const pts = (m[0].parts ?? [m[0].points]).flat();
-  return pts.every((p, i) => i === 0 || (p[0] >= pts[i - 1][0] - 0.01 && p[1] >= pts[i - 1][1] - 0.01)) && pts.at(-1)[1] > pts[0][1];
-});
-check('each has exactly one magenta waterline, and it only ever steps down, left to right', marksDown.length === 8,
-  WEAN_DRAWINGS.filter(d => !marksDown.includes(d)).map(d => d.id).join(', '));
-const svgs = WEAN_DRAWINGS.map(renderDrawing);
-check('every colour is a token: the mark the accent, the rest the text colour, no literal anywhere',
-  svgs.every(svg => (svg.match(/class="ij-mark" style="stroke: var\(--ij-color-accent\)"/g) || []).length === 1 &&
-    !/#[0-9a-f]{3,8}\b|\brgba?\(|\bhsla?\(/i.test(svg) && /var\(--ij-color-text-primary\)/.test(svg)));
-check('each drawing ships as a file in dist/drawings/wean/, and the example page shows the same SVG', WEAN_DRAWINGS.every((d, i) => {
-  const f = `dist/drawings/wean/${d.id.replace(/^wean-/, '')}.svg`;
-  return fs.existsSync(path.join(ROOT, f)) && read(f).includes(svgs[i]) && read('kit/wean.html').includes(svgs[i]);
-}));
-check('the drawings stay light: each under 16 KB before compression', svgs.every(svg => Buffer.byteLength(svg) < 16384),
-  svgs.map(svg => Buffer.byteLength(svg)).join(', '));
-check('kit.css keeps a drawing\'s strokes readable at any size, and gives a data line the accent in the same hand',
-  /\.ij-drawing path \{ vector-effect: non-scaling-stroke; \}/.test(read('kit/kit.css')) &&
-  /\.ij-loose \{[^}]*stroke: var\(--ij-color-accent\);[^}]*vector-effect: non-scaling-stroke;/.test(read('kit/kit.css')));
-// The example staircase follows Wean's own maths (lib/taper-plan.ts): a
+// Photo scenes with the one magenta line (#90). Wean's and Walkful's drawings
+// gave way to photographs: what must hold is a free licence, the line drawn on
+// the photo in the accent, cropping as the photo does, Wean's falling left to
+// right, and the files and the example pages carrying the same SVG.
+console.log('\nScenes:');
+const lined = SCENES.filter(sc => sc.line);
+check('four scenes, two each for Wean and Walkful, every photo free under the Unsplash License with its photographer named',
+  SCENES.length === 4 && ['wean-nicotine', 'walkful'].every(a => SCENES.filter(sc => sc.app === a).length === 2) &&
+  SCENES.every(sc => /^[\w-]{11}$/.test(sc.photo.unsplash) && /^photo-\d+-[0-9a-f]+$/.test(sc.photo.src) && sc.photo.by && sc.photo.size.join() === '1600,1067'));
+check('each app has one line, inside its photo, and Wean\'s waterline only ever falls from left to right',
+  lined.length === 2 && lined.every(sc => sc.line.every(([x, y]) => x >= 0 && x <= sc.photo.size[0] && y >= 0 && y <= sc.photo.size[1])) &&
+  (l => l.every((pt, i) => i === 0 || (pt[0] > l[i - 1][0] && pt[1] >= l[i - 1][1])))(SCENES.find(sc => sc.id === 'wean-tidal-flats').line));
+check('each line ships in dist/scenes/<app>/ as an SVG the size of its photo that crops as the photo does, and its example shows the same SVG',
+  lined.every(sc => {
+    const f = `dist/scenes/${sc.app}/${sc.id.replace(/^[a-z]+-/, '')}.svg`;
+    const page = read(sc.app === 'walkful' ? 'kit/walkful.html' : 'kit/wean.html');
+    const svg = read(f).split('-->\n')[1].trim();
+    return fs.existsSync(path.join(ROOT, f)) && page.includes(svg) &&
+      svg.includes(`viewBox="0 0 ${sc.photo.size.join(' ')}" preserveAspectRatio="xMidYMid slice"`) && (svg.match(/class="ij-loose"/g) ?? []).length === 1;
+  }));
+check('the examples use the photos they name, mirrored where the scene says, credited in the fineprint, and no drawings',
+  ['walkful', 'wean'].every(name => {
+    const page = read(`kit/${name}.html`), mine = SCENES.filter(sc => sc.app === (name === 'wean' ? 'wean-nicotine' : name));
+    return mine.every(sc => page.includes(`images.unsplash.com/${sc.photo.src}?`) &&
+      (!sc.mirrored || new RegExp(`ij-scene__photo--mirrored" src="https://images\\.unsplash\\.com/${sc.photo.src}`).test(page))) &&
+      mine.every(sc => new RegExp(`<span slot="fineprint">[^<]*${sc.photo.by}`).test(page)) && !/class="ij-drawing/.test(page);
+  }) && JSON.parse(read('package.json')).exports['./scenes/*'] === './dist/scenes/*');
+// The example's plan follows Wean's own maths (lib/taper-plan.ts): a
 // one-decimal allowance, shown as whole pouches, until it shows none.
 const taper = [];
 for (let w = 0; w < 520; w++) {
@@ -896,9 +897,9 @@ for (let w = 0; w < 520; w++) {
   taper.push(Math.floor(a));
   if (Math.floor(a) === 0) break;
 }
-check(`the Wean example's staircase is Wean's taper for 10 a day at 10% a week (${taper.length} weeks), with a text version`,
-  read('kit/wean.html').includes(`Week by week: ${taper.join(', ')}.`) && /<path class="ij-loose" d="/.test(read('kit/wean.html')) &&
-  taper.slice(0, 6).join() === '10,9,8,7,6,5' && taper.at(-2) === 1 && taper.at(-1) === 0);
+check(`the Wean example's plan is Wean's taper for 10 a day at 10% a week (${taper.length} weeks), as a table`,
+  read('kit/wean.html').includes(`over ${taper.length} weeks.`) && read('kit/wean.html').includes('<th scope="row">Week 1</th><td class="ij-num">10 a day</td>') &&
+  read('kit/wean.html').includes(`<td class="ij-num">0 a day</td>`) && taper.slice(0, 6).join() === '10,9,8,7,6,5' && taper.at(-2) === 1 && taper.at(-1) === 0);
 // It's mono's (#83): sampler types, not models. Eight machines, one per guide,
 // and three close-ups for the statements (the owner chose eleven over reusing
 // three). One lime line in each, the mono signal; no text in any of them, so

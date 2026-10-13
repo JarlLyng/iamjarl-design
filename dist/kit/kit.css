@@ -1,4 +1,4 @@
-/* IAMJARL marketing kit v1.30.0: generated from kit/kit.css, do not edit */
+/* IAMJARL marketing kit v1.31.0: generated from kit/kit.css, do not edit */
 /* The marketing page kit (#65): sections every app site can compose.
 
    Plain HTML with these classes. No JavaScript is needed to read any of it:
@@ -295,8 +295,12 @@ ij-store-cta { display: block; }
 .ij-statement { display: grid; gap: var(--ij-mkt-space-stack); align-items: center; }
 .ij-statement__text { display: flex; flex-direction: column; gap: var(--ij-spacing-lg); }
 .ij-statement__text p { margin: 0; color: var(--ij-color-text-secondary); max-width: 40ch; }
+/* Statements without drawings stand side by side, as short columns (#90). */
+.ij-statement:not(:has(> .ij-drawing)) { grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 768px) {
   .ij-statement { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--ij-mkt-space-block); }
+  .ij-statement:not(:has(> .ij-drawing)) { grid-template-columns: minmax(0, 1fr); }
+  .ij-statements:not(:has(.ij-drawing)) { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--ij-mkt-space-block); }
   .ij-statement:nth-child(even) .ij-drawing { order: 2; }
 }
 
@@ -610,6 +614,21 @@ ij-store-cta { display: block; }
     color-mix(in srgb, var(--ij-color-bg-app) 30%, transparent),
     color-mix(in srgb, var(--ij-color-bg-app) 55%, transparent) 60%,
     var(--ij-color-bg-app));
+}
+/* A photo shown mirrored, when the brief needs its line to run the other
+   way (Wean's waterline falls left to right). Its line is mirrored with it. */
+.ij-scene__photo--mirrored { transform: scaleX(-1); }
+/* The scene's one magenta line, drawn on the photo by hand (#90): an SVG the
+   size of the photo that crops exactly as the photo does, above the scene's
+   dimming, so the line stays vivid on the quiet picture. */
+.ij-scene__line {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
 }
 .ij-scene > .ij-container {
   --_fade: var(--ij-mkt-space-section);
