@@ -5,6 +5,60 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.32.0] — 2026-10-13
+
+TrimrPix' identity on its two sites, a fifth display face, and a before and after (#96).
+
+### Added
+- **TrimrPix' identity, one look on two sites,** light whatever the visitor's setting:
+  - **Ground and cards:** a lilac-white `#F1F0F6`, with white cards, apart from Walkful's sand, Wean's grey-blue, Anvil's notebook and TonVault's paper.
+  - **Text:** ink `#1C1B22` (15.1:1).
+  - **Faces:** Bricolage Grotesque for headlines and JetBrains Mono for every size and percentage.
+  - **Accent on the Mac site (`trimrpix`):** the Mac icon's lime `#D0FF00`, as a highlighter. It is 1.0:1 on the ground, so it is never text there: it fills behind black text (18:1), and links take a dark olive, `#4A5900` (6.8:1).
+  - **Accent on the iPhone site (`trimrpix-ios`):** the icons' magenta `#F140FE`, with black on it, and `#A80FB3` for links (5.5:1).
+- **Bricolage Grotesque, the fifth approved face** (`grotesque`, OFL-1.1), chosen by the owner from three on #96. It ships as `dist/fonts/bricolage-grotesque.css`, a 75 KB variable latin subset from Fontsource 5.3.0 with weights 200 to 800 and an optical-size axis, which the browser sets from the text's size by itself.
+- **`.ij-compare`, a before and after:** the same picture twice, each a `figure.ij-compare__item` with its size in the caption. Side by side when there's room, stacked on a phone, and never more than two across. A `figcaption` straight in `.ij-compare` spans both.
+- **`.ij-chips`, sizes as chips:** a list of `li.ij-chip`, short frameless facts in the numeral face, tabular, never broken.
+- **`.ij-num` anywhere on the page,** not only in a table: a figure in the numeral face, with tabular digits, that never breaks.
+- **Two kit examples,** `kit/trimrpix.html` and `kit/trimrpix-ios.html`, on the docs page:
+  - **The Mac site:** a centred hero with the window, the before and after with its chips, the window tour, and "where it works" led by one measured saving. Its window shows today's captures, in the app's dark appearance, until TrimrPix retakes them light.
+  - **The iPhone site:** a split hero with the phone, the same before and after, the phone tour, and "where it works" led by "0 duplicates".
+  - **The photo is an example:** one Unsplash photo by Jeremy Bishop, at two qualities, credited in the fineprint, with sizes marked as an example. Each site shows its own photo, made by the app at stated settings, with its measured sizes.
+
+### Fixed
+- **A stack keeps its spacing around the new pieces too.** `.ij-label`, `.ij-compare` and `.ij-chips` reset their margins in the kit's one reset, before the stack's rule, as #88 settled. A new contract test fails if any kit block resets its own margin after the stack's rule.
+
+### Tests
+- Both examples at 1440 and 375 px with every section, AA, no overflow, and no JavaScript.
+- Headlines in Bricolage Grotesque, the same photo twice with its sizes in mono, side by side at 1440 and stacked at 375, the chips in mono, every highlight black, and no lime text anywhere.
+- Every later child of a stack keeps the stack's spacing on both pages.
+
+### What TrimrPix (Mac) loads
+All from `@v1.32.0`, with the hashes below:
+- **The files:**
+  - `dist/css/tokens.css` and `dist/identity/trimrpix.css`. Take the sheet with the redesign, not before: it turns the site light only.
+  - `dist/fonts/bricolage-grotesque.css` **and** `dist/fonts/jetbrains-mono.css`, for the sizes;
+  - `dist/kit/kit.css`, `dist/kit/kit.js`, `ij-nav.js` and `ij-footer.js`.
+- **The `.black` Mac App Store fragments** (`dist/store/trimrpix.en.black.html`, `.footer.black.html`) and `trimrpix.en.offer.json` for the JSON-LD.
+- **The pieces:**
+  - `.ij-window` for the hero and `.ij-tour--window` for the tour, from 1.28.0;
+  - `.ij-compare` with your own photo before and after, and its measured sizes in `.ij-num`;
+  - `.ij-chips` for the sizes, `<mark>` for anything the lime stands behind, and never the lime as a text colour.
+- **`.ij-skip`** first in the body. No drawings; the photo's credit goes in the fineprint, if the photo isn't your own.
+
+### What TrimrPix for iOS loads
+All from `@v1.32.0`, with the hashes below:
+- **The files:**
+  - `dist/css/tokens.css` and `dist/identity/trimrpix-ios.css`. It turns the site light only;
+  - `dist/fonts/bricolage-grotesque.css` **and** `dist/fonts/jetbrains-mono.css`;
+  - `dist/kit/kit.css`, `dist/kit/kit.js`, `ij-nav.js` and `ij-footer.js`.
+- **The `.black` App Store fragments** (`dist/store/trimrpix-ios.en.black.html`, `.footer.black.html`) and `trimrpix-ios.en.offer.json`.
+- **The pieces:**
+  - `.ij-phone` in the hero and `.ij-tour` for the three steps;
+  - the same `.ij-compare` and `.ij-chips` as the Mac site, with your own photo and sizes;
+  - `<mark>` for highlights.
+- **`.ij-skip`** first in the body. No drawings, and a credit line only for a photo that isn't your own.
+
 ## [1.31.0] — 2026-10-13
 
 Wean's and Walkful's pictures, as photographs with their one magenta line (#90).
@@ -1107,6 +1161,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.32.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.32.0
 [1.31.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.31.0
 [1.30.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.30.0
 [1.29.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.29.1
