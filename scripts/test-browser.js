@@ -140,7 +140,7 @@ ${FULL_NAV.replace('<ij-nav>', '<ij-nav cta-after="#hero-cta">')}
   // hold for any dark site that has drawings, though WODrounds itself has none.
   'kit-dark-drawing': page({ nav: false, identity: 'wodrounds', body: `
 <link rel="stylesheet" href="/dist/kit/kit.css">
-<main class="ij-page" style="padding: 24px">${fs.readFileSync(path.join(ROOT, 'dist/drawings/wean/low-tide.svg'), 'utf-8')}</main>` }),
+<main class="ij-page" style="padding: 24px">${fs.readFileSync(path.join(ROOT, 'dist/drawings/its-mono-yo/pad-sampler.svg'), 'utf-8')}</main>` }),
 
   // A scene (#81) at its worst: a white photo on a dark site, a black one on a
   // light site. Every kind of text a scene may carry, and a long line that
@@ -658,7 +658,7 @@ try {
   // WODrounds alone sets its mood with photos (#81).
   // It's mono (#83) is a Mac app: a window, not a phone, and reviews set as type.
   const PHONE = ['.ij-window', '.ij-reviews'];
-  const notOn = { walkful: ['.ij-staircase', '.ij-scene', ...PHONE], wean: ['.ij-source', '.ij-scene', ...PHONE],
+  const notOn = { walkful: ['.ij-staircase', ...PHONE], wean: ['.ij-source', '.ij-staircase', ...PHONE],
     wodrounds: ['.ij-staircase', '.ij-source', '.ij-statements', ...PHONE], 'its-mono-yo': ['.ij-phone', '.ij-source', '.ij-staircase', '.ij-scene'],
     // Anvil and TonVault (#91) use no drawings: the app's data is the picture.
     'anvil-workout': ['.ij-statements', '.ij-source', '.ij-staircase', '.ij-scene', ...PHONE],
@@ -745,7 +745,7 @@ try {
   const dd = await p.eval(`(() => { const svg = document.querySelector('.ij-drawing');
     return { ink: getComputedStyle(svg.querySelector('g:last-of-type path')).stroke, mark: getComputedStyle(svg.querySelector('.ij-mark')).stroke,
       bg: getComputedStyle(document.body).backgroundColor, edge: getComputedStyle(document.documentElement).getPropertyValue('--ij-color-border-default').trim() }; })()`);
-  check('a drawing on a dark site takes the light ink and keeps its magenta waterline; the phone\'s edge is the dark border colour',
+  check('a drawing on a dark site takes the light ink and keeps its one line in the accent; the phone\'s edge is the dark border colour',
     dd.ink === 'rgb(242, 243, 239)' && dd.mark === 'rgb(208, 255, 0)' && dd.bg === 'rgb(11, 12, 13)' && /255, 255, 255/.test(dd.edge), JSON.stringify(dd));
 
   // WODrounds (#78): a timer's digits must not shift, so .ij-numeral sets
@@ -845,25 +845,29 @@ try {
   await p.settle(100);
   check('a site without bordered panels keeps its cards flat', await p.eval(`getComputedStyle(document.querySelector('.ij-card')).borderTopWidth === '0px'`));
 
-  // Wean's drawings (#75) at phone width: every one on screen at a readable
-  // size, its strokes kept at their width, the waterline and the staircase in
-  // the accent, and the staircase's text in the served HTML.
-  await p.viewport(375, 812);
-  await p.goto(`${base}/nojs/kit/wean.html`);
-  await p.settle(200);
-  const dr = await p.eval(`(() => {
-    const ds = [...document.querySelectorAll('svg[class*="ij-drawing--wean-"]')];
-    const mark = ds.map(d => d.querySelector('.ij-mark'));
-    const stairs = document.querySelector('.ij-staircase .ij-loose');
-    return { count: ds.length, narrowest: Math.min(...ds.map(d => Math.round(d.getBoundingClientRect().width))),
-      marks: [...new Set(mark.map(m => getComputedStyle(m).stroke))], effect: [...new Set(mark.map(m => getComputedStyle(m).vectorEffect))],
-      stairs: stairs && [getComputedStyle(stairs).stroke, getComputedStyle(stairs).vectorEffect, Math.round(stairs.getBoundingClientRect().width)],
-      text: document.querySelector('#wean-stairs-text')?.textContent.trim().slice(0, 40) };
-  })()`);
-  check('Wean\'s eight drawings at 375 px: all on screen at 120 px or more, strokes held, waterline and staircase in the accent',
-    dr.count === 8 && dr.narrowest >= 120 && dr.marks.join() === 'rgb(241, 64, 254)' && dr.effect.join() === 'non-scaling-stroke' &&
-    dr.stairs?.[0] === 'rgb(241, 64, 254)' && dr.stairs?.[1] === 'non-scaling-stroke' && dr.stairs?.[2] >= 280 &&
-    dr.text.startsWith('An example, not a plan'), JSON.stringify(dr));
+  // Photo scenes with the one magenta line (#90), on Walkful and Wean at both
+  // ends of the scale: the line in the accent at its width, cropped with the
+  // photo so it stays inside the scene, above the scene's dimming; the photo in
+  // monochrome, Wean's mirrored; and the line falling left to right on Wean.
+  for (const [demo, w, h] of [['walkful', 1440, 900], ['walkful', 375, 812], ['wean', 1440, 900], ['wean', 375, 812]]) {
+    await p.viewport(w, h);
+    await p.goto(`${base}/kit/${demo}.html`);
+    await p.settle(150);
+    const sc = await p.eval(`(() => {
+      const scene = document.querySelector('.ij-scene:has(.ij-scene__line)'), line = scene.querySelector('.ij-scene__line path');
+      const photo = scene.querySelector('.ij-scene__photo'), a = scene.getBoundingClientRect(), b = line.getBoundingClientRect();
+      const len = line.getTotalLength(), m = line.getScreenCTM(), at = t => { const q = line.getPointAtLength(len * t); return [q.x * m.a + m.e, q.y * m.d + m.f]; };
+      return { stroke: getComputedStyle(line).stroke, effect: getComputedStyle(line).vectorEffect, filter: getComputedStyle(photo).filter,
+        mirrored: getComputedStyle(photo).transform, z: getComputedStyle(scene.querySelector('.ij-scene__line')).zIndex,
+        inside: b.width > 20 && b.left >= a.left - 2 && b.right <= a.right + 2 && b.top >= a.top - 2 && b.bottom <= a.bottom + 2,
+        visible: (Math.min(b.right, a.right) - Math.max(b.left, a.left)) * (Math.min(b.bottom, a.bottom) - Math.max(b.top, a.top)) > 0,
+        start: at(0.02), end: at(0.98) };
+    })()`);
+    check(`${demo} at ${w}: the scene's magenta line in the accent, cropped with its photo, over a monochrome photo${demo === 'wean' ? ', mirrored, the line falling left to right' : ''}`,
+      sc.stroke === 'rgb(241, 64, 254)' && sc.effect === 'non-scaling-stroke' && sc.filter === 'grayscale(1)' && sc.visible && sc.z === '0' &&
+      (demo === 'wean' ? sc.mirrored === 'matrix(-1, 0, 0, 1, 0, 0)' && sc.end[0] > sc.start[0] && sc.end[1] > sc.start[1] : sc.mirrored === 'none'),
+      JSON.stringify(sc));
+  }
   await p.viewport(1440, 900);
 
   // Motion (#65): two things move, and only when they may.

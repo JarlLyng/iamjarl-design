@@ -4,7 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Marketing kit: Walkful example</title>
-<meta name="description" content="An example page built from the IAMJARL marketing kit, with Walkful's identity.">
+<meta name="description" content="An example page built from the IAMJARL marketing kit, with Walkful's identity and two photographs of paths through trees.">
+<!-- Walkful's identity (#65), and its paths and trees in two photographs (#90): the
+     placeholder drawings didn't hold up, so the owner chose photos for the mood. The
+     walked path is the one magenta line, drawn on the first photo. The line between
+     the markers below is written by the build from kit/scenes.js; edit that, not this. -->
 <meta name="robots" content="noindex">
 <link rel="stylesheet" href="../dist/css/tokens.css">
 <link rel="stylesheet" href="../dist/identity/walkful.css">
@@ -31,7 +35,6 @@
     <div class="ij-container ij-hero__inner">
       <div class="ij-hero__text">
         <h1 class="ij-display">Every step counts.</h1>
-        <svg class="ij-drawing" viewBox="0 0 320 24" aria-hidden="true"><path d="M3 15c28-9 52-11 79-6s45 9 74 3 47-12 79-8 47 9 82 4" fill="none" style="stroke: var(--ij-color-accent)" stroke-width="3.2" stroke-linecap="round"/></svg>
         <p class="ij-lede">Walkful turns your daily walks into something meaningful, calmly and entirely on your phone.</p>
         <!-- dist/store/walkful.en.black.html -->
         <div class="ij-store" data-ij-store="walkful" data-ij-store-locale="en">
@@ -51,36 +54,24 @@
     </div>
   </section>
 
-  <!-- Statements, one drawing each -->
+  <!-- Statements, side by side -->
   <section class="ij-section" id="how" aria-labelledby="how-h">
     <div class="ij-container">
       <h2 class="ij-headline" id="how-h" style="margin-bottom: var(--ij-mkt-space-block)">Walking, not winning.</h2>
       <div class="ij-statements">
         <div class="ij-statement">
-          <svg class="ij-drawing" viewBox="0 0 480 300" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <g style="stroke: var(--ij-color-text-tertiary)" stroke-width="2"><path d="M330 236v-86"/><path d="M330 168c-34-6-52-30-44-58 6-22 30-36 52-30 24-24 64-12 68 18 26 6 32 40 10 54-12 14-48 22-86 16"/><path d="M406 240v-56"/><path d="M406 196c-22-2-32-20-26-36 4-14 18-22 32-18 16-14 40-4 40 16 14 6 14 28-2 34-10 6-26 8-44 4"/></g>
-            <path d="M24 282c60-6 110-18 150-40s70-48 120-56 90 6 150-8" style="stroke: var(--ij-color-accent)" stroke-width="3"/>
-          </svg>
           <div class="ij-statement__text">
             <h3 class="ij-title">Every step counts, and none is a failure.</h3>
             <p>A short walk is a walk. Walkful shows what you did, not what you missed.</p>
           </div>
         </div>
         <div class="ij-statement">
-          <svg class="ij-drawing" viewBox="0 0 480 300" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <g style="stroke: var(--ij-color-text-tertiary)" stroke-width="2"><path d="M120 240v-90"/><path d="M120 162c-40-4-60-34-48-62 10-22 36-30 56-22 22-26 70-16 74 18 28 8 30 46 4 58-14 12-50 14-86 8"/><path d="M220 244v-60"/><path d="M220 196c-24-2-34-22-26-38 6-14 22-20 34-16 18-14 42-4 42 18 14 6 12 28-4 34-12 4-28 6-46 2"/></g>
-            <path d="M40 270c70 4 130-4 190-20s110-30 160-26 50 10 70 8" style="stroke: var(--ij-color-accent)" stroke-width="3"/>
-          </svg>
           <div class="ij-statement__text">
             <h3 class="ij-title">Your history, without judgement.</h3>
             <p>Weeks and months laid out plainly. A quiet day is part of the picture, not a mark against you.</p>
           </div>
         </div>
         <div class="ij-statement">
-          <svg class="ij-drawing" viewBox="0 0 480 300" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <g style="stroke: var(--ij-color-text-tertiary)" stroke-width="2"><path d="M240 250V120"/><path d="M240 140c-60-6-90-50-72-92 14-32 54-46 86-32 34-36 100-20 104 28 40 12 42 66 4 84-22 18-74 22-122 12"/></g>
-            <path d="M30 276c90-2 160-10 210-26s120-20 210-14" style="stroke: var(--ij-color-accent)" stroke-width="3"/>
-          </svg>
           <div class="ij-statement__text">
             <h3 class="ij-title">About 7,000 steps is enough to matter.</h3>
             <p>Not the 10,000 myth. The evidence points lower, and Walkful sets its goal there.</p>
@@ -89,6 +80,16 @@
       </div>
     </div>
   </section>
+
+  <!-- A scene: a path worn through the grass, the walked line the one magenta line -->
+  <div class="ij-scene" aria-hidden="true">
+    <img class="ij-scene__photo" src="https://images.unsplash.com/photo-1760283467156-90141d225116?w=1280&amp;q=75&amp;auto=format" srcset="https://images.unsplash.com/photo-1760283467156-90141d225116?w=960&amp;q=75&amp;auto=format 960w, https://images.unsplash.com/photo-1760283467156-90141d225116?w=1600&amp;q=75&amp;auto=format 1600w, https://images.unsplash.com/photo-1760283467156-90141d225116?w=2400&amp;q=70&amp;auto=format 2400w" sizes="100vw" width="1600" height="1067" alt="" loading="lazy" decoding="async">
+<!-- scene-line:walkful-path-in-fog -->
+<svg class="ij-scene__line" viewBox="0 0 1600 1067" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+  <path class="ij-loose" d="M905.8 1068.3Q884.4 1034.2 875.2 1017.1Q866 1000 852.5 982.5Q839 965 825.5 947.5Q812 930 798.8 912.2Q785.7 894.5 771.8 877.2Q758 860 746.9 842.9Q735.8 825.7 725.9 807.9Q716 790 712.3 774.9Q708.6 759.8 704.3 744.9Q700 730 704 705Q708 680 719 662.5Q730 645 741.5 630.9L752.9 616.8"/>
+</svg>
+<!-- /scene-line -->
+  </div>
 
   <!-- Frameless pieces in a bento -->
   <section class="ij-section ij-section--band" aria-labelledby="pieces-h">
@@ -195,15 +196,14 @@
     <div class="ij-container">
       <div class="ij-maker">
         <p>The maker's note goes here: three or four sentences in the first person, on why Walkful exists and why it is calm. The owner writes it.</p>
-        <p class="ij-maker__sign">Jarl
-          <svg class="ij-drawing" viewBox="0 0 140 14" aria-hidden="true"><path d="M2 9c20-6 40-6 62-2s46 4 74-3" fill="none" style="stroke: var(--ij-color-accent)" stroke-width="2.4" stroke-linecap="round"/></svg>
-        </p>
+        <p class="ij-maker__sign">Jarl</p>
       </div>
     </div>
   </section>
 
-  <!-- Closing: the wordmark, large -->
-  <section class="ij-section ij-section--band" aria-label="Download Walkful">
+  <!-- Closing: the wordmark, under the trees -->
+  <section class="ij-scene" aria-label="Download Walkful">
+    <img class="ij-scene__photo" src="https://images.unsplash.com/photo-1784859499528-02ecc1df6dda?w=1280&amp;q=75&amp;auto=format" srcset="https://images.unsplash.com/photo-1784859499528-02ecc1df6dda?w=960&amp;q=75&amp;auto=format 960w, https://images.unsplash.com/photo-1784859499528-02ecc1df6dda?w=1600&amp;q=75&amp;auto=format 1600w, https://images.unsplash.com/photo-1784859499528-02ecc1df6dda?w=2400&amp;q=70&amp;auto=format 2400w" sizes="100vw" width="1600" height="1067" alt="" loading="lazy" decoding="async">
     <div class="ij-container ij-closing">
       <p class="ij-wordmark">Walkful</p>
       <div class="ij-store" data-ij-store="walkful" data-ij-store-locale="en">
@@ -218,7 +218,7 @@
 </main>
 
 <ij-footer app="walkful">
-  <span slot="fineprint">An example page for the IAMJARL marketing kit (#65). The drawings, the phone frame and the maker's note are placeholders.</span>
+  <span slot="fineprint">Photos by Luca Volpe and zhao sky on Unsplash. An example page for the IAMJARL marketing kit (#65, #90); the phone frame and the maker's note are placeholders.</span>
 </ij-footer>
 
 </body>

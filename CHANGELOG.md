@@ -5,6 +5,52 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.31.0] — 2026-10-13
+
+Wean's and Walkful's pictures, as photographs with their one magenta line (#90).
+
+### Changed
+- **Photographs in place of drawings, for Wean and Walkful.**
+  - **Why:** Wean's coast drawings from #75 and Walkful's placeholders didn't hold up next to the type and the app captures. Generated drawings read as diagrams. Three more attempts, in a pen stroke and as an engraving, didn't reach the bar either.
+  - **The owner's choice (2026-10-13):** photographs for the mood, fewer pictures over more.
+  - **What the sites get:** two scenes each, on the kit's `.ij-scene` from 1.26.0, both free under the Unsplash License, with no faces and no brands:
+    - **Wean,** two by Julia Taubitz: tidal flats under a grey sky, the water drawing back, as a band; and wide flats under an overcast sky, behind the closing.
+    - **Walkful:** a path worn through the grass between trees in fog (Luca Volpe), as a band; and a narrow worn path under large trees (zhao sky), behind the closing.
+- **Removed: Wean's eight drawings** (`dist/drawings/wean/`, `kit/drawings/wean.js`) and the example's taper staircase. Wean took both off its pages on 2026-10-13. `kit/loose.js` and `stairsPoints` stay.
+- **The Wean and Walkful examples** show the scenes, and their statements stand as text, side by side. Wean's plan is a week-by-week table from Wean's own maths. The photographers are credited in the fineprint. The "Illustrations drawn with AI" line goes, as there are no drawings.
+
+### Added
+- **The scene's one magenta line,** `.ij-scene__line`: Walkful's walked path, Wean's waterline. It is drawn on the photo by hand through the loose stroke, as an SVG the size of the photo with `preserveAspectRatio="xMidYMid slice"`, so it crops exactly as the photo does at any width. It sits above the scene's dimming, so it stays vivid. The lines come from `kit/scenes.js` and ship in `dist/scenes/<app>/`.
+- **`.ij-scene__photo--mirrored`**, for when the brief needs the line to run the other way. Wean's waterline must fall from left to right, and its photo's rises.
+- **Statements without drawings** stand side by side as short columns.
+- **Tests:**
+  - every scene's photo is named, free and credited;
+  - Wean's line falls left to right;
+  - each line file is the size of its photo and is the same SVG on the example;
+  - in Chrome at 1440 and 375 px, each line is in the accent, cropped with its photo over a monochrome picture, and Wean's photo is mirrored with the line falling.
+
+### What Wean loads
+- **`dist/kit/kit.css` from `@v1.31.0`,** with the hash below. The other files may follow.
+- **The photos, from Unsplash (free licence):**
+  - [okDw1STxJZ8](https://unsplash.com/photos/okDw1STxJZ8) as a band between sections, with `.ij-scene__photo--mirrored`;
+  - [tEiP7X6u3Yc](https://unsplash.com/photos/tEiP7X6u3Yc) behind the closing wordmark.
+
+  Self-host them at 960, 1280 and 1920 px, or load them from `images.unsplash.com` with `?w=`. Keep the band's photo centred.
+- **The line:** `dist/scenes/wean-nicotine/tidal-flats.svg`, inlined in the band right after the photo.
+- **What goes:** `dist/drawings/wean/` is gone, so the sync drops it.
+- **Credit:** a photo credit in the fineprint is optional; the example has "Photos by Julia Taubitz on Unsplash". No badge.
+
+### What Walkful loads
+- **`dist/kit/kit.css` from `@v1.31.0`,** with the hash below.
+- **The photos, from Unsplash (free licence):**
+  - [ZrQZf1xY8KQ](https://unsplash.com/photos/ZrQZf1xY8KQ) as a band between sections;
+  - [6KCyb6eoWmY](https://unsplash.com/photos/6KCyb6eoWmY) behind the closing wordmark.
+- **The line:** `dist/scenes/walkful/path-in-fog.svg`, inlined in the band right after the photo.
+- **What goes:**
+  - the three placeholder drawings, so the statements stand as text;
+  - the magenta underlines in the hero and under the maker's signature, so the walked path is the one magenta line;
+  - the "Illustrations drawn with AI" line, if the site has it.
+
 ## [1.30.0] — 2026-10-13
 
 Anvil Workout's and TonVault's identities, two light sites with no drawings, and a waveform helper for TonVault (#91).
@@ -1061,6 +1107,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.31.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.31.0
 [1.30.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.30.0
 [1.29.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.29.1
 [1.29.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.29.0

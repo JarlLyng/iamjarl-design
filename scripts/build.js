@@ -1268,12 +1268,10 @@ function generateKitJs(tokens) {
 // into the kit's example page, so the files and the page cannot drift apart.
 async function generateDrawings(tokens) {
   const { renderDrawing } = await import(pathToFileURL(path.join(ROOT, 'kit', 'drawings', 'render.js')).href);
-  const { WEAN_DRAWINGS } = await import(pathToFileURL(path.join(ROOT, 'kit', 'drawings', 'wean.js')).href);
   const { ITS_MONO_DRAWINGS } = await import(pathToFileURL(path.join(ROOT, 'kit', 'drawings', 'its-mono-yo.js')).href);
-  const { loosePath, stairsPoints } = await import(pathToFileURL(path.join(ROOT, 'kit', 'loose.js')).href);
   const files = [], inline = {};
   // One set per app: its files in dist/drawings/<app>/, named without the prefix.
-  for (const [app, name, source, set] of [['wean', 'Wean', 'wean.js', WEAN_DRAWINGS], ['its-mono-yo', 'It\'s mono', 'its-mono-yo.js', ITS_MONO_DRAWINGS]]) {
+  for (const [app, name, source, set] of [['its-mono-yo', 'It\'s mono', 'its-mono-yo.js', ITS_MONO_DRAWINGS]]) {
     for (const d of set) {
       const svg = renderDrawing(d);
       files.push([`${app}/${d.id.replace(new RegExp(`^${app}-`), '')}.svg`,
@@ -1282,18 +1280,42 @@ async function generateDrawings(tokens) {
       inline[`drawing:${d.id}`] = svg;
     }
   }
-  // The example staircase on the Wean page: Wean's own taper maths for 10 a day
-  // at 10% a week (lib/taper-plan.ts: one-decimal rounding, then the whole-pouch
-  // floor), drawn through the loose stroke. Wean draws its own from the app.
+  return { files, inline };
+}
+
+// Photo scenes with the one magenta line (#90): the line drawn on the photo by
+// hand, in an SVG the size of the photo that crops as the photo does. One file
+// per scene with a line in dist/scenes/<app>/, and the same SVG written into
+// the kit's example page.
+async function generateScenes(tokens) {
+  const { SCENES } = await import(pathToFileURL(path.join(ROOT, 'kit', 'scenes.js')).href);
+  const { loosePath } = await import(pathToFileURL(path.join(ROOT, 'kit', 'loose.js')).href);
+  const files = [], inline = {};
+  for (const s of SCENES.filter(x => x.line)) {
+    const [w, h] = s.photo.size;
+    const svg = [
+      `<svg class="ij-scene__line" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">`,
+      `  <path class="ij-loose" d="${loosePath(s.line, { seed: s.seed, wobble: 3, step: 40 })}"/>`,
+      `</svg>`,
+    ].join('\n');
+    files.push([`${s.app}/${s.id.replace(new RegExp(`^${s.app.split('-')[0]}-`), '')}.svg`,
+      `<!-- IAMJARL scene line for ${s.app}: ${s.title}. On the photo https://unsplash.com/photos/${s.photo.unsplash} ` +
+      `(${s.photo.by}, Unsplash License)${s.mirrored ? ', shown mirrored with .ij-scene__photo--mirrored' : ''}. ` +
+      `Generated from kit/scenes.js, v${tokens.meta.version}. Inline it in the .ij-scene after the photo; do not edit. -->\n${svg}\n`]);
+    inline[`scene-line:${s.id}`] = svg;
+  }
+  // Wean's plan in the example, as Wean now shows it: a week-by-week table from
+  // its own maths for 10 a day at 10% a week (lib/taper-plan.ts), the weeks with
+  // the same allowance joined.
   const values = weanTaperExample(10, 10);
-  const d = loosePath(stairsPoints(values, { x: 16, y: 14, width: 608, height: 176, max: 10 }), { seed: 7, wobble: 1.2, step: 12 });
-  inline['staircase:wean-example'] = [
-    `<svg class="ij-staircase" viewBox="0 0 640 210" fill="none" role="img" aria-labelledby="wean-stairs-text">`,
-    `  <path class="ij-loose" d="${d}"/>`,
-    `</svg>`,
+  const runs = [];
+  values.forEach((v, i) => (runs.length && runs.at(-1).v === v ? runs.at(-1).to = i + 1 : runs.push({ v, from: i + 1, to: i + 1 })));
+  inline['plan:wean-example'] = [
+    `<table class="ij-data">`,
+    ...runs.map(r => `  <tr><th scope="row">${r.from === r.to ? `Week ${r.from}` : `Weeks ${r.from}–${r.to}`}</th><td class="ij-num">${r.v} a day</td></tr>`),
+    `</table>`,
   ].join('\n');
-  inline['staircase:wean-example-text'] = `An example, not a plan: 10 a day at 10% a week, in whole pouches. ` +
-    `Week by week: ${values.join(', ')}.`;
+  inline['plan:wean-example-text'] = `An example, not a plan: 10 a day at 10% a week, in whole pouches, over ${values.length} weeks.`;
   return { files, inline };
 }
 
@@ -1653,7 +1675,12 @@ async function main() {
   const drawingsDir = path.join(ROOT, 'dist', 'drawings');
   if (fs.existsSync(drawingsDir)) fs.rmSync(drawingsDir, { recursive: true });
   for (const [f, svg] of drawings.files) writeFile(path.join(drawingsDir, f), svg);
-  writeExamplePage(path.join(ROOT, 'kit', 'wean.html'), drawings.inline);
+  const scenes = await generateScenes(tokens);
+  const scenesDir = path.join(ROOT, 'dist', 'scenes');
+  if (fs.existsSync(scenesDir)) fs.rmSync(scenesDir, { recursive: true });
+  for (const [f, svg] of scenes.files) writeFile(path.join(scenesDir, f), svg);
+  writeExamplePage(path.join(ROOT, 'kit', 'wean.html'), scenes.inline);
+  writeExamplePage(path.join(ROOT, 'kit', 'walkful.html'), scenes.inline);
   writeExamplePage(path.join(ROOT, 'kit', 'its-mono-yo.html'), drawings.inline);
   writeExamplePage(path.join(ROOT, 'kit', 'tonvault.html'), await exampleWaves());
   const storeFragments = await generateStoreFragments(tokens);
