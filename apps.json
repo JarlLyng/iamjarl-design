@@ -1,7 +1,7 @@
 {
   "$comment": "Canonical list of IAMJARL products. Consumed by <ij-footer> to build cross-links, so a new app is added here once rather than in every site's footer. Each app may carry an `identity` (#65): its own ground, text, accent and display face, emitted as dist/identity/<app>.css; components/identity.js describes the fields. Categories only group the footer's links now; the family accents and faces they carried until 1.21.0 were copied onto their apps. Order is not significant except for the two always-links, which render in the order listed here. Everything else is selected by category and sorted by id, so the list can be re-sorted without rewriting a single fragment.",
   "meta": {
-    "updated": "2026-10-12"
+    "updated": "2026-10-13"
   },
   "categories": {
     "fitness": {
@@ -94,12 +94,15 @@
       "listed": true,
       "consumes": false,
       "identity": {
-        "display": "mono",
+        "scheme": "light",
+        "display": "geometric",
+        "numerals": "mono",
         "light": {
-          "accent": "#587114"
-        },
-        "dark": {
-          "accent": "#D0FF00"
+          "background": "#F3F3EF",
+          "surface": "#FFFFFF",
+          "text": "#1C1D21",
+          "accent": "#F140FE",
+          "accentText": "#A80FB3"
         }
       },
       "store": {
@@ -411,12 +414,15 @@
       "listed": true,
       "consumes": true,
       "identity": {
+        "scheme": "light",
         "display": "mono",
+        "panels": "bordered",
         "light": {
-          "accent": "#177082"
-        },
-        "dark": {
-          "accent": "#23ACC7"
+          "background": "#F5F4EE",
+          "surface": "#FFFFFF",
+          "text": "#141414",
+          "accent": "#D0FF00",
+          "accentText": "#4A5900"
         }
       },
       "store": {

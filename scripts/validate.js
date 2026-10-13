@@ -528,10 +528,13 @@ function validateIdentities(apps, tokensRef, one = 'site identity', many = 'site
   const ratio = (fg, bg) => contrastRatio(parseColor(fg), parseColor(bg));
   for (const a of withIdentity) {
     const id = a.identity;
-    const known = ['scheme', 'display', 'panels', ...MODES];
+    const known = ['scheme', 'display', 'numerals', 'panels', ...MODES];
     for (const k of Object.keys(id)) if (!known.includes(k)) bad(a, `unknown field "${k}"`);
     if (id.scheme !== undefined && !MODES.includes(id.scheme)) bad(a, `scheme must be "light" or "dark", not "${id.scheme}"`);
     if (id.panels !== undefined && !PANELS.includes(id.panels)) bad(a, `panels must be ${PANELS.map(p => `"${p}"`).join(' or ')}, not "${id.panels}"`);
+    if (id.numerals !== undefined && !faces.includes(id.numerals)) {
+      bad(a, `numerals "${id.numerals}" is not in the approved set (${faces.join(', ')})`);
+    }
     if (id.display !== undefined && !faces.includes(id.display)) {
       bad(a, `display "${id.display}" is not in the approved set (${faces.join(', ')})`);
     }

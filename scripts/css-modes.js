@@ -99,6 +99,12 @@ export function identitySheetCss(app, id, tokens) {
     // A face whose character lives on an axis (Fraunces' SOFT) carries it
     // here, so a site gets the face it was shown, not the axis's default.
     if (face && id.display?.face.axes) v('font-display-axes', id.display.face.axes);
+    // The numbers' own face (#91), with its own axes so the display face's
+    // (Fraunces' SOFT) never reaches a mono numeral.
+    if (face && id.numerals) {
+      v('font-numeral', id.numerals.face.stack);
+      v('font-numeral-axes', id.numerals.face.axes ?? 'normal');
+    }
     // Bordered panels (#83) don't change with mode either: the border colour
     // they name is the mode's own.
     if (face && id.panels === 'bordered') v('panel-border', '1px solid var(--ij-color-border-default)');
@@ -110,6 +116,9 @@ export function identitySheetCss(app, id, tokens) {
     `/* design system v${tokens.meta.version}. ${id.scheme ? `${id.scheme === 'light' ? 'Light' : 'Dark'} only: this sheet holds the site in that mode whatever the visitor's setting.` : 'Follows the visitor\'s light or dark setting.'} */`,
     id.display
       ? `/* Display face: ${id.display.face.name} (${id.display.face.licence}). Self-host it; see design.md. */`
+      : null,
+    id.numerals
+      ? `/* Numeral face: ${id.numerals.face.name} (${id.numerals.face.licence}), for .ij-numeral. Load it too. */`
       : null,
     '',
     ':root {',

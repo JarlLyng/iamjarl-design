@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketing kit: TonVault example</title>
+<meta name="description" content="An example page built from the IAMJARL marketing kit with TonVault's identity: a light service manual, black ink, bordered panels, lime as a highlighter and waveforms drawn from audio.">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="../dist/css/tokens.css">
+<link rel="stylesheet" href="../dist/identity/tonvault.css">
+<link rel="stylesheet" href="../dist/fonts/jetbrains-mono.css">
+<link rel="stylesheet" href="../dist/kit/kit.css">
+<!-- TonVault's identity (#91): light whatever the visitor's setting, a service
+     manual: off-white paper, black ink, bordered panels and JetBrains Mono for
+     headlines, labels and values. The icon's lime is a highlighter, a fill behind
+     black text and inside the waveforms, never text on the paper; links take a
+     dark olive. The waveforms are drawn by kit/wave.js at build time; TonVault
+     feeds it real samples, and this example synthesises four sounds instead. The
+     window shows TonVault's current public screenshot. The copy follows TonVault's
+     page brief and today's site. -->
+<script type="module" src="../dist/components/ij-nav.js"></script>
+<script type="module" src="../dist/components/ij-footer.js"></script>
+<script type="module" src="../dist/kit/kit.js"></script>
+</head>
+<body class="ij-page">
+<a class="ij-skip" href="#main">Skip to content</a>
+
+<ij-nav>
+  <a slot="brand" href="./tonvault.html">TonVault</a>
+  <a slot="links" href="#jobs">What it does</a>
+  <a slot="links" href="#checks">Health check</a>
+  <a slot="cta" href="https://apps.apple.com/app/id6792136657?pt=128512007&amp;ct=site&amp;mt=12" data-umami-event="store-click" data-umami-event-store="mac-app-store" data-umami-event-placement="nav" data-umami-event-locale="en">Download</a>
+</ij-nav>
+
+<main id="main">
+
+  <!-- Hero, centred: the words, a real waveform as the signature, then the window -->
+  <section class="ij-hero ij-hero--centred" id="hero">
+    <div class="ij-container ij-hero__inner">
+      <div class="ij-hero__text">
+        <p class="ij-label">A Mac companion for the Tonverk</p>
+        <h1 class="ij-display">See everything on your Tonverk card. Lose nothing.</h1>
+        <p class="ij-lede">TonVault scans your SD card, shows every sample with waveform and metadata, flags the problems Tonverk won't warn you about, and keeps verified backups of your work.</p>
+        <!-- dist/store/tonvault.en.black.html -->
+        <div class="ij-store" data-ij-store="tonvault" data-ij-store-locale="en">
+          <a class="ij-store-badge" href="https://apps.apple.com/app/id6792136657?pt=128512007&amp;ct=site&amp;mt=12" data-umami-event="store-click" data-umami-event-store="mac-app-store" data-umami-event-placement="hero" data-umami-event-locale="en">
+            <img src="../badges/mac-app-store-black-en-us.svg" alt="Download on the Mac App Store" width="156" height="40">
+          </a>
+          <p class="ij-store-facts">$1.99 once · macOS 14 or later</p>
+        </div>
+      </div>
+<!-- wave:tonvault-hero -->
+<svg class="ij-wave" viewBox="0 0 960 120" role="img" aria-label="The waveform of a two-bar beat: kicks, snares and hats">
+  <path d="M0 7.5L4 11.3L8 19.2L12.1 22.8L16.1 28.1L20.1 31.5L24.1 34.8L28.1 37.8L32.1 39.3L36.2 42L40.2 43.1L44.2 45.2L48.2 46.1L52.2 47.9L56.2 48.7L60.3 37.3L64.3 41.8L68.3 47.6L72.3 49.3L76.3 51.7L80.3 53.2L84.4 54.1L88.4 54.5L92.4 55.3L96.4 55.7L100.4 56.3L104.4 56.5L108.5 57L112.5 57.2L116.5 57.5L120.5 17.3L124.5 30.4L128.5 33.2L132.6 40.2L136.6 41.2L140.6 46.1L144.6 48.6L148.6 50.5L152.6 52.3L156.7 53.4L160.7 54.7L164.7 55.6L168.7 56.6L172.7 56.9L176.7 57.5L180.8 43.9L184.8 50.4L188.8 53.7L192.8 56.1L196.8 57.5L200.8 58L204.9 58.7L208.9 59.1L212.9 59.3L216.9 59.3L220.9 59.3L224.9 59.3L229 59.3L233 59.3L237 59.3L241 1.2L245 13.1L249 19.2L253.1 23.7L257.1 27L261.1 32.1L265.1 34.7L269.1 38L273.1 39.4L277.2 42L281.2 43.1L285.2 45.2L289.2 46.1L293.2 47.9L297.2 48.7L301.3 40.5L305.3 41.6L309.3 47.4L313.3 50L317.3 51.6L321.3 52.7L325.4 54.1L329.4 54.6L333.4 55.4L337.4 55.7L341.4 56.3L345.4 56.6L349.5 57L353.5 57.2L357.5 57.5L361.5 16.9L365.5 28.8L369.5 34.6L373.6 38.5L377.6 42.7L381.6 45.1L385.6 48.3L389.6 50.5L393.6 52.2L397.7 53.9L401.7 54.6L405.7 55.5L409.7 56.3L413.7 56.8L417.7 57.6L421.8 45.2L425.8 50.2L429.8 54.1L433.8 55.7L437.8 57.3L441.8 58.1L445.9 58.6L449.9 59.1L453.9 59.2L457.9 59.3L461.9 59.3L465.9 59.3L470 59.3L474 59.3L478 59.3L482 0L486 10.7L490 20.3L494.1 23.8L498.1 27.4L502.1 31.2L506.1 35L510.1 38L514.1 39.3L518.2 41.9L522.2 43.1L526.2 45.2L530.2 46.2L534.2 47.9L538.2 48.7L542.3 38.9L546.3 41.4L550.3 47.6L554.3 49L558.3 51.7L562.3 52.5L566.4 53.9L570.4 54.5L574.4 55.3L578.4 55.7L582.4 56.3L586.4 56.5L590.5 57L594.5 57.2L598.5 57.5L602.5 20.8L606.5 25L610.5 34.5L614.6 38.6L618.6 42.5L622.6 45.1L626.6 48.1L630.6 50.7L634.6 52.3L638.7 53.3L642.7 54.6L646.7 55.6L650.7 56.4L654.7 56.7L658.7 57.6L662.8 44.4L666.8 49.3L670.8 53.5L674.8 55.5L678.8 57.3L682.8 58.2L686.9 58.6L690.9 59.2L694.9 59.3L698.9 59.3L702.9 59.3L706.9 59.3L711 59.3L715 59.3L719 59.3L723 1.4L727 11.1L731 18.3L735.1 23.3L739.1 27.8L743.1 31.4L747.1 34.9L751.1 37.9L755.1 39.4L759.2 42.1L763.2 43.1L767.2 45.2L771.2 46.2L775.2 47.9L779.2 48.7L783.3 38.2L787.3 43.4L791.3 47.5L795.3 49L799.3 51.6L803.3 52.7L807.4 54.1L811.4 54.5L815.4 55.3L819.4 55.7L823.4 56.3L827.4 56.5L831.5 57L835.5 57.2L839.5 57.5L843.5 18.1L847.5 29.1L851.5 34.1L855.6 39.2L859.6 40.9L863.6 46.8L867.6 48.4L871.6 50.3L875.6 52.6L879.7 53L883.7 54.9L887.7 55.8L891.7 56.3L895.7 57L899.7 57.4L903.8 44.8L907.8 49.4L911.8 53.4L915.8 55.9L919.8 57.7L923.8 58.2L927.9 58.7L931.9 59.1L935.9 59.3L939.9 59.3L943.9 59.3L947.9 59.3L952 59.3L956 59.3L960 59.3L960 60.7L956 60.7L952 60.7L947.9 60.7L943.9 60.7L939.9 60.7L935.9 60.7L931.9 60.9L927.9 61.3L923.8 61.8L919.8 62.3L915.8 64.1L911.8 66.6L907.8 70.6L903.8 75.2L899.7 62.6L895.7 63L891.7 63.7L887.7 64.2L883.7 65.1L879.7 67L875.6 67.4L871.6 69.7L867.6 71.6L863.6 73.2L859.6 79.1L855.6 80.8L851.5 85.9L847.5 90.9L843.5 101.9L839.5 62.5L835.5 62.8L831.5 63L827.4 63.5L823.4 63.7L819.4 64.3L815.4 64.7L811.4 65.5L807.4 65.9L803.3 67.3L799.3 68.4L795.3 71L791.3 72.5L787.3 76.6L783.3 81.8L779.2 71.3L775.2 72.1L771.2 73.8L767.2 74.8L763.2 76.9L759.2 77.9L755.1 80.6L751.1 82.1L747.1 85.1L743.1 88.6L739.1 92.2L735.1 96.7L731 101.7L727 108.9L723 118.6L719 60.7L715 60.7L711 60.7L706.9 60.7L702.9 60.7L698.9 60.7L694.9 60.7L690.9 60.8L686.9 61.4L682.8 61.8L678.8 62.7L674.8 64.5L670.8 66.5L666.8 70.7L662.8 75.6L658.7 62.4L654.7 63.3L650.7 63.6L646.7 64.4L642.7 65.4L638.7 66.7L634.6 67.7L630.6 69.3L626.6 71.9L622.6 74.9L618.6 77.5L614.6 81.4L610.5 85.5L606.5 95L602.5 99.2L598.5 62.5L594.5 62.8L590.5 63L586.4 63.5L582.4 63.7L578.4 64.3L574.4 64.7L570.4 65.5L566.4 66.1L562.3 67.5L558.3 68.3L554.3 71L550.3 72.4L546.3 78.6L542.3 81.1L538.2 71.3L534.2 72.1L530.2 73.8L526.2 74.8L522.2 76.9L518.2 78.1L514.1 80.7L510.1 82L506.1 85L502.1 88.8L498.1 92.6L494.1 96.2L490 99.7L486 109.3L482 120L478 60.7L474 60.7L470 60.7L465.9 60.7L461.9 60.7L457.9 60.7L453.9 60.8L449.9 60.9L445.9 61.4L441.8 61.9L437.8 62.7L433.8 64.3L429.8 65.9L425.8 69.8L421.8 74.8L417.7 62.4L413.7 63.2L409.7 63.7L405.7 64.5L401.7 65.4L397.7 66.1L393.6 67.8L389.6 69.5L385.6 71.7L381.6 74.9L377.6 77.3L373.6 81.5L369.5 85.4L365.5 91.2L361.5 103.1L357.5 62.5L353.5 62.8L349.5 63L345.4 63.4L341.4 63.7L337.4 64.3L333.4 64.6L329.4 65.4L325.4 65.9L321.3 67.3L317.3 68.4L313.3 70L309.3 72.6L305.3 78.4L301.3 79.5L297.2 71.3L293.2 72.1L289.2 73.9L285.2 74.8L281.2 76.9L277.2 78L273.1 80.6L269.1 82L265.1 85.3L261.1 87.9L257.1 93L253.1 96.3L249 100.8L245 106.9L241 118.8L237 60.7L233 60.7L229 60.7L224.9 60.7L220.9 60.7L216.9 60.7L212.9 60.7L208.9 60.9L204.9 61.3L200.8 62L196.8 62.5L192.8 63.9L188.8 66.3L184.8 69.6L180.8 76.1L176.7 62.5L172.7 63.1L168.7 63.4L164.7 64.4L160.7 65.3L156.7 66.6L152.6 67.7L148.6 69.5L144.6 71.4L140.6 73.9L136.6 78.8L132.6 79.8L128.5 86.8L124.5 89.6L120.5 102.7L116.5 62.5L112.5 62.8L108.5 63L104.4 63.5L100.4 63.7L96.4 64.3L92.4 64.7L88.4 65.5L84.4 65.9L80.3 66.8L76.3 68.3L72.3 70.7L68.3 72.4L64.3 78.2L60.3 82.7L56.2 71.3L52.2 72.1L48.2 73.9L44.2 74.8L40.2 76.9L36.2 78L32.1 80.7L28.1 82.2L24.1 85.2L20.1 88.5L16.1 91.9L12.1 97.2L8 100.8L4 108.7L0 112.5Z"/>
+</svg>
+<!-- /wave -->
+      <div class="ij-hero__media">
+        <div class="ij-window">
+          <img src="https://tonvault.iamjarl.com/screenshot-overview.png" alt="TonVault's overview of a card: 6,444 audio files and a health check with two things to look at" width="1600" height="961" fetchpriority="high">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Built with the people it is for, set as type -->
+  <section class="ij-section ij-section--band" aria-labelledby="built-h">
+    <div class="ij-container ij-stack ij-measure">
+      <p class="ij-label">Elektronauts</p>
+      <h2 class="ij-headline" id="built-h">Built with Tonverk owners.</h2>
+      <p>TonVault took shape in a thread on Elektronauts, with owners of the sampler it serves. <a href="#">Read the thread</a></p>
+    </div>
+  </section>
+
+  <!-- The four jobs, numbered as a manual numbers its sections -->
+  <section class="ij-section" id="jobs" aria-labelledby="jobs-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="jobs-h">Four jobs, done carefully.</h2>
+      <div class="ij-rows">
+        <div class="ij-row">
+          <div class="ij-card">
+            <table class="ij-data">
+              <tr><td>BD Low 01.wav</td><td><!-- wave:tonvault-kick -->
+<svg class="ij-wave" viewBox="0 0 320 64" role="img" aria-label="The waveform of a kick: a sharp attack and a long decay">
+  <path d="M0 0L5.1 0.8L10.2 2.6L15.2 4.5L20.3 5.9L25.4 7.6L30.5 8.7L35.6 9.9L40.6 11L45.7 12.1L50.8 13.2L55.9 14.3L61 15.3L66 16.4L71.1 17.3L76.2 18.2L81.3 19.1L86.3 19.9L91.4 20.2L96.5 20.7L101.6 21.4L106.7 22.1L111.7 22.7L116.8 23.3L121.9 23.9L127 23.9L132.1 24.4L137.1 24.9L142.2 25.3L147.3 25.8L152.4 26.2L157.5 26.4L162.5 26.5L167.6 26.9L172.7 27.2L177.8 27.5L182.9 27.8L187.9 28.1L193 28.1L198.1 28.3L203.2 28.6L208.3 28.8L213.3 29L218.4 29.2L223.5 29.2L228.6 29.4L233.7 29.5L238.7 29.7L243.8 29.9L248.9 30L254 30.1L259 30.1L264.1 30.2L269.2 30.4L274.3 30.5L279.4 30.6L284.4 30.7L289.5 30.7L294.6 30.7L299.7 30.8L304.8 30.9L309.8 31L314.9 31L320 31.1L320 32.9L314.9 33L309.8 33L304.8 33.1L299.7 33.2L294.6 33.3L289.5 33.3L284.4 33.3L279.4 33.4L274.3 33.5L269.2 33.6L264.1 33.8L259 33.9L254 33.9L248.9 34L243.8 34.1L238.7 34.3L233.7 34.5L228.6 34.6L223.5 34.8L218.4 34.8L213.3 35L208.3 35.2L203.2 35.4L198.1 35.7L193 35.9L187.9 35.9L182.9 36.2L177.8 36.5L172.7 36.8L167.6 37.1L162.5 37.5L157.5 37.6L152.4 37.8L147.3 38.2L142.2 38.7L137.1 39.1L132.1 39.6L127 40.1L121.9 40.1L116.8 40.7L111.7 41.3L106.7 41.9L101.6 42.6L96.5 43.3L91.4 43.8L86.3 44.1L81.3 44.9L76.2 45.8L71.1 46.7L66 47.6L61 48.7L55.9 49.7L50.8 50.8L45.7 51.9L40.6 53L35.6 54.1L30.5 55.3L25.4 56.4L20.3 58.1L15.2 59.5L10.2 61.4L5.1 63.2L0 64Z"/>
+</svg>
+<!-- /wave --></td><td class="ij-num">48 kHz</td></tr>
+              <tr><td>SD Rim 03.wav</td><td><!-- wave:tonvault-snare -->
+<svg class="ij-wave" viewBox="0 0 320 64" role="img" aria-label="The waveform of a snare: a sharp attack and a short, noisy decay">
+  <path d="M0 0L5.1 1.9L10.2 0.9L15.2 4.9L20.3 7.5L25.4 9.4L30.5 14.9L35.6 12.2L40.6 16.7L45.7 16.4L50.8 15.5L55.9 16.6L61 18.1L66 18.7L71.1 20.5L76.2 21.2L81.3 21.8L86.3 22.6L91.4 23.1L96.5 23.9L101.6 24.9L106.7 25.3L111.7 25.8L116.8 25.8L121.9 26.4L127 26.9L132.1 27.4L137.1 27.9L142.2 28.7L147.3 28.6L152.4 28.6L157.5 29L162.5 29L167.6 29.3L172.7 29.5L177.8 29.6L182.9 30L187.9 30L193 30.4L198.1 30.3L203.2 30.4L208.3 30.5L213.3 30.7L218.4 30.8L223.5 30.9L228.6 31L233.7 31L238.7 31.1L243.8 31.1L248.9 31.2L254 31.3L259 31.3L264.1 31.4L269.2 31.5L274.3 31.4L279.4 31.5L284.4 31.5L289.5 31.6L294.6 31.6L299.7 31.6L304.8 31.6L309.8 31.6L314.9 31.6L320 31.6L320 32.4L314.9 32.4L309.8 32.4L304.8 32.4L299.7 32.4L294.6 32.4L289.5 32.4L284.4 32.5L279.4 32.5L274.3 32.6L269.2 32.5L264.1 32.6L259 32.7L254 32.7L248.9 32.8L243.8 32.9L238.7 32.9L233.7 33L228.6 33L223.5 33.1L218.4 33.2L213.3 33.3L208.3 33.5L203.2 33.6L198.1 33.7L193 33.6L187.9 34L182.9 34L177.8 34.4L172.7 34.5L167.6 34.7L162.5 35L157.5 35L152.4 35.4L147.3 35.4L142.2 35.3L137.1 36.1L132.1 36.6L127 37.1L121.9 37.6L116.8 38.2L111.7 38.2L106.7 38.7L101.6 39.1L96.5 40.1L91.4 40.9L86.3 41.4L81.3 42.2L76.2 42.8L71.1 43.5L66 45.3L61 45.9L55.9 47.4L50.8 48.5L45.7 47.6L40.6 47.3L35.6 51.8L30.5 49.1L25.4 54.6L20.3 56.5L15.2 59.1L10.2 63.1L5.1 62.1L0 64Z"/>
+</svg>
+<!-- /wave --></td><td class="ij-num"><mark>44.1 kHz</mark></td></tr>
+              <tr><td>HH Closed 02.wav</td><td><!-- wave:tonvault-hat -->
+<svg class="ij-wave" viewBox="0 0 320 64" role="img" aria-label="The waveform of a closed hat: a click and almost nothing after">
+  <path d="M0 3.1L5.1 0L10.2 0.5L15.2 4.1L20.3 5.2L25.4 8.6L30.5 10.1L35.6 11.8L40.6 13.1L45.7 14.3L50.8 15.9L55.9 17.3L61 18.9L66 19.4L71.1 20.2L76.2 21.4L81.3 22L86.3 23.4L91.4 23.9L96.5 24.4L101.6 25L106.7 25.6L111.7 26.1L116.8 26.8L121.9 27.2L127 27.9L132.1 28.2L137.1 28.3L142.2 28.6L147.3 28.8L152.4 29L157.5 29.4L162.5 29.5L167.6 29.9L172.7 29.9L177.8 30.1L182.9 30.2L187.9 30.3L193 30.5L198.1 30.6L203.2 30.7L208.3 30.8L213.3 30.9L218.4 31L223.5 31.1L228.6 31.2L233.7 31.2L238.7 31.3L243.8 31.4L248.9 31.4L254 31.5L259 31.5L264.1 31.5L269.2 31.6L274.3 31.6L279.4 31.6L284.4 31.6L289.5 31.6L294.6 31.6L299.7 31.6L304.8 31.6L309.8 31.6L314.9 31.6L320 31.6L320 32.4L314.9 32.4L309.8 32.4L304.8 32.4L299.7 32.4L294.6 32.4L289.5 32.4L284.4 32.4L279.4 32.4L274.3 32.4L269.2 32.4L264.1 32.5L259 32.5L254 32.5L248.9 32.6L243.8 32.6L238.7 32.7L233.7 32.8L228.6 32.8L223.5 32.9L218.4 33L213.3 33.1L208.3 33.2L203.2 33.3L198.1 33.4L193 33.5L187.9 33.7L182.9 33.8L177.8 33.9L172.7 34.1L167.6 34.1L162.5 34.5L157.5 34.6L152.4 35L147.3 35.2L142.2 35.4L137.1 35.7L132.1 35.8L127 36.1L121.9 36.8L116.8 37.2L111.7 37.9L106.7 38.4L101.6 39L96.5 39.6L91.4 40.1L86.3 40.6L81.3 42L76.2 42.6L71.1 43.8L66 44.6L61 45.1L55.9 46.7L50.8 48.1L45.7 49.7L40.6 50.9L35.6 52.2L30.5 53.9L25.4 55.4L20.3 58.8L15.2 59.9L10.2 63.5L5.1 64L0 60.9Z"/>
+</svg>
+<!-- /wave --></td><td class="ij-num">48 kHz</td></tr>
+              <tr><td>Pad Warm C3.wav</td><td><!-- wave:tonvault-pad -->
+<svg class="ij-wave" viewBox="0 0 320 64" role="img" aria-label="The waveform of a pad: a slow swell and a long sustain">
+  <path d="M0 30.1L5.1 28L10.2 25.8L15.2 23.9L20.3 21.7L25.4 20.2L30.5 18.9L35.6 18.2L40.6 18L45.7 18L50.8 18.5L55.9 18.9L61 19.2L66 19.5L71.1 19.4L76.2 18.7L81.3 16.7L86.3 14.1L91.4 12.1L96.5 10.8L101.6 9.5L106.7 8.6L111.7 7.7L116.8 6.9L121.9 6L127 5.2L132.1 4.2L137.1 3.3L142.2 2.3L147.3 1.4L152.4 0.7L157.5 0.2L162.5 0L167.6 0L172.7 0.3L177.8 1.1L182.9 2.2L187.9 3.9L193 5.6L198.1 7.9L203.2 9.8L208.3 12L213.3 13.6L218.4 15L223.5 13.3L228.6 10.1L233.7 7.7L238.7 5.3L243.8 5.3L248.9 5.5L254 6.4L259 7.6L264.1 9.5L269.2 11.2L274.3 13.5L279.4 15.4L284.4 17.7L289.5 19.5L294.6 21.7L299.7 23.4L304.8 25.4L309.8 27L314.9 28.9L320 30.4L320 33.6L314.9 35.1L309.8 37L304.8 38.6L299.7 40.6L294.6 42.3L289.5 44.5L284.4 46.3L279.4 48.6L274.3 50.5L269.2 52.8L264.1 54.5L259 56.4L254 57.6L248.9 58.5L243.8 58.7L238.7 58.7L233.7 56.3L228.6 53.9L223.5 50.7L218.4 49L213.3 50.4L208.3 52L203.2 54.2L198.1 56.1L193 58.4L187.9 60.1L182.9 61.8L177.8 62.9L172.7 63.7L167.6 64L162.5 64L157.5 63.8L152.4 63.3L147.3 62.6L142.2 61.7L137.1 60.7L132.1 59.8L127 58.8L121.9 58L116.8 57.1L111.7 56.3L106.7 55.4L101.6 54.5L96.5 53.2L91.4 51.9L86.3 49.9L81.3 47.3L76.2 45.3L71.1 44.6L66 44.5L61 44.8L55.9 45.1L50.8 45.5L45.7 46L40.6 46L35.6 45.8L30.5 45.1L25.4 43.8L20.3 42.3L15.2 40.1L10.2 38.2L5.1 36L0 33.9Z"/>
+</svg>
+<!-- /wave --></td><td class="ij-num">48 kHz</td></tr>
+            </table>
+          </div>
+          <div class="ij-row__text"><p class="ij-label">01 · Library</p><h3 class="ij-title">Your card, finally legible.</h3><p>Every sample with its waveform, sample rate, bit depth, channels, length and place on the card.</p></div>
+        </div>
+        <div class="ij-row">
+          <div class="ij-card">
+            <table class="ij-data">
+              <tr><th scope="row">Warning</th><td><mark>209 samples not at 48 kHz</mark></td></tr>
+              <tr><th scope="row">Info</th><td>2 empty folders</td></tr>
+            </table>
+          </div>
+          <div class="ij-row__text"><p class="ij-label">02 · Health check</p><h3 class="ij-title">What to look at, in plain words.</h3><p>Each finding says what it is, why it matters to the Tonverk and what you can do.</p></div>
+        </div>
+        <div class="ij-row">
+          <div class="ij-card">
+            <table class="ij-data">
+              <tr><td>Kick Tight.wav</td><td class="ij-num">412 KB</td></tr>
+              <tr><td>Kick Tight copy.wav</td><td class="ij-num">412 KB</td></tr>
+              <tr><th scope="row" colspan="2">To quarantine on your Mac, after a verified copy</th></tr>
+            </table>
+          </div>
+          <div class="ij-row__text"><p class="ij-label">03 · Duplicates</p><h3 class="ij-title">Space back, safely.</h3><p>Identical files move to a quarantine folder on your Mac, and any of them can go back.</p></div>
+        </div>
+        <div class="ij-row">
+          <div class="ij-card">
+            <table class="ij-data">
+              <tr><th scope="row">Copied</th><td class="ij-num">6,444 files</td></tr>
+              <tr><th scope="row">Checksummed</th><td class="ij-num">6,444 files</td></tr>
+              <tr><th scope="row">Differences</th><td class="ij-num"><mark>0</mark></td></tr>
+            </table>
+          </div>
+          <div class="ij-row__text"><p class="ij-label">04 · Backup</p><h3 class="ij-title">Verified, not hopeful.</h3><p>Versioned backups, with every file checksummed after it is copied.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Where it works: the eight rules of the health check -->
+  <section class="ij-section ij-section--band" id="checks" aria-labelledby="checks-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="checks-h">What the Tonverk won't tell you.</h2>
+      <div class="ij-traits ij-traits--pairs">
+        <div class="ij-trait ij-trait--number"><p class="ij-numeral" style="font-size: var(--ij-mkt-wordmark-size)">8</p><p>Rules in the health check. <mark>TonVault never deletes anything on the card.</mark></p></div>
+        <div class="ij-trait"><h3 class="ij-title">Unplayable files</h3><p>Files the sampler can't play.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Unreadable files</h3><p>Files TonVault couldn't read.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Not 48 kHz</h3><p>Samples that play back degraded.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Missing samples</h3><p>Presets that point at files that are gone.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Silence first</h3><p>Multi-sampled instruments that start with silence.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Identical files</h3><p>Groups of the same sample, twice or more.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Empty folders</h3><p>Folders with nothing in them.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Outside USER</h3><p>Samples outside the USER folder.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Three guides -->
+  <section class="ij-section" aria-labelledby="guides-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="guides-h">Guides.</h2>
+      <div class="ij-bento">
+        <div class="ij-card"><p class="ij-label">Guide</p><h3 class="ij-title"><a href="#">Backing up the SD card</a></h3><p>What to copy, and how to know the copy is whole.</p></div>
+        <div class="ij-card"><p class="ij-label">Guide</p><h3 class="ij-title"><a href="#">Samples that aren't 48 kHz</a></h3><p>Why they sound worse, and what to do about it.</p></div>
+        <div class="ij-card"><p class="ij-label">Guide</p><h3 class="ij-title"><a href="#">Moving a library between cards</a></h3><p>What moves with it, and what to check after.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy and price -->
+  <section class="ij-section ij-section--band" aria-labelledby="privacy-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="privacy-h">Runs on your Mac. Paid for once.</h2>
+      <div class="ij-assurances">
+        <div class="ij-assurance"><h3 class="ij-title">On your Mac</h3><p>Offline, with no account and no cloud.</p></div>
+        <div class="ij-assurance"><h3 class="ij-title">Paid for once</h3><p>No subscription.</p></div>
+        <div class="ij-assurance ij-assurance--label"><h3 class="ij-title">Data Not Collected</h3><p>The Mac App Store's privacy label, as Apple shows it.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- A note from the maker -->
+  <section class="ij-section" aria-label="A note from the maker">
+    <div class="ij-container">
+      <div class="ij-maker">
+        <p>I own a Tonverk, and a few months in, my SD card was already getting away from me. I wanted to see every sample, know what the Tonverk would quietly get wrong, and trust my backups. So TonVault reads the card, never changes it, and runs entirely on your Mac.</p>
+        <p class="ij-maker__sign">Jarl</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing: the wordmark, sized to its column -->
+  <section class="ij-section ij-section--band" aria-label="Download TonVault">
+    <div class="ij-container ij-closing">
+      <p class="ij-wordmark" style="--ij-wordmark-em: 5">TonVault</p>
+      <div class="ij-store" data-ij-store="tonvault" data-ij-store-locale="en">
+        <a class="ij-store-badge" href="https://apps.apple.com/app/id6792136657?pt=128512007&amp;ct=site&amp;mt=12" data-umami-event="store-click" data-umami-event-store="mac-app-store" data-umami-event-placement="footer" data-umami-event-locale="en">
+          <img src="../badges/mac-app-store-black-en-us.svg" alt="Download on the Mac App Store" width="156" height="40" loading="lazy">
+        </a>
+        <p class="ij-store-facts">$1.99 once · macOS 14 or later</p>
+      </div>
+      <p class="ij-small">TonVault is an independent app and is not affiliated with Elektron.</p>
+    </div>
+  </section>
+
+</main>
+
+<ij-footer app="tonvault">
+  <span slot="fineprint">An example page for the IAMJARL marketing kit, with TonVault's identity (#91). The waveforms are synthesised for the example; TonVault draws its own from real samples.</span>
+</ij-footer>
+
+</body>
+</html>

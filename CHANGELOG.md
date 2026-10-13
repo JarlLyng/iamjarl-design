@@ -5,6 +5,73 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.30.0] — 2026-10-13
+
+Anvil Workout's and TonVault's identities, two light sites with no drawings, and a waveform helper for TonVault (#91).
+
+### Added
+- **Anvil Workout's identity:** light whatever the visitor's setting.
+  - **Ground and cards:** a clean notebook neutral `#F3F3EF`, with white cards.
+  - **Text:** charcoal `#1C1D21` (15.1:1).
+  - **Accent:** the icons' magenta `#F140FE` for fills and strokes, with black on it, and `#A80FB3` for links (5.6:1), as on Walkful and Wean.
+  - **Faces:** Outfit for headlines and JetBrains Mono for every number.
+
+  The ground and the faces tell it apart from the two other magenta sites.
+- **TonVault's identity:** a light service manual.
+  - **Ground and cards:** paper `#F5F4EE`, with white cards drawn as bordered panels.
+  - **Text:** ink `#141414` (16.7:1).
+  - **Face:** JetBrains Mono for headlines, labels and values.
+  - **Accent:** the icon's lime `#D0FF00`, as a highlighter. The lime is 1.1:1 on the paper, so it is never text there. It is a fill behind black text (18:1) and inside the waveforms, and its links take a dark olive, `#4A5900` (7:1).
+
+  That keeps it apart from It's mono and WODrounds, which are dark with lime.
+- **A numeral face of its own,** the identity field `"numerals"`. It sets `--ij-font-numeral`, which `.ij-numeral` and the figures in a table use. The validator holds it to the approved faces.
+- **`kit/wave.js`**, published as `dist/kit/wave.js` with SRI. It has two pure functions, run at build time:
+  - `peaksOf(samples, buckets)` gives the loudest sample in each run, from 0 to 1;
+  - `wavePath(peaks, box, { shape })` draws a closed outline mirrored about the middle, or one bar per peak.
+
+  `.ij-wave` fills the outline with the accent and edges it in the text colour, so a light accent still reads on a light page. The line is clean, not the drawings' loose stroke, because a waveform is a measurement.
+- **More of the kit:**
+  - `.ij-data`, a table of figures, numbers in the numeral face with tabular figures;
+  - `<mark>` and `.ij-highlight`, the accent behind on-accent text;
+  - `.ij-label`, a label in the display face's capitals.
+  - A numeral never breaks across lines, and a numeral in a card is primary text.
+- **Two kit examples,** `kit/anvil-workout.html` and `kit/tonvault.html`, on the docs page:
+  - **Anvil's** data as the picture: a week of sets, a new record, the 1RM curve, the plate calculator and the Watch's rest, with 70 in "where it works". Its phone shows today's captures, in the app's dark appearance, until Anvil retakes them light.
+  - **TonVault's** four jobs as numbered rows: a library with waveforms, the health check, duplicates and the verified backup. Its eight rules sit around an 8, and its window shows the current public screenshot. The example synthesises a beat and four sounds, a kick, a snare, a hat and a pad, from their physics, because it has no card; TonVault feeds `wavePath` real samples.
+- **Tests:**
+  - both examples at 1440 and 375 px with every section, AA and no overflow;
+  - Anvil's faces, every number in mono with tabular figures, and its highlight at AA;
+  - on TonVault, no text in the lime anywhere, the lime only behind black text and inside the waveforms with an ink edge, bordered panels and capital labels;
+  - `peaksOf` and `wavePath` give fixed output for fixed input, and refuse bad input.
+
+### What Anvil loads
+All from `@v1.30.0`, with the hashes below:
+- **The files:**
+  - `dist/css/tokens.css` and `dist/identity/anvil-workout.css`. Take the sheet with the redesign, not before: it turns the site light only.
+  - `dist/fonts/outfit.css` **and** `dist/fonts/jetbrains-mono.css`, for the numbers;
+  - `dist/kit/kit.css`, `dist/kit/kit.js`, `ij-nav.js` and `ij-footer.js`.
+- **The `.black` store fragments** (`anvil-workout.en.black.html`, `.footer.black.html`) and `anvil-workout.en.offer.json` for the JSON-LD.
+- **The numbers:**
+  - in `.ij-numeral`, with the 70 in `.ij-trait--number`;
+  - a table of sets in `.ij-data` with `.ij-num` cells;
+  - a highlight in `<mark>`.
+- **`.ij-skip`** first in the body. No drawings, no photos and no credit line.
+
+### What TonVault loads
+All from `@v1.30.0`, with the hashes below:
+- **The files:**
+  - `dist/css/tokens.css` and `dist/identity/tonvault.css`. It turns the site light only, with bordered panels;
+  - `dist/fonts/jetbrains-mono.css`;
+  - `dist/kit/kit.css`, `dist/kit/kit.js`, `ij-nav.js` and `ij-footer.js`.
+- **`dist/kit/wave.js`** at build time: `wavePath(peaksOf(samples, n), box)` on peaks from real samples, inlined in `<svg class="ij-wave">` with a label each.
+- **The `.black` Mac App Store fragments** and `tonvault.en.offer.json`.
+- **The lime:** `<mark>` for anything the lime should stand behind, and never the lime as a text colour.
+- **The window and the labels:**
+  - `.ij-window` for the hero loop and `.ij-tour--window` for the four jobs, from 1.28.0;
+  - `.ij-label` for section labels.
+- **The 8** in `.ij-trait--number`, with `.ij-traits--pairs` for the rules.
+- **`.ij-skip`** first in the body. No drawings and no credit line.
+
 ## [1.29.1] — 2026-10-12
 
 Two findings from Walkful's move to 1.29.0 (#88).
@@ -994,6 +1061,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.30.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.30.0
 [1.29.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.29.1
 [1.29.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.29.0
 [1.28.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.28.0
