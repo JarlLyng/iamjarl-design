@@ -10,6 +10,8 @@
 //   "identity": {
 //     "scheme": "light",            one mode only; absent means it follows the visitor
 //     "display": "humanist",        a face from tokens.json's approved set
+//     "numerals": "mono",           a second face for .ij-numeral, when the
+//                                   numbers want a face of their own (#91)
 //     "panels": "bordered",         cards drawn with a thin border, as in a
 //                                   hardware manual; absent means flat (#83)
 //     "light": { "background", "surface", "text", "accent", "accentText" },
@@ -61,6 +63,14 @@ export function identityFor(registry, appId, tokens) {
     if (!face) throw new Error(`Unknown display face "${id.display}" for "${appId}"`);
     display = { key: id.display, face };
   }
+  // The numbers' face, if they have their own: Anvil's headlines are Outfit
+  // and its weights and reps JetBrains Mono (#91).
+  let numerals = null;
+  if (id?.numerals) {
+    const face = tokens.brand?.typography?.display?.[id.numerals];
+    if (!face) throw new Error(`Unknown numeral face "${id.numerals}" for "${appId}"`);
+    numerals = { key: id.numerals, face };
+  }
 
   const scheme = id?.scheme ?? null;
   const modes = {};
@@ -85,5 +95,5 @@ export function identityFor(registry, appId, tokens) {
 
   const hasColour = Object.values(modes).some(m => Object.keys(m.declared).length);
   const panels = id?.panels ?? null;
-  return { app, scheme, display, panels, modes, hasColour, isEmpty: !hasColour && !display && !scheme && !panels };
+  return { app, scheme, display, numerals, panels, modes, hasColour, isEmpty: !hasColour && !display && !numerals && !scheme && !panels };
 }

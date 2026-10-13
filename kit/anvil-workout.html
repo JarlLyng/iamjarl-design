@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketing kit: Anvil Workout example</title>
+<meta name="description" content="An example page built from the IAMJARL marketing kit with Anvil Workout's identity: light, the icons' magenta, Outfit for headlines and JetBrains Mono for the numbers.">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="../dist/css/tokens.css">
+<link rel="stylesheet" href="../dist/identity/anvil-workout.css">
+<link rel="stylesheet" href="../dist/fonts/outfit.css">
+<link rel="stylesheet" href="../dist/fonts/jetbrains-mono.css">
+<link rel="stylesheet" href="../dist/kit/kit.css">
+<!-- Anvil Workout's identity (#91): light whatever the visitor's setting, a notebook
+     neutral with white cards, the icons' magenta for fills and strokes and a deep
+     magenta for links, Outfit for headlines and JetBrains Mono for every number.
+     No drawings and no photos: the training log is the picture. The phone shows
+     today's captures, in the app's dark appearance, until Anvil retakes them light.
+     The copy follows Anvil's page brief, which is public. -->
+<script type="module" src="../dist/components/ij-nav.js"></script>
+<script type="module" src="../dist/components/ij-footer.js"></script>
+<script type="module" src="../dist/kit/kit.js"></script>
+</head>
+<body class="ij-page">
+<a class="ij-skip" href="#main">Skip to content</a>
+
+<ij-nav>
+  <a slot="brand" href="./anvil-workout.html">Anvil</a>
+  <a slot="links" href="#log">The log</a>
+  <a slot="links" href="#where">Where it works</a>
+  <a slot="cta" href="https://apps.apple.com/app/id6760627760?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="nav" data-umami-event-locale="en">Download</a>
+</ij-nav>
+
+<main id="main">
+
+  <!-- Hero, split: on a phone the words and the button come before the device -->
+  <section class="ij-hero ij-hero--split" id="hero">
+    <div class="ij-container ij-hero__inner">
+      <div class="ij-hero__text">
+        <h1 class="ij-display">Plan your workout. Follow the flow. Track your progress.</h1>
+        <p class="ij-lede">A strength log for iPhone, iPad and Apple Watch. Paid for once, with your data on your devices.</p>
+        <!-- dist/store/anvil-workout.en.black.html -->
+        <div class="ij-store" data-ij-store="anvil-workout" data-ij-store-locale="en">
+          <a class="ij-store-badge" href="https://apps.apple.com/app/id6760627760?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="hero" data-umami-event-locale="en">
+            <img src="../badges/app-store-black-en-us.svg" alt="Download on the App Store" width="120" height="40">
+          </a>
+          <p class="ij-store-facts">$2.99 once · iOS 17 or later</p>
+        </div>
+      </div>
+      <div class="ij-hero__media">
+        <div class="ij-phone" style="--ij-phone-width: 320px">
+          <div class="ij-phone__screen">
+            <img src="https://cdn.jsdelivr.net/gh/JarlLyng/Anvil-Workout@9c2b3017583a0d72f583b3d806cb57b15dde06b3/appstore/raw/en/iphone-workout.png" alt="A workout in progress: back squat, set 3 of 5 at 305 lb, with the last session's weight beside it" width="1320" height="2868" fetchpriority="high">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Frameless pieces of the log: the numbers are the picture -->
+  <section class="ij-section ij-section--band" id="log" aria-labelledby="log-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="log-h">The log, not a feed.</h2>
+      <div class="ij-bento">
+        <div class="ij-card ij-card--half">
+          <div class="ij-card__piece">
+            <table class="ij-data">
+              <tr><th scope="row">Mon</th><td>Back squat</td><td class="ij-num">5 × 5</td><td class="ij-num">305 lb</td></tr>
+              <tr><th scope="row">Wed</th><td>Bench press</td><td class="ij-num">5 × 5</td><td class="ij-num">175 lb</td></tr>
+              <tr><th scope="row">Wed</th><td>Barbell row</td><td class="ij-num">5 × 5</td><td class="ij-num">175 lb</td></tr>
+              <tr><th scope="row">Fri</th><td>Deadlift</td><td class="ij-num">1 × 5</td><td class="ij-num">405 lb</td></tr>
+            </table>
+          </div>
+          <h3 class="ij-title">A week of sets.</h3>
+          <p>Every set you did, with its weight and reps, in the order you did it.</p>
+        </div>
+        <div class="ij-card ij-card--half">
+          <div class="ij-card__piece" style="flex-direction: column; gap: var(--ij-spacing-sm)"><p class="ij-label"><mark>New record</mark></p><p class="ij-numeral">175 lb</p></div>
+          <h3 class="ij-title">A new record.</h3>
+          <p>Bench press, five pounds past your best, marked as a record.</p>
+        </div>
+        <div class="ij-card">
+          <div class="ij-card__piece" aria-hidden="true">
+            <svg viewBox="0 0 220 120" width="220" height="120">
+              <path d="M10 104H210" style="stroke: var(--ij-color-border-default)" stroke-width="1" fill="none"/>
+              <path d="M14 92L40 86L66 82L92 72L118 66L144 54L170 42L196 30" style="stroke: var(--ij-color-accent)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="196" cy="30" r="5" style="fill: var(--ij-color-accent)"/>
+              <text x="196" y="16" text-anchor="end" style="font: 400 13px var(--ij-font-numeral); fill: var(--ij-color-text-primary); font-variant-numeric: tabular-nums">356 lb</text>
+            </svg>
+          </div>
+          <h3 class="ij-title">Your estimated 1RM.</h3>
+          <p>For each lift, from the sets you log. No max-out day needed.</p>
+        </div>
+        <div class="ij-card">
+          <div class="ij-card__piece" aria-hidden="true">
+            <svg viewBox="0 0 220 120" width="220" height="120">
+              <rect x="8" y="57" width="204" height="6" rx="3" style="fill: var(--ij-color-text-primary)"/>
+              <g style="stroke: var(--ij-color-text-primary); fill: var(--ij-color-bg-card)" stroke-width="1.5">
+                <rect x="60" y="14" width="14" height="92" rx="3"/>
+                <rect x="78" y="14" width="14" height="92" rx="3"/>
+                <rect x="96" y="24" width="12" height="72" rx="3"/>
+                <rect x="112" y="34" width="10" height="52" rx="3"/>
+                <rect x="126" y="40" width="8" height="40" rx="2"/>
+              </g>
+              <rect x="60" y="14" width="14" height="92" rx="3" style="fill: var(--ij-color-accent)"/>
+              <rect x="78" y="14" width="14" height="92" rx="3" style="fill: var(--ij-color-accent)"/>
+            </svg>
+          </div>
+          <h3 class="ij-title">Plates, worked out.</h3>
+          <p>305 lb is 45, 45, 25, 10 and 5 on each side of the bar.</p>
+        </div>
+        <div class="ij-card">
+          <div class="ij-card__piece">
+            <div class="ij-watch" style="--ij-watch-width: 110px"><div class="ij-watch__screen"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/Anvil-Workout@9c2b3017583a0d72f583b3d806cb57b15dde06b3/appstore/raw/en/watch-rest.png" alt="The rest timer on Apple Watch" width="416" height="496" loading="lazy" decoding="async"></div></div>
+          </div>
+          <h3 class="ij-title">Rest on your wrist.</h3>
+          <p>The Watch taps you when the rest is over.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The phone that stays -->
+  <section class="ij-section" aria-labelledby="tour-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="tour-h">From the plan to the numbers.</h2>
+      <div class="ij-tour">
+        <div class="ij-tour__screens">
+          <div class="ij-phone" data-step="1"><div class="ij-phone__screen"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/Anvil-Workout@9c2b3017583a0d72f583b3d806cb57b15dde06b3/appstore/raw/en/iphone-home.png" alt="The home screen with the next workout from a program" width="1320" height="2868" loading="lazy" decoding="async"></div></div>
+          <div class="ij-phone" data-step="2"><div class="ij-phone__screen"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/Anvil-Workout@9c2b3017583a0d72f583b3d806cb57b15dde06b3/appstore/raw/en/iphone-workout.png" alt="A workout in progress" width="1320" height="2868" loading="lazy" decoding="async"></div></div>
+          <div class="ij-phone" data-step="3"><div class="ij-phone__screen"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/Anvil-Workout@9c2b3017583a0d72f583b3d806cb57b15dde06b3/appstore/raw/en/iphone-stats.png" alt="Stats: volume per week and personal records" width="1320" height="2868" loading="lazy" decoding="async"></div></div>
+        </div>
+        <ol class="ij-tour__steps">
+          <li class="ij-tour__step" data-step="1"><h3 class="ij-title">Pick a program</h3><p>StrongLifts, Starting Strength and the other classics, ready to follow.</p></li>
+          <li class="ij-tour__step" data-step="2"><h3 class="ij-title">Follow the flow</h3><p>Mark a set done, rest, and see last time's weight under the next one.</p></li>
+          <li class="ij-tour__step" data-step="3"><h3 class="ij-title">See the progress</h3><p>Volume by week, records, and an estimated 1RM per lift.</p></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Where it works: one big number, then the rest -->
+  <section class="ij-section ij-section--band" id="where" aria-labelledby="where-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="where-h">Where it works.</h2>
+      <div class="ij-traits">
+        <div class="ij-trait ij-trait--number"><p class="ij-numeral" style="font-size: var(--ij-mkt-wordmark-size); color: var(--ij-color-accent-text)">70</p><p>Exercises built in, each with its muscle groups.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Your own exercises</h3><p>Add what's missing, and filter by muscle group.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">iPhone, iPad, Watch</h3><p>The Watch follows a workout started on your iPhone.</p></div>
+        <div class="ij-trait ij-trait--wide"><h3 class="ij-title">Health, CSV, Strong and Hevy</h3><p>Workouts go to Apple Health, your log exports as CSV, and your history comes over from Strong or Hevy.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">No signal needed</h3><p>It works in the gym's basement.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy and price -->
+  <section class="ij-section" aria-labelledby="privacy-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="privacy-h">Paid for once. Kept on your devices.</h2>
+      <div class="ij-assurances">
+        <div class="ij-assurance"><h3 class="ij-title">No account, no ads</h3><p>And no analytics inside the app.</p></div>
+        <div class="ij-assurance"><h3 class="ij-title">Paid for once</h3><p>No subscription and no in-app purchases.</p></div>
+        <div class="ij-assurance ij-assurance--label"><h3 class="ij-title">Data Not Linked to You</h3><p>Diagnostics only, crash and performance data, as the App Store's privacy label shows it.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- A note from the maker -->
+  <section class="ij-section ij-section--band" aria-label="A note from the maker">
+    <div class="ij-container">
+      <div class="ij-maker">
+        <p>I built Anvil for my own training. The apps I tried wanted a subscription, an account or a feed, and I just wanted to log my sets and see whether I was getting stronger. So Anvil keeps everything on your devices, works in the gym without a signal, and asks for one payment.</p>
+        <p class="ij-maker__sign">Jarl</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing: the wordmark, sized to its column -->
+  <section class="ij-section" aria-label="Download Anvil">
+    <div class="ij-container ij-closing">
+      <p class="ij-wordmark">Anvil</p>
+      <div class="ij-store" data-ij-store="anvil-workout" data-ij-store-locale="en">
+        <a class="ij-store-badge" href="https://apps.apple.com/app/id6760627760?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="footer" data-umami-event-locale="en">
+          <img src="../badges/app-store-black-en-us.svg" alt="Download on the App Store" width="120" height="40" loading="lazy">
+        </a>
+        <p class="ij-store-facts">$2.99 once · iOS 17 or later</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<ij-footer app="anvil-workout">
+  <span slot="fineprint">An example page for the IAMJARL marketing kit, with Anvil Workout's identity (#91). The copy follows Anvil's page brief; the captures are today's, in the app's dark appearance.</span>
+</ij-footer>
+
+</body>
+</html>

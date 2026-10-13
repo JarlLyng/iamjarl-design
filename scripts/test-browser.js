@@ -659,7 +659,10 @@ try {
   // It's mono (#83) is a Mac app: a window, not a phone, and reviews set as type.
   const PHONE = ['.ij-window', '.ij-reviews'];
   const notOn = { walkful: ['.ij-staircase', '.ij-scene', ...PHONE], wean: ['.ij-source', '.ij-scene', ...PHONE],
-    wodrounds: ['.ij-staircase', '.ij-source', '.ij-statements', ...PHONE], 'its-mono-yo': ['.ij-phone', '.ij-source', '.ij-staircase', '.ij-scene'] };
+    wodrounds: ['.ij-staircase', '.ij-source', '.ij-statements', ...PHONE], 'its-mono-yo': ['.ij-phone', '.ij-source', '.ij-staircase', '.ij-scene'],
+    // Anvil and TonVault (#91) use no drawings: the app's data is the picture.
+    'anvil-workout': ['.ij-statements', '.ij-source', '.ij-staircase', '.ij-scene', ...PHONE],
+    tonvault: ['.ij-phone', '.ij-statements', '.ij-tour', '.ij-source', '.ij-staircase', '.ij-scene', '.ij-reviews'] };
   const kitProbe = `(() => {
     const lum = c => { const m = c.match(/[\\d.]+/g).map(Number); const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
       return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]); };
@@ -671,11 +674,12 @@ try {
     const low = texts.map(e => [e.textContent.trim().slice(0, 30), ratio(getComputedStyle(e).color, ground(e))]).filter(([, r]) => r < 4.5);
     const missing = ${JSON.stringify(KIT_SECTIONS)}.filter(sel => !document.querySelector(sel) || !document.querySelector(sel).getBoundingClientRect().height);
     const h1 = getComputedStyle(document.querySelector('h1'));
-    const body = parseFloat(getComputedStyle(document.querySelector('.ij-statement__text p, .ij-row__text p, .ij-card p, .ij-trait p')).fontSize);
+    const body = parseFloat(getComputedStyle(document.querySelector(':is(.ij-statement__text, .ij-row__text, .ij-card, .ij-trait) p:not(.ij-label, .ij-numeral)')).fontSize);
     const imgs = [...document.querySelectorAll('main img')];
     const hero = document.querySelector('.ij-hero');
     const lazyWrong = imgs.filter(i => hero.contains(i) ? i.loading === 'lazy' : i.loading !== 'lazy').map(i => i.alt);
     const screens = [...document.querySelectorAll('.ij-tour__screens > [data-step]')].map(e => Math.round(e.getBoundingClientRect().top));
+    const hasTour = !!document.querySelector('.ij-tour');
     // The page's own rules must not reach into the components (#72): the nav's
     // CTA keeps its on-accent text, its links keep text colours, and the footer
     // lines up with the content.
@@ -685,7 +689,7 @@ try {
     const ft = document.querySelector('ij-footer').getBoundingClientRect(), ct = document.querySelector('main .ij-container').getBoundingClientRect();
     return { overflow: document.documentElement.scrollWidth - innerWidth, missing, low, h1: parseFloat(h1.fontSize),
       face: h1.fontFamily, axes: h1.fontVariationSettings, body, lazyWrong, animations: document.getAnimations().length,
-      screensInARow: screens.length > 1 && screens.every(t => t === screens[0]), bg: getComputedStyle(document.body).backgroundColor,
+      screensInARow: !hasTour || (screens.length > 1 && screens.every(t => t === screens[0])), bg: getComputedStyle(document.body).backgroundColor,
       ctaRatio: ratio(getComputedStyle(cta).color, getComputedStyle(cta).backgroundColor),
       navNoAccent: !navLinks.includes(swatch('--ij-color-accent-text')),
       footerAligned: Math.abs(ft.left - ct.left) <= 1 && Math.abs(ft.width - ct.width) <= 1,
@@ -693,7 +697,8 @@ try {
         return r.getBoundingClientRect().width <= wm.closest('.ij-closing').getBoundingClientRect().width + 1; })() };
   })()`;
   for (const [demo, bg, faceRe] of [['walkful', 'rgb(245, 239, 230)', /Fraunces/], ['wean', 'rgb(230, 236, 239)', /Instrument Sans/],
-    ['wodrounds', 'rgb(11, 12, 13)', /JetBrains Mono/], ['its-mono-yo', 'rgb(13, 15, 19)', /JetBrains Mono/]]) {
+    ['wodrounds', 'rgb(11, 12, 13)', /JetBrains Mono/], ['its-mono-yo', 'rgb(13, 15, 19)', /JetBrains Mono/],
+    ['anvil-workout', 'rgb(243, 243, 239)', /Outfit/], ['tonvault', 'rgb(245, 244, 238)', /JetBrains Mono/]]) {
     for (const [w, h, size] of [[1440, 900, 96], [375, 812, 52]]) {
       await p.viewport(w, h);
       await p.goto(`${base}/kit/${demo}.html`);
@@ -923,6 +928,46 @@ try {
   check('with reduce motion on, or on a phone, the tour stays a row of screens',
     !still.live && still.opacities.every(o => o === '1') && !narrow.live, JSON.stringify({ still, narrow }));
 
+  // Anvil and TonVault (#91). Anvil: headlines in Outfit and every number in
+  // JetBrains Mono with tabular figures, the record's highlight black on the
+  // magenta. TonVault: the lime is never text on the paper; it is a highlight
+  // behind black text and the fill of the waveforms, which an ink edge carries.
+  for (const [w, h] of [[1440, 900], [375, 812]]) {
+    await p.viewport(w, h);
+    await p.goto(`${base}/kit/anvil-workout.html`);
+    await p.eval('document.fonts.ready');
+    await p.settle(150);
+    const an = await p.eval(`(() => {
+      const lum = c => { const m = c.match(/[\\d.]+/g).map(Number); const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+        return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]); };
+      const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m); return (x + 0.05) / (y + 0.05); };
+      const h1 = getComputedStyle(document.querySelector('h1')).fontFamily;
+      const nums = [...document.querySelectorAll('.ij-numeral, .ij-data .ij-num')].map(e => getComputedStyle(e));
+      const mark = getComputedStyle(document.querySelector('mark'));
+      return { h1, mono: nums.every(cs => /JetBrains Mono/.test(cs.fontFamily) && /tabular-nums/.test(cs.fontVariantNumeric)), count: nums.length,
+        mark: +ratio(mark.color, mark.backgroundColor).toFixed(2), markBg: mark.backgroundColor, overflow: document.documentElement.scrollWidth - innerWidth };
+    })()`);
+    check(`Anvil at ${w}: headlines in Outfit, every number in JetBrains Mono with tabular figures, the record's highlight at AA`,
+      /Outfit/.test(an.h1) && an.mono && an.count >= 9 && an.markBg === 'rgb(241, 64, 254)' && an.mark >= 4.5 && an.overflow <= 0, JSON.stringify(an));
+    await p.goto(`${base}/kit/tonvault.html`);
+    await p.eval('document.fonts.ready');
+    await p.settle(150);
+    const tv = await p.eval(`(() => {
+      const lime = 'rgb(208, 255, 0)';
+      const asText = [...document.querySelectorAll('main *')].filter(e => e.childNodes.length && [...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()) &&
+        getComputedStyle(e).color === lime).map(e => e.tagName + '.' + e.className);
+      const marks = [...document.querySelectorAll('main mark')].map(m => [getComputedStyle(m).backgroundColor, getComputedStyle(m).color]);
+      const waves = [...document.querySelectorAll('.ij-wave path')].map(p => [getComputedStyle(p).fill, getComputedStyle(p).stroke]);
+      const panel = getComputedStyle(document.querySelector('.ij-trait')).borderTopWidth;
+      const label = getComputedStyle(document.querySelector('.ij-label')).textTransform;
+      return { asText, marks: [...new Set(marks.map(m => m.join(' on ')))], waves: [...new Set(waves.map(w => w.join(' / ')))], count: waves.length, panel, label,
+        overflow: document.documentElement.scrollWidth - innerWidth };
+    })()`);
+    check(`TonVault at ${w}: no lime text, lime as a highlight behind black and the waveforms' fill with an ink edge, bordered panels, labels in capitals`,
+      tv.asText.length === 0 && tv.marks.join() === 'rgb(208, 255, 0) on rgb(0, 0, 0)' && tv.count === 5 &&
+      tv.waves.join() === 'rgb(208, 255, 0) / rgb(20, 20, 20)' && tv.panel === '1px' && tv.label === 'uppercase' && tv.overflow <= 0, JSON.stringify(tv));
+  }
+
   // The window that stays: the same tour with a window in the wider column,
   // holding still while the texts pass, and changing with the one in the middle.
   await p.viewport(1440, 900);
@@ -947,7 +992,7 @@ try {
   // their own margin, later in kit.css and as specific, used to win: a source
   // card sat flush on its heading. Every later child of a stack, on every
   // example, must keep the stack's spacing.
-  for (const demo of ['walkful', 'wean', 'wodrounds', 'its-mono-yo']) {
+  for (const demo of ['walkful', 'wean', 'wodrounds', 'its-mono-yo', 'anvil-workout', 'tonvault']) {
     await p.viewport(1440, 900);
     await p.goto(`${base}/kit/${demo}.html`);
     await p.settle(100);
@@ -965,7 +1010,7 @@ try {
   const rowProbe = `(() => { const sc = document.querySelector('.ij-tour__screens'), ph = [...sc.children];
     const r = sc.getBoundingClientRect(), first = ph[0].getBoundingClientRect(), last = ph.at(-1).getBoundingClientRect();
     return { overflows: sc.scrollWidth > sc.clientWidth + 1, start: Math.round(first.left - r.left), end: Math.round(r.right - last.right) }; })()`;
-  for (const demo of ['walkful', 'wean', 'wodrounds', 'its-mono-yo']) {
+  for (const demo of ['walkful', 'wean', 'wodrounds', 'its-mono-yo', 'anvil-workout']) {
     await p.viewport(375, 812);
     await p.goto(`${base}/kit/${demo}.html`);
     await p.settle(200);

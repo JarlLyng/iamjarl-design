@@ -11,6 +11,7 @@ import { extractNotes, sriNotes } from './release-notes.js';
 import { selectLinks, categoryReach } from '../components/select-links.js';
 import { identityFor, mix, TEXT_MIX } from '../components/identity.js';
 import { loosePath, stairsPoints } from '../kit/loose.js';
+import { peaksOf, wavePath } from '../kit/wave.js';
 import { renderDrawing } from '../kit/drawings/render.js';
 import { identitySheetCss } from './css-modes.js';
 import { WEAN_DRAWINGS } from '../kit/drawings/wean.js';
@@ -924,6 +925,30 @@ check('the It\'s mono example: the one credit line in the fineprint, no badge, n
   !/\bAI\b/.test(monoPage.replace(/<span slot="fineprint">[\s\S]*?<\/span>/g, '')) &&
   [...monoPage.matchAll(/<script[^>]*src="([^"]+)"/g)].every(m => m[1].startsWith('../dist/components/') || m[1] === '../dist/kit/kit.js') &&
   /not affiliated with Roland, Elektron, Erica Synths, Polyend or Akai/.test(monoPage));
+// The waveform helper (#91): pure, deterministic, a clean line from peaks.
+console.log('\nWaveforms:');
+const throws = f => { try { f(); return false; } catch { return true; } };
+const env = wavePath([0, 1, 0.5], { width: 100, height: 40 });
+check('peaksOf takes the loudest absolute sample per bucket, normalised to the loudest',
+  JSON.stringify(peaksOf([0.1, -0.5, 0.2, 0.25], 2)) === JSON.stringify([1, 0.5]) && JSON.stringify(peaksOf([0, 0], 2)) === '[0,0]' &&
+  throws(() => peaksOf([], 4)) && throws(() => peaksOf([1], 0)));
+check('wavePath draws a closed envelope mirrored about the middle, or one bar per peak, the same every time',
+  env === 'M0 19.8L50 0L100 10L100 30L50 40L0 20.2Z' && env === wavePath([0, 1, 0.5], { width: 100, height: 40 }) &&
+  wavePath([1, 0.5], { width: 10, height: 20, y: 0 }, { shape: 'bars' }) === 'M0 0V20M10 5V15' &&
+  throws(() => wavePath([1], { width: 10, height: 10 })) && throws(() => wavePath([1, 1], { width: 10, height: 10 }, { shape: 'dots' })));
+check('dist/kit/wave.js is the source with its version on top, and hashed',
+  read('dist/kit/wave.js').endsWith(read('kit/wave.js')) && read('dist/kit/wave.js').startsWith(`// IAMJARL marketing kit v${fullTokens.meta.version}:`) &&
+  'dist/kit/wave.js' in JSON.parse(read('dist/sri.json')).files);
+const tvPage = read('kit/tonvault.html'), anvilPage = read('kit/anvil-workout.html');
+check('the TonVault example draws its waveforms through wavePath, five of them, with a label for each',
+  (tvPage.match(/<svg class="ij-wave" viewBox="[^"]+" role="img" aria-label="[^"]+">/g) ?? []).length === 5 && /<path d="M[\d.]+ [\d.]+L/.test(tvPage));
+check('the Anvil and TonVault examples: no badge, no AI wording, nothing from Google, no script but the system\'s',
+  [tvPage, anvilPage].every(html => !/madebyhuman\.iamjarl\.com\/badges|fonts\.googleapis|fonts\.gstatic/i.test(html) && !/\bAI\b/.test(html) &&
+    [...html.matchAll(/<script[^>]*src="([^"]+)"/g)].every(m => m[1].startsWith('../dist/components/') || m[1] === '../dist/kit/kit.js')) &&
+  /not affiliated with Elektron/.test(tvPage));
+check('a numeral face of its own: Anvil\'s sheet sets --ij-font-numeral to JetBrains Mono, and the kit reads it for .ij-numeral and the figures',
+  /--ij-font-numeral: 'JetBrains Mono'/.test(read('dist/identity/anvil-workout.css')) && /--ij-font-numeral-axes: normal/.test(read('dist/identity/anvil-workout.css')) &&
+  /\.ij-numeral \{\s*font-family: var\(--ij-font-numeral,/.test(kitSrc) && /\.ij-data \.ij-num \{[^}]*var\(--ij-font-numeral,/.test(kitSrc));
 check('dist/kit/loose.js is the source with its version on top, hashed, and the drawings are exported',
   read('dist/kit/loose.js').endsWith(read('kit/loose.js')) && 'dist/kit/loose.js' in JSON.parse(read('dist/sri.json')).files &&
   JSON.parse(read('package.json')).exports['./drawings/*'] === './dist/drawings/*');

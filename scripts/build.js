@@ -1297,6 +1297,46 @@ async function generateDrawings(tokens) {
   return { files, inline };
 }
 
+// The TonVault example's waveforms (#91). TonVault feeds wavePath the peaks
+// of real samples on a card; the example has no card, so it synthesises four
+// sounds a Tonverk card holds (a kick, a snare, a hat and a pad) from their
+// physics, deterministically, and draws them the same way.
+async function exampleWaves() {
+  const { peaksOf, wavePath } = await import(pathToFileURL(path.join(ROOT, 'kit', 'wave.js')).href);
+  let seed = 7;
+  const noise = () => ((seed = (seed * 16807) % 2147483647) / 2147483647) * 2 - 1;
+  const RATE = 8000;
+  const sound = (seconds, f) => Array.from({ length: Math.round(seconds * RATE) }, (_, i) => f(i / RATE));
+  const sounds = {
+    kick: sound(0.6, t => Math.sin(2 * Math.PI * (45 * t + 90 * (1 - Math.exp(-t * 28)) / 28)) * Math.exp(-t * 6) * Math.min(1, t * 400)),
+    snare: sound(0.45, t => (0.55 * noise() + 0.45 * Math.sin(2 * Math.PI * 190 * t)) * Math.exp(-t * 11) * Math.min(1, t * 600)),
+    hat: sound(0.18, t => noise() * Math.exp(-t * 30) * Math.min(1, t * 900)),
+    pad: sound(3.2, t => (Math.sin(2 * Math.PI * 110 * t) + 0.6 * Math.sin(2 * Math.PI * 110.7 * t) + 0.3 * Math.sin(2 * Math.PI * 220.4 * t))
+      * Math.min(1, t / 0.9) * Math.min(1, (3.2 - t) / 0.8) * (0.8 + 0.2 * Math.sin(2 * Math.PI * 0.6 * t))),
+  };
+  // The hero's signature is a beat, two bars at 120 BPM: a kick on one and
+  // three, a snare on two and four, a hat on every eighth.
+  const beat = sound(4, t => {
+    let v = 0;
+    for (const start of [0, 1]) { const d = (t - start) % 2; if (d >= 0 && d < 0.6) v += Math.sin(2 * Math.PI * (45 * d + 90 * (1 - Math.exp(-d * 28)) / 28)) * Math.exp(-d * 6); }
+    for (const start of [0.5, 1.5]) { const d = (t - start) % 2; if (d >= 0 && d < 0.45) v += 0.8 * (0.55 * noise() + 0.45 * Math.sin(2 * Math.PI * 190 * d)) * Math.exp(-d * 11); }
+    const h = t % 0.25; v += 0.35 * noise() * Math.exp(-h * 30);
+    return v;
+  });
+  const svg = (peaks, w, h, label) => [
+    `<svg class="ij-wave" viewBox="0 0 ${w} ${h}" role="img" aria-label="${label}">`,
+    `  <path d="${wavePath(peaks, { width: w, height: h })}"/>`,
+    `</svg>`,
+  ].join('\n');
+  return {
+    'wave:tonvault-hero': svg(peaksOf(beat, 240), 960, 120, 'The waveform of a two-bar beat: kicks, snares and hats'),
+    'wave:tonvault-kick': svg(peaksOf(sounds.kick, 64), 320, 64, 'The waveform of a kick: a sharp attack and a long decay'),
+    'wave:tonvault-snare': svg(peaksOf(sounds.snare, 64), 320, 64, 'The waveform of a snare: a sharp attack and a short, noisy decay'),
+    'wave:tonvault-hat': svg(peaksOf(sounds.hat, 64), 320, 64, 'The waveform of a closed hat: a click and almost nothing after'),
+    'wave:tonvault-pad': svg(peaksOf(sounds.pad, 64), 320, 64, 'The waveform of a pad: a slow swell and a long sustain'),
+  };
+}
+
 // Wean's taper for the example, as lib/taper-plan.ts computes it.
 function weanTaperExample(baseline, percent) {
   const out = [];
@@ -1410,6 +1450,7 @@ const SRI_FILES = [
   'dist/kit/kit.css',
   'dist/kit/kit.js',
   'dist/kit/loose.js',
+  'dist/kit/wave.js',
 ];
 
 // The names a site may meet that tokens.css does not define (#80): the hooks
@@ -1606,12 +1647,15 @@ async function main() {
   writeFile(path.join(ROOT, 'dist', 'kit', 'kit.js'), generateKitJs(tokens));
   writeFile(path.join(ROOT, 'dist', 'kit', 'loose.js'),
     `// IAMJARL marketing kit v${tokens.meta.version}: generated from kit/loose.js, do not edit\n${fs.readFileSync(path.join(ROOT, 'kit', 'loose.js'), 'utf-8')}`);
+  writeFile(path.join(ROOT, 'dist', 'kit', 'wave.js'),
+    `// IAMJARL marketing kit v${tokens.meta.version}: generated from kit/wave.js, do not edit\n${fs.readFileSync(path.join(ROOT, 'kit', 'wave.js'), 'utf-8')}`);
   const drawings = await generateDrawings(tokens);
   const drawingsDir = path.join(ROOT, 'dist', 'drawings');
   if (fs.existsSync(drawingsDir)) fs.rmSync(drawingsDir, { recursive: true });
   for (const [f, svg] of drawings.files) writeFile(path.join(drawingsDir, f), svg);
   writeExamplePage(path.join(ROOT, 'kit', 'wean.html'), drawings.inline);
   writeExamplePage(path.join(ROOT, 'kit', 'its-mono-yo.html'), drawings.inline);
+  writeExamplePage(path.join(ROOT, 'kit', 'tonvault.html'), await exampleWaves());
   const storeFragments = await generateStoreFragments(tokens);
   const storeDir = path.join(ROOT, 'dist', 'store');
   const storeKeep = new Set(storeFragments.map(([f]) => f));
