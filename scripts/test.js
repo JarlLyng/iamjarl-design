@@ -1184,6 +1184,9 @@ check('every install pin in the README is the current version',
   check('the warm-up asks for every file in sri.json, every face\'s font and the badges',
     unwarmed.length === 0 && faces.every(f => warmed.includes(f)) && warmed.some(f => f.startsWith('badges/')),
     `missing: ${[...unwarmed, ...faces.filter(f => !warmed.includes(f))].join(', ')}`);
+  check('a live site serves the design system from its own origin, and the README, design.md and AGENTS.md all say so (#100)',
+    readme.includes('**A site serves the design system from its own origin**') && read('design.md').includes('The design system comes from the site\'s own origin') &&
+    read('AGENTS.md').includes('A live site serves these files from its own origin'));
   check('the README shows how to serve a checked copy from the site itself, from GitHub and not the CDN',
     /archive\/refs\/tags\/v\d+\.\d+\.\d+\.tar\.gz/.test(readme) && readme.includes('openssl dgst -sha384') && readme.includes('dist/sri.json'));
 }

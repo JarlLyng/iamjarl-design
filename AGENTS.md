@@ -123,6 +123,11 @@ All CSS variables are prefixed with `--ij-` to avoid collisions. Use `var(--ij-c
 
 For manual mode switching, add class `.light` or `.dark` to a parent element.
 
+**A live site serves these files from its own origin** (owner's decision, 2026-10-15). With a build
+step, install the package. A static site copies the pinned files it loads into its repo, checked
+against the tag's `dist/sri.json` (README › *A copy served from the site itself*). Loading them from
+jsDelivr when the page is shown is for trying something out only.
+
 TypeScript:
 ```typescript
 import {

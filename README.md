@@ -278,17 +278,18 @@ the sites are written in (#80). A Danish page with `<html lang="da">` gets "Mere
 
 ### Three ways to take it, and which one you want
 
-The snippets above load from a CDN, which is right for a hand-edited static site. **If your site has
-a build step, install it instead.** A static site that shouldn't wait on a CDN can serve a checked
-copy itself.
+**A site serves the design system from its own origin** (the owner's decision on 2026-10-15, #100).
+A hand-edited static site serves [a checked copy](#a-copy-served-from-the-site-itself), and a site with
+a build step installs it. The pinned CDN URLs in this README are for trying something out, not for a
+live site.
 
-| | Pinned CDN URL | A copy in the site | npm dependency |
+| | A copy in the site | npm dependency | Pinned CDN URL |
 |---|---|---|---|
-| Best for | hand-edited static HTML | hand-edited static HTML that loads with no third party | anything with a build |
-| Where the version lives | in the markup | in the folder's name and the markup | in `package.json`, where Dependabot can see it |
-| Reproducibility | the tag | the tag's hashes, checked when you copy | the lockfile pins the exact commit |
-| Runtime dependency | a third-party CDN | none — served from your own origin | none — served from your own origin |
-| Needs `integrity`? | yes, worth it | worth keeping: the same hashes | no — nothing crosses an origin |
+| Best for | **a live static site** | **a live site with a build** | trying something out |
+| Where the version lives | in the folder's name and the markup | in `package.json`, where Dependabot can see it | in the markup |
+| Reproducibility | the tag's hashes, checked when you copy | the lockfile pins the exact commit | the tag |
+| Runtime dependency | none — served from your own origin | none — served from your own origin | a third-party CDN |
+| Needs `integrity`? | worth keeping: the same hashes | no — nothing crosses an origin | yes, worth it |
 
 ```bash
 npm install github:jarllyng/iamjarl-design#v1.32.2
@@ -308,12 +309,13 @@ it from `node_modules/@iamjarl/design-tokens/dist/footers/`.
 
 #### A copy served from the site itself
 
-The token sheet, your identity sheet and `kit.css` block the first paint, so a page shows nothing
-until they arrive. On 2026-10-14 jsDelivr answered some requests to a new tag with `503` for minutes
-(#100). The release now warms jsDelivr's cache straight after tagging, which covers a new tag. A site
-that must not depend on a CDN at all copies the files it loads into its own repo, checked against the
-tag's hashes. It's the same reason the faces are self-hosted: no third-party request on a page that
-says it has none.
+**Why it's the default for a static site:**
+- **A CDN can blank the page.** The token sheet, your identity sheet and `kit.css` block the first paint, so a page shows nothing until they arrive.
+- **jsDelivr has failed in practice.** On 2026-10-14 and 15, its `/gh/` path answered `503` or timed out for minutes on files of a new tag (#100). That happened even after the release had warmed its cache, because each of its edge servers still fetches a file the first time a visitor near it asks.
+- **No third party.** A copy means no third-party request on a page that says it has none, the same reason the faces are self-hosted.
+
+Copy the files your page loads into the site's repo, and check each one against the tag's hashes. Wean,
+It's 404 yo! and PageLens already work this way.
 
 ```bash
 # 1. The release, from GitHub's own archive of the tag, into a scratch folder.
@@ -340,7 +342,8 @@ edited in place. Take only what your page loads; the store pieces are pasted int
 
 ### Pinning with Subresource Integrity
 
-For the CDN path only — a bundled dependency is served from your own origin and needs none of this.
+For the CDN path, and for a copy in the site, which uses the same hashes. A bundled dependency is
+served from your own origin and needs none of this.
 
 A pinned tag says *which* file you want; an `integrity` hash proves you got it. jsDelivr serves
 `/gh/` paths byte-for-byte, so these hashes are valid for the URLs below. They are generated at

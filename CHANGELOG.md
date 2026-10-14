@@ -7,13 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.32.2] — 2026-10-15
 
-A finding from PageLens' move to 1.32.1: the footer's quiet text on a page that maps its own palette.
+Two findings from the move to 1.32.1:
+- the footer's quiet text on a page that maps its own palette (PageLens);
+- jsDelivr failing after a warmed release (Wean, TrimrPix), which makes a copy in the site the default.
 
 ### Fixed
 - **`<ij-footer>`'s labels and fineprint on a page that maps its own palette and has no tertiary.**
   - **The cause:** 1.32.1 set them in `--ij-color-text-tertiary` (#98). A page that maps its own colours onto the footer instead of loading `tokens.css`, such as PageLens' guides, never set that variable, so the footer used its own fallback for the visitor's mode.
   - **The effect:** in a dark OS that fallback is white at 60%, which on such a light page was close to invisible (1:1).
   - **Now:** a missing tertiary falls back to the page's own secondary first, and only then to the footer's fallback.
+
+### Changed
+- **A live site serves the design system from its own origin** (#100, the owner's decision on 2026-10-15).
+  - **Why:** jsDelivr's `/gh/` path answered `503` or timed out for minutes on files of v1.32.1, for Wean and TrimrPix, after the release had warmed it. The warm-up fills jsDelivr's store and the edge nearest GitHub; every other edge still fetches a file the first time a visitor near it asks. The token sheet, the identity sheet and `kit.css` block the first paint, so a stalled file blanks the page.
+  - **How:** a static site copies the files it loads into its repo, checked against the tag's hashes, as the README's recipe shows. A site with a build installs the package. The CDN URLs are for trying something out.
+  - **Where it's written:** the README, design.md and AGENTS.md now say so.
 
 ### Documented
 - **A page that is light whatever the visitor's setting** and loads a sheet that follows it pins `<html class="light">`. Without it, a visitor in dark mode gets dark values, such as a light accent for hover, on a light page.
@@ -24,6 +32,7 @@ A finding from PageLens' move to 1.32.1: the footer's quiet text on a page that 
 
 ### Who should move
 - **A page that maps its own palette onto `<ij-footer>`:** bump `ij-footer.js`, or map `--ij-color-text-tertiary`. PageLens has already done the second. A site that loads `tokens.css` or an identity sheet is unaffected.
+- **Every site that loads the design system from jsDelivr when the page is shown:** serve a copy from the site itself. Each gets an issue: Walkful, Anvil, WODrounds, It's mono, Echolume, BotLens and Patternaut. TrimrPix, TrimrPix for iOS and TonVault take it with their redesigns.
 
 ## [1.32.1] — 2026-10-15
 
