@@ -52,8 +52,10 @@ const STYLE = `
   --_link:    var(--ij-color-text-secondary, rgba(0, 0, 0, 0.70));
   /* The quiet text, labels and fineprint, in the tertiary colour, which the
      identity validator holds to AA on the ground (#98). Never opacity: 0.65 of
-     the secondary colour was about 3.4:1 on every light site. */
-  --_quiet:   var(--ij-color-text-tertiary,  rgba(0, 0, 0, 0.55));
+     the secondary colour was about 3.4:1 on every light site. A page that maps
+     its own palette onto the footer and has no tertiary gets its secondary,
+     never the fallback below, which in a dark OS is white on its white. */
+  --_quiet:   var(--ij-color-text-tertiary, var(--ij-color-text-secondary, rgba(0, 0, 0, 0.55)));
   /* Hover follows the site's accent, as <ij-nav>'s dot and CTA do, so a teal
      site is not lime on footer hover (#57). It is text, so it takes the
      text-safe variant (#65): Walkful's magenta is for strokes, and its links
@@ -83,7 +85,7 @@ const STYLE = `
     --_text:    var(--ij-color-text-secondary, rgba(255, 255, 255, 0.75));
     --_heading: var(--ij-color-text-primary,   rgba(255, 255, 255, 1));
     --_link:    var(--ij-color-text-secondary, rgba(255, 255, 255, 0.75));
-    --_quiet:   var(--ij-color-text-tertiary,  rgba(255, 255, 255, 0.60));
+    --_quiet:   var(--ij-color-text-tertiary, var(--ij-color-text-secondary, rgba(255, 255, 255, 0.60)));
     --_hover:   var(--ij-color-accent-text, var(--ij-color-accent-family, var(--ij-color-primary, #D0FF00)));
     --_border:  var(--ij-color-border-subtle,  rgba(255, 255, 255, 0.12));
   }

@@ -1,4 +1,4 @@
-<!-- IAMJARL drawing for It's mono: A modular rack of sampler modules. For where it works: the Eurorack samplers guide. Generated from kit/drawings/its-mono-yo.js, v1.32.1. Inline it in the page; do not edit. -->
+<!-- IAMJARL drawing for It's mono: A modular rack of sampler modules. For where it works: the Eurorack samplers guide. Generated from kit/drawings/its-mono-yo.js, v1.32.2. Inline it in the page; do not edit. -->
 <svg class="ij-drawing ij-drawing--its-mono-yo-eurorack-rack" viewBox="0 0 320 240" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
   <g style="stroke: var(--ij-color-text-primary)" stroke-width="1.1" stroke-opacity="0.4">
     <path d="M12.5 20Q55.7 20 76.6 20.2Q97.4 20.3 118.3 20.3Q139.1 20.4 160 20.3Q180.9 20.2 201.7 20.1Q222.6 20 243.4 20Q264.3 20 285.9 20L307.5 20"/>
