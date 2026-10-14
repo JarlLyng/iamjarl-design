@@ -1538,12 +1538,13 @@ function sriReadmeBlock(version, hashes) {
 // hand at release time — so each release that forgot one left a consumer
 // copying a pin three to five versions old. The SRI block already solved this by
 // being generated; the pins outside it are rewritten the same way. The patterns
-// are the three ways a consumer installs this repo, and nothing else: prose that
+// are the four ways a consumer installs this repo, and nothing else: prose that
 // mentions a version ("deprecated since 1.6.0") is history and stays.
 const README_PINS = [
   /(iamjarl-design@v)\d+\.\d+\.\d+/g,             // jsDelivr
   /(iamjarl-design#v)\d+\.\d+\.\d+/g,             // npm from GitHub
   /(iamjarl-design\.git", from: ")\d+\.\d+\.\d+/g, // Swift Package Manager
+  /(iamjarl-design\/archive\/refs\/tags\/v)\d+\.\d+\.\d+/g, // a copy served from the site itself
 ];
 
 function writeReadmePins(version) {

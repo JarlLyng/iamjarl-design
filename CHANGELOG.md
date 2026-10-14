@@ -5,9 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.32.1] — 2026-10-14
+## [1.32.1] — 2026-10-15
 
-Two findings from TrimrPix' move to 1.32.0: the footer's quiet text below AA on every light site, and a `<picture>` the kit didn't size (#98, #99).
+Three findings from TrimrPix' move to 1.32.0 (#98, #99, #100):
+- the footer's quiet text was below AA on every light site;
+- the kit didn't size an image inside a `<picture>`;
+- jsDelivr was slow to serve a new tag.
 
 ### Fixed
 - **`<ij-footer>`'s group labels and fineprint read at AA on every ground** (#98).
@@ -18,6 +21,11 @@ Two findings from TrimrPix' move to 1.32.0: the footer's quiet text below AA on 
   - **Where:** `.ij-window`, `.ij-phone__screen`, `.ij-tv__screen`, `.ij-watch__screen`, `.ij-card__piece` and `.ij-compare__item`.
   - **How:** the kit lays the `<picture>` out as if it weren't there, and sizes the `<img>` inside it as it does a bare one.
   - **Why it matters:** a site can serve its captures as AVIF and WebP with a fallback, where before the `<img>` kept its `height` attribute and was squashed.
+- **A new tag no longer reaches its first visitor through a cold CDN** (#100). jsDelivr fetches a tagged file from GitHub the first time anyone asks for it, and that first fetch is the one that failed. On 2026-10-14, v1.32.0 answered `503` for minutes. A day later, about 300 of its 358 files had still never been fetched.
+  - **The release now warms the cache:** `scripts/warm-cdn.js` asks for every published file straight after the release. It retries until each one is served and matches its hash in `sri.json`. Cold, that takes several minutes; warm, two seconds.
+
+### Added
+- **A copy served from the site itself,** in the README: download the tag's archive from GitHub, copy the files the page loads, and check each one against the tag's `sri.json`. The page then loads with no third-party request at all, the same reason the faces are self-hosted. The recipe is pinned to the current release like the other install lines.
 
 ### Tests
 - **The kit examples' contrast scan:**
@@ -31,6 +39,7 @@ Each of these tests fails on 1.32.0.
 ### Who should move
 - **Every light site that uses `<ij-footer>` with fineprint or groups**, to pass AA: Walkful, Wean, Anvil, TonVault, TrimrPix and TrimrPix for iOS, and the light family sites. Bump `ij-footer.js` and its hash. Nothing else changes.
 - **A site that wants AVIF or WebP captures** in a window, a phone or a before and after: bump `kit.css` and its hash.
+- **A site that shouldn't depend on jsDelivr:** serve a checked copy, as the README shows. Nothing requires it.
 
 ## [1.32.0] — 2026-10-13
 

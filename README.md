@@ -276,18 +276,19 @@ the sites are written in (#80). A Danish page with `<html lang="da">` gets "Mere
 | --- | --- |
 | `--ij-footer-links-justify` | How the link rows align: any `justify-content` value, default `flex-start`. Labels, tagline and fineprint already follow the page's `text-align`; the rows are flex and cannot, so a centred footer sets both: `ij-footer { text-align: center; --ij-footer-links-justify: center; }`. In `layout="columns"` the links stack and follow `text-align` on their own |
 
-### Two ways to take it, and which one you want
+### Three ways to take it, and which one you want
 
 The snippets above load from a CDN, which is right for a hand-edited static site. **If your site has
-a build step, install it instead.**
+a build step, install it instead.** A static site that shouldn't wait on a CDN can serve a checked
+copy itself.
 
-| | Pinned CDN URL | npm dependency |
-|---|---|---|
-| Best for | hand-edited static HTML | anything with a build |
-| Where the version lives | in the markup | in `package.json`, where Dependabot can see it |
-| Reproducibility | the tag | the lockfile pins the exact commit |
-| Runtime dependency | a third-party CDN | none — served from your own origin |
-| Needs `integrity`? | yes, worth it | no — nothing crosses an origin |
+| | Pinned CDN URL | A copy in the site | npm dependency |
+|---|---|---|---|
+| Best for | hand-edited static HTML | hand-edited static HTML that loads with no third party | anything with a build |
+| Where the version lives | in the markup | in the folder's name and the markup | in `package.json`, where Dependabot can see it |
+| Reproducibility | the tag | the tag's hashes, checked when you copy | the lockfile pins the exact commit |
+| Runtime dependency | a third-party CDN | none — served from your own origin | none — served from your own origin |
+| Needs `integrity`? | yes, worth it | worth keeping: the same hashes | no — nothing crosses an origin |
 
 ```bash
 npm install github:jarllyng/iamjarl-design#v1.32.1
@@ -304,6 +305,38 @@ moved, a commit cannot.
 
 The cross-link fragment works either way: fetch `dist/footers/<app>.html` during the build, or read
 it from `node_modules/@iamjarl/design-tokens/dist/footers/`.
+
+#### A copy served from the site itself
+
+The token sheet, your identity sheet and `kit.css` block the first paint, so a page shows nothing
+until they arrive. On 2026-10-14 jsDelivr answered some requests to a new tag with `503` for minutes
+(#100). The release now warms jsDelivr's cache straight after tagging, which covers a new tag. A site
+that must not depend on a CDN at all copies the files it loads into its own repo, checked against the
+tag's hashes. It's the same reason the faces are self-hosted: no third-party request on a page that
+says it has none.
+
+```bash
+# 1. The release, from GitHub's own archive of the tag, into a scratch folder.
+SRC=$(mktemp -d)
+curl -sfL https://github.com/JarlLyng/iamjarl-design/archive/refs/tags/v1.32.1.tar.gz | tar -xz --strip-components=1 -C "$SRC"
+
+# 2. The files your page loads, in the same layout, so the font sheet still finds its font.
+DEST=assets/iamjarl-design@v1.32.1
+mkdir -p "$DEST"
+(cd "$SRC" && tar -cf - dist/css/tokens.css dist/identity/<app>.css dist/fonts/<face>.css fonts/<face>-*.woff2 \
+  dist/kit/kit.css dist/kit/kit.js dist/components/ij-nav.js dist/components/ij-footer.js) | tar -xf - -C "$DEST"
+
+# 3. Check every copy against the tag's own hashes.
+(cd "$DEST" && find dist -type f) | while read -r f; do
+  want=$(grep -o "\"$f\": \"sha384-[^\"]*" "$SRC/dist/sri.json" | cut -d'"' -f4)
+  got="sha384-$(openssl dgst -sha384 -binary "$DEST/$f" | openssl base64 -A)"
+  if [ "$want" = "$got" ]; then echo "ok $f"; else echo "MISMATCH $f"; fi
+done
+```
+
+Then link the copies with the same `integrity` as the CDN snippets, from `/assets/iamjarl-design@v1.32.1/dist/…`.
+Keep the version in the folder's name, so a bump is a new folder and a changed link, never a file
+edited in place. Take only what your page loads; the store pieces are pasted into your HTML anyway.
 
 ### Pinning with Subresource Integrity
 

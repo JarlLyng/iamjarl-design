@@ -82,3 +82,11 @@ jobs:
             --verify-tag \
             --latest
           echo "Released v${VERSION}"
+
+      # jsDelivr fetches a tagged file from GitHub the first time anyone asks
+      # for it, and that first fetch is the one that fails (#100). Ask for every
+      # file now, so a site's first visitor gets it from the cache. On a run that
+      # didn't tag, the files are already cached and this takes seconds.
+      - name: Warm jsDelivr
+        timeout-minutes: 20
+        run: node scripts/warm-cdn.js "${VERSION}"
