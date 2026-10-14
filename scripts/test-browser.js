@@ -47,6 +47,30 @@ const FULL_NAV = `
   <a slot="secondary" href="https://github.com/JarlLyng/echolume">GitHub</a>
 </ij-nav>`;
 
+// What a reader sees (#98): a text's colour composited over what is painted
+// under it, through its own alpha and every opacity on the way up the flat
+// tree, across slots and shadow roots. The footer's fineprint was 0.65 of the
+// secondary colour inside the shadow root, which a scan of computed colours in
+// <main> never saw. Pasted into a page probe; it defines inkRatio and texted.
+const INK = `
+    const up = n => n.assignedSlot || n.parentElement || (n.getRootNode() instanceof ShadowRoot ? n.getRootNode().host : null);
+    const rgba = c => { const m = c.match(/[\\d.]+/g).map(Number), k = c.startsWith('color(') ? 255 : 1;
+      return [m[0] * k, m[1] * k, m[2] * k, m[3] ?? 1]; };
+    const lumOf = c => { const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+      return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]); };
+    const over = (top, a, under) => [0, 1, 2].map(i => top[i] * a + under[i] * (1 - a));
+    const groundOf = el => { const layers = [];
+      for (let n = el; n; n = up(n)) { const b = rgba(getComputedStyle(n).backgroundColor); if (b[3] > 0) { layers.push(b); if (b[3] >= 1) break; } }
+      return layers.reverse().reduce((g, b) => over(b, b[3], g), [255, 255, 255]); };
+    const fade = el => { let o = 1; for (let n = el; n; n = up(n)) o *= +getComputedStyle(n).opacity; return o; };
+    const inkRatio = el => { const g = groundOf(el), c = rgba(getComputedStyle(el).color), ink = over(c, c[3] * fade(el), g);
+      const [x, y] = [lumOf(ink), lumOf(g)].sort((p, q) => q - p); return +((x + 0.05) / (y + 0.05)).toFixed(2); };
+    const texted = root => [...root.querySelectorAll('*')].filter(e => !e.closest('svg') &&
+      [...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()) && e.getClientRects().length);
+`;
+
+const IDENTITIES = fs.readdirSync(path.join(ROOT, 'dist/identity')).filter(f => f.endsWith('.css')).map(f => f.slice(0, -4));
+
 const FIXTURES = {
   full: page({ identity: 'echolume', body: `${FULL_NAV}<main id="main"><h1>Echolume</h1><div class="tall"></div></main>` }),
 
@@ -181,6 +205,27 @@ ${FULL_NAV.replace('<ij-nav>', '<ij-nav cta-after="#hero-cta">')}
     fs.readFileSync(path.join(ROOT, 'dist/store/wodrounds.en.html'), 'utf-8')
       .replace(/https:\/\/cdn\.jsdelivr\.net\/gh\/jarllyng\/iamjarl-design@v[\d.]+\/badges\//g, '/badges/')}</ij-store-cta>
 <ij-store-cta id="unknown" app="nope"></ij-store-cta>` }),
+
+  // Every identity's footer with labels and fineprint (#98), and one on the
+  // tokens alone: the quiet text has to read at AA on every ground.
+  ...Object.fromEntries([...IDENTITIES, null].map(id => [`footer-ink-${id ?? 'tokens'}`, page({ nav: false, footer: true, identity: id, body: `
+<main><ij-footer app="${id ?? 'echolume'}" layout="columns" tagline="An IAMJARL app.">
+  <a slot="links" href="/privacy">Privacy</a>
+  <p slot="fineprint">© 2026 IAMJARL. Photo by a photographer on Unsplash.</p>
+</ij-footer></main>` })])),
+
+  // A <picture> where the kit sizes an <img> (#99): AVIF and WebP with a
+  // fallback, the <img> keeping its width and height attributes.
+  'kit-picture': page({ nav: false, identity: 'trimrpix', body: (() => {
+    const svg = (w, h) => `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}'%3E%3Crect width='${w}' height='${h}' fill='%23888'/%3E%3C/svg%3E`;
+    const pic = (w, h) => `<picture><source srcset="${svg(w, h)}" type="image/svg+xml"><img src="/missing.png" width="${w}" height="${h}" alt=""></picture>`;
+    return `
+<link rel="stylesheet" href="/dist/kit/kit.css">
+<main class="ij-page" style="width: 600px">
+  <div class="ij-window" id="window">${pic(1800, 900)}</div>
+  <div class="ij-phone" id="phone" style="width: 240px"><div class="ij-phone__screen">${pic(1320, 2868)}</div></div>
+  <div class="ij-compare"><figure class="ij-compare__item" id="compare">${pic(1200, 900)}<figcaption><span>Original</span><span class="ij-num">4.2 MB</span></figcaption></figure></div>
+</main>`; })() }),
 
   'footer-justify': page({ nav: false, footer: true, body: `
 <div style="width: 900px"><ij-footer app="its-mono-yo" style="text-align: center; --ij-footer-links-justify: center"></ij-footer></div>` }),
@@ -666,7 +711,7 @@ try {
     // TrimrPix (#96): before and after as the picture, one for each platform.
     trimrpix: ['.ij-phone', '.ij-statements', '.ij-card', '.ij-source', '.ij-staircase', '.ij-scene', '.ij-reviews'],
     'trimrpix-ios': ['.ij-window', '.ij-statements', '.ij-card', '.ij-source', '.ij-staircase', '.ij-scene', '.ij-reviews'] };
-  const kitProbe = `(() => {
+  const kitProbe = `(() => {${INK}
     const lum = c => { const m = c.match(/[\\d.]+/g).map(Number); const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
       return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]); };
     const ground = el => { for (let n = el; n; n = n.parentElement) { const b = getComputedStyle(n).backgroundColor;
@@ -674,7 +719,9 @@ try {
     const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
     const texts = [...document.querySelectorAll('main p, main h1, main h2, main h3, main blockquote, main figcaption')]
       .filter(e => e.offsetParent && e.textContent.trim());
-    const low = texts.map(e => [e.textContent.trim().slice(0, 30), ratio(getComputedStyle(e).color, ground(e))]).filter(([, r]) => r < 4.5);
+    const foot = document.querySelector('ij-footer');
+    const low = [...texts, ...(foot ? [...texted(foot), ...(foot.shadowRoot ? texted(foot.shadowRoot) : [])] : [])]
+      .map(e => [e.textContent.trim().slice(0, 30), inkRatio(e)]).filter(([, r]) => r < 4.5);
     const missing = ${JSON.stringify(KIT_SECTIONS)}.filter(sel => !document.querySelector(sel) || !document.querySelector(sel).getBoundingClientRect().height);
     const h1 = getComputedStyle(document.querySelector('h1'));
     const body = parseFloat(getComputedStyle(document.querySelector(':is(.ij-statement__text, .ij-row__text, .ij-card, .ij-trait) p:not(.ij-label, .ij-numeral)')).fontSize);
@@ -830,7 +877,7 @@ try {
     await p.settle(200);
     const mono = await p.eval(`(() => {
       const edge = getComputedStyle(document.documentElement).getPropertyValue('--ij-color-border-default').trim();
-      const media = [...document.querySelectorAll('.ij-window > img, .ij-window > video')].filter(m => m.getClientRects().length);
+      const media = [...document.querySelectorAll('.ij-window > :is(img, video), .ij-window > picture > img')].filter(m => m.getClientRects().length);
       const clip = media.map(m => { const r = m.getBoundingClientRect(), rad = parseFloat(getComputedStyle(m).borderTopLeftRadius);
         return +(rad / r.width).toFixed(4); });
       const panels = ['.ij-card', '.ij-trait', '.ij-review'].map(sel => { const cs = getComputedStyle(document.querySelector(sel));
@@ -1121,6 +1168,45 @@ try {
       name === 'footer-nojs' ? ft.fallback && ft.slottedA === 0 && ft.slottedB === 2 : !ft.fallback && ft.slottedA === 3 && ft.slottedB === 2,
       JSON.stringify(ft));
   }
+
+  // The quiet text (#98): labels and fineprint at AA on every identity's
+  // ground, in both modes, and on the tokens alone.
+  const inkLow = [];
+  for (const scheme of ['light', 'dark']) {
+    await p.media([{ name: 'prefers-color-scheme', value: scheme }]);
+    for (const id of [...IDENTITIES, 'tokens']) {
+      await p.goto(`${base}/fixture/footer-ink-${id}/index.html`);
+      await p.eval(`customElements.whenDefined('ij-footer')`);
+      await p.settle(100);
+      const r = await p.eval(`(() => {${INK}
+        const f = document.querySelector('ij-footer'), all = [...texted(f), ...texted(f.shadowRoot)];
+        return { n: all.length, quiet: [...f.shadowRoot.querySelectorAll('.label, .fineprint')].length,
+          low: all.map(e => [e.textContent.trim().slice(0, 24), inkRatio(e)]).filter(([, x]) => x < 4.5) };
+      })()`);
+      if (!r.quiet || r.low.length) inkLow.push({ id, scheme, ...r });
+    }
+  }
+  await p.media([]);
+  check(`every text in the footer, its labels and fineprint too, at AA on all ${IDENTITIES.length} identities and the tokens alone, light and dark`,
+    inkLow.length === 0, JSON.stringify(inkLow));
+  check('the footer fades nothing: its quiet text is a colour, not an opacity', await p.eval(`(() => {
+    const sr = document.querySelector('ij-footer').shadowRoot;
+    return [...sr.querySelectorAll('*')].every(e => getComputedStyle(e).opacity === '1');
+  })()`));
+
+  console.log('\nA <picture> in the kit:');
+  await p.goto(`${base}/fixture/kit-picture/index.html`);
+  await p.settle(150);
+  const pic = await p.eval(`(() => {
+    const box = id => { const img = document.querySelector('#' + id + ' img'), r = img.getBoundingClientRect(), host = document.getElementById(id).getBoundingClientRect();
+      return { w: Math.round(r.width), h: Math.round(r.height), hostW: Math.round(host.width), radius: parseFloat(getComputedStyle(img).borderTopLeftRadius) }; };
+    const screen = document.querySelector('#phone .ij-phone__screen').getBoundingClientRect();
+    return { window: box('window'), phone: box('phone'), screen: [Math.round(screen.width), Math.round(screen.height)], compare: box('compare') };
+  })()`);
+  check('an <img> inside a <picture> fills the window at its own ratio with the window\'s corners, fills the phone\'s screen, and takes the before and after\'s 3:2',
+    pic.window.w === pic.window.hostW && Math.abs(pic.window.h - pic.window.w / 2) <= 1 && pic.window.radius > 0 &&
+    Math.abs(pic.phone.w - pic.screen[0]) <= 1 && Math.abs(pic.phone.h - pic.screen[1]) <= 1 &&
+    pic.compare.w === pic.compare.hostW && Math.abs(pic.compare.h - pic.compare.w * 2 / 3) <= 1 && pic.compare.radius > 0, JSON.stringify(pic));
 
   await p.goto(`${base}/fixture/footer-unknown/index.html`);
   await p.settle(150);

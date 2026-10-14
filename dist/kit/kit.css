@@ -1,4 +1,4 @@
-/* IAMJARL marketing kit v1.32.0: generated from kit/kit.css, do not edit */
+/* IAMJARL marketing kit v1.32.1: generated from kit/kit.css, do not edit */
 /* The marketing page kit (#65): sections every app site can compose.
 
    Plain HTML with these classes. No JavaScript is needed to read any of it:
@@ -175,7 +175,12 @@ ij-store-cta { display: block; }
   overflow: hidden;
   background: var(--ij-color-bg-card);
 }
-.ij-phone__screen > img, .ij-phone__screen > video {
+/* A <picture> stands in for its <img> wherever the kit sizes one (#99), so a
+   site can serve AVIF and WebP with a fallback: it lays out as if it weren't
+   there, and the rules below reach the <img> inside it. */
+:is(.ij-phone__screen, .ij-tv__screen, .ij-watch__screen, .ij-window, .ij-card__piece, .ij-compare__item) > picture { display: contents; }
+
+.ij-phone__screen > :is(img, video), .ij-phone__screen > picture > img {
   display: block; width: 100%; height: 100%; object-fit: cover; object-position: top;
 }
 .ij-phone__frame { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
@@ -203,7 +208,7 @@ ij-store-cta { display: block; }
     0 0 0 1px var(--ij-color-border-default);
 }
 .ij-tv__screen { aspect-ratio: 16 / 9; overflow: hidden; border-radius: 3px; background: var(--ij-color-bg-card); }
-.ij-tv__screen > img, .ij-tv__screen > video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ij-tv__screen > :is(img, video), .ij-tv__screen > picture > img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .ij-tv::after {
   content: "";
   position: absolute;
@@ -230,7 +235,7 @@ ij-store-cta { display: block; }
     0 0 0 1px var(--ij-color-border-default);
 }
 .ij-watch__screen { aspect-ratio: 416 / 496; overflow: hidden; border-radius: 22%; background: var(--ij-color-bg-card); }
-.ij-watch__screen > img, .ij-watch__screen > video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ij-watch__screen > :is(img, video), .ij-watch__screen > picture > img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .ij-watch::before, .ij-watch::after {
   content: "";
   position: absolute;
@@ -258,7 +263,7 @@ ij-store-cta { display: block; }
   width: min(var(--_w), 100%);
   container-type: inline-size;
 }
-.ij-window > img, .ij-window > video {
+.ij-window > :is(img, video), .ij-window > picture > img {
   display: block;
   width: 100%;
   height: auto;
@@ -318,7 +323,7 @@ ij-store-cta { display: block; }
 .ij-card p { margin: 0; color: var(--ij-color-text-secondary); }
 .ij-card .ij-numeral { color: var(--ij-color-text-primary); }
 .ij-card__piece { display: flex; align-items: center; justify-content: center; min-height: 160px; }
-.ij-card__piece > img { display: block; height: auto; border-radius: var(--ij-radius-md); }
+.ij-card__piece > img, .ij-card__piece > picture > img { display: block; height: auto; border-radius: var(--ij-radius-md); }
 
 .ij-bento { display: grid; gap: var(--ij-spacing-lg); grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 768px) {
@@ -523,7 +528,7 @@ ij-store-cta { display: block; }
   grid-template-columns: repeat(auto-fit, minmax(max(min(100%, 240px), calc(50% - var(--ij-mkt-space-stack))), 1fr));
 }
 .ij-compare__item { margin: 0; display: flex; flex-direction: column; gap: var(--ij-spacing-sm); min-width: 0; }
-.ij-compare__item > img {
+.ij-compare__item > img, .ij-compare__item > picture > img {
   display: block;
   width: 100%;
   height: auto;

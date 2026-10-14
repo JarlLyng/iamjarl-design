@@ -19,6 +19,7 @@ import { ITS_MONO_DRAWINGS } from '../kit/drawings/its-mono-yo.js';
 import { NAV_ALPHA, NAV_COLLAPSE_BELOW, MAX_LINKS, currentIndex, heroOnScreen, navWarnings } from '../components/nav-rules.js';
 import { storeLink, factsLine, badgeFile, badgeHeight, smartBannerHtml, fragmentName, offer, PLACEMENTS, TONES, LOCALES } from '../components/store.js';
 import { LABELS, labelsFor, PROJECTS_ID } from '../components/labels.js';
+import { filesToWarm } from './warm-cdn.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -1163,13 +1164,29 @@ check('README block uses crossorigin on every tag',
 // deliberately broader than any one install method: a pin in a new form still
 // has to be current.
 const pins = [...readme.matchAll(
-  /iamjarl-design(?:\.git", from: "|[@#]v)(\d+\.\d+\.\d+)/g
+  /iamjarl-design(?:\.git", from: "|[@#]v|\/archive\/refs\/tags\/v)(\d+\.\d+\.\d+)/g
 )].map(m => m[1]);
 check('the README has install pins to check', pins.length >= 5,
   `found ${pins.length}; if the install sections moved, this test must move with them`);
 check('every install pin in the README is the current version',
   pins.every(v => v === tokens.meta.version),
   `stale: ${[...new Set(pins.filter(v => v !== tokens.meta.version))].join(', ')} — run npm run build`);
+
+// A release warms jsDelivr (#100): a tag's first fetch is the one that fails,
+// so the release asks for every file before a site's visitor does.
+{
+  const wf = fs.readFileSync(path.join(ROOT, '.github/workflows/build-tokens.yml'), 'utf-8');
+  const release = wf.indexOf('gh release create'), warm = wf.indexOf('node scripts/warm-cdn.js "${VERSION}"');
+  check('the release warms jsDelivr after the GitHub Release is made', release > 0 && warm > release);
+  const warmed = filesToWarm(), sriNow = JSON.parse(fs.readFileSync(path.join(ROOT, 'dist/sri.json'), 'utf-8'));
+  const unwarmed = Object.keys(sriNow.files).filter(f => !warmed.includes(f));
+  const faces = Object.values(tokens.brand.typography.display).map(f => `fonts/${f.file}`);
+  check('the warm-up asks for every file in sri.json, every face\'s font and the badges',
+    unwarmed.length === 0 && faces.every(f => warmed.includes(f)) && warmed.some(f => f.startsWith('badges/')),
+    `missing: ${[...unwarmed, ...faces.filter(f => !warmed.includes(f))].join(', ')}`);
+  check('the README shows how to serve a checked copy from the site itself, from GitHub and not the CDN',
+    /archive\/refs\/tags\/v\d+\.\d+\.\d+\.tar\.gz/.test(readme) && readme.includes('openssl dgst -sha384') && readme.includes('dist/sri.json'));
+}
 
 console.log();
 if (failed > 0) {

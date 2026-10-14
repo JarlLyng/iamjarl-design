@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.32.1] — 2026-10-15
+
+Three findings from TrimrPix' move to 1.32.0 (#98, #99, #100):
+- the footer's quiet text was below AA on every light site;
+- the kit didn't size an image inside a `<picture>`;
+- jsDelivr was slow to serve a new tag.
+
+### Fixed
+- **`<ij-footer>`'s group labels and fineprint read at AA on every ground** (#98).
+  - **Before:** they were faded with `opacity: 0.65`. On every light site that put the fineprint at 3.1 to 3.8:1, below AA, and the labels at 4.4:1 on Walkful and Wean.
+  - **Now:** both take the tertiary text colour, 5.1:1 or more on every identity's ground and 4.8:1 on the tokens alone.
+  - **What it looks like:** both stand out a little more against the ground, the fineprint most. Nothing else changes.
+- **A `<picture>` works wherever the kit sizes an image** (#99):
+  - **Where:** `.ij-window`, `.ij-phone__screen`, `.ij-tv__screen`, `.ij-watch__screen`, `.ij-card__piece` and `.ij-compare__item`.
+  - **How:** the kit lays the `<picture>` out as if it weren't there, and sizes the `<img>` inside it as it does a bare one.
+  - **Why it matters:** a site can serve its captures as AVIF and WebP with a fallback, where before the `<img>` kept its `height` attribute and was squashed.
+- **A new tag no longer reaches its first visitor through a cold CDN** (#100). jsDelivr fetches a tagged file from GitHub the first time anyone asks for it, and that first fetch is the one that failed. On 2026-10-14, v1.32.0 answered `503` for minutes. A day later, about 300 of its 358 files had still never been fetched.
+  - **The release now warms the cache:** `scripts/warm-cdn.js` asks for every published file straight after the release. It retries until each one is served and matches its hash in `sri.json`. Cold, that takes several minutes; warm, two seconds.
+
+### Added
+- **A copy served from the site itself,** in the README: download the tag's archive from GitHub, copy the files the page loads, and check each one against the tag's `sri.json`. The page then loads with no third-party request at all, the same reason the faces are self-hosted. The recipe is pinned to the current release like the other install lines.
+
+### Tests
+- **The kit examples' contrast scan:**
+  - **What a reader sees:** each text's colour is composited through its alpha and every opacity above it, across slots and shadow roots.
+  - **The footer too:** the scan now reads the footer's text, not just `<main>`.
+- **Every identity's footer** in both modes, and one on the tokens alone: each text at AA, and nothing in the footer faded by opacity.
+- **A `<picture>` fixture:** the window at its own ratio with its corners, the phone's screen filled, and the before and after at 3:2.
+
+Each of these tests fails on 1.32.0.
+
+### Who should move
+- **Every light site that uses `<ij-footer>` with fineprint or groups**, to pass AA: Walkful, Wean, Anvil, TonVault, TrimrPix and TrimrPix for iOS, and the light family sites. Bump `ij-footer.js` and its hash. Nothing else changes.
+- **A site that wants AVIF or WebP captures** in a window, a phone or a before and after: bump `kit.css` and its hash.
+- **A site that shouldn't depend on jsDelivr:** serve a checked copy, as the README shows. Nothing requires it.
+
 ## [1.32.0] — 2026-10-13
 
 TrimrPix' identity on its two sites, a fifth display face, and a before and after (#96).
@@ -1161,6 +1197,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.32.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.32.1
 [1.32.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.32.0
 [1.31.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.31.0
 [1.30.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.30.0

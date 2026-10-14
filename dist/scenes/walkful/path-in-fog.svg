@@ -1,4 +1,4 @@
-<!-- IAMJARL scene line for walkful: A path worn through the grass, between trees in fog. On the photo https://unsplash.com/photos/ZrQZf1xY8KQ (Luca Volpe, Unsplash License). Generated from kit/scenes.js, v1.32.0. Inline it in the .ij-scene after the photo; do not edit. -->
+<!-- IAMJARL scene line for walkful: A path worn through the grass, between trees in fog. On the photo https://unsplash.com/photos/ZrQZf1xY8KQ (Luca Volpe, Unsplash License). Generated from kit/scenes.js, v1.32.1. Inline it in the .ij-scene after the photo; do not edit. -->
 <svg class="ij-scene__line" viewBox="0 0 1600 1067" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
   <path class="ij-loose" d="M905.8 1068.3Q884.4 1034.2 875.2 1017.1Q866 1000 852.5 982.5Q839 965 825.5 947.5Q812 930 798.8 912.2Q785.7 894.5 771.8 877.2Q758 860 746.9 842.9Q735.8 825.7 725.9 807.9Q716 790 712.3 774.9Q708.6 759.8 704.3 744.9Q700 730 704 705Q708 680 719 662.5Q730 645 741.5 630.9L752.9 616.8"/>
 </svg>

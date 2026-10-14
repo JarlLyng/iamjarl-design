@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.32.0)
+# IAMJARL Design System (v1.32.1)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -296,7 +296,7 @@ Where `backdrop-filter` is missing, or the visitor sets `prefers-reduced-transpa
 - Pick the smallest layer that works; values are spaced by 100 so you rarely need anything in between.
 
 ### Opacity
-- `opacity.disabled` (0.4) for disabled controls; `opacity.muted` (0.65) for de-emphasized-but-active content.
+- `opacity.disabled` (0.4) for disabled controls; `opacity.muted` (0.65) for de-emphasized-but-active content. **Never on text:** 0.65 of the secondary colour falls to about 3.4:1 on a light ground. Quiet text takes `text.tertiary`, which every identity holds at AA (#98).
 
 ### Typography
 - Default UI font: system-ui (platform native)
