@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="./dist/fonts/outfit.css">
   <link rel="stylesheet" href="./dist/fonts/instrument-sans.css">
   <link rel="stylesheet" href="./dist/fonts/fraunces.css">
+  <link rel="stylesheet" href="./dist/fonts/bricolage-grotesque.css">
   <script type="module" src="./dist/components/ij-nav.js"></script>
   <script type="module" src="./dist/components/ij-footer.js"></script>
   <script type="module" src="./dist/components/ij-store-cta.js"></script>
@@ -251,6 +252,10 @@
           <figcaption class="small"><a href="./kit/tonvault.html">TonVault</a>: a service manual, black ink, lime as a highlighter, real waveforms</figcaption></figure>
         <figure class="card"><iframe src="./kit/its-mono-yo.html" title="The kit with It's mono's identity, dark" loading="lazy"></iframe>
           <figcaption class="small"><a href="./kit/its-mono-yo.html">It's mono</a>: a Mac app, a blue-black desk at night, bordered panels, sampler drawings</figcaption></figure>
+        <figure class="card"><iframe src="./kit/trimrpix.html" title="The kit with TrimrPix' identity" loading="lazy"></iframe>
+          <figcaption class="small"><a href="./kit/trimrpix.html">TrimrPix</a>: a Mac app, a cool light ground, Bricolage Grotesque, lime as a highlighter, before and after</figcaption></figure>
+        <figure class="card"><iframe src="./kit/trimrpix-ios.html" title="The kit with TrimrPix for iOS' identity" loading="lazy"></iframe>
+          <figcaption class="small"><a href="./kit/trimrpix-ios.html">TrimrPix for iOS</a>: the same ground and face, the magenta, before and after</figcaption></figure>
       </div>
       <div class="table-wrap"><table class="small" id="kit-sections">
         <thead><tr><th>Section</th><th>Classes</th><th>Without JavaScript, or with reduced motion</th></tr></thead>
@@ -264,6 +269,7 @@
           <tr><td>Privacy and price</td><td><code>.ij-assurances</code> <code>.ij-assurance--label</code></td><td>Static</td></tr>
           <tr><td>A note from the maker</td><td><code>.ij-maker</code> <code>.ij-maker__sign</code></td><td>Static</td></tr>
           <tr><td>A dated source</td><td><code>.ij-source</code> <code>.ij-source__meta</code></td><td>Static</td></tr>
+          <tr><td>Before and after, and sizes</td><td><code>.ij-compare</code> <code>.ij-compare__item</code> <code>.ij-chips</code> <code>.ij-chip</code></td><td>Static; side by side when there's room, stacked on a phone</td></tr>
           <tr><td>Closing wordmark</td><td><code>.ij-closing</code> <code>.ij-wordmark</code></td><td>Static</td></tr>
           <tr><td>A site's drawings</td><td><code>.ij-drawing</code>, from <code>dist/drawings/&lt;app&gt;/</code></td><td>Static SVG, inlined; strokes keep their width at any size</td></tr>
           <tr><td>A data line in the drawings' hand</td><td><code>.ij-loose</code>, drawn with <code>dist/kit/loose.js</code></td><td>Static SVG, computed at build time, with its values as text</td></tr>

@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketing kit: TrimrPix example</title>
+<meta name="description" content="An example page built from the IAMJARL marketing kit with TrimrPix's identity: a lilac-white ground, Bricolage Grotesque, the Mac icon's lime as a highlighter, and before and after as the picture.">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="../dist/css/tokens.css">
+<link rel="stylesheet" href="../dist/identity/trimrpix.css">
+<link rel="stylesheet" href="../dist/fonts/bricolage-grotesque.css">
+<link rel="stylesheet" href="../dist/fonts/jetbrains-mono.css">
+<link rel="stylesheet" href="../dist/kit/kit.css">
+<!-- TrimrPix's identity for the Mac (#96): light whatever the visitor's setting, a cool
+     lilac-white ground shared with the iOS site, Bricolage Grotesque for headlines and
+     JetBrains Mono for every size and percentage. The Mac icon's lime is a highlighter,
+     behind black text and never as text; links take a dark olive. No drawings: the same
+     photo at both sizes is the picture, and the cow stays the icon. The window shows
+     today's captures, in the app's dark appearance, until TrimrPix retakes them light.
+     The copy follows TrimrPix's page brief. -->
+<script type="module" src="../dist/components/ij-nav.js"></script>
+<script type="module" src="../dist/components/ij-footer.js"></script>
+<script type="module" src="../dist/kit/kit.js"></script>
+</head>
+<body class="ij-page">
+<a class="ij-skip" href="#main">Skip to content</a>
+
+<ij-nav>
+  <a slot="brand" href="./trimrpix.html">TrimrPix</a>
+  <a slot="links" href="#compare">Before and after</a>
+  <a slot="links" href="#where">Where it works</a>
+  <a slot="cta" href="https://apps.apple.com/app/id6758639590?pt=128512007&amp;ct=site&amp;mt=12" data-umami-event="store-click" data-umami-event-store="mac-app-store" data-umami-event-placement="nav" data-umami-event-locale="en">Download</a>
+</ij-nav>
+
+<main id="main">
+
+  <!-- Hero, centred: the words, then the window -->
+  <section class="ij-hero ij-hero--centred" id="hero">
+    <div class="ij-container ij-hero__inner">
+      <div class="ij-hero__text">
+        <h1 class="ij-display">Trim file size. <mark>Keep quality.</mark></h1>
+        <p class="ij-lede">TrimrPix makes your image files smaller without making them look worse. It runs on your Mac, in batches, and uploads nothing.</p>
+        <!-- dist/store/trimrpix.en.black.html -->
+        <div class="ij-store" data-ij-store="trimrpix" data-ij-store-locale="en">
+          <a class="ij-store-badge" href="https://apps.apple.com/app/id6758639590?pt=128512007&amp;ct=site&amp;mt=12" data-umami-event="store-click" data-umami-event-store="mac-app-store" data-umami-event-placement="hero" data-umami-event-locale="en">
+            <img src="../badges/mac-app-store-black-en-us.svg" alt="Download on the Mac App Store" width="156" height="40">
+          </a>
+          <p class="ij-store-facts">$1.99 once · macOS 15.2 or later</p>
+        </div>
+        <p class="ij-small"><a href="./trimrpix-ios.html">Looking for iPhone or iPad?</a></p>
+      </div>
+      <div class="ij-hero__media">
+        <div class="ij-window">
+          <img src="https://cdn.jsdelivr.net/gh/JarlLyng/TrimrPix@4333f2a3460d12e06d912b9adafacdbf652484ba/docs/screenshot-1.png" alt="TrimrPix with two photos dropped in, each with its original size" width="1800" height="900" fetchpriority="high">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Before and after: the same photo at both sizes -->
+  <section class="ij-section ij-section--band" id="compare" aria-labelledby="compare-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="compare-h">The same photo. A fifth of the size.</h2>
+      <figure class="ij-compare">
+        <figure class="ij-compare__item">
+          <img src="https://images.unsplash.com/photo-1498330177096-689e3fb901ca?w=1200&amp;q=92&amp;auto=format" alt="A blue wave breaking on a sandy shore, the original" width="1200" height="800" loading="lazy" decoding="async">
+          <figcaption><span>Original</span><span class="ij-num">4.2 MB</span></figcaption>
+        </figure>
+        <figure class="ij-compare__item">
+          <img src="https://images.unsplash.com/photo-1498330177096-689e3fb901ca?w=1200&amp;q=70&amp;auto=format" alt="The same photo after TrimrPix" width="1200" height="800" loading="lazy" decoding="async">
+          <figcaption><span>After TrimrPix</span><span class="ij-num"><mark>0.9 MB</mark></span></figcaption>
+        </figure>
+        <figcaption>An example of the piece: the site shows its own photo, made by the app at stated settings, with its measured sizes.</figcaption>
+      </figure>
+      <ul class="ij-chips" aria-label="Sizes before and after">
+        <li class="ij-chip">4.2 MB → 0.9 MB <mark>−79%</mark></li>
+        <li class="ij-chip">3 photos, 2.6 MB saved <mark>−80%</mark></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- The window that stays -->
+  <section class="ij-section" aria-labelledby="tour-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="tour-h">Drop, choose, trim.</h2>
+      <div class="ij-tour ij-tour--window">
+        <div class="ij-tour__screens">
+          <div class="ij-window" data-step="1"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/TrimrPix@4333f2a3460d12e06d912b9adafacdbf652484ba/docs/screenshot-1.png" alt="Photos dropped in, each with its size" width="1800" height="900" loading="lazy" decoding="async"></div>
+          <div class="ij-window" data-step="2"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/TrimrPix@4333f2a3460d12e06d912b9adafacdbf652484ba/docs/screenshot-2.png" alt="The settings: a preset, the quality, saving and the Watch Folder" width="1000" height="1040" loading="lazy" decoding="async"></div>
+          <div class="ij-window" data-step="3"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/TrimrPix@4333f2a3460d12e06d912b9adafacdbf652484ba/docs/screenshot-3.png" alt="A batch of screenshots ready to optimize" width="1892" height="1084" loading="lazy" decoding="async"></div>
+        </div>
+        <ol class="ij-tour__steps">
+          <li class="ij-tour__step" data-step="1"><h3 class="ij-title">Drop a batch</h3><p>Any number of images at once, each with its size.</p></li>
+          <li class="ij-tour__step" data-step="2"><h3 class="ij-title">Choose the quality</h3><p>A preset or your own setting, and a Watch Folder that trims what lands in it.</p></li>
+          <li class="ij-tour__step" data-step="3"><h3 class="ij-title">Optimize all</h3><p>The originals stay as they were unless you choose otherwise.</p></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Where it works: one measured saving, then the formats -->
+  <section class="ij-section ij-section--band" id="where" aria-labelledby="where-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="where-h">Where it works.</h2>
+      <div class="ij-traits">
+        <div class="ij-trait ij-trait--number"><p class="ij-numeral" style="font-size: var(--ij-mkt-wordmark-size)">−72%</p><p><mark>An example:</mark> the site states its own measured saving and the folder and settings it came from.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">JPEG, PNG, GIF, AVIF, HEIC</h3><p>The formats you have.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Scanned PDFs</h3><p>Smaller scans, the same pages.</p></div>
+        <div class="ij-trait ij-trait--wide"><h3 class="ij-title">Watch Folder, metadata, resize</h3><p>Trim what lands in a folder, strip metadata, and resize as you go.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Offline</h3><p>Nothing leaves your Mac.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy and price -->
+  <section class="ij-section" aria-labelledby="privacy-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="privacy-h">Nothing uploaded. Paid for once.</h2>
+      <div class="ij-assurances">
+        <div class="ij-assurance"><h3 class="ij-title">Nothing uploaded</h3><p>No account, and no server in between.</p></div>
+        <div class="ij-assurance"><h3 class="ij-title">Paid for once</h3><p>No subscription.</p></div>
+        <div class="ij-assurance ij-assurance--label"><h3 class="ij-title">Data Not Collected</h3><p>The Mac App Store's privacy label, as Apple shows it.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- A note from the maker -->
+  <section class="ij-section ij-section--band" aria-label="A note from the maker">
+    <div class="ij-container">
+      <div class="ij-maker">
+        <p>I built TrimrPix to do one thing well. It makes your image files smaller without making them look worse, it runs on your Mac, and it uploads nothing. You pay for it once.</p>
+        <p class="ij-maker__sign">Jarl</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ij-section ij-section--band" aria-label="Download TrimrPix">
+    <div class="ij-container ij-closing">
+      <p class="ij-wordmark">TrimrPix</p>
+      <div class="ij-store" data-ij-store="trimrpix" data-ij-store-locale="en">
+        <a class="ij-store-badge" href="https://apps.apple.com/app/id6758639590?pt=128512007&amp;ct=site&amp;mt=12" data-umami-event="store-click" data-umami-event-store="mac-app-store" data-umami-event-placement="footer" data-umami-event-locale="en">
+          <img src="../badges/mac-app-store-black-en-us.svg" alt="Download on the Mac App Store" width="156" height="40" loading="lazy">
+        </a>
+        <p class="ij-store-facts">$1.99 once · macOS 15.2 or later</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<ij-footer app="trimrpix">
+  <span slot="fineprint">Photo by Jeremy Bishop on Unsplash. An example page for the IAMJARL marketing kit, with TrimrPix's identity (#96); the copy follows TrimrPix's page brief.</span>
+</ij-footer>
+
+</body>
+</html>

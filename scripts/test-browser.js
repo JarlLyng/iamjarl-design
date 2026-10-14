@@ -662,7 +662,10 @@ try {
     wodrounds: ['.ij-staircase', '.ij-source', '.ij-statements', ...PHONE], 'its-mono-yo': ['.ij-phone', '.ij-source', '.ij-staircase', '.ij-scene'],
     // Anvil and TonVault (#91) use no drawings: the app's data is the picture.
     'anvil-workout': ['.ij-statements', '.ij-source', '.ij-staircase', '.ij-scene', ...PHONE],
-    tonvault: ['.ij-phone', '.ij-statements', '.ij-tour', '.ij-source', '.ij-staircase', '.ij-scene', '.ij-reviews'] };
+    tonvault: ['.ij-phone', '.ij-statements', '.ij-tour', '.ij-source', '.ij-staircase', '.ij-scene', '.ij-reviews'],
+    // TrimrPix (#96): before and after as the picture, one for each platform.
+    trimrpix: ['.ij-phone', '.ij-statements', '.ij-card', '.ij-source', '.ij-staircase', '.ij-scene', '.ij-reviews'],
+    'trimrpix-ios': ['.ij-window', '.ij-statements', '.ij-card', '.ij-source', '.ij-staircase', '.ij-scene', '.ij-reviews'] };
   const kitProbe = `(() => {
     const lum = c => { const m = c.match(/[\\d.]+/g).map(Number); const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
       return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]); };
@@ -698,7 +701,8 @@ try {
   })()`;
   for (const [demo, bg, faceRe] of [['walkful', 'rgb(245, 239, 230)', /Fraunces/], ['wean', 'rgb(230, 236, 239)', /Instrument Sans/],
     ['wodrounds', 'rgb(11, 12, 13)', /JetBrains Mono/], ['its-mono-yo', 'rgb(13, 15, 19)', /JetBrains Mono/],
-    ['anvil-workout', 'rgb(243, 243, 239)', /Outfit/], ['tonvault', 'rgb(245, 244, 238)', /JetBrains Mono/]]) {
+    ['anvil-workout', 'rgb(243, 243, 239)', /Outfit/], ['tonvault', 'rgb(245, 244, 238)', /JetBrains Mono/],
+    ['trimrpix', 'rgb(241, 240, 246)', /Bricolage Grotesque/], ['trimrpix-ios', 'rgb(241, 240, 246)', /Bricolage Grotesque/]]) {
     for (const [w, h, size] of [[1440, 900, 96], [375, 812, 52]]) {
       await p.viewport(w, h);
       await p.goto(`${base}/kit/${demo}.html`);
@@ -972,6 +976,33 @@ try {
       tv.waves.join() === 'rgb(208, 255, 0) / rgb(20, 20, 20)' && tv.panel === '1px' && tv.label === 'uppercase' && tv.overflow <= 0, JSON.stringify(tv));
   }
 
+  // TrimrPix (#96): one light look on both sites, Bricolage Grotesque for the
+  // headlines and the numeral face for every size; the same photo twice, side
+  // by side when there's room and stacked on a phone, each labelled with its
+  // size; size chips in the numeral face; and on the Mac the lime only ever
+  // behind black text.
+  for (const [demo, w, h] of [['trimrpix', 1440, 900], ['trimrpix', 375, 812], ['trimrpix-ios', 1440, 900], ['trimrpix-ios', 375, 812]]) {
+    await p.viewport(w, h);
+    await p.goto(`${base}/kit/${demo}.html`);
+    await p.eval('document.fonts.ready');
+    await p.settle(150);
+    const tp = await p.eval(`(() => {
+      const items = [...document.querySelectorAll('.ij-compare__item')], imgs = items.map(i => i.querySelector('img'));
+      const [a, b] = items.map(i => i.getBoundingClientRect());
+      const sizes = items.map(i => i.querySelector('.ij-num')).map(n => [n.textContent.trim(), getComputedStyle(n).fontFamily]);
+      const chips = [...document.querySelectorAll('.ij-chip')].map(c => getComputedStyle(c).fontFamily);
+      const lime = 'rgb(208, 255, 0)';
+      const limeText = [...document.querySelectorAll('main *')].filter(e => [...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()) && getComputedStyle(e).color === lime).length;
+      const marks = [...new Set([...document.querySelectorAll('main mark')].map(m => getComputedStyle(m).color))];
+      return { h1: getComputedStyle(document.querySelector('h1')).fontFamily, same: imgs.length === 2 && imgs[0].src.split('?')[0] === imgs[1].src.split('?')[0],
+        sizes, chips: chips.length && chips.every(f => /JetBrains Mono/.test(f)), side: Math.abs(a.top - b.top) < 1, stacked: b.top > a.bottom - 1,
+        limeText, marks, overflow: document.documentElement.scrollWidth - innerWidth };
+    })()`);
+    check(`${demo} at ${w}: headlines in Bricolage Grotesque, the same photo twice with its sizes in mono, ${w > 700 ? 'side by side' : 'stacked'}, size chips, highlights black, no lime text`,
+      /Bricolage Grotesque/.test(tp.h1) && tp.same && tp.sizes.length === 2 && tp.sizes.every(([t, f]) => /\d MB$/.test(t) && /JetBrains Mono/.test(f)) && tp.chips &&
+      (w > 700 ? tp.side : tp.stacked) && tp.limeText === 0 && tp.marks.join() === 'rgb(0, 0, 0)' && tp.overflow <= 0, JSON.stringify(tp));
+  }
+
   // The window that stays: the same tour with a window in the wider column,
   // holding still while the texts pass, and changing with the one in the middle.
   await p.viewport(1440, 900);
@@ -996,7 +1027,7 @@ try {
   // their own margin, later in kit.css and as specific, used to win: a source
   // card sat flush on its heading. Every later child of a stack, on every
   // example, must keep the stack's spacing.
-  for (const demo of ['walkful', 'wean', 'wodrounds', 'its-mono-yo', 'anvil-workout', 'tonvault']) {
+  for (const demo of ['walkful', 'wean', 'wodrounds', 'its-mono-yo', 'anvil-workout', 'tonvault', 'trimrpix', 'trimrpix-ios']) {
     await p.viewport(1440, 900);
     await p.goto(`${base}/kit/${demo}.html`);
     await p.settle(100);
@@ -1014,7 +1045,7 @@ try {
   const rowProbe = `(() => { const sc = document.querySelector('.ij-tour__screens'), ph = [...sc.children];
     const r = sc.getBoundingClientRect(), first = ph[0].getBoundingClientRect(), last = ph.at(-1).getBoundingClientRect();
     return { overflows: sc.scrollWidth > sc.clientWidth + 1, start: Math.round(first.left - r.left), end: Math.round(r.right - last.right) }; })()`;
-  for (const demo of ['walkful', 'wean', 'wodrounds', 'its-mono-yo', 'anvil-workout']) {
+  for (const demo of ['walkful', 'wean', 'wodrounds', 'its-mono-yo', 'anvil-workout', 'trimrpix-ios']) {
     await p.viewport(375, 812);
     await p.goto(`${base}/kit/${demo}.html`);
     await p.settle(200);

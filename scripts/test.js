@@ -673,7 +673,7 @@ check('an unknown face throws rather than emitting it', (() => {
 
 // --- Display type ---
 const faces = fullTokens.brand.typography.display;
-check('four approved display faces', Object.keys(faces).length === 4);
+check('five approved display faces, Bricolage Grotesque the fifth (#96)', Object.keys(faces).length === 5 && faces.grotesque?.name === 'Bricolage Grotesque');
 check('every approved face records a licence and a real fallback', Object.values(faces).every(f =>
   f.licence && f.stack.includes(',') && /sans-serif|monospace|serif$/.test(f.stack.trim())),
   'a stack without a real fallback leaves a site unreadable until the file lands');
@@ -787,6 +787,13 @@ check('a cross-link fragment per store language, the same links with only the po
     return en.length === here.length && here.every((line, i) => line.includes(`href="${portfolio.url}"`)
       ? line.endsWith(`>${labelsFor(l).projects}</a>`) : line === en[i]);
   })) && read('dist/footers/wodrounds.da.html').includes('>Alle projekter</a>'));
+// A stack's spacing must win (#88, #96): no block the kit offers may reset its
+// own margin after the stack's rule, where, as specific and later, it beats
+// the stack. A block's reset belongs in the one .ij-page :where(…) rule placed
+// before the stack. Parts of a block (with __) and descendants are fine.
+const afterStack = kitSrc.slice(kitSrc.indexOf('.ij-stack > * + *'));
+const ownResets = [...afterStack.matchAll(/(^|\n)(\.ij-[a-z-]+(?:--[a-z-]+)?)\s*\{[^}]*\bmargin(?:-top|-block)?:\s*0[;\s]/g)].map(m => m[2]);
+check('no kit block resets its own margin after the stack\'s rule, so a stack\'s spacing always wins', ownResets.length === 0, ownResets.join(', '));
 const kitDist = read('dist/kit/kit.css');
 check('dist/kit/kit.css is the source with its version on top, hashed and exported',
   kitDist.startsWith(`/* IAMJARL marketing kit v${fullTokens.meta.version}:`) && kitDist.endsWith(kitSrc) &&
@@ -949,7 +956,7 @@ check('the Anvil and TonVault examples: no badge, no AI wording, nothing from Go
   /not affiliated with Elektron/.test(tvPage));
 check('a numeral face of its own: Anvil\'s sheet sets --ij-font-numeral to JetBrains Mono, and the kit reads it for .ij-numeral and the figures',
   /--ij-font-numeral: 'JetBrains Mono'/.test(read('dist/identity/anvil-workout.css')) && /--ij-font-numeral-axes: normal/.test(read('dist/identity/anvil-workout.css')) &&
-  /\.ij-numeral \{\s*font-family: var\(--ij-font-numeral,/.test(kitSrc) && /\.ij-data \.ij-num \{[^}]*var\(--ij-font-numeral,/.test(kitSrc));
+  /\.ij-numeral \{\s*font-family: var\(--ij-font-numeral,/.test(kitSrc) && /\.ij-page \.ij-num \{[^}]*var\(--ij-font-numeral,/.test(kitSrc));
 check('dist/kit/loose.js is the source with its version on top, hashed, and the drawings are exported',
   read('dist/kit/loose.js').endsWith(read('kit/loose.js')) && 'dist/kit/loose.js' in JSON.parse(read('dist/sri.json')).files &&
   JSON.parse(read('package.json')).exports['./drawings/*'] === './dist/drawings/*');

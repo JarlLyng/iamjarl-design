@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketing kit: TrimrPix for iOS example</title>
+<meta name="description" content="An example page built from the IAMJARL marketing kit with TrimrPix for iOS's identity: a lilac-white ground, Bricolage Grotesque, the icons' magenta, and before and after as the picture.">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="../dist/css/tokens.css">
+<link rel="stylesheet" href="../dist/identity/trimrpix-ios.css">
+<link rel="stylesheet" href="../dist/fonts/bricolage-grotesque.css">
+<link rel="stylesheet" href="../dist/fonts/jetbrains-mono.css">
+<link rel="stylesheet" href="../dist/kit/kit.css">
+<!-- TrimrPix for iOS's identity (#96): the same light look as the Mac site, a cool
+     lilac-white ground, Bricolage Grotesque and JetBrains Mono for sizes, with the
+     iPhone icon's magenta for fills and highlights and a deep magenta for links. No
+     drawings: the same photo at both sizes is the picture, and the cow stays the icon.
+     The copy follows TrimrPix for iOS's page brief. -->
+<script type="module" src="../dist/components/ij-nav.js"></script>
+<script type="module" src="../dist/components/ij-footer.js"></script>
+<script type="module" src="../dist/kit/kit.js"></script>
+</head>
+<body class="ij-page">
+<a class="ij-skip" href="#main">Skip to content</a>
+
+<ij-nav>
+  <a slot="brand" href="./trimrpix-ios.html">TrimrPix</a>
+  <a slot="links" href="#compare">Before and after</a>
+  <a slot="links" href="#where">Where it works</a>
+  <a slot="cta" href="https://apps.apple.com/app/id6761081919?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="nav" data-umami-event-locale="en">Download</a>
+</ij-nav>
+
+<main id="main">
+
+  <!-- Hero, split: on a phone the words and the button come before the device -->
+  <section class="ij-hero ij-hero--split" id="hero">
+    <div class="ij-container ij-hero__inner">
+      <div class="ij-hero__text">
+        <h1 class="ij-display">Smaller photos. <mark>No duplicates.</mark></h1>
+        <p class="ij-lede">TrimrPix makes the photos in your library smaller and puts them back where they were. Nothing is uploaded.</p>
+        <!-- dist/store/trimrpix-ios.en.black.html -->
+        <div class="ij-store" data-ij-store="trimrpix-ios" data-ij-store-locale="en">
+          <a class="ij-store-badge" href="https://apps.apple.com/app/id6761081919?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="hero" data-umami-event-locale="en">
+            <img src="../badges/app-store-black-en-us.svg" alt="Download on the App Store" width="120" height="40">
+          </a>
+          <p class="ij-store-facts">$1.99 once · iOS 17 or later</p>
+        </div>
+        <p class="ij-small"><a href="./trimrpix.html">TrimrPix for Mac</a></p>
+      </div>
+      <div class="ij-hero__media">
+        <div class="ij-phone" style="--ij-phone-width: 300px">
+          <div class="ij-phone__screen">
+            <img src="https://cdn.jsdelivr.net/gh/JarlLyng/TrimrPix-for-iOS@a21c90c4c5a0bebcf59a4ff06c09361be785dad1/appstore/screenshots/raw/4-result.png" alt="Done: three photos compressed, 2.6 MB saved" width="1320" height="2868" fetchpriority="high">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Before and after: the same photo at both sizes -->
+  <section class="ij-section ij-section--band" id="compare" aria-labelledby="compare-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="compare-h">The same photo. A fifth of the size.</h2>
+      <figure class="ij-compare">
+        <figure class="ij-compare__item">
+          <img src="https://images.unsplash.com/photo-1498330177096-689e3fb901ca?w=1200&amp;q=92&amp;auto=format" alt="A blue wave breaking on a sandy shore, the original" width="1200" height="800" loading="lazy" decoding="async">
+          <figcaption><span>Original</span><span class="ij-num">4.2 MB</span></figcaption>
+        </figure>
+        <figure class="ij-compare__item">
+          <img src="https://images.unsplash.com/photo-1498330177096-689e3fb901ca?w=1200&amp;q=70&amp;auto=format" alt="The same photo after TrimrPix" width="1200" height="800" loading="lazy" decoding="async">
+          <figcaption><span>After TrimrPix</span><span class="ij-num"><mark>0.9 MB</mark></span></figcaption>
+        </figure>
+        <figcaption>An example of the piece: the site shows its own photo, made by the app at stated settings, with its measured sizes.</figcaption>
+      </figure>
+      <ul class="ij-chips" aria-label="Sizes before and after">
+        <li class="ij-chip">4.2 MB → 0.9 MB <mark>−79%</mark></li>
+        <li class="ij-chip">3 photos, 2.6 MB saved <mark>−80%</mark></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- The phone that stays -->
+  <section class="ij-section" aria-labelledby="tour-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="tour-h">Pick, set, confirm.</h2>
+      <div class="ij-tour">
+        <div class="ij-tour__screens">
+          <div class="ij-phone" data-step="1"><div class="ij-phone__screen"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/TrimrPix-for-iOS@a21c90c4c5a0bebcf59a4ff06c09361be785dad1/appstore/screenshots/raw/1-select.png" alt="Picking photos, with an estimate of the saving" width="1320" height="2868" loading="lazy" decoding="async"></div></div>
+          <div class="ij-phone" data-step="2"><div class="ij-phone__screen"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/TrimrPix-for-iOS@a21c90c4c5a0bebcf59a4ff06c09361be785dad1/appstore/screenshots/raw/2-configure.png" alt="The target size and the metadata settings" width="1320" height="2868" loading="lazy" decoding="async"></div></div>
+          <div class="ij-phone" data-step="3"><div class="ij-phone__screen"><img src="https://cdn.jsdelivr.net/gh/JarlLyng/TrimrPix-for-iOS@a21c90c4c5a0bebcf59a4ff06c09361be785dad1/appstore/screenshots/raw/3-confirm.png" alt="Slide to confirm" width="1320" height="2868" loading="lazy" decoding="async"></div></div>
+        </div>
+        <ol class="ij-tour__steps">
+          <li class="ij-tour__step" data-step="1"><h3 class="ij-title">Pick photos</h3><p>See an estimate of what you'll save first.</p></li>
+          <li class="ij-tour__step" data-step="2"><h3 class="ij-title">Set the target</h3><p>A quality, or a target size of your own, and what happens to the metadata.</p></li>
+          <li class="ij-tour__step" data-step="3"><h3 class="ij-title">Slide to confirm</h3><p>The smaller photos go back where the originals were.</p></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Where it works: no duplicates -->
+  <section class="ij-section ij-section--band" id="where" aria-labelledby="where-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="where-h">Where it works.</h2>
+      <div class="ij-traits">
+        <div class="ij-trait ij-trait--number"><p class="ij-numeral" style="font-size: var(--ij-mkt-wordmark-size)">0</p><p>Duplicates: each photo is replaced in place, not copied.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Quality or target size</h3><p>Choose how small.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Metadata control</h3><p>Keep it, or strip it.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">iCloud photos</h3><p>Your library, as it is.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">iPhone and iPad</h3><p>The same app on both.</p></div>
+        <div class="ij-trait"><h3 class="ij-title">Offline</h3><p>Nothing leaves your phone.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy and price -->
+  <section class="ij-section" aria-labelledby="privacy-h">
+    <div class="ij-container ij-stack">
+      <h2 class="ij-headline" id="privacy-h">Nothing uploaded. Paid for once.</h2>
+      <div class="ij-assurances">
+        <div class="ij-assurance"><h3 class="ij-title">Nothing uploaded</h3><p>No account, and no server in between.</p></div>
+        <div class="ij-assurance"><h3 class="ij-title">Paid for once</h3><p>No subscription.</p></div>
+        <div class="ij-assurance ij-assurance--label"><h3 class="ij-title">Data Not Linked to You</h3><p>Diagnostics only, crash data, as the App Store's privacy label shows it.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- A note from the maker -->
+  <section class="ij-section ij-section--band" aria-label="A note from the maker">
+    <div class="ij-container">
+      <div class="ij-maker">
+        <p>I built TrimrPix to do one thing well. It makes the photos in your library smaller and puts them back where they were. Nothing is uploaded, and you pay for it once.</p>
+        <p class="ij-maker__sign">Jarl</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ij-section ij-section--band" aria-label="Download TrimrPix">
+    <div class="ij-container ij-closing">
+      <p class="ij-wordmark">TrimrPix</p>
+      <div class="ij-store" data-ij-store="trimrpix-ios" data-ij-store-locale="en">
+        <a class="ij-store-badge" href="https://apps.apple.com/app/id6761081919?pt=128512007&amp;ct=site&amp;mt=8" data-umami-event="store-click" data-umami-event-store="app-store" data-umami-event-placement="footer" data-umami-event-locale="en">
+          <img src="../badges/app-store-black-en-us.svg" alt="Download on the App Store" width="120" height="40" loading="lazy">
+        </a>
+        <p class="ij-store-facts">$1.99 once · iOS 17 or later</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<ij-footer app="trimrpix-ios">
+  <span slot="fineprint">Photo by Jeremy Bishop on Unsplash. An example page for the IAMJARL marketing kit, with TrimrPix for iOS's identity (#96); the copy follows TrimrPix for iOS's page brief.</span>
+</ij-footer>
+
+</body>
+</html>

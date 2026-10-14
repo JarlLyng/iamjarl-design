@@ -63,12 +63,15 @@
       "listed": true,
       "consumes": false,
       "identity": {
-        "display": "geometric",
+        "scheme": "light",
+        "display": "grotesque",
+        "numerals": "mono",
         "light": {
-          "accent": "#B4401D"
-        },
-        "dark": {
-          "accent": "#DD5931"
+          "background": "#F1F0F6",
+          "surface": "#FFFFFF",
+          "text": "#1C1B22",
+          "accent": "#D0FF00",
+          "accentText": "#4A5900"
         }
       },
       "store": {
@@ -384,12 +387,15 @@
       "listed": true,
       "consumes": true,
       "identity": {
-        "display": "geometric",
+        "scheme": "light",
+        "display": "grotesque",
+        "numerals": "mono",
         "light": {
-          "accent": "#B4401D"
-        },
-        "dark": {
-          "accent": "#DD5931"
+          "background": "#F1F0F6",
+          "surface": "#FFFFFF",
+          "text": "#1C1B22",
+          "accent": "#F140FE",
+          "accentText": "#A80FB3"
         }
       },
       "store": {
