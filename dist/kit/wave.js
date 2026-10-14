@@ -1,4 +1,4 @@
-// IAMJARL marketing kit v1.32.0: generated from kit/wave.js, do not edit
+// IAMJARL marketing kit v1.32.1: generated from kit/wave.js, do not edit
 // A waveform from real audio, as data (#91).
 //
 // TonVault's signature is the waveform of a sample on the card. A site feeds

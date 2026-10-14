@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.32.1] — 2026-10-14
+
+Two findings from TrimrPix' move to 1.32.0: the footer's quiet text below AA on every light site, and a `<picture>` the kit didn't size (#98, #99).
+
+### Fixed
+- **`<ij-footer>`'s group labels and fineprint read at AA on every ground** (#98).
+  - **Before:** they were faded with `opacity: 0.65`. On every light site that put the fineprint at 3.1 to 3.8:1, below AA, and the labels at 4.4:1 on Walkful and Wean.
+  - **Now:** both take the tertiary text colour, 5.1:1 or more on every identity's ground and 4.8:1 on the tokens alone.
+  - **What it looks like:** both stand out a little more against the ground, the fineprint most. Nothing else changes.
+- **A `<picture>` works wherever the kit sizes an image** (#99):
+  - **Where:** `.ij-window`, `.ij-phone__screen`, `.ij-tv__screen`, `.ij-watch__screen`, `.ij-card__piece` and `.ij-compare__item`.
+  - **How:** the kit lays the `<picture>` out as if it weren't there, and sizes the `<img>` inside it as it does a bare one.
+  - **Why it matters:** a site can serve its captures as AVIF and WebP with a fallback, where before the `<img>` kept its `height` attribute and was squashed.
+
+### Tests
+- **The kit examples' contrast scan:**
+  - **What a reader sees:** each text's colour is composited through its alpha and every opacity above it, across slots and shadow roots.
+  - **The footer too:** the scan now reads the footer's text, not just `<main>`.
+- **Every identity's footer** in both modes, and one on the tokens alone: each text at AA, and nothing in the footer faded by opacity.
+- **A `<picture>` fixture:** the window at its own ratio with its corners, the phone's screen filled, and the before and after at 3:2.
+
+Each of these tests fails on 1.32.0.
+
+### Who should move
+- **Every light site that uses `<ij-footer>` with fineprint or groups**, to pass AA: Walkful, Wean, Anvil, TonVault, TrimrPix and TrimrPix for iOS, and the light family sites. Bump `ij-footer.js` and its hash. Nothing else changes.
+- **A site that wants AVIF or WebP captures** in a window, a phone or a before and after: bump `kit.css` and its hash.
+
 ## [1.32.0] — 2026-10-13
 
 TrimrPix' identity on its two sites, a fifth display face, and a before and after (#96).
@@ -1161,6 +1188,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.32.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.32.1
 [1.32.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.32.0
 [1.31.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.31.0
 [1.30.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.30.0
