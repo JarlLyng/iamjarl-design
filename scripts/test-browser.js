@@ -227,6 +227,13 @@ ${FULL_NAV.replace('<ij-nav>', '<ij-nav cta-after="#hero-cta">')}
   <div class="ij-compare"><figure class="ij-compare__item" id="compare">${pic(1200, 900)}<figcaption><span>Original</span><span class="ij-num">4.2 MB</span></figcaption></figure></div>
 </main>`; })() }),
 
+  // A light page that maps its own palette onto the footer, with no token
+  // sheet and no tertiary (PageLens' guides, after #98).
+  'footer-mapped': page({ tokens: false, nav: false, footer: true, body: `
+<style>:root { --ij-color-text-primary: #111111; --ij-color-text-secondary: #444444; --ij-color-border-subtle: #dddddd; }
+  body { background: #ffffff; color: #111111; }</style>
+<main><ij-footer app="pagelens"><p slot="fineprint">© 2026 IAMJARL. Powered by a library.</p></ij-footer></main>` }),
+
   'footer-justify': page({ nav: false, footer: true, body: `
 <div style="width: 900px"><ij-footer app="its-mono-yo" style="text-align: center; --ij-footer-links-justify: center"></ij-footer></div>` }),
 };
@@ -1189,6 +1196,22 @@ try {
   await p.media([]);
   check(`every text in the footer, its labels and fineprint too, at AA on all ${IDENTITIES.length} identities and the tokens alone, light and dark`,
     inkLow.length === 0, JSON.stringify(inkLow));
+  // A page that maps its own palette and has no tertiary: in a dark OS, the
+  // quiet text must take the page's secondary, not the footer's dark fallback.
+  await p.media([{ name: 'prefers-color-scheme', value: 'dark' }]);
+  await p.goto(`${base}/fixture/footer-mapped/index.html`);
+  await p.eval(`customElements.whenDefined('ij-footer')`);
+  await p.settle(100);
+  const mapped = await p.eval(`(() => {${INK}
+    const f = document.querySelector('ij-footer'), fine = f.querySelector('[slot="fineprint"]'), label = f.shadowRoot.querySelector('.label');
+    return { fine: getComputedStyle(fine).color, label: label && getComputedStyle(label).color, low: [...texted(f), ...texted(f.shadowRoot)].map(e => inkRatio(e)).filter(x => x < 4.5) };
+  })()`);
+  await p.media([]);
+  check('a page that maps its own palette and no tertiary: in a dark OS the labels and fineprint take its secondary, at AA on its white',
+    mapped.fine === 'rgb(68, 68, 68)' && mapped.label === 'rgb(68, 68, 68)' && mapped.low.length === 0, JSON.stringify(mapped));
+  await p.goto(`${base}/fixture/footer-ink-tokens/index.html`);
+  await p.eval(`customElements.whenDefined('ij-footer')`);
+  await p.settle(100);
   check('the footer fades nothing: its quiet text is a colour, not an opacity', await p.eval(`(() => {
     const sr = document.querySelector('ij-footer').shadowRoot;
     return [...sr.querySelectorAll('*')].every(e => getComputedStyle(e).opacity === '1');
