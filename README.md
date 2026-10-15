@@ -342,6 +342,11 @@ Then link the copies with the same `integrity` as the CDN snippets, from `/asset
 Keep the version in the folder's name, so a bump is a new folder and a changed link, never a file
 edited in place. Take only what your page loads; the store pieces are pasted into your HTML anyway.
 
+**Check that `integrity` is enforced, not just present** (the TrimrPix for iOS session's practice). Change
+one byte in your copy of `tokens.css` and reload. The browser must refuse the sheet, with an SRI error in
+the console. Then restore the byte. A wrong hash fails the same way a missing file does, and a page with
+fallback values can look almost right while it runs without the design system.
+
 ### Pinning with Subresource Integrity
 
 For the CDN path, and for a copy in the site, which uses the same hashes. A bundled dependency is
