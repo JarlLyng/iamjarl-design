@@ -1189,6 +1189,9 @@ check('every install pin in the README is the current version',
     read('AGENTS.md').includes('A live site serves these files from its own origin'));
   check('the README shows how to serve a checked copy from the site itself, from GitHub and not the CDN',
     /archive\/refs\/tags\/v\d+\.\d+\.\d+\.tar\.gz/.test(readme) && readme.includes('openssl dgst -sha384') && readme.includes('dist/sri.json'));
+  // OFL-1.1 asks for a face's licence to travel with its font (walkful#213).
+  check('the copy recipe takes each face\'s licence and the repo\'s with the files',
+    /fonts\/LICENSE-<face>\.txt/.test(readme) && /\n  LICENSE\) \| tar -xf -/.test(readme));
 }
 
 console.log();
