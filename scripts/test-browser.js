@@ -189,21 +189,19 @@ ${FULL_NAV.replace('<ij-nav>', '<ij-nav cta-after="#hero-cta">')}
   'footer-accent': page({ nav: false, footer: true, identity: 'echolume', body: `
 <ij-footer app="echolume"><a slot="links" href="#">Privacy</a></ij-footer>` }),
 
-  // The store button: the generated fragment as a site would paste it, with its
-  // badges pointed at this server instead of the release tag on the CDN.
+  // The store button: the generated fragment exactly as a site pastes it. Its
+  // badge points at the site's own copy, /assets/iamjarl-design@vX.Y.Z/, which
+  // this server serves from the repo the way a self-hosted site does (#104).
   'store-fragment': page({ nav: false, body: `<main id="main">${
-    fs.readFileSync(path.join(ROOT, 'dist/store/wodrounds.da.html'), 'utf-8')
-      .replace(/https:\/\/cdn\.jsdelivr\.net\/gh\/jarllyng\/iamjarl-design@v[\d.]+\/badges\//g, '/badges/')}</main>` }),
+    fs.readFileSync(path.join(ROOT, 'dist/store/wodrounds.da.html'), 'utf-8')}</main>` }),
   // An always-dark site's closing call to action, pasted by hand with no module:
   // the white, midpage variant must be right in the served HTML alone (#63).
   'store-tone': page({ nav: false, body: `<main id="main" style="background: #000">${
-    fs.readFileSync(path.join(ROOT, 'dist/store/wodrounds.da.midpage.white.html'), 'utf-8')
-      .replace(/https:\/\/cdn\.jsdelivr\.net\/gh\/jarllyng\/iamjarl-design@v[\d.]+\/badges\//g, '/badges/')}</main>` }),
+    fs.readFileSync(path.join(ROOT, 'dist/store/wodrounds.da.midpage.white.html'), 'utf-8')}</main>` }),
   'store-element': page({ nav: false, body: `<script type="module" src="/dist/components/ij-store-cta.js"></script>
 <ij-store-cta id="from-registry" app="tonvault" placement="midpage"></ij-store-cta>
 <ij-store-cta id="pinned" app="wodrounds" tone="white">${
-    fs.readFileSync(path.join(ROOT, 'dist/store/wodrounds.en.html'), 'utf-8')
-      .replace(/https:\/\/cdn\.jsdelivr\.net\/gh\/jarllyng\/iamjarl-design@v[\d.]+\/badges\//g, '/badges/')}</ij-store-cta>
+    fs.readFileSync(path.join(ROOT, 'dist/store/wodrounds.en.html'), 'utf-8')}</ij-store-cta>
 <ij-store-cta id="unknown" app="nope"></ij-store-cta>` }),
 
   // Every identity's footer with labels and fineprint (#98), and one on the
@@ -249,6 +247,10 @@ function serve() {
       res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
       return res.end(FIXTURES[fx[1]]);
     }
+    // /assets/iamjarl-design@vX.Y.Z/<path>: a site's copy of the release, laid
+    // out as the README's recipe lays it out, here served from the repo (#104).
+    const copy = url.pathname.match(/^\/assets\/iamjarl-design@v\d+\.\d+\.\d+\/(.+)$/);
+    if (copy) url.pathname = '/' + copy[1];
     // /nojs/<path>: the repo's own page with every <script> removed, to read a
     // page as a crawler, a link preview or a visitor without JavaScript does.
     const nojs = url.pathname.startsWith('/nojs/');

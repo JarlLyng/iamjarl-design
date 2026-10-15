@@ -1,5 +1,5 @@
 {
-  "version": "1.32.2",
+  "version": "1.33.0",
   "description": "The custom properties a site may set that are not tokens (#80). The kit and the components read them with a default, so a site sets one only to change that default. A check for counterfeit tokens reads this list, and the identity names in dist/hooks.json, before it reports a name tokens.css does not define.",
   "hooks": [
     {

@@ -1,4 +1,4 @@
-<!-- IAMJARL drawing for It's mono: A groovebox with a row of step buttons. For where it works: the Digitakt guide. Generated from kit/drawings/its-mono-yo.js, v1.32.2. Inline it in the page; do not edit. -->
+<!-- IAMJARL drawing for It's mono: A groovebox with a row of step buttons. For where it works: the Digitakt guide. Generated from kit/drawings/its-mono-yo.js, v1.33.0. Inline it in the page; do not edit. -->
 <svg class="ij-drawing ij-drawing--its-mono-yo-groovebox" viewBox="0 0 320 240" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
   <g style="stroke: var(--ij-color-text-primary)" stroke-width="1.1" stroke-opacity="0.4">
     <path d="M95.5 97Q125.8 97.1 141 97L156.1 97"/>

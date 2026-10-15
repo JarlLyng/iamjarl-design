@@ -1214,7 +1214,10 @@ function generateStoreCta(tokens) {
 // The store fragments, per app and page locale: the badge with its facts line
 // once per placement and tone, the nav's text link, the JSON-LD Offer, and
 // Safari's Smart App Banner where there is an iPhone app. Badges load from the
-// release's own tag, like the font sheets.
+// site's own copy of the release, at /assets/iamjarl-design@vX.Y.Z/badges/, the
+// path the README's copy recipe uses (#104): a live site serves the design
+// system from its own origin (#100), so a badge from jsDelivr was the one
+// third-party request left on a self-hosted page.
 //
 // Every variant is a file of its own because most of the portfolio's sites have
 // no build step: they paste a fragment by hand, so the served HTML is only right
@@ -1224,7 +1227,7 @@ async function generateStoreFragments(tokens) {
   const store = await import(pathToFileURL(path.join(ROOT, 'components', 'store.js')).href);
   const widths = badgeWidths();
   const badges = {
-    base: `https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v${tokens.meta.version}/badges/`,
+    base: `/assets/iamjarl-design@v${tokens.meta.version}/badges/`,
     width: f => {
       if (!(f in widths)) throw new Error(`No badge file badges/${f}`);
       return widths[f];
