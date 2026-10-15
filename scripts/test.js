@@ -1062,6 +1062,10 @@ for (const a of storeAppsReg) {
           : html.includes(`srcset="`) && html.includes(`/${badgeFile(a.store.platform, code, 'white')}"`) &&
             html.includes(`/${badgeFile(a.store.platform, code, 'black')}"`);
         if (!ok) fragmentProblems.push(`${name}: tone`);
+        // The badge comes from the site's own copy of this release (#104), never a CDN.
+        const srcs = [...html.matchAll(/(?:src|srcset)="([^"]+)"/g)].map(m => m[1]);
+        if (!srcs.length || !srcs.every(u => u.startsWith(`/assets/iamjarl-design@v${tokens.meta.version}/badges/`) &&
+          fs.existsSync(path.join(ROOT, u.replace(/^\/assets\/iamjarl-design@v[\d.]+\//, ''))))) fragmentProblems.push(`${name}: badge path`);
       }
     }
     const n = `dist/store/${a.id}.${code}.nav.html`;
@@ -1193,7 +1197,9 @@ check('every install pin in the README is the current version',
   // A repo-wide dist/ ignore drops the copy's dist/ from the commit (BotLens#54).
   check('the copy recipe checks that git tracks every copied file', readme.includes('git ls-files "$DEST"') && readme.includes('git check-ignore -v'));
   check('the copy recipe takes each face\'s licence and the repo\'s with the files',
-    /fonts\/LICENSE-<face>\.txt/.test(readme) && /\n  LICENSE\) \| tar -xf -/.test(readme));
+    /fonts\/LICENSE-<face>\.txt/.test(readme) && /LICENSE\) \| tar -xf -/.test(readme));
+  check('the copy recipe takes the badges the store fragments name, and says where to serve the copy (#104)',
+    /badges\/<badge>\.svg LICENSE\)/.test(readme) && readme.includes('`/assets/iamjarl-design@vX.Y.Z/` from your site\'s root'));
 }
 
 console.log();

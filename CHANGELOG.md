@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.33.0] — 2026-10-16
+
+The store fragments' badge comes from the site's own copy, so a self-hosted page makes no request to jsDelivr (#104).
+
+### Changed
+- **Every store fragment's badge points at `/assets/iamjarl-design@vX.Y.Z/badges/<file>.svg`.**
+  - **Before:** it pointed at jsDelivr's copy of the tag. That was the one request to a third party left on a page that serves everything else itself, as TrimrPix found when it moved to a copy.
+  - **Why this path:** it is where the README's copy recipe puts the release, and TrimrPix and Walkful already serve their copies there.
+  - **What a site does:** copy the badges its fragments name, and paste fragments from the same release as its copy.
+- **The copy recipe takes the badges.** The README now says to serve the folder at that path from the site's root.
+
+### Tests
+- **Every fragment's badge path:** each `src` and `srcset` names this release's copy path and a badge that exists.
+- **Pasted verbatim:** the browser tests paste the fragments exactly as they ship, with no rewrite. The test server serves `/assets/iamjarl-design@vX.Y.Z/` from the repo, the way a self-hosted site does, and the badge loads at 40 px.
+
+### Who should move
+- **Every site that pastes store fragments:**
+  - take this release's copy with the badges;
+  - paste the fragments from it;
+  - check that the badge loads and that no request goes to `cdn.jsdelivr.net`.
+- **A site still on jsDelivr** has an issue from 1.32.2 to move to a copy. A fragment from this release won't show its badge until it has.
+
 ## [1.32.2] — 2026-10-15
 
 Two findings from the move to 1.32.1:
@@ -1226,6 +1248,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.33.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.33.0
 [1.32.2]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.32.2
 [1.32.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.32.1
 [1.32.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.32.0
