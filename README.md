@@ -336,6 +336,12 @@ mkdir -p "$DEST"
   got="sha384-$(openssl dgst -sha384 -binary "$DEST/$f" | openssl base64 -A)"
   if [ "$want" = "$got" ]; then echo "ok $f"; else echo "MISMATCH $f"; fi
 done
+
+# 4. Check that git takes all of it. A repo-wide `dist/` in .gitignore, kept for a build's
+#    output, silently drops the copy's dist/ folder (BotLens). Anchor that line as `/dist/`.
+git add "$DEST"
+[ "$(git ls-files "$DEST" | wc -l)" -eq "$(find "$DEST" -type f | wc -l)" ] && echo "all tracked" ||
+  git check-ignore -v $(find "$DEST" -type f)
 ```
 
 Then link the copies with the same `integrity` as the CDN snippets, from `/assets/iamjarl-design@v1.32.2/dist/…`.
