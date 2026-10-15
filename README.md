@@ -325,8 +325,10 @@ curl -sfL https://github.com/JarlLyng/iamjarl-design/archive/refs/tags/v1.32.2.t
 # 2. The files your page loads, in the same layout, so the font sheet still finds its font.
 DEST=assets/iamjarl-design@v1.32.2
 mkdir -p "$DEST"
+#    The licences travel with them: OFL-1.1 asks for the face's beside its font, and MIT for the rest.
 (cd "$SRC" && tar -cf - dist/css/tokens.css dist/identity/<app>.css dist/fonts/<face>.css fonts/<face>-*.woff2 \
-  dist/kit/kit.css dist/kit/kit.js dist/components/ij-nav.js dist/components/ij-footer.js) | tar -xf - -C "$DEST"
+  fonts/LICENSE-<face>.txt dist/kit/kit.css dist/kit/kit.js dist/components/ij-nav.js dist/components/ij-footer.js \
+  LICENSE) | tar -xf - -C "$DEST"
 
 # 3. Check every copy against the tag's own hashes.
 (cd "$DEST" && find dist -type f) | while read -r f; do
