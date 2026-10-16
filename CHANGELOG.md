@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.33.1] — 2026-10-16
+
+TonVault's new price, released on the day of its app release (#93).
+
+### Changed
+- **TonVault's US price is $4.99,** up from $1.99, by the owner's decision on TonVault#31. It changes TonVault's store fragments' facts line, `tonvault.en.offer.json` and the kit's TonVault example.
+
+### What TonVault loads
+- **The new fragments, pasted from `@v1.33.1`:**
+  - `dist/store/tonvault.en.black.html`, `.midpage.black.html` (the guide pages) and `.footer.black.html`;
+  - `tonvault.en.offer.json`, for the JSON-LD offer.
+
+  `tonvault.en.nav.html` carries no price.
+- **The badge comes from the site's own copy** (since 1.33.0): `/assets/iamjarl-design@v1.33.1/badges/mac-app-store-black-en-us.svg`. Copy v1.33.1 with that badge, as the README's recipe does, before pasting.
+- **The order (the hub's), so the site never shows a price the store doesn't:**
+  1. The App Store price changes first.
+  2. TonVault checks that Apple's lookup returns $4.99.
+  3. This is merged.
+  4. The fragments are pasted.
+
+### Tests
+- The store element's browser test reads TonVault's expected price from the registry instead of holding $1.99.
+
 ## [1.33.0] — 2026-10-16
 
 The store fragments' badge comes from the site's own copy, so a self-hosted page makes no request to jsDelivr (#104).
@@ -1248,6 +1271,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.33.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.33.1
 [1.33.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.33.0
 [1.32.2]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.32.2
 [1.32.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.32.1

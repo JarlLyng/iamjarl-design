@@ -696,7 +696,7 @@ try {
       unknown: document.querySelector('#unknown').innerHTML.trim() };
   })()`);
   check('empty, it renders from the registry — Mac badge, facts, placement', /mac-app-store-black-en-us\.svg$/.test(el.regSrc || '') &&
-    el.regLoaded && el.regPlacement === 'midpage' && el.regFacts === '$1.99 once · macOS 14 or later', JSON.stringify(el));
+    el.regLoaded && el.regPlacement === 'midpage' && el.regFacts === `${JSON.parse(fs.readFileSync(path.join(ROOT, 'apps.json'), 'utf-8')).apps.find(a => a.id === 'tonvault').store.price.us} once · macOS 14 or later`, JSON.stringify(el));
   check('tone="white" pins the badge for an always-dark site', /app-store-white-en-us\.svg$/.test(el.pinSrc) && !el.pinSource, el.pinSrc);
   check('an app with no store entry renders nothing and says why', el.unknown === '' &&
     p.console.some(m => m.type === 'error' && m.text.includes('no store entry for app "nope"')));
