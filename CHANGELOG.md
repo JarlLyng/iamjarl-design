@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.34.0] — 2026-10-18
 
 A store block for the apps' READMEs, generated from the registry like the sites' store button (#107).
 
@@ -23,7 +23,8 @@ A store block for the apps' READMEs, generated from the registry like the sites'
 - **The example carries this release's WODrounds block, whole.**
 
 ### Who should move
-- **Nobody yet.** The app repos' README issues wait for this release, and each one pastes its block from it.
+- **No site.** The sites' store fragments are unchanged apart from the version in their first line.
+- **Each app repo, under its README issue:** paste `dist/store/<app>.en.readme.md` from v1.34.0 under the README's one-line description, whole, and check on GitHub that the badge switches between light and dark.
 
 ## [1.33.1] — 2026-10-16
 
@@ -1291,6 +1292,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.34.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.34.0
 [1.33.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.33.1
 [1.33.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.33.0
 [1.32.2]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.32.2
