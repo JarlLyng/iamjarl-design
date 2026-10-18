@@ -14,7 +14,8 @@ A store block for the apps' READMEs, generated from the registry like the sites'
   - **What it holds:** the official badge, black on GitHub's light theme and white on its dark one; the store link with `ct=github` (`utm_source=github` on the Chrome Web Store); the facts line in the site's words; and the app's site.
   - **Where the badge comes from:** this repo at the release's tag, on `raw.githubusercontent.com`. A README has no origin of its own to serve a copy from, the tag never changes under a pasted block, and the badge's version matches the one in the block's first line.
   - **Why it's generated:** every app's README pastes it, so a price or an OS floor changes in `apps.json` once and every block follows in the next release.
-- **`docs/readme-example.md`:** WODrounds' first screen under the README standard, with the block pasted in. The build pastes it again each release.
+- **`docs/readme-example.md`:** WODrounds' README under the standard, with the block pasted in, its first two iPhone posters side by side, and the badge row that opens the developer half. The build pastes the block again each release.
+- **The rest of the first screen, documented next to the block:** the hero (two posters for an iPhone app, one image otherwise, a width and no height so it fits a phone) and the badge row (Made by Human's Co-created with AI badge in both tones, then CI and license).
 - **`storeLink(store, ct)`** takes the campaign, so the site's links stay `ct=site` and the README's say `ct=github`.
 
 ### Tests

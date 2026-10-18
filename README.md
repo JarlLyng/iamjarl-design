@@ -625,6 +625,45 @@ way [the example](docs/readme-example.md) shows:
 - **Refresh it the way a site refreshes its fragments.** The first line names the release; when one
   changes a price or an OS floor, paste the file from that release again.
 
+**The hero goes under the block.** An iPhone app shows the first two posters of its set side by
+side. A Mac app, an extension or a web project shows one image. Give each image a width and no
+height: GitHub caps an image at the page's width, and without a height it keeps its shape.
+
+```html
+<!-- iPhone: side by side on a desktop, one above the other on a phone -->
+<p>
+  <img src="<poster 1>.png" alt="<its caption>. <what the screen shows>." width="240">
+  <img src="<poster 2>.png" alt="<its caption>. <what the screen shows>." width="240">
+</p>
+
+<!-- Mac, extension or web: one image, which shrinks to fit a phone -->
+<p>
+  <img src="<image>.png" alt="<what it shows>." width="640">
+</p>
+```
+
+Not a `<table>`: GitHub gives a table its own scrollbar on a phone instead of letting it wrap.
+
+**The developer half opens with the badges.** First Made by Human's Co-created with AI badge, the
+real file, black on light and white on dark, then the repo's CI and license badges:
+
+```html
+<p>
+  <a href="https://madebyhuman.iamjarl.com"><picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://madebyhuman.iamjarl.com/badges/co-created-white.svg">
+    <img src="https://madebyhuman.iamjarl.com/badges/co-created-black.svg" alt="Co-created with AI" width="120" height="40"></picture></a>
+  <a href="https://github.com/JarlLyng/<repo>/actions/workflows/<workflow>.yml"><img src="https://github.com/JarlLyng/<repo>/actions/workflows/<workflow>.yml/badge.svg" alt="<workflow name>"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/JarlLyng/<repo>" alt="<license> License"></a>
+</p>
+```
+
+- **40 px tall,** like the store badge, the smallest size where its words still read. Never a
+  shields.io stand-in for it.
+- **The link closes right after the image.** Whitespace inside it would show as an underlined space
+  before the CI badge.
+- **The CI badge is GitHub's own,** for the workflow that runs the tests. shields.io reads the
+  license from the repo.
+
 ### Structured data: the `Offer`
 
 `<app>.<locale>.offer.json` is the `offers` value of the page's `SoftwareApplication`, in the

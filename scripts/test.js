@@ -1102,6 +1102,10 @@ check(`every store fragment matches the registry (${storeAppsReg.reduce((n, a) =
   fragmentProblems.length === 0, fragmentProblems.join('; '));
 check('the README example carries this release\'s WODrounds block, pasted whole (#107)',
   read('docs/readme-example.md').includes(`\n${read('dist/store/wodrounds.en.readme.md')}\n`));
+check('the README\'s badge row and the example use Made by Human\'s own badge, black on light and white on dark',
+  ['README.md', 'docs/readme-example.md'].every(f => read(f).includes(
+    '<source media="(prefers-color-scheme: dark)" srcset="https://madebyhuman.iamjarl.com/badges/co-created-white.svg">\n' +
+    '    <img src="https://madebyhuman.iamjarl.com/badges/co-created-black.svg" alt="Co-created with AI" width="120" height="40"></picture></a>')));
 check('the store README documents the README block next to the HTML variants',
   read('README.md').includes('| `dist/store/<app>.<locale>.readme.md` |'));
 check('an iPhone app, or a Mac app with an iPhone sibling, gets a Smart App Banner',
