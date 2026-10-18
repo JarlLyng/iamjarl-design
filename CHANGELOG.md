@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.34.0] — 2026-10-18
+
+A store block for the apps' READMEs, generated from the registry like the sites' store button (#107).
+
+### Added
+- **`dist/store/<app>.<locale>.readme.md`, for every app and store language in `apps.json`.**
+  - **What it holds:** the official badge, black on GitHub's light theme and white on its dark one; the store link with `ct=github` (`utm_source=github` on the Chrome Web Store); the facts line in the site's words; and the app's site.
+  - **Where the badge comes from:** this repo at the release's tag, on `raw.githubusercontent.com`. A README has no origin of its own to serve a copy from, the tag never changes under a pasted block, and the badge's version matches the one in the block's first line.
+  - **Why it's generated:** every app's README pastes it, so a price or an OS floor changes in `apps.json` once and every block follows in the next release.
+- **`docs/readme-example.md`:** WODrounds' README under the standard, with the block pasted in, its first two iPhone posters side by side, and the badge row that opens the developer half. The build pastes the block again each release.
+- **The rest of the first screen, documented next to the block:** the hero (two posters for an iPhone app, one image otherwise, a width and no height so it fits a phone) and the badge row (Made by Human's Co-created with AI badge in both tones, then CI and license).
+- **`storeLink(store, ct)`** takes the campaign, so the site's links stay `ct=site` and the README's say `ct=github`.
+
+### Tests
+- **Every README block matches the registry:** the first line and its version, the link and campaign, both badges from this release's tag and present in `badges/`, the facts line and the site, and no blank line that would end GitHub's HTML block.
+- **The example carries this release's WODrounds block, whole.**
+
+### Who should move
+- **No site.** The sites' store fragments are unchanged apart from the version in their first line.
+- **Each app repo, under its README issue:** paste `dist/store/<app>.en.readme.md` from v1.34.0 under the README's one-line description, whole, and check on GitHub that the badge switches between light and dark.
+
 ## [1.33.1] — 2026-10-16
 
 TonVault's new price, released on the day of its app release (#93).
@@ -1271,6 +1292,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.34.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.34.0
 [1.33.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.33.1
 [1.33.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.33.0
 [1.32.2]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.32.2

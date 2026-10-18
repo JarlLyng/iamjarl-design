@@ -1,4 +1,4 @@
-// IAMJARL <ij-store-cta> v1.33.1: generated, do not edit
+// IAMJARL <ij-store-cta> v1.34.0: generated, do not edit
 // Sources: components/store.js, components/ij-store-cta.js, apps.json, badges/
 
 const REGISTRY = {
@@ -256,6 +256,7 @@ const BADGE_WIDTHS = {
 // rather than per page: Apple only reports a campaign after five first-time
 // downloads, so splitting it per page would hide every number.
 const CAMPAIGN = { pt: '128512007', ct: 'site' };
+const README_CT = 'github';
 const MEDIA_TYPE = { 'app-store': '8', 'mac-app-store': '12' };
 const OS_NAME = { 'app-store': 'iOS', 'mac-app-store': 'macOS' };
 
@@ -302,15 +303,18 @@ function locale(code) {
   return l;
 }
 
-// The store page, with the campaign. The Chrome Web Store has no campaign
-// parameters, so its link is the listing itself.
-function storeLink(store) {
+// The store page, with the campaign. ct says where the link sits: 'site' on
+// the app's own site, 'github' in its README (#107). The Chrome Web Store has
+// no campaign of Apple's kind, so the site's link is the listing itself; the
+// README's carries utm_source, which the Web Store's dashboard reads.
+function storeLink(store, ct = CAMPAIGN.ct) {
   if (store.platform === 'chrome-web-store') {
-    return `https://chromewebstore.google.com/detail/${store.slug}/${store.id}`;
+    const listing = `https://chromewebstore.google.com/detail/${store.slug}/${store.id}`;
+    return ct === CAMPAIGN.ct ? listing : `${listing}?utm_source=${ct}`;
   }
   const mt = MEDIA_TYPE[store.platform];
   if (!mt) throw new Error(`Unknown store platform "${store.platform}"`);
-  return `https://apps.apple.com/app/id${store.id}?pt=${CAMPAIGN.pt}&ct=${CAMPAIGN.ct}&mt=${mt}`;
+  return `https://apps.apple.com/app/id${store.id}?pt=${CAMPAIGN.pt}&ct=${ct}&mt=${mt}`;
 }
 
 // "$2.99 once · iOS 16 or later". The price is the store's own wording for that
@@ -379,6 +383,31 @@ function badgeHtml(app, code, { placement = 'hero', tone, badges }) {
     `  </a>`,
     `  <p class="ij-store-facts">${esc(factsLine(s, code))}</p>`,
     `</div>`,
+  ].join('\n');
+}
+
+// A README's store block (#107): the hero's badge, link and facts line, for a
+// repo's README on GitHub, followed by the app's site. GitHub keeps <picture>
+// and follows its own light or dark theme with it, but strips class, data-*
+// and scripts, so the block carries no click event; ct=github tells the
+// README's visitors apart instead. The badge URL is absolute, because the block
+// is pasted into other repos. A blank line would end GitHub's HTML block and
+// turn the rest into Markdown, so there is none.
+//   badges = { base: 'https://…/badges/', width: file => width at 40 px tall }
+function readmeHtml(app, code, { badges }) {
+  const s = app.store;
+  const src = t => esc(badges.base + badgeFile(s.platform, code, t));
+  const height = badgeHeight(s.platform);
+  const width = Math.round(badges.width(badgeFile(s.platform, code, 'black')) * height / 40);
+  return [
+    `<p>`,
+    `  <a href="${esc(storeLink(s, README_CT))}"><picture>`,
+    `    <source media="(prefers-color-scheme: dark)" srcset="${src('white')}">`,
+    `    <img src="${src('black')}" alt="${esc(badgeAlt(s.platform, code))}" width="${width}" height="${height}">`,
+    `  </picture></a>`,
+    `  <br>`,
+    `  ${esc(factsLine(s, code))} · <a href="${esc(app.url)}">${esc(new URL(app.url).host)}</a>`,
+    `</p>`,
   ].join('\n');
 }
 

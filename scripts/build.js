@@ -1190,6 +1190,7 @@ function badgeWidths() {
 }
 
 const storeApps = registry => registry.apps.filter(a => a.status === 'shipped' && a.store);
+const GITHUB_REPO = 'JarlLyng/iamjarl-design';
 
 // <ij-store-cta>, one file, with the store facts it needs inlined — the same
 // shape as the footer, and for the same reason: no runtime fetch of apps.json.
@@ -1212,8 +1213,9 @@ function generateStoreCta(tokens) {
 }
 
 // The store fragments, per app and page locale: the badge with its facts line
-// once per placement and tone, the nav's text link, the JSON-LD Offer, and
-// Safari's Smart App Banner where there is an iPhone app. Badges load from the
+// once per placement and tone, the nav's text link, the JSON-LD Offer, the
+// README's store block, and Safari's Smart App Banner where there is an iPhone
+// app. Badges load from the
 // site's own copy of the release, at /assets/iamjarl-design@vX.Y.Z/badges/, the
 // path the README's copy recipe uses (#104): a live site serves the design
 // system from its own origin (#100), so a badge from jsDelivr was the one
@@ -1233,6 +1235,13 @@ async function generateStoreFragments(tokens) {
       return widths[f];
     },
   };
+  // A README has no origin of its own to serve a copy from, so its block takes
+  // the badge from this repo on GitHub, at the release's tag (#107): the README
+  // loads it from the host it is already on, the tag never changes under a
+  // pasted block, and the comment's version and the badge's agree. Apple's
+  // Marketing Tools URLs are official too, but carry no version and have moved
+  // host once already, and Google publishes no embed URL for its badge.
+  const readmeBadges = { ...badges, base: `https://raw.githubusercontent.com/${GITHUB_REPO}/v${tokens.meta.version}/badges/` };
   const out = [];
   for (const app of storeApps(registry)) {
     for (const code of app.store.locales) {
@@ -1246,6 +1255,7 @@ async function generateStoreFragments(tokens) {
       }
       out.push([`${app.id}.${code}.nav.html`, `${head('nav call to action')}\n${store.navLinkHtml(app, code)}\n`]);
       out.push([`${app.id}.${code}.offer.json`, `${JSON.stringify(store.offer(app.store, code), null, 2)}\n`]);
+      out.push([`${app.id}.${code}.readme.md`, `${head('README store block')}\n${store.readmeHtml(app, code, { badges: readmeBadges })}\n`]);
     }
     const banner = store.smartBannerHtml(app, registry);
     if (banner) out.push([`${app.id}.head.html`, `<!-- Smart App Banner for ${app.name}: put in <head>. Generated, do not edit. -->\n${banner}\n`]);
@@ -1387,6 +1397,25 @@ function writeExamplePage(file, pieces) {
   if (next !== html) {
     fs.writeFileSync(file, next, 'utf-8');
     console.log(`  ✓ ${path.relative(ROOT, file)} (generated pieces)`);
+  }
+}
+
+// docs/readme-example.md shows a README's first screen with a store block
+// pasted in (#107). The build pastes it again, the way writeReadmePins keeps the
+// README's pins, so the example always shows this release's block.
+function writeReadmeExample(storeFragments) {
+  const file = path.join(ROOT, 'docs', 'readme-example.md');
+  const md = fs.readFileSync(file, 'utf-8');
+  const blocks = new Map(storeFragments.filter(([f]) => f.endsWith('.readme.md'))
+    .map(([, block]) => [block.split('\n')[0].replace(/ Generated from .*$/, ''), block.trimEnd()]));
+  const next = md.replace(/<!-- IAMJARL README store block for [^\n]*-->\n<p>[\s\S]*?\n<\/p>/g, old => {
+    const block = blocks.get(old.split('\n')[0].replace(/ Generated from .*$/, ''));
+    if (!block) throw new Error(`docs/readme-example.md has a store block the build no longer makes: ${old.split('\n')[0]}`);
+    return block;
+  });
+  if (next !== md) {
+    fs.writeFileSync(file, next, 'utf-8');
+    console.log('  \u2713 docs/readme-example.md (store block)');
   }
 }
 
@@ -1694,6 +1723,7 @@ async function main() {
     for (const f of fs.readdirSync(storeDir)) if (!storeKeep.has(f)) fs.rmSync(path.join(storeDir, f));
   }
   for (const [f, html] of storeFragments) writeFile(path.join(storeDir, f), html);
+  writeReadmeExample(storeFragments);
   writeFile(path.join(ROOT, 'Tests', 'IAMJARLDesignTokensTests', 'PaletteTests.swift'), generateSwiftPaletteTests(tokens));
 
   // Build-time cross-link fragments, one per shipped app

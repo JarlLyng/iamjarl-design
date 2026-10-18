@@ -1,0 +1,9 @@
+<!-- IAMJARL README store block for TrimrPix for iOS (en). Generated from apps.json, v1.34.0. Do not edit. -->
+<p>
+  <a href="https://apps.apple.com/app/id6761081919?pt=128512007&amp;ct=github&amp;mt=8"><picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.34.0/badges/app-store-white-en-us.svg">
+    <img src="https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.34.0/badges/app-store-black-en-us.svg" alt="Download on the App Store" width="120" height="40">
+  </picture></a>
+  <br>
+  $1.99 once · iOS 17 or later · <a href="https://trimrpixforios.iamjarl.com">trimrpixforios.iamjarl.com</a>
+</p>

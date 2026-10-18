@@ -51,7 +51,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.33.1")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.34.0")
 ]
 ```
 
@@ -235,7 +235,7 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.33.1/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -292,7 +292,7 @@ live site.
 | Needs `integrity`? | worth keeping: the same hashes | no — nothing crosses an origin | yes, worth it |
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.33.1
+npm install github:jarllyng/iamjarl-design#v1.34.0
 ```
 
 ```js
@@ -320,10 +320,10 @@ It's 404 yo! and PageLens already work this way.
 ```bash
 # 1. The release, from GitHub's own archive of the tag, into a scratch folder.
 SRC=$(mktemp -d)
-curl -sfL https://github.com/JarlLyng/iamjarl-design/archive/refs/tags/v1.33.1.tar.gz | tar -xz --strip-components=1 -C "$SRC"
+curl -sfL https://github.com/JarlLyng/iamjarl-design/archive/refs/tags/v1.34.0.tar.gz | tar -xz --strip-components=1 -C "$SRC"
 
 # 2. The files your page loads, in the same layout, so the font sheet still finds its font.
-DEST=assets/iamjarl-design@v1.33.1
+DEST=assets/iamjarl-design@v1.34.0
 mkdir -p "$DEST"
 #    The licences travel with them: OFL-1.1 asks for the face's beside its font, and MIT for the rest.
 #    The store fragments' badges come from here too: take the ones your fragments name.
@@ -345,7 +345,7 @@ git add "$DEST"
   git check-ignore -v $(find "$DEST" -type f)
 ```
 
-Then link the copies with the same `integrity` as the CDN snippets, from `/assets/iamjarl-design@v1.33.1/dist/…`.
+Then link the copies with the same `integrity` as the CDN snippets, from `/assets/iamjarl-design@v1.34.0/dist/…`.
 Keep the version in the folder's name, so a bump is a new folder and a changed link, never a file
 edited in place. Take only what your page loads, and the badges your store fragments name.
 
@@ -369,23 +369,23 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.33.1/dist/css/tokens.css"
-  integrity="sha384-wfLvtAqc3Awh2k+Rj7GWQfW3ECafClneztuoWBFf+etRnZXvfJFolp9IOn+P9dcx"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/css/tokens.css"
+  integrity="sha384-S5bOw6eR683xIamZgAgAzRXbZzrH42bOgWNwp2r6sRWJlBRfxHzK4NMQ0C9b0f9V"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.33.1/dist/components/ij-footer.js"
-  integrity="sha384-H+QXeJ0rkEH21WMVRLjB7m1X/UNWWYyX2rtDlS7ds4I/Pv2wg18UFvtZRnXjnSo+"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/components/ij-footer.js"
+  integrity="sha384-RuV+2fRv8RhRXOtA8TaHauPbLNDgXD6YrIhXRLUGNi9Ry7WRmnkVVIfEKdgs/Yfh"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.33.1/dist/components/ij-nav.js"
-  integrity="sha384-iBMYav2rZFFKIFyo4nuhlqFyDMxgBsOaCvSUEwvQcPtYhIpTL36kRlhFrbnCxnvs"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/components/ij-nav.js"
+  integrity="sha384-uJbD3h4PvO0siwfXZvi9NvLOi8tRN79ZefcddL+Y+oNNdlPqNO2IkDvakK3KbTCd"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.33.1/dist/components/ij-store-cta.js"
-  integrity="sha384-YXEEwmsk08fvbse35TvUSGumhDqSxkgvpKrPfWIifT7iK4UGQ31wXehcLgzqk8Ii"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/components/ij-store-cta.js"
+  integrity="sha384-EvspZEuLAZ6YGKwPU3Yhs/Z4BW84bf+TJsSiij+oNKjh0TGWq3WEqriHpStFcnNU"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
@@ -417,7 +417,7 @@ The component builds the cross-links at runtime, so crawlers that do not execute
 pre-rendered fragment for your app and the component will slot it instead of regenerating:
 
 ```bash
-curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.33.1/dist/footers/botlens.html
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/footers/botlens.html
 ```
 
 ```html
@@ -484,7 +484,7 @@ it supplies the landmark, the sticky translucent bar, the phone layout and the k
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.33.1/dist/components/ij-nav.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/components/ij-nav.js"></script>
 
 <ij-nav>
   <a slot="brand" href="/">Echolume</a>
@@ -580,6 +580,7 @@ right file needs no script:
 | `dist/store/<app>.<locale>.nav.html` | `<ij-nav>`'s call to action: a text link, since there is one badge per layout. Its `slot="cta"` does nothing outside `<ij-nav>`, so a site's own nav can keep it |
 | `dist/store/<app>.<locale>.offer.json` | the JSON-LD `Offer`, below |
 | `dist/store/<app>.head.html` | Safari's Smart App Banner, for an iPhone app or a Mac app with an iPhone sibling |
+| `dist/store/<app>.<locale>.readme.md` | the app's README on GitHub, [below](#in-a-readme) |
 
 So Echolume, always dark, uses `echolume.en.white.html` in the hero and `echolume.en.footer.white.html`
 at the end of the page.
@@ -595,6 +596,73 @@ serves, so a self-hosted page makes no request to a third party.
 names the version it came from: when a release changes a price or an OS floor, paste the files
 from that release again. The hub is adding a check that reports a site whose pasted copy no
 longer matches (#63).
+
+### In a README
+
+`<app>.<locale>.readme.md` is the hero's badge, link and facts line for the app's README on GitHub,
+with the site after the facts line (#107). It goes under the README's one-line description, the
+way [the example](docs/readme-example.md) shows:
+
+```html
+<!-- IAMJARL README store block for WODrounds (en). Generated from apps.json, vX.Y.Z. Do not edit. -->
+<p>
+  <a href="https://apps.apple.com/app/id6759229877?pt=128512007&amp;ct=github&amp;mt=8"><picture>…black and white badge…</picture></a>
+  <br>
+  $2.99 once · iOS 16 or later · <a href="https://wodrounds.iamjarl.com">wodrounds.iamjarl.com</a>
+</p>
+```
+
+- **The campaign is `ct=github`**, and `utm_source=github` on the Chrome Web Store, so the stores
+  count README visitors apart from the site's.
+- **The badge is the official one, unaltered,** black on GitHub's light theme and white on its dark
+  one. It loads from this repo at the release's tag,
+  `https://raw.githubusercontent.com/JarlLyng/iamjarl-design/vX.Y.Z/badges/<file>`, because a README
+  has no origin of its own to serve a copy from, and a tag never changes under a pasted block.
+- **There is no click event.** GitHub strips `class`, `data-*` and scripts, so the campaign does that
+  job.
+- **Paste the file whole.** A blank line inside would end GitHub's HTML block and turn the rest into
+  Markdown, so the block has none.
+- **Refresh it the way a site refreshes its fragments.** The first line names the release; when one
+  changes a price or an OS floor, paste the file from that release again.
+
+**The hero goes under the block.** An iPhone app shows the first two posters of its set side by
+side. A Mac app, an extension or a web project shows one image. Give each image a width and no
+height: GitHub caps an image at the page's width, and without a height it keeps its shape.
+
+```html
+<!-- iPhone: side by side on a desktop, one above the other on a phone -->
+<p>
+  <img src="<poster 1>.png" alt="<its caption>. <what the screen shows>." width="240">
+  <img src="<poster 2>.png" alt="<its caption>. <what the screen shows>." width="240">
+</p>
+
+<!-- Mac, extension or web: one image, which shrinks to fit a phone -->
+<p>
+  <img src="<image>.png" alt="<what it shows>." width="640">
+</p>
+```
+
+Not a `<table>`: GitHub gives a table its own scrollbar on a phone instead of letting it wrap.
+
+**The developer half opens with the badges.** First Made by Human's Co-created with AI badge, the
+real file, black on light and white on dark, then the repo's CI and license badges:
+
+```html
+<p>
+  <a href="https://madebyhuman.iamjarl.com"><picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://madebyhuman.iamjarl.com/badges/co-created-white.svg">
+    <img src="https://madebyhuman.iamjarl.com/badges/co-created-black.svg" alt="Co-created with AI" width="120" height="40"></picture></a>
+  <a href="https://github.com/JarlLyng/<repo>/actions/workflows/<workflow>.yml"><img src="https://github.com/JarlLyng/<repo>/actions/workflows/<workflow>.yml/badge.svg" alt="<workflow name>"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/JarlLyng/<repo>" alt="<license> License"></a>
+</p>
+```
+
+- **40 px tall,** like the store badge, the smallest size where its words still read. Never a
+  shields.io stand-in for it.
+- **The link closes right after the image.** Whitespace inside it would show as an underlined space
+  before the CI badge.
+- **The CI badge is GitHub's own,** for the workflow that runs the tests. shields.io reads the
+  license from the repo.
 
 ### Structured data: the `Offer`
 
@@ -650,7 +718,7 @@ reuse. Left empty, the element renders the fragment itself from the registry, wh
 without a build step, but crawlers will not see that copy:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.33.1/dist/components/ij-store-cta.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/components/ij-store-cta.js"></script>
 <ij-store-cta app="wodrounds" placement="midpage" tone="white">…fragment…</ij-store-cta>
 ```
 
@@ -688,7 +756,7 @@ JavaScript. See the eight live demos: [Walkful](https://jarllyng.github.io/iamja
 <link rel="stylesheet" href="…/dist/identity/<app>.css" integrity="…" crossorigin="anonymous">
 <link rel="stylesheet" href="…/dist/fonts/<face>.css" integrity="…" crossorigin="anonymous">
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.33.1/dist/kit/kit.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/kit/kit.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 
 <body class="ij-page">
@@ -879,7 +947,7 @@ dependencies), loaded after the page; nothing waits for it:
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.33.1/dist/kit/kit.js"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/kit/kit.js"
   integrity="<from sri.json>" crossorigin="anonymous"></script>
 ```
 
@@ -943,7 +1011,7 @@ nothing on a site that did not ask for a new identity. If your app has no file i
 ```html
 <!-- tokens.css first, from the SRI block above, then the identity sheet -->
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.33.1/dist/identity/<app>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/identity/<app>.css"
   integrity="<from sri.json, see below>"
   crossorigin="anonymous">
 ```
@@ -952,7 +1020,7 @@ nothing on a site that did not ask for a new identity. If your app has no file i
 yours:
 
 ```bash
-curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.33.1/dist/sri.json | grep 'identity/<app>.css'
+curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/sri.json | grep 'identity/<app>.css'
 ```
 
 Each sheet carries the version in its header, so its hash changes every release. Move the tag and
@@ -987,7 +1055,7 @@ Echolume does exactly this today; giving it `"scheme": "dark"` would make the cl
 
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.33.1/dist/fonts/<face>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/fonts/<face>.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 ```
 
