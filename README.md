@@ -385,7 +385,7 @@ build time and regenerate every release &mdash; copy them from here, never from 
 
 <script type="module"
   src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.33.1/dist/components/ij-store-cta.js"
-  integrity="sha384-YXEEwmsk08fvbse35TvUSGumhDqSxkgvpKrPfWIifT7iK4UGQ31wXehcLgzqk8Ii"
+  integrity="sha384-wur94kdrNa7uDw9eSANCstzY5kfn2DMK9Czi/p0Gm7/ZbrHBHK38LNSU0o0gnKe1"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
@@ -580,6 +580,7 @@ right file needs no script:
 | `dist/store/<app>.<locale>.nav.html` | `<ij-nav>`'s call to action: a text link, since there is one badge per layout. Its `slot="cta"` does nothing outside `<ij-nav>`, so a site's own nav can keep it |
 | `dist/store/<app>.<locale>.offer.json` | the JSON-LD `Offer`, below |
 | `dist/store/<app>.head.html` | Safari's Smart App Banner, for an iPhone app or a Mac app with an iPhone sibling |
+| `dist/store/<app>.<locale>.readme.md` | the app's README on GitHub, [below](#in-a-readme) |
 
 So Echolume, always dark, uses `echolume.en.white.html` in the hero and `echolume.en.footer.white.html`
 at the end of the page.
@@ -595,6 +596,34 @@ serves, so a self-hosted page makes no request to a third party.
 names the version it came from: when a release changes a price or an OS floor, paste the files
 from that release again. The hub is adding a check that reports a site whose pasted copy no
 longer matches (#63).
+
+### In a README
+
+`<app>.<locale>.readme.md` is the hero's badge, link and facts line for the app's README on GitHub,
+with the site after the facts line (#107). It goes under the README's one-line description, the
+way [the example](docs/readme-example.md) shows:
+
+```html
+<!-- IAMJARL README store block for WODrounds (en). Generated from apps.json, vX.Y.Z. Do not edit. -->
+<p>
+  <a href="https://apps.apple.com/app/id6759229877?pt=128512007&amp;ct=github&amp;mt=8"><picture>…black and white badge…</picture></a>
+  <br>
+  $2.99 once · iOS 16 or later · <a href="https://wodrounds.iamjarl.com">wodrounds.iamjarl.com</a>
+</p>
+```
+
+- **The campaign is `ct=github`**, and `utm_source=github` on the Chrome Web Store, so the stores
+  count README visitors apart from the site's.
+- **The badge is the official one, unaltered,** black on GitHub's light theme and white on its dark
+  one. It loads from this repo at the release's tag,
+  `https://raw.githubusercontent.com/JarlLyng/iamjarl-design/vX.Y.Z/badges/<file>`, because a README
+  has no origin of its own to serve a copy from, and a tag never changes under a pasted block.
+- **There is no click event.** GitHub strips `class`, `data-*` and scripts, so the campaign does that
+  job.
+- **Paste the file whole.** A blank line inside would end GitHub's HTML block and turn the rest into
+  Markdown, so the block has none.
+- **Refresh it the way a site refreshes its fragments.** The first line names the release; when one
+  changes a price or an OS floor, paste the file from that release again.
 
 ### Structured data: the `Offer`
 

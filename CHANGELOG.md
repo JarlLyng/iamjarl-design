@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+A store block for the apps' READMEs, generated from the registry like the sites' store button (#107).
+
+### Added
+- **`dist/store/<app>.<locale>.readme.md`, for every app and store language in `apps.json`.**
+  - **What it holds:** the official badge, black on GitHub's light theme and white on its dark one; the store link with `ct=github` (`utm_source=github` on the Chrome Web Store); the facts line in the site's words; and the app's site.
+  - **Where the badge comes from:** this repo at the release's tag, on `raw.githubusercontent.com`. A README has no origin of its own to serve a copy from, the tag never changes under a pasted block, and the badge's version matches the one in the block's first line.
+  - **Why it's generated:** every app's README pastes it, so a price or an OS floor changes in `apps.json` once and every block follows in the next release.
+- **`docs/readme-example.md`:** WODrounds' first screen under the README standard, with the block pasted in. The build pastes it again each release.
+- **`storeLink(store, ct)`** takes the campaign, so the site's links stay `ct=site` and the README's say `ct=github`.
+
+### Tests
+- **Every README block matches the registry:** the first line and its version, the link and campaign, both badges from this release's tag and present in `badges/`, the facts line and the site, and no blank line that would end GitHub's HTML block.
+- **The example carries this release's WODrounds block, whole.**
+
+### Who should move
+- **Nobody yet.** The app repos' README issues wait for this release, and each one pastes its block from it.
+
 ## [1.33.1] — 2026-10-16
 
 TonVault's new price, released on the day of its app release (#93).

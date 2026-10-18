@@ -17,7 +17,7 @@ import { identitySheetCss } from './css-modes.js';
 import { SCENES } from '../kit/scenes.js';
 import { ITS_MONO_DRAWINGS } from '../kit/drawings/its-mono-yo.js';
 import { NAV_ALPHA, NAV_COLLAPSE_BELOW, MAX_LINKS, currentIndex, heroOnScreen, navWarnings } from '../components/nav-rules.js';
-import { storeLink, factsLine, badgeFile, badgeHeight, smartBannerHtml, fragmentName, offer, PLACEMENTS, TONES, LOCALES } from '../components/store.js';
+import { storeLink, factsLine, badgeFile, badgeHeight, badgeAlt, smartBannerHtml, fragmentName, offer, PLACEMENTS, TONES, LOCALES } from '../components/store.js';
 import { LABELS, labelsFor, PROJECTS_ID } from '../components/labels.js';
 import { filesToWarm } from './warm-cdn.js';
 
@@ -1011,6 +1011,10 @@ check('the App Store link carries the portfolio campaign, mt=8 for iPhone',
   storeLink(ios) === 'https://apps.apple.com/app/id6759229877?pt=128512007&ct=site&mt=8');
 check('the Mac App Store link uses mt=12', storeLink(mac).endsWith('&mt=12'));
 check('the Chrome Web Store link is the listing', storeLink(cws) === 'https://chromewebstore.google.com/detail/botlens/lpopnolnbpkmealenachikdfkfeaoecl');
+check('a README\'s link says ct=github, and the Web Store\'s says utm_source=github (#107)',
+  storeLink(ios, 'github') === 'https://apps.apple.com/app/id6759229877?pt=128512007&ct=github&mt=8' &&
+  storeLink(mac, 'github').endsWith('&ct=github&mt=12') &&
+  storeLink(cws, 'github') === 'https://chromewebstore.google.com/detail/botlens/lpopnolnbpkmealenachikdfkfeaoecl?utm_source=github');
 check('the facts line: price, once, the OS floor', factsLine(ios, 'en') === '$2.99 once · iOS 16 or later' &&
   factsLine(mac, 'en') === '$1.99 once · macOS 14 or later');
 check('a translated page quotes its own storefront in its own words', factsLine(ios, 'da') === '29,00 kr engangskøb · iOS 16 eller nyere');
@@ -1075,12 +1079,31 @@ for (const a of storeAppsReg) {
     if (!/\n<a slot="cta"[^>]*data-umami-event-placement="nav"/.test(nav)) fragmentProblems.push(`${a.id}.${code}: nav fragment`);
     const o = `dist/store/${a.id}.${code}.offer.json`;
     if (!fs.existsSync(path.join(ROOT, o)) || JSON.stringify(JSON.parse(read(o))) !== JSON.stringify(offer(a.store, code))) fragmentProblems.push(`${o}: offer`);
+    // The README's block (#107): GitHub's campaign, the badge in both tones from
+    // this release's tag, the facts line and the site, as one HTML block.
+    const r = `${a.id}.${code}.readme.md`;
+    if (!fs.existsSync(path.join(ROOT, 'dist/store', r))) { fragmentProblems.push(`${r} missing`); continue; }
+    const md = read(`dist/store/${r}`);
+    const tag = `https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v${tokens.meta.version}/badges/`;
+    if (!md.startsWith(`<!-- IAMJARL README store block for ${a.name} (${code}). Generated from apps.json, v${tokens.meta.version}. Do not edit. -->\n<p>\n`)) fragmentProblems.push(`${r}: first line`);
+    if (!md.includes(`<a href="${storeLink(a.store, 'github').replace(/&/g, '&amp;')}">`)) fragmentProblems.push(`${r}: link`);
+    if (!md.includes(`<source media="(prefers-color-scheme: dark)" srcset="${tag}${badgeFile(a.store.platform, code, 'white')}">`) ||
+      !md.includes(`<img src="${tag}${badgeFile(a.store.platform, code, 'black')}" alt="${badgeAlt(a.store.platform, code)}"`)) fragmentProblems.push(`${r}: badge`);
+    if (![...md.matchAll(/(?:src|srcset)="([^"]+)"/g)].every(m => m[1].startsWith(tag) && fs.existsSync(path.join(ROOT, 'badges', m[1].slice(tag.length))))) fragmentProblems.push(`${r}: badge file`);
+    if (!md.includes(`height="${badgeHeight(a.store.platform)}"`)) fragmentProblems.push(`${r}: badge height`);
+    if (!md.includes(`\n  ${factsLine(a.store, code)} · <a href="${a.url}">${new URL(a.url).host}</a>\n`)) fragmentProblems.push(`${r}: facts and site`);
+    // A blank line ends GitHub's HTML block, and what follows renders as Markdown.
+    if (/\n\s*\n/.test(md.trimEnd()) || !md.endsWith('</p>\n')) fragmentProblems.push(`${r}: one block`);
   }
   const banner = smartBannerHtml(a, registry);
   if (Boolean(banner) !== fs.existsSync(path.join(ROOT, `dist/store/${a.id}.head.html`))) fragmentProblems.push(`${a.id}: smart banner`);
 }
-check(`every store fragment matches the registry (${storeAppsReg.reduce((n, a) => n + a.store.locales.length, 0)} locales, ${PLACEMENTS.length} placements, ${TONES.length + 1} tones, the nav and the Offer)`,
+check(`every store fragment matches the registry (${storeAppsReg.reduce((n, a) => n + a.store.locales.length, 0)} locales, ${PLACEMENTS.length} placements, ${TONES.length + 1} tones, the nav, the Offer and the README block)`,
   fragmentProblems.length === 0, fragmentProblems.join('; '));
+check('the README example carries this release\'s WODrounds block, pasted whole (#107)',
+  read('docs/readme-example.md').includes(`\n${read('dist/store/wodrounds.en.readme.md')}\n`));
+check('the store README documents the README block next to the HTML variants',
+  read('README.md').includes('| `dist/store/<app>.<locale>.readme.md` |'));
 check('an iPhone app, or a Mac app with an iPhone sibling, gets a Smart App Banner',
   read('dist/store/trimrpix.head.html').includes('app-id=6761081919') && !fs.existsSync(path.join(ROOT, 'dist/store/tonvault.head.html')));
 const storeDist = read('dist/components/ij-store-cta.js');
