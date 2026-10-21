@@ -3,6 +3,8 @@
 // No test framework, just assertions.
 
 import crypto from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import os from 'node:os';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -1195,7 +1197,7 @@ check('README block uses crossorigin on every tag',
 // deliberately broader than any one install method: a pin in a new form still
 // has to be current.
 const pins = [...readme.matchAll(
-  /iamjarl-design(?:\.git", from: "|[@#]v|\/archive\/refs\/tags\/v)(\d+\.\d+\.\d+)/g
+  /(?:iamjarl-design(?:\.git", from: "|[@#]v|\/archive\/refs\/tags\/v)|iamjarl-design\/v(?=\d+\.\d+\.\d+\/dist\/(?:vendor\.mjs|sri\.json))|iamjarl-vendor\.mjs v)(\d+\.\d+\.\d+)/g
 )].map(m => m[1]);
 check('the README has install pins to check', pins.length >= 5,
   `found ${pins.length}; if the install sections moved, this test must move with them`);
@@ -1227,6 +1229,69 @@ check('every install pin in the README is the current version',
     /fonts\/LICENSE-<face>\.txt/.test(readme) && /LICENSE\) \| tar -xf -/.test(readme));
   check('the copy recipe takes the badges the store fragments name, and says where to serve the copy (#104)',
     /badges\/<badge>\.svg LICENSE\)/.test(readme) && readme.includes('`/assets/iamjarl-design@vX.Y.Z/` from your site\'s root'));
+}
+
+// The copy script (dist/vendor.mjs): a site on jsDelivr with stale pieces,
+// taken to this release from this checkout. The links, the integrity, the
+// pieces, the offer, the copy's files, the check mode and the git guard.
+{
+  const v = `v${tokens.meta.version}`;
+  const sriNow = JSON.parse(read('dist/sri.json')).files;
+  const site = fs.mkdtempSync(path.join(os.tmpdir(), 'ij-vendor-'));
+  const docs = path.join(site, 'docs');
+  fs.mkdirSync(path.join(docs, 'assets', 'iamjarl-design@v0.0.1'), { recursive: true });
+  const cdn = 'https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.30.0';
+  const hero = read('dist/store/tonvault.en.black.html').split('\n').slice(1).join('\n').replace(/\/assets\/iamjarl-design@v[\d.]+\//, `${cdn}/`).replace(/<p class="ij-store-facts">[^<]*/, '<p class="ij-store-facts">$0.99 once');
+  fs.writeFileSync(path.join(docs, 'index.html'), `<!doctype html><html lang="en"><head>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="${cdn}/dist/css/tokens.css" integrity="sha384-old" crossorigin="anonymous">
+  <link rel="stylesheet" href="${cdn}/dist/identity/tonvault.css">
+  <link rel="stylesheet" href="${cdn}/dist/fonts/jetbrains-mono.css" integrity="sha384-old">
+  <script type="module" src="/assets/iamjarl-design@v0.0.1/dist/components/ij-footer.js" integrity="sha384-old"></script>
+  <script type="application/ld+json">
+  {
+    "@type": "SoftwareApplication",
+    "offers": { "@type": "Offer", "price": "0.99", "priceCurrency": "USD", "url": "https://apps.apple.com/app/id6792136657" }
+  }
+  </script>
+</head><body>
+  ${hero}
+</body></html>
+`);
+  const run = (...extra) => { try { return { code: 0, out: execFileSync('node', [path.join(ROOT, 'dist/vendor.mjs'), v, '--root', docs, '--from', ROOT, ...extra], { cwd: site, stdio: ['ignore', 'pipe', 'pipe'] }).toString() }; }
+    catch (e) { return { code: e.status, out: `${e.stdout}${e.stderr}` }; } };
+  const before = run('--check', '--no-git');
+  const done = run('--no-git');
+  const after = run('--check', '--no-git');
+  const page = fs.readFileSync(path.join(docs, 'index.html'), 'utf-8');
+  const copyDir = path.join(docs, 'assets', `iamjarl-design@${v}`);
+  const links = [...page.matchAll(/(?:href|src)="(\/assets\/iamjarl-design@v[\d.]+\/(dist\/[^"]+))"[^>]*?integrity="([^"]+)"/g)];
+  const face = JSON.parse(read('tokens.json')).brand.typography.display.mono.file;
+  const offerNow = JSON.parse(read('dist/store/tonvault.en.offer.json'));
+  const offerOnPage = JSON.parse(page.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]).offers;
+  check('the copy script finds what a stale site loads and refuses it in --check, then takes this release, and --check passes after',
+    before.code === 1 && /would change/.test(before.out) && done.code === 0 && after.code === 0, `${before.code} ${done.code} ${after.code}\n${done.out}`);
+  check('the copy script points every link at the copy with this release\'s integrity, and nothing at jsDelivr is left, not even the preconnect',
+    !/jsdelivr/i.test(page) && links.length === 4 && links.every(([, url, file, hash]) => url.startsWith(`/assets/iamjarl-design@${v}/`) && hash === sriNow[file]),
+    JSON.stringify(links.map(l => [l[2], l[3] === sriNow[l[2]]])));
+  check('the copy script pastes the store button and the offer from this release',
+    page.includes(read('dist/store/tonvault.en.black.html').split('\n').slice(1).join('\n').trimEnd().split('\n')[0]) &&
+    page.includes(read('dist/store/tonvault.en.black.html').match(/<p class="ij-store-facts">[^<]*/)[0]) &&
+    JSON.stringify(offerOnPage) === JSON.stringify(offerNow));
+  check('the copy script copies what the pages load, the font and its licence, the badge and the LICENSE, and drops the old copy',
+    ['dist/css/tokens.css', 'dist/identity/tonvault.css', 'dist/fonts/jetbrains-mono.css', 'dist/components/ij-footer.js', `fonts/${face}`,
+      'fonts/LICENSE-jetbrains-mono.txt', 'badges/mac-app-store-black-en-us.svg', 'LICENSE'].every(f => fs.existsSync(path.join(copyDir, f))) &&
+    !fs.existsSync(path.join(docs, 'assets', 'iamjarl-design@v0.0.1')));
+  // A repo-wide dist/ in .gitignore: the script names the rule and fails.
+  let gitOk = true;
+  try { execFileSync('git', ['init', '-q'], { cwd: site }); fs.writeFileSync(path.join(site, '.gitignore'), 'dist/\n'); } catch { gitOk = false; }
+  if (gitOk) {
+    const ignored = run();
+    check('the copy script fails and names the rule when git would drop the copy\'s dist/', ignored.code === 1 && /\.gitignore:1:dist\//.test(ignored.out), ignored.out);
+  }
+  fs.rmSync(site, { recursive: true, force: true });
+  check('dist/vendor.mjs is tools/vendor.mjs with its version line', read('dist/vendor.mjs') ===
+    `// IAMJARL design system v${tokens.meta.version}: generated from tools/vendor.mjs, do not edit\n${read('tools/vendor.mjs')}`);
 }
 
 console.log();

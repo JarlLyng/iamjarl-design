@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.35.0] — 2026-10-21
+
+One command to take a release into a static site, served from its own origin.
+
+### Added
+- **`dist/vendor.mjs`, the copy script.** It does what the README's recipe does by hand, and what TonVault, Wean and It's 404 yo! each wrote a script of their own for. It reads the site's pages and takes only what they load:
+  - it downloads the release from GitHub's archive of the tag, never from jsDelivr;
+  - it copies the files the pages load into `<root>/assets/iamjarl-design@vX.Y.Z/`, with each font and its licence, the store badges and the `LICENSE`;
+  - it checks every `dist/` file against the tag's `sri.json`, and stops before writing on a mismatch;
+  - it points every page at the copy, with the tag's `integrity` on each script and stylesheet, and adds it where one was missing;
+  - it pastes the generated pieces again from the same tag: store buttons, the nav's call to action, the footer's cross-links, the Smart App Banner and the JSON-LD offer. It recognises each by what it is (`data-ij-store`, the click event, the store link), not by a comment, so a site's own markers keep working;
+  - it removes older copies that no page loads any more, drops a preconnect to jsDelivr, checks that git tracks the copy, and names the rule when an ignore drops it.
+- **Its options:**
+  - `--check` writes nothing and exits 1 if anything would change, for a site's CI;
+  - `--self` takes the copy of the script the release ships;
+  - `--base` puts the copy somewhere other than `/assets`;
+  - `--from <dir>` uses a release already on disk.
+- **Tried on five live homepages** (Anvil, Walkful, WODrounds, It's mono and TrimrPix for iOS). It changed only links, integrity and the version in the generated comments.
+
+### Tests
+- **A stale site taken to this release:**
+  - a page on jsDelivr at an older tag, with an older copy, a stale store button, a stale JSON-LD offer and a preconnect;
+  - `--check` fails before the run and passes after it;
+  - every link points at the copy with this release's hash;
+  - the pieces and the offer match this release;
+  - the font, its licence, the badge and the `LICENSE` are copied;
+  - the old copy goes.
+- **The git guard:** with `dist/` in `.gitignore`, the script fails and names the rule.
+- **`dist/vendor.mjs`** is `tools/vendor.mjs` with its version line.
+
+### Who should move
+- **Nobody has to.** A static site may swap its hand-written copy script for this one: TonVault's `scripts/vendor-design.mjs`, or the README's recipe. It keeps any site-specific steps (TonVault's guides and waveforms) as a step of its own after the copy.
+
 ## [1.34.0] — 2026-10-18
 
 A store block for the apps' READMEs, generated from the registry like the sites' store button (#107).
@@ -1292,6 +1325,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.35.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.0
 [1.34.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.34.0
 [1.33.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.33.1
 [1.33.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.33.0

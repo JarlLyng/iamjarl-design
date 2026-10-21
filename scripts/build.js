@@ -1505,6 +1505,7 @@ const SRI_FILES = [
   'dist/kit/kit.js',
   'dist/kit/loose.js',
   'dist/kit/wave.js',
+  'dist/vendor.mjs',
 ];
 
 // The names a site may meet that tokens.css does not define (#80): the hooks
@@ -1570,13 +1571,15 @@ function sriReadmeBlock(version, hashes) {
 // hand at release time — so each release that forgot one left a consumer
 // copying a pin three to five versions old. The SRI block already solved this by
 // being generated; the pins outside it are rewritten the same way. The patterns
-// are the four ways a consumer installs this repo, and nothing else: prose that
+// are the ways a consumer installs this repo, and nothing else: prose that
 // mentions a version ("deprecated since 1.6.0") is history and stays.
 const README_PINS = [
   /(iamjarl-design@v)\d+\.\d+\.\d+/g,             // jsDelivr
   /(iamjarl-design#v)\d+\.\d+\.\d+/g,             // npm from GitHub
   /(iamjarl-design\.git", from: ")\d+\.\d+\.\d+/g, // Swift Package Manager
   /(iamjarl-design\/archive\/refs\/tags\/v)\d+\.\d+\.\d+/g, // a copy served from the site itself
+  /(raw\.githubusercontent\.com\/JarlLyng\/iamjarl-design\/v)\d+\.\d+\.\d+(?=\/dist\/(?:vendor\.mjs|sri\.json))/g, // the copy script
+  /(iamjarl-vendor\.mjs v)\d+\.\d+\.\d+/g,             // running it
 ];
 
 function writeReadmePins(version) {
@@ -1704,6 +1707,9 @@ async function main() {
     `// IAMJARL marketing kit v${tokens.meta.version}: generated from kit/loose.js, do not edit\n${fs.readFileSync(path.join(ROOT, 'kit', 'loose.js'), 'utf-8')}`);
   writeFile(path.join(ROOT, 'dist', 'kit', 'wave.js'),
     `// IAMJARL marketing kit v${tokens.meta.version}: generated from kit/wave.js, do not edit\n${fs.readFileSync(path.join(ROOT, 'kit', 'wave.js'), 'utf-8')}`);
+  // The copy script: a site keeps this file and runs it to take a release.
+  writeFile(path.join(ROOT, 'dist', 'vendor.mjs'),
+    `// IAMJARL design system v${tokens.meta.version}: generated from tools/vendor.mjs, do not edit\n${fs.readFileSync(path.join(ROOT, 'tools', 'vendor.mjs'), 'utf-8')}`);
   const drawings = await generateDrawings(tokens);
   const drawingsDir = path.join(ROOT, 'dist', 'drawings');
   if (fs.existsSync(drawingsDir)) fs.rmSync(drawingsDir, { recursive: true });

@@ -51,7 +51,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.34.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.35.0")
 ]
 ```
 
@@ -235,7 +235,7 @@ every site instead of nine hand-kept lists. Works in any page — no build step,
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.0/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -292,7 +292,7 @@ live site.
 | Needs `integrity`? | worth keeping: the same hashes | no — nothing crosses an origin | yes, worth it |
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.34.0
+npm install github:jarllyng/iamjarl-design#v1.35.0
 ```
 
 ```js
@@ -317,13 +317,38 @@ it from `node_modules/@iamjarl/design-tokens/dist/footers/`.
 Copy the files your page loads into the site's repo, and check each one against the tag's hashes. Wean,
 It's 404 yo! and PageLens already work this way.
 
+**In one command: `dist/vendor.mjs`** (since 1.35.0). It reads your pages and does everything below,
+for just the files they load:
+- copies them, with each font and its licence, the store badges and the `LICENSE`, and checks every `dist/` file against the tag's `sri.json`;
+- points every page at the copy, with the tag's `integrity` on each script and stylesheet;
+- pastes the store buttons, the nav's call to action, the footer's cross-links, the Smart App Banner and the JSON-LD offer again from the same tag. It recognises each by what it is, not by a comment;
+- removes older copies no page loads any more, and checks that git tracks the new one.
+
+It needs Node 18 or later and the system's `tar`, and nothing else. It downloads from GitHub, never from jsDelivr.
+
+```bash
+# Once: keep the script in the site's repo, checked against the tag's own hash.
+curl -sfL https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.35.0/dist/vendor.mjs -o scripts/iamjarl-vendor.mjs
+curl -sfL https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.35.0/dist/sri.json | grep '"dist/vendor.mjs"'
+echo "sha384-$(openssl dgst -sha384 -binary scripts/iamjarl-vendor.mjs | openssl base64 -A)"
+
+# Each release: your pages under docs/, the copy at /assets/iamjarl-design@vX.Y.Z/.
+node scripts/iamjarl-vendor.mjs v1.35.0 --root docs
+```
+
+- **Check mode:** `--check` writes nothing and exits 1 if anything would change, which suits a site's CI.
+- **Updating the script:** `--self` replaces the script with the copy the release ships.
+- **A copy elsewhere:** `--base /static` serves the copy from `/static` instead of `/assets`.
+
+**A site with a build of its own,** like Wean's Astro pages, keeps its own sync. By hand, the recipe is:
+
 ```bash
 # 1. The release, from GitHub's own archive of the tag, into a scratch folder.
 SRC=$(mktemp -d)
-curl -sfL https://github.com/JarlLyng/iamjarl-design/archive/refs/tags/v1.34.0.tar.gz | tar -xz --strip-components=1 -C "$SRC"
+curl -sfL https://github.com/JarlLyng/iamjarl-design/archive/refs/tags/v1.35.0.tar.gz | tar -xz --strip-components=1 -C "$SRC"
 
 # 2. The files your page loads, in the same layout, so the font sheet still finds its font.
-DEST=assets/iamjarl-design@v1.34.0
+DEST=assets/iamjarl-design@v1.35.0
 mkdir -p "$DEST"
 #    The licences travel with them: OFL-1.1 asks for the face's beside its font, and MIT for the rest.
 #    The store fragments' badges come from here too: take the ones your fragments name.
@@ -345,7 +370,7 @@ git add "$DEST"
   git check-ignore -v $(find "$DEST" -type f)
 ```
 
-Then link the copies with the same `integrity` as the CDN snippets, from `/assets/iamjarl-design@v1.34.0/dist/…`.
+Then link the copies with the same `integrity` as the CDN snippets, from `/assets/iamjarl-design@v1.35.0/dist/…`.
 Keep the version in the folder's name, so a bump is a new folder and a changed link, never a file
 edited in place. Take only what your page loads, and the badges your store fragments name.
 
@@ -369,23 +394,23 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/css/tokens.css"
-  integrity="sha384-S5bOw6eR683xIamZgAgAzRXbZzrH42bOgWNwp2r6sRWJlBRfxHzK4NMQ0C9b0f9V"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.0/dist/css/tokens.css"
+  integrity="sha384-NaF0Ee0976jW8y2YQdSQLx/CFfq+tS3Fvlm4fpbW7LMmtD5/mSHytL5LcJsntuR3"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/components/ij-footer.js"
-  integrity="sha384-RuV+2fRv8RhRXOtA8TaHauPbLNDgXD6YrIhXRLUGNi9Ry7WRmnkVVIfEKdgs/Yfh"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.0/dist/components/ij-footer.js"
+  integrity="sha384-6H+6tBIqSeFnsxlhhFYBotwBjnzoUZv7VSDAtZa/CLLd9xBLdsGAg1HoLkEGCMjh"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/components/ij-nav.js"
-  integrity="sha384-uJbD3h4PvO0siwfXZvi9NvLOi8tRN79ZefcddL+Y+oNNdlPqNO2IkDvakK3KbTCd"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.0/dist/components/ij-nav.js"
+  integrity="sha384-x0ry3ir5uMBdfEBg3zb7musX8K/VsQPuc6iqIKxM6YHlGXsybEMOPw2TXTXsT2Ek"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/components/ij-store-cta.js"
-  integrity="sha384-EvspZEuLAZ6YGKwPU3Yhs/Z4BW84bf+TJsSiij+oNKjh0TGWq3WEqriHpStFcnNU"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.0/dist/components/ij-store-cta.js"
+  integrity="sha384-KaxvIdbFgeUOuH6/7qnGqeeP4f3RV6DHCgQt+iCvC+Gdd0SqB3QIbh7q7ALRQ5Hl"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
@@ -417,7 +442,7 @@ The component builds the cross-links at runtime, so crawlers that do not execute
 pre-rendered fragment for your app and the component will slot it instead of regenerating:
 
 ```bash
-curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/footers/botlens.html
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.0/dist/footers/botlens.html
 ```
 
 ```html
@@ -484,7 +509,7 @@ it supplies the landmark, the sticky translucent bar, the phone layout and the k
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/components/ij-nav.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.0/dist/components/ij-nav.js"></script>
 
 <ij-nav>
   <a slot="brand" href="/">Echolume</a>
@@ -718,7 +743,7 @@ reuse. Left empty, the element renders the fragment itself from the registry, wh
 without a build step, but crawlers will not see that copy:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/components/ij-store-cta.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.0/dist/components/ij-store-cta.js"></script>
 <ij-store-cta app="wodrounds" placement="midpage" tone="white">…fragment…</ij-store-cta>
 ```
 
@@ -756,7 +781,7 @@ JavaScript. See the eight live demos: [Walkful](https://jarllyng.github.io/iamja
 <link rel="stylesheet" href="…/dist/identity/<app>.css" integrity="…" crossorigin="anonymous">
 <link rel="stylesheet" href="…/dist/fonts/<face>.css" integrity="…" crossorigin="anonymous">
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/kit/kit.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.0/dist/kit/kit.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 
 <body class="ij-page">
@@ -947,7 +972,7 @@ dependencies), loaded after the page; nothing waits for it:
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/kit/kit.js"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.0/dist/kit/kit.js"
   integrity="<from sri.json>" crossorigin="anonymous"></script>
 ```
 
@@ -1011,7 +1036,7 @@ nothing on a site that did not ask for a new identity. If your app has no file i
 ```html
 <!-- tokens.css first, from the SRI block above, then the identity sheet -->
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/identity/<app>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.0/dist/identity/<app>.css"
   integrity="<from sri.json, see below>"
   crossorigin="anonymous">
 ```
@@ -1020,7 +1045,7 @@ nothing on a site that did not ask for a new identity. If your app has no file i
 yours:
 
 ```bash
-curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/sri.json | grep 'identity/<app>.css'
+curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.0/dist/sri.json | grep 'identity/<app>.css'
 ```
 
 Each sheet carries the version in its header, so its hash changes every release. Move the tag and
@@ -1055,7 +1080,7 @@ Echolume does exactly this today; giving it `"scheme": "dark"` would make the cl
 
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.34.0/dist/fonts/<face>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.0/dist/fonts/<face>.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 ```
 
