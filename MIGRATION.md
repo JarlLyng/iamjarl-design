@@ -95,6 +95,7 @@ This table gets a row for every release, including the ones where the answer is 
 | **1.33.0** | Every store fragment's badge points at the site's own copy, `/assets/iamjarl-design@vX.Y.Z/badges/`, not jsDelivr; the copy recipe takes the badges | **Yes, for a site that pastes store fragments:** copy the badges its fragments name into its copy of this release, served at that path, and paste the fragments from the same release |
 | **1.33.1** | TonVault's US price is $4.99 in its store fragments and JSON-LD offer | No, except TonVault: paste the new fragments and offer, with a copy of v1.33.1 and its badge, on its release day, after the App Store price has changed |
 | **1.34.0** | A README store block per app and store language, `dist/store/<app>.<locale>.readme.md`: the official badge in both tones, the link with `ct=github`, the facts line and the site. The README documents the hero and the developer badge row next to it | No for sites. Each app repo pastes its block from v1.34.0 under its README issue |
+| **1.35.0** | `dist/vendor.mjs`: one command to take a release into a static site from its own origin, pasting the generated pieces again, with `--check` for CI | No. A static site may swap its own copy script for it |
 
 ### Who needs to migrate
 - ✅ **Everyone** — bump the version. Nothing you use today changes value or name.
