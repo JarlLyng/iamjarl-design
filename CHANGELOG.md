@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.35.1] — 2026-10-23
+
+WODrounds' iOS floor, released on the day WODrounds 1.10 goes live (#109).
+
+### Changed
+- **WODrounds needs iOS 17 or later,** up from 16, from its 1.10 on. It changes the facts line in every WODrounds store fragment and README block, in all seven languages. The Mac and Apple TV apps keep their floors; the facts line names the iPhone's.
+- **The examples that quote WODrounds say iOS 17 too:** the store button's and the README block's in the README, and the facts line in `design.md`.
+
+### What WODrounds loads
+- **The store fragments, pasted again from `@v1.35.1`,** every `dist/store/wodrounds.*.html` the site pastes, in each of its languages. `dist/vendor.mjs` from v1.35.1 takes the copy and pastes them in one run.
+- **The README block,** `dist/store/wodrounds.en.readme.md`, pasted again under the README's one-line description (WODrounds#209).
+- **Unchanged apart from the version in the first line:** the nav's call to action and the footer's cross-links. The JSON-LD offers carry no OS floor, so they don't change at all.
+- **The order, so no page names a floor the store doesn't:**
+  1. WODrounds 1.10 is live, and its App Store listing says iOS 17.0.
+  2. This is merged.
+  3. The fragments and the README block are pasted.
+
+### Who should move
+- **Only WODrounds.** Every other fragment changes only in the version in its first line.
+
 ## [1.35.0] — 2026-10-21
 
 One command to take a release into a static site, served from its own origin.
@@ -1325,6 +1345,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.35.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.1
 [1.35.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.0
 [1.34.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.34.0
 [1.33.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.33.1

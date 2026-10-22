@@ -1,4 +1,4 @@
-// IAMJARL <ij-store-cta> v1.35.0: generated, do not edit
+// IAMJARL <ij-store-cta> v1.35.1: generated, do not edit
 // Sources: components/store.js, components/ij-store-cta.js, apps.json, badges/
 
 const REGISTRY = {
@@ -55,7 +55,7 @@ const REGISTRY = {
       "store": {
         "platform": "app-store",
         "id": "6759229877",
-        "minOS": "16.0",
+        "minOS": "17.0",
         "price": {
           "us": "$2.99",
           "dk": "29,00 kr",
