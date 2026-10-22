@@ -22,6 +22,9 @@ WODrounds' iOS floor, released on the day WODrounds 1.10 goes live (#109).
   2. This is merged.
   3. The fragments and the README block are pasted.
 
+### Tests
+- The store fragment's browser test reads WODrounds' Danish price and OS floor from the registry instead of holding them.
+
 ### Who should move
 - **Only WODrounds.** Every other fragment changes only in the version in its first line.
 
