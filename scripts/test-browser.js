@@ -660,10 +660,13 @@ try {
   check('the fragment works without JavaScript: badge loaded at 40 px, link and event in place',
     frag.loaded && frag.height === 40 && frag.href.includes('pt=128512007') && frag.event === 'store-click' && frag.placement === 'hero',
     JSON.stringify(frag));
+  // The price and the OS floor are WODrounds' in the registry, so a release that
+  // changes either needs no edit here (#109).
+  const wod = JSON.parse(fs.readFileSync(path.join(ROOT, 'apps.json'), 'utf-8')).apps.find(a => a.id === 'wodrounds').store;
   check('the Danish page gets the Danish badge, alt text and facts',
     /app-store-black-da-dk\.svg$/.test(frag.src) && frag.alt === 'Hent i App Store' &&
     // Apple writes the price with a no-break space before the currency; keep it, compare loosely.
-    frag.facts.replace(/\s/g, ' ') === '29,00 kr engangskøb · iOS 16 eller nyere',
+    frag.facts.replace(/\s/g, ' ') === `${wod.price.dk} engangskøb · iOS ${wod.minOS.replace(/(\.0)+$/, '')} eller nyere`.replace(/\s/g, ' '),
     `${frag.src} · ${frag.alt} · ${frag.facts}`);
   await p.media([{ name: 'prefers-color-scheme', value: 'dark' }]);
   await p.goto(`${base}/fixture/store-fragment/index.html?dark`);
