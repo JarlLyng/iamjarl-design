@@ -97,6 +97,7 @@ This table gets a row for every release, including the ones where the answer is 
 | **1.34.0** | A README store block per app and store language, `dist/store/<app>.<locale>.readme.md`: the official badge in both tones, the link with `ct=github`, the facts line and the site. The README documents the hero and the developer badge row next to it | No for sites. Each app repo pastes its block from v1.34.0 under its README issue |
 | **1.35.0** | `dist/vendor.mjs`: one command to take a release into a static site from its own origin, pasting the generated pieces again, with `--check` for CI | No. A static site may swap its own copy script for it |
 | **1.35.1** | WODrounds needs iOS 17 or later in its store fragments and README blocks | No, except WODrounds: paste its fragments and README block from v1.35.1 once its 1.10 is live |
+| **1.35.2** | It's mono, yo!'s US price is $1.99 in its store fragments, README block and JSON-LD offer | No, except It's mono: paste its fragments, offer and README block from v1.35.2, now that the App Store shows $1.99 |
 
 ### Who needs to migrate
 - ✅ **Everyone** — bump the version. Nothing you use today changes value or name.
