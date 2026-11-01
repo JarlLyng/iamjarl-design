@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.35.2] — 2026-11-01
+
+It's mono, yo!'s new price, released once the App Store shows it (#115).
+
+### Changed
+- **It's mono, yo!'s US price is $1.99,** up from $0.99, by the owner's decision on #115. It changes the facts line in every It's mono store fragment and its README block, `its-mono-yo.en.offer.json`, the store element's registry and the kit's It's mono example. The App Store has shown $1.99 since 2026-11-01, a day before the planned date.
+
+### What It's mono loads
+- **The store fragments, pasted again from `@v1.35.2`:** every `dist/store/its-mono-yo.en.*.html` the site pastes, with the white badge its dark pages use. `its-mono-yo.en.nav.html` carries no price.
+- **The JSON-LD offer,** `dist/store/its-mono-yo.en.offer.json`, on the home page.
+- **The README block,** `dist/store/its-mono-yo.en.readme.md`, pasted again in the README.
+- **The badge comes from the site's own copy:** `/assets/iamjarl-design@v1.35.2/badges/mac-app-store-white-en-us.svg`. `dist/vendor.mjs` from v1.35.2 takes the copy and pastes the fragments and the offer in one run.
+- **The order, so the site never shows a price the store doesn't:**
+  1. The App Store shows $1.99, and Apple's lookup returns it.
+  2. This is merged.
+  3. It's mono takes the release (It-s-mono-yo-#106).
+
+### Who should move
+- **Only It's mono.** Every other fragment changes only in the version in its first line.
+
 ## [1.35.1] — 2026-10-23
 
 WODrounds' iOS floor, released on the day WODrounds 1.10 goes live (#109).
@@ -1348,6 +1368,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.35.2]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.2
 [1.35.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.1
 [1.35.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.0
 [1.34.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.34.0
