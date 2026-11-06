@@ -1,9 +1,8 @@
 # Pattern: the photographic hero ground
 
-A photograph behind the hero, darkened until the text wins. Two sites in the portfolio
-arrived at it independently — WODrounds and Anvil Workout — and eleven have not tried it.
-The hub's `DESIGN.md` calls it the cheapest thing that separates a designed page from a
-generated one.
+A photograph behind the hero, darkened until the text wins. Two sites in the portfolio,
+WODrounds and Anvil Workout, arrived at it independently, and eleven have not tried it.
+It is the cheapest way to make a page look designed rather than generated.
 
 This page exists so the next site does not derive the overlay again.
 
@@ -30,7 +29,7 @@ Both sites reached almost the same answer without talking to each other:
 ```
 
 Horizontal, near-opaque where the text sits, thinning toward the image side. **Ramp the
-overlay toward the text rather than darkening the whole frame** — a uniform scrim dulls the
+overlay toward the text rather than darkening the whole frame.** A uniform scrim dulls the
 photograph everywhere and buys contrast only where you needed it.
 
 In tokens:
@@ -88,8 +87,8 @@ against the result:
 Both production sites sit at 0.95–0.97 where their text falls, which is why neither has a
 problem despite never having computed this.
 
-The light-mode mirror — `rgba(255,255,255,α)` over the darkest possible image, black text —
-clears comfortably by 0.70 (10.02:1).
+The light-mode mirror, `rgba(255,255,255,α)` over the darkest possible image with black
+text, clears comfortably by 0.70 (10.02:1).
 
 This is a floor for the region *under the text*, not for the whole ramp. The thin end can go
 as low as the design wants, because nothing is read there.
@@ -105,7 +104,7 @@ import { parseColor, contrastRatio } from './scripts/color.js';
 
 ## The weight budget
 
-WODrounds ships **2521 KB** for its hero photograph — the original at 3936px wide, which is
+WODrounds ships **2521 KB** for its hero photograph: the original at 3936px wide, which is
 more than twice any viewport it will meet. The same image, resized and re-encoded:
 
 | Width | Weight |
@@ -116,7 +115,7 @@ more than twice any viewport it will meet. The same image, resized and re-encode
 | 800px | 63 KB |
 
 **Budget: 250 KB for the largest breakpoint.** Nearly all of the 9× saving comes from
-serving a sensible width, not from the codec — resize first, then reach for AVIF or WebP.
+serving a sensible width, not from the codec. Resize first, then reach for AVIF or WebP.
 
 Neither site uses `srcset` today. A decorative hero should:
 
@@ -137,8 +136,8 @@ it would be noise. That is the same rule as the first section, enforced in the m
 
 ## Reference implementations
 
-- **WODrounds** — full-bleed gym photograph, ramp to the right, display type over it
-- **Anvil Workout** — the same shape at a steeper ramp
+- **WODrounds**: full-bleed gym photograph, ramp to the right, display type over it
+- **Anvil Workout**: the same shape at a steeper ramp
 
 Both predate this page. Where they differ from it, they are the evidence and this is the
 summary; where a third site differs from both, that is worth a look before it ships.

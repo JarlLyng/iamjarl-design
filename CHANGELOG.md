@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.35.4] — 2026-11-06
+
+A follow-up to the tidy-up in 1.35.3.
+
+### Fixed
+- **`patterns/photographic-hero.md`:**
+  - it no longer cites a private repo; the point it borrowed stands on its own;
+  - the prose has no em-dashes.
+
+  The overlay, the contrast floor, the weight budget and the reference sites are unchanged.
+
+### Who should move
+- **Nobody.** The pattern is guidance, and only the generated files' version strings change in what ships.
+
 ## [1.35.3] — 2026-11-06
 
 A tidy-up of the repo's documents, so a stranger can read it without tripping over stale facts (#118).
@@ -1400,6 +1414,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.35.4]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.4
 [1.35.3]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.3
 [1.35.2]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.2
 [1.35.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.1
