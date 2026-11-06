@@ -99,6 +99,7 @@ This table gets a row for every release, including the ones where the answer is 
 | **1.35.1** | WODrounds needs iOS 17 or later in its store fragments and README blocks | No, except WODrounds: paste its fragments and README block from v1.35.1 once its 1.10 is live |
 | **1.35.2** | It's mono, yo!'s US price is $1.99 in its store fragments, README block and JSON-LD offer | No, except It's mono: paste its fragments, offer and README block from v1.35.2, now that the App Store shows $1.99 |
 | **1.35.3** | The repo's documents tidied (SECURITY, COMPONENTS, CONTRIBUTING, README); `meta.updated` kept to the release date by a test | No |
+| **1.35.4** | The photographic hero pattern no longer cites a private repo, and loses its em-dashes | No |
 
 ### Who needs to migrate
 - ✅ **Everyone** — bump the version. Nothing you use today changes value or name.
