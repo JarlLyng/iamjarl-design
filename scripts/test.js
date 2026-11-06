@@ -1205,6 +1205,14 @@ check('every install pin in the README is the current version',
   pins.every(v => v === tokens.meta.version),
   `stale: ${[...new Set(pins.filter(v => v !== tokens.meta.version))].join(', ')} — run npm run build`);
 
+// tokens.json's meta.updated is the release's date (#118): it went stale for
+// two releases while CONTRIBUTING asked for it by hand.
+{
+  const heading = read('CHANGELOG.md').match(new RegExp(`^## \\[${tokens.meta.version.replace(/\./g, '\\.')}\\] [—–-] (\\d{4}-\\d{2}-\\d{2})`, 'm'));
+  check('tokens.json\'s meta.updated is the date of the current version\'s CHANGELOG heading',
+    !!heading && tokens.meta.updated === heading[1], `meta.updated ${tokens.meta.updated}, CHANGELOG ${heading?.[1]}`);
+}
+
 // A release warms jsDelivr (#100): a tag's first fetch is the one that fails,
 // so the release asks for every file before a site's visitor does.
 {

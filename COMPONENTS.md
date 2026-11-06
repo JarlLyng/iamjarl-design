@@ -1,12 +1,21 @@
-# Components (proposed layer)
+# Components
 
-This repo ships design **tokens** today. This document proposes adding a **components** layer, and
-records the reasoning so the decision is reviewable rather than implied by a commit.
+> **Status: shipped.** The layer this document proposed is built: three web components, each one file
+> in `dist/components/` with its own integrity hash.
+> - `<ij-footer>`, since 1.4.0;
+> - `<ij-nav>`, since 1.14.0;
+> - `<ij-store-cta>`, the store button, since 1.20.0.
+>
+> The app sites use them, and the README documents each one.
+>
+> Everything below is the reasoning written in August 2026, before and while the footer was built. It
+> is kept because the decisions in it still hold. Where it describes the sites, or says what is
+> proposed, it describes them as they were then.
 
-Status: **`<ij-footer>` shipped in 1.4.0**, with TonVault as the first and only consumer. The rest
-of this document is the reasoning that led there, kept because the decisions are still live.
-Written 2026-08-12, revised 2026-08-13 after an audit of five of the marketing sites overturned one
-of its premises, and 2026-08-29 when the footer was built.
+This document proposed adding a **components** layer to a repo that shipped only design **tokens**,
+and records the reasoning so the decision is reviewable rather than implied by a commit. It was
+written 2026-08-12, revised 2026-08-13 after an audit of five of the marketing sites overturned one of
+its premises, and revised again 2026-08-29 when the footer was built.
 
 ## Why
 
@@ -19,7 +28,7 @@ The intended split, decided at portfolio level:
 |---|---|---|
 | Tokens (colour, type, spacing) | yes, but **not yet actually adopted** | this repo |
 | **Components (footer, nav, CTA)** | **yes, proposed** | **this repo** |
-| Page patterns (hero, storytelling arc) | shared rules, not shared layout | the private strategy hub |
+| Page patterns (hero, storytelling arc) | shared rules, not shared layout | outside this repo |
 | Content, imagery, tone | per app | the app's own repo |
 
 The sites should not look identical. They serve different audiences and that difference is
@@ -29,7 +38,7 @@ deliberate. They should be identical only where nothing but craft is at stake.
 
 The numbers below differ on purpose, and the two layers are not scoped the same way.
 
-- **Tokens belong on every site — all nine.** There is no reason for a concept site to hold a
+- **Tokens belong on every site, all nine.** There is no reason for a concept site to hold a
   different set of colours or spacing than an app site.
 - **Components belong on the app marketing sites**, the ones that sell an app. The concept sites
   are deliberately excluded: their whole point is that they look like themselves.
@@ -62,7 +71,7 @@ This matters directly for theming. A component reading `var(--ij-color-bg-card)`
 
 ### Echolume is not a rename job
 
-Six of Echolume's 23 names are not invented at all — they are **real tokens, redefined with
+Six of Echolume's 23 names are not invented at all: they are **real tokens, redefined with
 different values**:
 
 | Token | Echolume | Design system (light) |
@@ -75,12 +84,12 @@ different values**:
 | `--ij-radius-sm` | `8px` | `8px` (the only match) |
 
 Two consequences. First, both files declare on `:root` at equal specificity, so which one wins is
-decided by **stylesheet load order** — a bug that can look correct locally and break on a deploy
+decided by **stylesheet load order**, a bug that can look correct locally and break on a deploy
 that reorders them.
 
 Second, and larger: those overrides are **dark-mode values used as fixed constants**. `#d0ff00` is
 the system's dark primary, and the text colour is white-based. Echolume is a permanently dark site.
-So adopting tokens there is not a rename in passing — it is a decision about whether the site
+So adopting tokens there is not a rename in passing: it is a decision about whether the site
 becomes mode-aware at all. Step one has to treat Echolume as that decision, not as cleanup.
 
 ## Step zero is not a component
@@ -107,11 +116,12 @@ Proposed shape, alongside the existing token outputs:
 dist/components/          # ESM, one self-contained file per component
 ```
 
-*As built:* one file per component (`ij-footer.js`, `ij-nav.js`), each with its own SRI hash, and no index. An index would make every site load every component and would tie their hashes together.
+*As built:* one file per component (`ij-footer.js`, `ij-nav.js`, `ij-store-cta.js`), each with its own SRI hash, and no index. An index would make every site load every component and would tie their hashes together.
 
-Serve it from a **pinned jsDelivr tag**, not GitHub Pages. Pages serves always-latest, so one bad
-commit would hit every site at once. A tag URL is immutable, supports SRI, and needs no
-infrastructure:
+Serve it from a **pinned tag**, not GitHub Pages. Pages serves always-latest, so one bad commit would
+hit every site at once. A tag URL is immutable, supports SRI, and needs no infrastructure. *Since
+1.32.2 a live site goes one step further and serves a checked copy of the tag from its own origin;
+the README has the recipe and `dist/vendor.mjs`.* The original example:
 
 ```html
 <script type="module"
@@ -134,10 +144,10 @@ inherited value. The component would override whatever mode the site had chosen 
 instead.
 
 An earlier draft claimed Walkful pins light mode with a class and would therefore render dark on a
-light page. **That was wrong** — checked against all seven sites, none pins a mode: every one follows
+light page. **That was wrong.** Checked against all seven sites, none pins a mode: every one follows
 `prefers-color-scheme`, and the only `classList` toggles are tabs and carousels. The example was
 invented; the mechanism is not. `:host` beating inheritance is verified against a test page, and the
-day a site does pin a mode — a manual theme switch is the likely reason — importing
+day a site does pin a mode (a manual theme switch is the likely reason), importing
 `tokens.shadow.css` would silently override it.
 
 `tokens.shadow.css` was built for the opposite need, a content script that wants isolation *from* a
@@ -174,13 +184,13 @@ the five sites:
 |---|---|
 | Made by Human | 5 |
 | Anvil Workout, TrimrPix, Wean Nicotine, It's mono yo!, It's 404 yo! | 2 each |
-| **Get to the Movie!** — not in the portfolio | **2** |
+| **Get to the Movie!** (not in the portfolio) | **2** |
 | Walkful, WODrounds | 1 each |
 | **Echolume, TonVault, BotLens, PageLens** | **0** |
 
 Four apps get nothing, including Echolume and a live PageLens site, while a project outside the
 portfolio is linked from two sites. TonVault shows the mechanism: it names Echolume in a prose
-sentence **with no href**, so both ends score zero. Hand-written cross-links don't just drift — they
+sentence **with no href**, so both ends score zero. Hand-written cross-links don't just drift: they
 quietly stop being links.
 
 That carries a design consequence. The footer's app list must come from **data in this repo**, not
@@ -197,13 +207,13 @@ footer showed the same links, copy-paste would very nearly do. It is because the
 rule** that they should be computed rather than written out once per site.
 
 The rule is relevance: cross-promotion works between apps whose audiences overlap. So a site
-declares only who it is —
+declares only who it is:
 
 ```html
 <ij-footer app="wodrounds"></ij-footer>
 ```
 
-— and the component resolves the rest from the registry: WODrounds gets the other training apps,
+The component resolves the rest from the registry: WODrounds gets the other training apps,
 TonVault gets the other audio apps. Different content, one component, nothing to maintain per site.
 
 ### `apps.json`
@@ -231,12 +241,12 @@ TonVault gets the other audio apps. Different content, one component, nothing to
 
 Three flags, each earning its place against something real in the current footers:
 
-- **`listed`** — appears in other sites' footers. Separate from `consumes`, because a site can
+- **`listed`**: appears in other sites' footers. Separate from `consumes`, because a site can
   belong in the list without rendering the component, and because anything not in the registry stops
   being linked by accident. Today a project that is not part of the portfolio is linked from two
   sites while four portfolio apps are linked from none.
-- **`consumes`** — renders the component. Lets the rollout go one site at a time.
-- **`always`** — shown in every footer regardless of cluster, for the portfolio-wide links that are
+- **`consumes`**: renders the component. Lets the rollout go one site at a time.
+- **`always`**: shown in every footer regardless of cluster, for the portfolio-wide links that are
   a statement rather than a cross-sell. (`COMPONENTS.md` proposed calling this `pinned`; the shipped
   field is `always`.)
 
@@ -244,48 +254,48 @@ Two edge cases the current data forces:
 
 **Thin clusters.** The web-tools cluster has two members, so one of them would see a single sibling.
 Rule: if a cluster yields fewer than three, top up from the rest of the registry, **least-connected
-first** — ranked by how many footers an app's own category already reaches.
+first**, ranked by how many footers an app's own category already reaches.
 
 The first version of this rule said *newest first*, reasoning that new apps need exposure most.
 Measured against the live sites, that was wrong in a way worth recording: the newest app was picked
 for every top-up and ended up in nine footers, while the two apps in the two-member category sat at
 **one inbound link each**. Ranking by category reach is the accurate version of the same intent, and
-it levels the distribution — nothing below three, spread down from 2.33 to 0.87.
+it levels the distribution: nothing below three, spread down from 2.33 to 0.87.
 
 The ranking is computed from the registry's content, never from its own output. Ranking by actual
 inbound links would make the rule depend on its result, so two runs could disagree and the committed
 fragments would stop being reproducible.
 
 **Ordering.** Leave it to the registry, not to each site, or the footers drift again in a subtler
-way. Cluster siblings first, then the top-up, then the always-links — each group sorted by id, so
+way. Cluster siblings first, then the top-up, then the always-links, each group sorted by id, so
 re-sorting `apps.json` cannot rewrite a committed fragment.
 
 ### Attribution: the component carries it, the site does not
 
 Every site in the portfolio links `madebyhuman.iamjarl.com` from its fine print, usually worded
 **"Co-created with AI"**, and the component adds `Made by Human` as an always-link. Adopting the
-component therefore produces the same destination twice under two labels, on every site — a
+component therefore produces the same destination twice under two labels, on every site: a
 question nine sites would otherwise answer nine different ways.
 
 **Decision: the site drops its own badge link, and the component carries the attribution.**
 
 The reason is the same one behind the registry itself. A badge maintained per site is a hand-kept
-link, and hand-kept links drift — that is the problem this component exists to remove. Carrying it
+link, and hand-kept links drift. That is the problem this component exists to remove. Carrying it
 in `apps.json` means the wording, the destination and its position are consistent everywhere and
 change in one place.
 
 The cost is real and worth naming: the visual "Co-created with AI" badge gives way to a plain text
-link in a list. If a site has a deliberate reason to keep the badge as a graphic — a launch page, a
-manifesto — keep it and accept the duplicate there rather than reopening this for the whole
+link in a list. If a site has a deliberate reason to keep the badge as a graphic (a launch page, a
+manifesto), keep it and accept the duplicate there rather than reopening this for the whole
 portfolio.
 
 So when adopting the component, remove the `madebyhuman` link from the fine print. Everything else
-in the fine print — copyright, legal disclaimers, anything specific to that product — stays.
+in the fine print (copyright, legal disclaimers, anything specific to that product) stays.
 
 ### Graceful degradation
 
 A component loaded from a CDN is a dependency: if the script fails, the footer disappears. Custom
-elements render their own children until they upgrade, so the fallback is free —
+elements render their own children until they upgrade, so the fallback is free:
 
 ```html
 <ij-footer app="wodrounds">
@@ -298,7 +308,7 @@ Worst case is a plainer footer, not a missing one. Every consuming site should s
 
 ### Nav
 
-Nav is as tokenisable as the footer: wordmark, links, CTA — three slots, and the CTA pointing at a
+Nav is as tokenisable as the footer: wordmark, links, CTA: three slots, and the CTA pointing at a
 different store per site is an argument for a prop, not against the component. An earlier draft of
 this document used that difference as a reason to defer nav, which overstated it.
 
@@ -310,7 +320,7 @@ least two sites.
 in one way that shaped everything else: the footer's links are generated from the registry, the
 nav's are all slotted. A site's own navigation is the most important thing a crawler reads on it,
 and a link built in JavaScript inside a shadow root is invisible to the ones that do not run it.
-So the component owns behaviour — landmark, sticky bar, the phone layout, focus, `aria-current` —
+So the component owns behaviour (landmark, sticky bar, the phone layout, focus, `aria-current`)
 and never content. The rules it checks are in `components/nav-rules.js`, pure, like the footer's.
 
 ## Decisions, now resolved
@@ -351,7 +361,7 @@ The repo's quality rests on hard-failing checks with **no dependencies**. A comp
 shadow roots, focus and keyboard behaviour, none of which that harness can reach. Rather than break
 the zero-dependency promise for a single component, the decisions were moved out of the DOM:
 
-**`components/select-links.js` is pure** — no DOM, no fetch, no globals. Every rule with a judgement
+**`components/select-links.js` is pure:** no DOM, no fetch, no globals. Every rule with a judgement
 in it lives there (exclude self, group by category, top up a thin cluster, always-links last, filter
 by status) and is covered by contract tests in the existing harness. The custom element is a
 rendering shell over it.
@@ -362,7 +372,7 @@ stylesheet.
 
 **What that did not cover:** shadow-DOM rendering, slot behaviour, focus order, and the
 pre-upgrade fallback. Those need a browser, and for the footer they were checked by hand against
-`components/TESTING.md`. That checklist found a real bug on its first run — attaching a shadow root
+`components/TESTING.md`. That checklist found a real bug on its first run: attaching a shadow root
 before validating the `app` attribute hid the fallback content precisely when an unknown id made it
 necessary.
 
@@ -378,7 +388,7 @@ It found a real bug before release, the way the checklist did: the first version
 the nav's CTA paint and then fade out on every page load, focusable while it did. Invisible in a
 screenshot taken after the fade.
 
-The manual checklist remains for what a headless browser cannot judge — whether it looks right on a
+The manual checklist remains for what a headless browser cannot judge: whether it looks right on a
 real site.
 
 ## Non-negotiables that already apply
@@ -399,6 +409,6 @@ breaks one of those is a bug, not a variant.
 ## What deliberately does not live here
 
 The *reasoning* behind page structure stays out of this repo: which hero converts, what the
-storytelling arc should be, what the audience data says. That belongs in the private strategy hub,
-along with anything competitive. This repo holds values and components, the things a consuming app
+storytelling arc should be, what the audience data says. That is kept outside this repo, along with
+anything competitive. This repo holds values and components, the things a consuming app
 needs in order to build. Keeping that line clean is why this repo can stay public.
