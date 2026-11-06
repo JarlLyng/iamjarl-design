@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.35.3] — 2026-11-06
+
+A tidy-up of the repo's documents, so a stranger can read it without tripping over stale facts (#118).
+
+### Fixed
+- **`SECURITY.md`:**
+  - the supported version is the latest 1.x release, not 0.5.x;
+  - the scope now covers the code the repo ships and runs: the web components, `kit.js`, `dist/vendor.mjs`, the build-time helpers and the integrity hashes, as well as the static tokens.
+- **`COMPONENTS.md`:**
+  - a status header says the layer is built, with the three components and the release each came in;
+  - "as built" names `ij-store-cta.js`;
+  - it no longer cites a private repo;
+  - its advice on serving points at the README's copy from the site's own origin.
+- **`tokens.json` `meta.updated`** is this release's date. It had stayed at 2026-10-18 through 1.35.1 and 1.35.2. A contract test now holds it to the date of the version's CHANGELOG heading, and CONTRIBUTING says so.
+- **README:**
+  - **No longer claims** which sites serve their own copy.
+  - **"What's inside"** lists every folder and generated output: `components/`, `kit/`, `badges/`, `fonts/`, `tools/`, `hooks.json`, `dist/store/`, `dist/identity/`, `dist/vendor.mjs`, `dist/sri.json` and the rest.
+  - **Install examples:**
+    - each `npm install` names a tag;
+    - upgrading means changing the tag, because `npm update` doesn't move a `#vX.Y.Z` pin.
+
+### Changed
+- **The README reads for a stranger:**
+  - the dated decisions, the notes on other repos' practice and on the owner's process are gone;
+  - the section of prompts for one AI tool is replaced by a pointer to `AGENTS.md`, which any assistant can read;
+  - the prose has no em-dashes.
+
+  `COMPONENTS.md` and `CONTRIBUTING.md` lose their em-dashes too.
+
+### Who should move
+- **Nobody.** Only `tokens.json`'s date and the generated files' version strings change in what ships.
+
 ## [1.35.2] — 2026-11-01
 
 It's mono, yo!'s new price, released once the App Store shows it (#115).
@@ -1368,6 +1400,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.35.3]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.3
 [1.35.2]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.2
 [1.35.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.1
 [1.35.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.0

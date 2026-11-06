@@ -8,32 +8,48 @@
 Shared design system for all IAMJARL products (apps + web).
 
 This repository is the **single source of truth** for colors, typography, spacing, radius and icon usage across all IAMJARL projects.
-It is designed to work equally well for **humans** (design overview) and **AI tools like Cursor** (deterministic tokens + rules).
+It is written to work equally well for **people** (the design overview) and **AI assistants**, whichever tool (fixed tokens and rules, in [AGENTS.md](AGENTS.md)).
 
 [![Co-created with AI](https://madebyhuman.iamjarl.com/badges/co-created-white.svg)](https://madebyhuman.iamjarl.com)
 
-> **⚠️ Upgrading?** Every 1.x release is a safe bump — no token or CSS variable has been renamed or removed since v1.0. The last breaking change was v1.0, which renamed the `typography.lineHeights` keys (`tight/normal/relaxed/…` → `xs/sm/base/lg/xl/xxl`). Earlier: v0.4 changed the error color and switched the npm package to ESM; v0.3 prefixed all CSS variables with `--ij-`. See **[MIGRATION.md](MIGRATION.md)** for step-by-step upgrade guides.
+> **⚠️ Upgrading?** Every 1.x release is a safe bump: no token or CSS variable has been renamed or removed since v1.0. The last breaking change was v1.0, which renamed the `typography.lineHeights` keys (`tight/normal/relaxed/…` → `xs/sm/base/lg/xl/xxl`). Earlier: v0.4 changed the error color and switched the npm package to ESM; v0.3 prefixed all CSS variables with `--ij-`. See **[MIGRATION.md](MIGRATION.md)** for step-by-step upgrade guides.
 
 ---
 
 ## What's inside
-- `tokens.json` — machine-readable design tokens (colors incl. interaction/disabled/state-text, spacing, radius, typography, icons, shadows, motion, breakpoints, focus, z-index, opacity)
-- `design.md` — rules, principles and non-negotiables (Cursor-friendly)
-- `COMPONENTS.md` — the components layer: reasoning, scope and testing policy
-- `apps.json` — canonical product registry, consumed by `<ij-footer>` for cross-links
-- `index.html` — the docs page: every token in both modes, the families, the faces and live components, rendered from `tokens.json` and `apps.json`. A browser test fails if a token is missing from it
-- `scripts/build.js` — generates platform-specific token files from `tokens.json`
-- `scripts/validate.js` — validates token structure and contrast ratios
+
+**The sources, edited by hand:**
+- `tokens.json`: the design tokens (colour with interaction, disabled and state-text colours, spacing, radius, typography, icons, shadows, motion, breakpoints, focus, z-index, opacity). `tokens.schema.json` describes its shape.
+- `design.md`: the rules, principles and non-negotiables.
+- `apps.json`: the product registry. It holds each app's store facts, its site identity and its category, which the footer's cross-links use.
+- `components/`: the sources of the web components (`<ij-footer>`, `<ij-nav>`, `<ij-store-cta>`) and the logic they share. `COMPONENTS.md` explains why there is a components layer.
+- `kit/`: the marketing kit's sources (`kit.css`, `kit.js`, the drawing and waveform helpers) and its example pages, one per app site that has its own identity.
+- `badges/`: the official store badges, per store, tone and language.
+- `fonts/`: the approved display faces as latin woff2 files, each with its OFL licence.
+- `hooks.json`: the custom properties a site may set that are not tokens, with their defaults.
+- `tools/vendor.mjs`: the copy script, below.
+- `index.html`: the docs page. It renders every token in both modes, the identities, the faces and live components from `tokens.json` and `apps.json`, and a browser test fails if a token is missing from it.
+- `scripts/`: the build (`build.js`), the checks (`validate.js`, `test.js`, `test-browser.js`) and the release helpers.
+- `patterns/`: page patterns that are rules rather than code, such as the photographic hero.
+- `docs/readme-example.md`: the README store block, rendered as GitHub shows it.
+- `Package.swift`, `Sources/` and `Tests/`: the Swift package and its tests.
+- The documents: `design.md`, `COMPONENTS.md`, `CHANGELOG.md`, `MIGRATION.md`, `CONTRIBUTING.md`, `SECURITY.md`, and `AGENTS.md` for AI assistants.
 
 ### Generated outputs
-- `Sources/IAMJARLDesignTokens/DesignTokens.swift` — Swift (SPM package)
-- `dist/css/tokens.css` — CSS custom properties (light + dark mode)
-- `dist/css/tokens.shadow.css` — same variables scoped to `:host` (Shadow DOM / content scripts)
-- `dist/ts/tokens.js` — ESM runtime (npm main entry)
-- `dist/ts/tokens.d.ts` — TypeScript declarations
-- `dist/ts/tokens.ts` — TypeScript source (for inspection / TS-aware bundlers)
-- `dist/components/ij-footer.js` — `<ij-footer>` web component, registry inlined
-- `dist/footers/<app>.html` — pre-rendered cross-links per app, for inlining at build time
+Built by `scripts/build.js` and committed, so a tag holds exactly what it ships:
+- `Sources/IAMJARLDesignTokens/DesignTokens.swift`: Swift, as a Swift package.
+- `dist/css/tokens.css`: CSS custom properties, light and dark. `tokens.shadow.css` scopes the same variables to `:host`, for Shadow DOM and content scripts.
+- `dist/ts/`: an ESM runtime (`tokens.js`, the npm entry), its TypeScript declarations and the TypeScript source.
+- `dist/components/`: `ij-footer.js`, `ij-nav.js` and `ij-store-cta.js`, one file each, with the registry inlined.
+- `dist/footers/<app>.html`: each app's cross-links, pre-rendered for pasting into served HTML.
+- `dist/store/`: each app's store pieces per store language. That means the button for each spot and tone, the nav's call to action, the JSON-LD offer, Safari's Smart App Banner and the block for its README.
+- `dist/identity/<app>.css`: each app site's identity (ground, text, accent, face).
+- `dist/fonts/<face>.css`: one `@font-face` sheet per face, pointing at the woff2 in `fonts/`.
+- `dist/kit/`: the marketing kit (`kit.css`, `kit.js`) and its build-time helpers (`loose.js`, `wave.js`).
+- `dist/drawings/`, `dist/scenes/`: the drawings and the photo scenes' lines.
+- `dist/vendor.mjs`: the copy script, as a site keeps it.
+- `dist/sri.json`: the integrity hash of every file a page loads by URL.
+- `dist/hooks.json`: `hooks.json`, with the names each identity sheet sets.
 
 ---
 
@@ -51,7 +67,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.35.2")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.35.3")
 ]
 ```
 
@@ -60,7 +76,7 @@ Then use in code:
 ```swift
 import IAMJARLDesignTokens
 
-// Colours that resolve light or dark by themselves — nothing to pass
+// Colours that resolve light or dark by themselves: nothing to pass
 Text("Start")
   .foregroundStyle(DesignTokens.Palette.Text.primary)
   .background(DesignTokens.Palette.Background.app)
@@ -78,7 +94,7 @@ let corner = DesignTokens.Radius.lg
 
 **Why `Palette` rather than `Common`:** `Common.primary(scheme)` needs the `ColorScheme` passed in,
 so it only works inside a view that has read it, and every app ended up wrapping it. `Palette`
-resolves by itself — in a widget, a `.tint()`, a `ShapeStyle` or a UIKit/AppKit view as well.
+resolves by itself, in a widget, a `.tint()`, a `ShapeStyle` or a UIKit/AppKit view as well.
 `Common` and `ColorToken` stay. For an app's own derived colours, `DesignTokens.adaptive(light:dark:)`
 makes one that adapts the same way.
 
@@ -88,19 +104,22 @@ token at the default size and scales along the nearest Apple text style (`captio
 `largeTitle` for `xxl`), with the token's line height. On macOS and tvOS, which have no Dynamic
 Type, it is the token.
 
-**Numerals** — `sm` 32, `md` 56, `lg` 80 — were derived from what ships: WODrounds' 80 pt timer
+**Numerals** (`sm` 32, `md` 56, `lg` 80) were derived from what ships: WODrounds' 80 pt timer
 and 56 pt values, and the watch timers of WODrounds (34) and Anvil (30). `.ijNumeral` sets
 tabular digits, so a timer does not shift sideways as its digits change, and caps Dynamic Type
 at 1.5×, because an 80 pt timer that keeps growing leaves the screen. Pick the design for your
 app: `.ijNumeral(.lg, design: .rounded)`.
 
-On watchOS `Palette` is always the dark value — the watch has one appearance.
+On watchOS `Palette` is always the dark value, because the watch has one appearance.
 
 ### React web (npm)
 
 ```bash
-npm install github:jarllyng/iamjarl-design
+npm install github:jarllyng/iamjarl-design#v1.35.3
 ```
+
+Pin the tag, as above. To upgrade, change the tag and install again: `npm update` doesn't move a
+`#vX.Y.Z` pin.
 
 CSS custom properties:
 
@@ -136,7 +155,7 @@ const theme = colors.light;
 ### Expo / React Native
 
 ```bash
-npm install github:jarllyng/iamjarl-design
+npm install github:jarllyng/iamjarl-design#v1.35.3
 ```
 
 ```typescript
@@ -156,10 +175,10 @@ const theme = useTheme();
 ### Chrome extension (Manifest V3)
 
 ```bash
-npm install github:jarllyng/iamjarl-design
+npm install github:jarllyng/iamjarl-design#v1.35.3
 ```
 
-**Popup, options page, side panel** — link the standard CSS file:
+**Popup, options page, side panel:** link the standard CSS file:
 
 ```html
 <!-- popup.html / options.html / sidepanel.html -->
@@ -185,7 +204,7 @@ Add the file to `web_accessible_resources` in `manifest.json` if needed:
 }
 ```
 
-**Content script with Shadow DOM** — use the `:host`-scoped variant to isolate from the host page:
+**Content script with Shadow DOM:** use the `:host`-scoped variant to isolate from the host page:
 
 ```typescript
 import shadowCss from '@iamjarl/design-tokens/css/shadow' with { type: 'css' };
@@ -219,7 +238,7 @@ style.textContent = cssText;
 shadow.appendChild(style);
 ```
 
-**Background/service worker** — use the TS module for color values without DOM:
+**Background/service worker:** use the TS module for color values without DOM:
 
 ```typescript
 import { colors } from '@iamjarl/design-tokens';
@@ -231,11 +250,11 @@ chrome.action.setBadgeBackgroundColor({ color: colors.light.primary });
 ## Web component: `<ij-footer>`
 
 A shared footer that builds its cross-links from [`apps.json`](apps.json), so adding an app updates
-every site instead of nine hand-kept lists. Works in any page — no build step, no framework.
+every site instead of nine hand-kept lists. Works in any page, with no build step and no framework.
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.2/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.3/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -278,7 +297,7 @@ the sites are written in (#80). A Danish page with `<html lang="da">` gets "Mere
 
 ### Three ways to take it, and which one you want
 
-**A site serves the design system from its own origin** (the owner's decision on 2026-10-15, #100).
+**A site serves the design system from its own origin** (#100).
 A hand-edited static site serves [a checked copy](#a-copy-served-from-the-site-itself), and a site with
 a build step installs it. The pinned CDN URLs in this README are for trying something out, not for a
 live site.
@@ -288,11 +307,11 @@ live site.
 | Best for | **a live static site** | **a live site with a build** | trying something out |
 | Where the version lives | in the folder's name and the markup | in `package.json`, where Dependabot can see it | in the markup |
 | Reproducibility | the tag's hashes, checked when you copy | the lockfile pins the exact commit | the tag |
-| Runtime dependency | none — served from your own origin | none — served from your own origin | a third-party CDN |
-| Needs `integrity`? | worth keeping: the same hashes | no — nothing crosses an origin | yes, worth it |
+| Runtime dependency | none: served from your own origin | none: served from your own origin | a third-party CDN |
+| Needs `integrity`? | worth keeping: the same hashes | no: nothing crosses an origin | yes, worth it |
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.35.2
+npm install github:jarllyng/iamjarl-design#v1.35.3
 ```
 
 ```js
@@ -300,9 +319,9 @@ import '@iamjarl/design-tokens/components';   // registers <ij-footer>
 import '@iamjarl/design-tokens/css';          // the token layer
 ```
 
-Pin the tag in the dependency, not just the range. PageLens does this and its lockfile resolves the
-tag to an exact commit, which is a stronger guarantee than a tag URL — a tag can in principle be
-moved, a commit cannot.
+Pin the tag in the dependency, not just the range. The lockfile then resolves the tag to an exact
+commit, which is a stronger guarantee than a tag URL: a tag can in principle be moved, a commit
+cannot.
 
 The cross-link fragment works either way: fetch `dist/footers/<app>.html` during the build, or read
 it from `node_modules/@iamjarl/design-tokens/dist/footers/`.
@@ -311,11 +330,10 @@ it from `node_modules/@iamjarl/design-tokens/dist/footers/`.
 
 **Why it's the default for a static site:**
 - **A CDN can blank the page.** The token sheet, your identity sheet and `kit.css` block the first paint, so a page shows nothing until they arrive.
-- **jsDelivr has failed in practice.** On 2026-10-14 and 15, its `/gh/` path answered `503` or timed out for minutes on files of a new tag (#100). That happened even after the release had warmed its cache, because each of its edge servers still fetches a file the first time a visitor near it asks.
+- **jsDelivr has failed in practice.** Its `/gh/` path has answered `503` or timed out on files of a new tag (#100), even after the release had warmed its cache, because each of its edge servers still fetches a file the first time a visitor near it asks.
 - **No third party.** A copy means no third-party request on a page that says it has none, the same reason the faces are self-hosted.
 
-Copy the files your page loads into the site's repo, and check each one against the tag's hashes. Wean,
-It's 404 yo! and PageLens already work this way.
+Copy the files your page loads into the site's repo, and check each one against the tag's hashes.
 
 **In one command: `dist/vendor.mjs`** (since 1.35.0). It reads your pages and does everything below,
 for just the files they load:
@@ -328,27 +346,27 @@ It needs Node 18 or later and the system's `tar`, and nothing else. It downloads
 
 ```bash
 # Once: keep the script in the site's repo, checked against the tag's own hash.
-curl -sfL https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.35.2/dist/vendor.mjs -o scripts/iamjarl-vendor.mjs
-curl -sfL https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.35.2/dist/sri.json | grep '"dist/vendor.mjs"'
+curl -sfL https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.35.3/dist/vendor.mjs -o scripts/iamjarl-vendor.mjs
+curl -sfL https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.35.3/dist/sri.json | grep '"dist/vendor.mjs"'
 echo "sha384-$(openssl dgst -sha384 -binary scripts/iamjarl-vendor.mjs | openssl base64 -A)"
 
 # Each release: your pages under docs/, the copy at /assets/iamjarl-design@vX.Y.Z/.
-node scripts/iamjarl-vendor.mjs v1.35.2 --root docs
+node scripts/iamjarl-vendor.mjs v1.35.3 --root docs
 ```
 
 - **Check mode:** `--check` writes nothing and exits 1 if anything would change, which suits a site's CI.
 - **Updating the script:** `--self` replaces the script with the copy the release ships.
 - **A copy elsewhere:** `--base /static` serves the copy from `/static` instead of `/assets`.
 
-**A site with a build of its own,** like Wean's Astro pages, keeps its own sync. By hand, the recipe is:
+**A site with a build of its own** installs the package, or keeps a sync of its own. By hand, the recipe is:
 
 ```bash
 # 1. The release, from GitHub's own archive of the tag, into a scratch folder.
 SRC=$(mktemp -d)
-curl -sfL https://github.com/JarlLyng/iamjarl-design/archive/refs/tags/v1.35.2.tar.gz | tar -xz --strip-components=1 -C "$SRC"
+curl -sfL https://github.com/JarlLyng/iamjarl-design/archive/refs/tags/v1.35.3.tar.gz | tar -xz --strip-components=1 -C "$SRC"
 
 # 2. The files your page loads, in the same layout, so the font sheet still finds its font.
-DEST=assets/iamjarl-design@v1.35.2
+DEST=assets/iamjarl-design@v1.35.3
 mkdir -p "$DEST"
 #    The licences travel with them: OFL-1.1 asks for the face's beside its font, and MIT for the rest.
 #    The store fragments' badges come from here too: take the ones your fragments name.
@@ -364,20 +382,20 @@ mkdir -p "$DEST"
 done
 
 # 4. Check that git takes all of it. A repo-wide `dist/` in .gitignore, kept for a build's
-#    output, silently drops the copy's dist/ folder (BotLens). Anchor that line as `/dist/`.
+#    output, silently drops the copy's dist/ folder. Anchor that line as `/dist/`.
 git add "$DEST"
 [ "$(git ls-files "$DEST" | wc -l)" -eq "$(find "$DEST" -type f | wc -l)" ] && echo "all tracked" ||
   git check-ignore -v $(find "$DEST" -type f)
 ```
 
-Then link the copies with the same `integrity` as the CDN snippets, from `/assets/iamjarl-design@v1.35.2/dist/…`.
+Then link the copies with the same `integrity` as the CDN snippets, from `/assets/iamjarl-design@v1.35.3/dist/…`.
 Keep the version in the folder's name, so a bump is a new folder and a changed link, never a file
 edited in place. Take only what your page loads, and the badges your store fragments name.
 
 **Serve the folder at that path, `/assets/iamjarl-design@vX.Y.Z/` from your site's root:** the store
 fragments point their badge there (#104).
 
-**Check that `integrity` is enforced, not just present** (the TrimrPix for iOS session's practice). Change
+**Check that `integrity` is enforced, not just present.** Change
 one byte in your copy of `tokens.css` and reload. The browser must refuse the sheet, with an SRI error in
 the console. Then restore the byte. A wrong hash fails the same way a missing file does, and a page with
 fallback values can look almost right while it runs without the design system.
@@ -394,23 +412,23 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.2/dist/css/tokens.css"
-  integrity="sha384-0Wo1kfB29kv9lCLAG4wEHY14WzZQjtmQ6c7ecUNU3/6GDOfTAMwkZNer/imFSU2v"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.3/dist/css/tokens.css"
+  integrity="sha384-jGriT+gKFsIEmUwthz1wXSLHN+A2NCwy3n/vxbejbpeOR90LvyUuV481azsTOpSH"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.2/dist/components/ij-footer.js"
-  integrity="sha384-xn+FVDyf2FM7SwVXiIzDZtqdajKBk6Kj4FaCE5tq9+IjAodkop0mnBHi0SnOfUtu"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.3/dist/components/ij-footer.js"
+  integrity="sha384-d8jI+22SMzpbOMiswjq/TMhPTEaT2p4WxdJj771Ey1zvCVBpIp5KxzFnd1Kw50uf"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.2/dist/components/ij-nav.js"
-  integrity="sha384-eIlzA1T4AXvkYAiVFNPNMYyvJDS4mhsZX0ubqyCOWn8FNaNk/BoT1BGWv+O7XfKB"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.3/dist/components/ij-nav.js"
+  integrity="sha384-4RR6Cm04P8cjdvoGKHAhyJkX56nOiUxAkXMq4+Dc9Ipe3WD42l/blDQAeTh3nu+E"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.2/dist/components/ij-store-cta.js"
-  integrity="sha384-W4vwpwcT2te/PH1sVbxbqyAKwrXeNh4Jg3FR2QaMlQ/Au0vWL0JJZ1TOINSC42Vq"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.3/dist/components/ij-store-cta.js"
+  integrity="sha384-YKweky65IT7SaQp+E0XJMVW1iiTOAXauSpd0pSR5nAJ+UB/yUcVkEhzIIes7feJc"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
@@ -442,7 +460,7 @@ The component builds the cross-links at runtime, so crawlers that do not execute
 pre-rendered fragment for your app and the component will slot it instead of regenerating:
 
 ```bash
-curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.2/dist/footers/botlens.html
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.3/dist/footers/botlens.html
 ```
 
 ```html
@@ -463,8 +481,8 @@ The difference is freshness: a fragment is a snapshot that refreshes when you re
 generated version is current on every load. Omit the slot entirely and nothing changes.
 
 Two slots, because a footer carries two kinds of per-site content. `links` holds your own
-navigation; `fineprint` holds the colophon — copyright, legal text, attribution. **Put legal text in
-`fineprint`, not loose in the tag** — unslotted content is hidden once the component upgrades.
+navigation; `fineprint` holds the colophon: copyright, legal text, attribution. **Put legal text in
+`fineprint`, not loose in the tag,** because unslotted content is hidden once the component upgrades.
 The group labels and the fineprint are set in your tertiary text colour, which the identity validator
 holds to AA on your ground (#98). A link nested inside your fineprint takes your page's own link style.
 
@@ -477,7 +495,7 @@ fewer than three members is topped up with the newest apps, and a site never lin
 
 ### Theming
 
-The component **inherits** your tokens — it declares none of its own. Import `dist/css/tokens.css`
+The component **inherits** your tokens and declares none of its own. Import `dist/css/tokens.css`
 on the page and the footer follows it, including a pinned `.light` or `.dark` class. Without a token
 layer it falls back to the system's own values and follows `prefers-color-scheme`.
 
@@ -509,7 +527,7 @@ it supplies the landmark, the sticky translucent bar, the phone layout and the k
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.2/dist/components/ij-nav.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.3/dist/components/ij-nav.js"></script>
 
 <ij-nav>
   <a slot="brand" href="/">Echolume</a>
@@ -530,13 +548,13 @@ its parent. For the pinned-with-`integrity` version, use the SRI block above.
 | --- | --- |
 | `brand` | **Required.** Your wordmark, linking home. A dot in your site's accent sits beside it, unless the link carries its own mark (an `<svg>` or `<img>`) |
 | `links` | Up to three. The one for this page gets `aria-current="page"`, unless you set it yourself |
-| `secondary` | Optional, one. A quiet button — GitHub, a changelog |
+| `secondary` | Optional, one. A quiet button, such as GitHub or a changelog |
 | `cta` | One. Your store link, filled with your site's accent, with its on-accent text |
 
 | Attribute | |
 | --- | --- |
 | `label` | The landmark's `aria-label`. Default `Main`, in the page's language ("Hovedmenu" on a Danish page) |
-| `skip-to` | The id the skip link jumps to. Default `main`. No element with that id, no skip link — and a console warning. A page with its own skip link to it, before the nav (such as the kit's `.ij-skip`), gets none from the nav, so there is one stop |
+| `skip-to` | The id the skip link jumps to. Default `main`. No element with that id, no skip link, and a console warning. A page with its own skip link to it, before the nav (such as the kit's `.ij-skip`), gets none from the nav, so there is one stop |
 | `skip-label`, `menu-label` | The skip link's words and the menu button's hidden label. Both follow the page's language on their own, like the footer's; set these only for another language or your own phrasing |
 | `cta-after` | A selector for your hero's CTA. While it is on screen, the nav's CTA waits, so there is one call to action above the fold |
 
@@ -552,7 +570,7 @@ its parent. For the pinned-with-`integrity` version, use the SRI block above.
   the nav, a second CTA, a CTA reporting `placement="hero"`. Nothing is hidden: every link still
   renders, and the site decides.
 
-**Before the script loads**, `<ij-nav>` is a row of plain links — which is also what a crawler sees.
+**Before the script loads**, `<ij-nav>` is a row of plain links, which is also what a crawler sees.
 To make that state look like a bar and avoid a jump on upgrade:
 
 ```css
@@ -571,7 +589,7 @@ links outside the components:
 a:where(:not([slot])) { color: var(--accent); }
 ```
 
-Echolume found this when it adopted the nav (#57). The same holds for `<ij-footer>`.
+The same holds for `<ij-footer>` (#57).
 
 Attributes and slots only, so it works unchanged in React, where `<ij-nav>` is just an element.
 
@@ -619,8 +637,8 @@ serves, so a self-hosted page makes no request to a third party.
 
 **A site with no build step pastes by hand, and refreshes by hand.** The comment on the first line
 names the version it came from: when a release changes a price or an OS floor, paste the files
-from that release again. The hub is adding a check that reports a site whose pasted copy no
-longer matches (#63).
+from that release again (#63). `dist/vendor.mjs --check` reports a page whose pasted copy no longer
+matches its release.
 
 ### In a README
 
@@ -711,8 +729,7 @@ engine reading the markup is not one.
 
 ### Layout
 
-The fragment brings no styles. These defaults, from the pilots on Anvil and Patternaut, cover what
-every site ended up writing:
+The fragment brings no styles. These defaults cover what every site ended up writing:
 
 ```css
 ij-store-cta { display: block; }          /* a custom element is inline by default */
@@ -743,7 +760,7 @@ reuse. Left empty, the element renders the fragment itself from the registry, wh
 without a build step, but crawlers will not see that copy:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.2/dist/components/ij-store-cta.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.3/dist/components/ij-store-cta.js"></script>
 <ij-store-cta app="wodrounds" placement="midpage" tone="white">…fragment…</ij-store-cta>
 ```
 
@@ -781,7 +798,7 @@ JavaScript. See the eight live demos: [Walkful](https://jarllyng.github.io/iamja
 <link rel="stylesheet" href="…/dist/identity/<app>.css" integrity="…" crossorigin="anonymous">
 <link rel="stylesheet" href="…/dist/fonts/<face>.css" integrity="…" crossorigin="anonymous">
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.2/dist/kit/kit.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.3/dist/kit/kit.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 
 <body class="ij-page">
@@ -972,7 +989,7 @@ dependencies), loaded after the page; nothing waits for it:
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.2/dist/kit/kit.js"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.3/dist/kit/kit.js"
   integrity="<from sri.json>" crossorigin="anonymous"></script>
 ```
 
@@ -1036,7 +1053,7 @@ nothing on a site that did not ask for a new identity. If your app has no file i
 ```html
 <!-- tokens.css first, from the SRI block above, then the identity sheet -->
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.2/dist/identity/<app>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.3/dist/identity/<app>.css"
   integrity="<from sri.json, see below>"
   crossorigin="anonymous">
 ```
@@ -1045,7 +1062,7 @@ nothing on a site that did not ask for a new identity. If your app has no file i
 yours:
 
 ```bash
-curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.2/dist/sri.json | grep 'identity/<app>.css'
+curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.3/dist/sri.json | grep 'identity/<app>.css'
 ```
 
 Each sheet carries the version in its header, so its hash changes every release. Move the tag and
@@ -1074,13 +1091,13 @@ Translucent: `color-mix(in srgb, var(--ij-color-accent) 15%, transparent)`, or t
 setting. Nothing to add to the page. A site that follows the visitor gets both modes, switched under
 `prefers-color-scheme` as in `tokens.css`. A site without a `scheme` that is nevertheless always dark
 needs `class="dark"` on `<html>`, or a visitor in light mode gets the light accent on a dark page.
-Echolume does exactly this today; giving it `"scheme": "dark"` would make the class unnecessary.
+Giving it `"scheme": "dark"` makes the class unnecessary.
 
 **The display face comes from here too.** The sheet sets `--ij-font-display` to the face's stack; load the face itself from the same tag:
 
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.2/dist/fonts/<face>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.35.3/dist/fonts/<face>.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 ```
 
@@ -1122,7 +1139,7 @@ Every variable is prefixed `--ij-` and the token path is lower-kebab-cased:
 Rule: `--ij-` + group + kebab(key). Two non-obvious mappings: **`background` → `bg`**, and **gradients get their own `--ij-gradient-*` namespace** rather than being flattened under `--ij-color-`. Mode colors (`primary`, `text.*`, `background.*`, `surface.*`, `border.*`, `state.*`) switch automatically via `prefers-color-scheme`, or manually with a `.light` / `.dark` class on a parent.
 
 ### Gradients and tints
-- `--ij-gradient-primary` / `--ij-gradient-brand` are mode-aware CSS gradient values. Web only — they have no SwiftUI equivalent.
+- `--ij-gradient-primary` / `--ij-gradient-brand` are mode-aware CSS gradient values. Web only: they have no SwiftUI equivalent.
 - For a tint, glow or translucent border, use `color-mix()` against an existing token rather than a hardcoded `rgba()`:
   ```css
   background: color-mix(in srgb, var(--ij-color-primary) 30%, transparent);
@@ -1130,11 +1147,11 @@ Rule: `--ij-` + group + kebab(key). Two non-obvious mappings: **`background` →
 - `--ij-color-primary-rgb` is **deprecated** since 1.6.0 (removal in 2.0.0). It only covered `primary`; `color-mix()` works on every color token.
 
 ### State colors: fill vs. text
-- `--ij-color-{success,warning,error}` are **fills** — use as backgrounds, paired with `--ij-color-on-*`.
+- `--ij-color-{success,warning,error}` are **fills**: use them as backgrounds, paired with `--ij-color-on-*`.
 - `--ij-color-state-{success,warning,error}` are **text/foreground** colors, tuned per mode to meet WCAG AA on `--ij-color-bg-app`. Never use a raw fill color as text.
 
 ### Swift accessors
-Mode-aware colours resolve by themselves through `DesignTokens.Palette` — `.primary`, `.Text.disabled`, `.State.error`. The older `DesignTokens.Common.primary(scheme)` form, which takes the `ColorScheme`, still works. Text: `.ijFont(.base)` and `.ijNumeral(.lg)`. Non-color scales are static: `DesignTokens.Spacing.md`, `.Radius.lg`, `.ZIndex.modal`, `.Opacity.disabled`. See [AGENTS.md](AGENTS.md) for the full accessor list.
+Mode-aware colours resolve by themselves through `DesignTokens.Palette`: `.primary`, `.Text.disabled`, `.State.error`. The older `DesignTokens.Common.primary(scheme)` form, which takes the `ColorScheme`, still works. Text: `.ijFont(.base)` and `.ijNumeral(.lg)`. Non-color scales are static: `DesignTokens.Spacing.md`, `.Radius.lg`, `.ZIndex.modal`, `.Opacity.disabled`. See [AGENTS.md](AGENTS.md) for the full accessor list.
 
 ---
 
@@ -1144,48 +1161,27 @@ When updating to a new version, check **[MIGRATION.md](MIGRATION.md)** for break
 
 | From → To | Breaking? | Affects |
 | --- | --- | --- |
-| 1.2.x → any later 1.x | No | All additive — no CSS variable renamed or removed. One caveat: don't adopt `--ij-color-primary-rgb`, deprecated in 1.6.0 in favour of `color-mix()`. MIGRATION.md has a row for every release |
+| 1.2.x → any later 1.x | No | All additive: no CSS variable renamed or removed. One caveat: don't adopt `--ij-color-primary-rgb`, deprecated in 1.6.0 in favour of `color-mix()`. MIGRATION.md has a row for every release |
 | 1.1.x → 1.2.0 | No | Nothing in the tokens. Repo maintenance only: Node floor raised to 22, version-coherence checks, CI fixes |
-| 1.0.x → 1.1.0 | No | SwiftUI only — macOS deployment floor lowered 13 → 11. No token values changed |
+| 1.0.x → 1.1.0 | No | SwiftUI only: macOS deployment floor lowered 13 → 11. No token values changed |
 | 0.5.x → 1.0.0 | Yes | `typography.lineHeights` keys renamed (`tight/normal/relaxed/…` → `xs/sm/base/lg/xl/xxl`). Otherwise additive: state-text colors, primary hover/pressed/subtle, disabled tokens, z-index, opacity |
 | 0.4.x → 0.5.0 | No | Additive only (Chrome extension support, popup breakpoint, shadow CSS) |
 | 0.3.x → 0.4.0 | Yes | Error color (visual) + npm package now ESM |
 | 0.2.x → 0.3.0 | Yes | CSS variables now prefixed with `--ij-` |
 | 0.1.x → 0.2.0 | No | Additive only (new shadow/motion/breakpoint/focus tokens) |
 
-For SwiftUI: **File → Packages → Update to Latest Package Versions**
-For npm: `npm update @iamjarl/design-tokens`
+For SwiftUI: **File → Packages → Update to Latest Package Versions**.
+For npm: change the tag in `package.json` (`github:jarllyng/iamjarl-design#vX.Y.Z`) and run `npm install`.
+`npm update` doesn't move a tag pin.
+For a static site with a copy: `node scripts/iamjarl-vendor.mjs vX.Y.Z --root <dir>`.
 
 ---
 
-## Cursor start prompt (copy/paste)
+## Working with an AI assistant
 
-Use this when you start a new project or when you want Cursor to sync an existing project with the latest tokens.
-
-```text
-You must follow the IAMJARL Design System.
-
-Source of truth:
-- Design rules: https://jarllyng.github.io/iamjarl-design/design.md
-- Tokens (JSON): https://jarllyng.github.io/iamjarl-design/tokens.json
-- Human viewer: https://jarllyng.github.io/iamjarl-design/
-
-Rules:
-- Do NOT invent new colors, spacing, radius or typography values.
-- Always support light + dark mode using the tokens.
-- Icons: Phosphor on the web, SF Symbols in native apps, never both in one app (design.md).
-- For colored backgrounds, always use semantic on-colors (onPrimary, onSuccess, onWarning, onError) to ensure sufficient contrast.
-
-Integration:
-- SwiftUI: Add the SPM package from https://github.com/jarllyng/iamjarl-design.git and use `import IAMJARLDesignTokens`.
-- React/Expo: Install via `npm install github:jarllyng/iamjarl-design` and import from `@iamjarl/design-tokens`.
-- If SPM/npm is not an option, read tokens.json and create local token mappings.
-
-Task:
-1) Install the design tokens package for this project type.
-2) Update the UI to use tokens only (no hardcoded values).
-3) If there are conflicts, prefer the design system.
-```
+[AGENTS.md](AGENTS.md) holds the rules for any assistant, whichever tool it is, working in this repo
+or in a project that uses it: the tokens, the non-negotiables and how to install. Point yours at it,
+together with `design.md` and `tokens.json`.
 
 ---
 
@@ -1193,8 +1189,8 @@ Task:
 
 ### 1) Make the change
 - [ ] Update `tokens.json` (preferred) or `design.md` (rules)
-- [ ] Bump `meta.version` in `tokens.json` per [SemVer](https://semver.org/) — see [CONTRIBUTING.md](CONTRIBUTING.md) (patch = value tweak, minor = new token, major = rename/removal). Keep it in sync with `package.json`.
-- [ ] Update `meta.updated` date in `tokens.json`
+- [ ] Bump `meta.version` in `tokens.json` per [SemVer](https://semver.org/), as [CONTRIBUTING.md](CONTRIBUTING.md) explains (patch = value tweak, minor = new token, major = rename/removal). Keep it in sync with `package.json`.
+- [ ] Set `meta.updated` in `tokens.json` to the release's date, the same as its CHANGELOG heading. A test checks it.
 
 ### 2) Verify locally
 ```bash
@@ -1210,7 +1206,7 @@ node scripts/build.js       # regenerate platform files
 
 ### 4) Sync projects
 - **SwiftUI**: In Xcode, update the package version (File > Packages > Update)
-- **React/Expo**: Run `npm update @iamjarl/design-tokens`
+- **React/Expo**: Change the tag in `package.json` and run `npm install`
 - Visually verify key screens in light + dark mode
 
 ---
@@ -1225,7 +1221,7 @@ node scripts/validate.js
 node scripts/build.js
 ```
 
-No dependencies required — scripts use only Node.js built-ins.
+No dependencies: the scripts use only Node.js built-ins.
 
 ---
 
