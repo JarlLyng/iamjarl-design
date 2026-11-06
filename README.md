@@ -1,7 +1,7 @@
 # iamjarl-design
 
 [![Version](https://img.shields.io/github/v/tag/jarllyng/iamjarl-design?label=version&sort=semver)](https://github.com/jarllyng/iamjarl-design/releases)
-[![License](https://img.shields.io/github/license/jarllyng/iamjarl-design)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Build Tokens](https://github.com/jarllyng/iamjarl-design/actions/workflows/build-tokens.yml/badge.svg)](https://github.com/jarllyng/iamjarl-design/actions/workflows/build-tokens.yml)
 [![SPM compatible](https://img.shields.io/badge/SPM-compatible-brightgreen.svg)](https://swift.org/package-manager/)
 
@@ -696,7 +696,7 @@ real file, black on light and white on dark, then the repo's CI and license badg
     <source media="(prefers-color-scheme: dark)" srcset="https://madebyhuman.iamjarl.com/badges/co-created-white.svg">
     <img src="https://madebyhuman.iamjarl.com/badges/co-created-black.svg" alt="Co-created with AI" width="120" height="40"></picture></a>
   <a href="https://github.com/JarlLyng/<repo>/actions/workflows/<workflow>.yml"><img src="https://github.com/JarlLyng/<repo>/actions/workflows/<workflow>.yml/badge.svg" alt="<workflow name>"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/JarlLyng/<repo>" alt="<license> License"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-<license>-blue" alt="<license> License"></a>
 </p>
 ```
 
@@ -704,8 +704,11 @@ real file, black on light and white on dark, then the repo's CI and license badg
   shields.io stand-in for it.
 - **The link closes right after the image.** Whitespace inside it would show as an underlined space
   before the CI badge.
-- **The CI badge is GitHub's own,** for the workflow that runs the tests. shields.io reads the
-  license from the repo.
+- **The CI badge is GitHub's own,** for the workflow that runs the tests.
+- **The license badge is static.** Its URL names the license, with any dash written twice:
+  `license-MIT-blue`, `license-AGPL--3.0-blue`. A badge that asks GitHub for the license on
+  every view sometimes reads "license: invalid", and GitHub's image proxy keeps that answer for
+  hours (#110). A license almost never changes, so a fixed label costs nothing.
 
 ### Structured data: the `Offer`
 

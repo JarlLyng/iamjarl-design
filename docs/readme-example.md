@@ -30,7 +30,7 @@ WODrounds times EMOM, intervals and For Time, in numbers you can read from acros
     <source media="(prefers-color-scheme: dark)" srcset="https://madebyhuman.iamjarl.com/badges/co-created-white.svg">
     <img src="https://madebyhuman.iamjarl.com/badges/co-created-black.svg" alt="Co-created with AI" width="120" height="40"></picture></a>
   <a href="https://github.com/JarlLyng/WODrounds/actions/workflows/tests.yml"><img src="https://github.com/JarlLyng/WODrounds/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
-  <a href="https://github.com/JarlLyng/WODrounds/blob/main/LICENSE"><img src="https://img.shields.io/github/license/JarlLyng/WODrounds" alt="MIT License"></a>
+  <a href="https://github.com/JarlLyng/WODrounds/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
 </p>
 
 This is where WODrounds' own README carries on, with build and run, architecture, contributing and the license.
