@@ -1108,6 +1108,10 @@ check('the README\'s badge row and the example use Made by Human\'s own badge, b
   ['README.md', 'docs/readme-example.md'].every(f => read(f).includes(
     '<source media="(prefers-color-scheme: dark)" srcset="https://madebyhuman.iamjarl.com/badges/co-created-white.svg">\n' +
     '    <img src="https://madebyhuman.iamjarl.com/badges/co-created-black.svg" alt="Co-created with AI" width="120" height="40"></picture></a>')));
+check('the README\'s badge row and the example name the license in a static badge, never one looked up per view (#110)',
+  ['README.md', 'docs/readme-example.md'].every(f => !read(f).includes('img.shields.io/github/license')) &&
+  read('README.md').includes('<img src="https://img.shields.io/badge/license-<license>-blue" alt="<license> License">') &&
+  read('docs/readme-example.md').includes('<img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License">'));
 check('the store README documents the README block next to the HTML variants',
   read('README.md').includes('| `dist/store/<app>.<locale>.readme.md` |'));
 check('an iPhone app, or a Mac app with an iPhone sibling, gets a Smart App Banner',
