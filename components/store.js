@@ -20,8 +20,10 @@ const OS_NAME = { 'app-store': 'iOS', 'mac-app-store': 'macOS' };
 // US store; a translated page quotes its own country's (owner, #58).
 export const LOCALES = {
   en: { front: 'us', badge: 'en-us', free: 'Free', once: 'once', orLater: 'or later', download: 'Download',
+        trial: (days, price) => `Free to try for ${days} days, then ${price} once`,
         alt: { 'app-store': 'Download on the App Store', 'mac-app-store': 'Download on the Mac App Store', 'chrome-web-store': 'Available in the Chrome Web Store' } },
   da: { front: 'dk', badge: 'da-dk', free: 'Gratis', once: 'engangskøb', orLater: 'eller nyere', download: 'Hent',
+        trial: (days, price) => `Gratis at prøve i ${days} dage, derefter ${price} som engangskøb`,
         alt: { 'app-store': 'Hent i App Store' } },
   de: { front: 'de', badge: 'de-de', free: 'Kostenlos', once: 'einmalig', orLater: 'oder neuer', download: 'Laden',
         alt: { 'app-store': 'Laden im App Store' } },
@@ -72,13 +74,32 @@ export function storeLink(store, ct = CAMPAIGN.ct) {
   return `https://apps.apple.com/app/id${store.id}?pt=${CAMPAIGN.pt}&ct=${ct}&mt=${mt}`;
 }
 
+// A free download that unlocks with a one-time in-app purchase after a trial
+// (#114). price stays the store's own word, "Free", so check-store-facts can
+// still compare it with Apple's lookup; trial holds what the lookup cannot see:
+//   "price": { "us": "Free" },
+//   "trial": { "days": 14, "then": { "us": "$9.99" } }
+// The facts line names the trial and the unlock, and the Offer carries the
+// unlock's price, so neither tells a visitor the app is simply free.
+function unlock(store, l, code) {
+  const t = store.trial;
+  if (!t) return null;
+  if (store.price?.[l.front] !== 'Free') throw new Error(`"${store.id}" has a trial, so its ${l.front} price must be "Free"`);
+  if (!Number.isInteger(t.days) || t.days < 1) throw new Error(`"${store.id}" trial.days must be a whole number of days`);
+  const then = t.then?.[l.front];
+  if (typeof then !== 'string' || !/\d/.test(then)) throw new Error(`No ${l.front} unlock price for "${store.id}"'s trial (locale ${code})`);
+  if (!l.trial) throw new Error(`No trial wording for locale ${code}`);
+  return { days: t.days, then };
+}
+
 // "$2.99 once · iOS 16 or later". The price is the store's own wording for that
 // storefront, so it can be compared with Apple's lookup as a string.
 export function factsLine(store, code) {
   const l = locale(code);
   const raw = store.price?.[l.front];
   if (raw === undefined) throw new Error(`No ${l.front} price for "${store.id}" (locale ${code})`);
-  const price = raw === 'Free' ? l.free : `${raw} ${l.once}`;
+  const u = unlock(store, l, code);
+  const price = u ? l.trial(u.days, u.then) : raw === 'Free' ? l.free : `${raw} ${l.once}`;
   if (!OS_NAME[store.platform]) return price;
   const version = String(store.minOS).replace(/(\.0)+$/, '');
   return `${price} · ${OS_NAME[store.platform]} ${version} ${l.orLater}`;
@@ -167,13 +188,14 @@ export function readmeHtml(app, code, { badges }) {
 }
 
 // The JSON-LD Offer for the page's storefront: the value of a SoftwareApplication's
-// "offers", so the structured data quotes the same price as the facts line. The
-// url is the plain store page; the campaign is for visitors who click, and a
-// search engine reading the markup is not one.
+// "offers", so the structured data quotes the same price as the facts line, and
+// for an app with a trial, the unlock's. The url is the plain store page; the
+// campaign is for visitors who click, and a search engine reading the markup is
+// not one.
 export function offer(store, code) {
   const l = locale(code);
-  const raw = store.price?.[l.front];
-  if (raw === undefined) throw new Error(`No ${l.front} price for "${store.id}" (locale ${code})`);
+  if (store.price?.[l.front] === undefined) throw new Error(`No ${l.front} price for "${store.id}" (locale ${code})`);
+  const raw = unlock(store, l, code)?.then ?? store.price[l.front];
   let price = '0';
   if (raw !== 'Free') {
     const digits = raw.replace(/[^\d.,]/g, '');

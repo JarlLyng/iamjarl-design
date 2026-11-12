@@ -1,0 +1,9 @@
+<!-- IAMJARL README store block for Edwell (en). Generated from apps.json, v1.36.0. Do not edit. -->
+<p>
+  <a href="https://apps.apple.com/app/id6825963733?pt=128512007&amp;ct=github&amp;mt=12"><picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.36.0/badges/mac-app-store-white-en-us.svg">
+    <img src="https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.36.0/badges/mac-app-store-black-en-us.svg" alt="Download on the Mac App Store" width="156" height="40">
+  </picture></a>
+  <br>
+  Free to try for 14 days, then $9.99 once · macOS 14 or later · <a href="https://edwell.iamjarl.com">edwell.iamjarl.com</a>
+</p>

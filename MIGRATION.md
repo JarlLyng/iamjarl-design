@@ -100,6 +100,7 @@ This table gets a row for every release, including the ones where the answer is 
 | **1.35.2** | It's mono, yo!'s US price is $1.99 in its store fragments, README block and JSON-LD offer | No, except It's mono: paste its fragments, offer and README block from v1.35.2, now that the App Store shows $1.99 |
 | **1.35.3** | The repo's documents tidied (SECURITY, COMPONENTS, CONTRIBUTING, README); `meta.updated` kept to the release date by a test | No |
 | **1.35.4** | The photographic hero pattern no longer cites a private repo, and loses its em-dashes | No |
+| **1.36.0** | Edwell in the registry, in `images` with a dark identity; `store.trial` for a free download with a one-time unlock; ties in the footer's top-up spread across footers, so three footers link to Edwell | No, except Edwell (take the release on launch day), and BotLens, TrimrPix and TrimrPix for iOS for Edwell in their footer, on their next release |
 
 ### Who needs to migrate
 - ✅ **Everyone** — bump the version. Nothing you use today changes value or name.

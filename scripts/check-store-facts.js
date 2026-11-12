@@ -11,6 +11,8 @@
 //
 // It reports and never edits: whether a price changed on purpose is the owner's
 // call. The Chrome Web Store has no comparable API, and both extensions are free.
+// A trial's unlock (#114) is an in-app purchase, which the lookup does not
+// return, so this checks Edwell's "Free" and its OS floor, not its $9.99.
 
 import fs from 'node:fs';
 import path from 'node:path';
