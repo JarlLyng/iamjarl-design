@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.36.0] — 2026-11-12
+
+Edwell, a Mac video editor, joins the registry on its launch day (#114), and the store facts learn to say "free to try".
+
+### Added
+- **Edwell in `apps.json`:**
+  - Mac App Store id 6825963733, macOS 14 or later, with store fragments in English and Danish;
+  - in the `images` category, now labelled "Images, video and screenshots". The App Store files Edwell under Photo & Video, next to TrimrPix. A category of its own would have left TrimrPix for iOS in two footers;
+  - its identity: dark, on the app window's black, with the icon's lime and Fraunces for headlines. Secondary and tertiary text mix to the values the site's stand-in already uses.
+
+  So the release carries its store fragments, Offers and README blocks in `en` and `da`, `dist/footers/edwell.html` and `dist/identity/edwell.css`.
+- **A trial in the store facts:**
+  - **The field:** `store.trial`, as in `{ "days": 14, "then": { "us": "$9.99", "dk": "89,00 kr" } }`, is for a free download that unlocks with a one-time in-app purchase.
+  - **The price stays Apple's own "Free",** so the weekly check against the store's lookup still compares it. The lookup doesn't show in-app purchases, so the unlock's price is checked by hand: $9.99 and 89,00 kr on the store pages on 2026-11-12.
+  - **The facts line names the trial and the unlock:**
+    - "Free to try for 14 days, then $9.99 once · macOS 14 or later", the same words as Edwell's holding page;
+    - in Danish, "Gratis at prøve i 14 dage, derefter 89,00 kr som engangskøb".
+  - **The JSON-LD Offer carries the unlock's price, not 0.**
+  - **It throws rather than guessing** on a trial for a paid app, one with no unlock price, or one in a language with no words for it.
+
+### Changed
+- **Ties in the footer's top-up spread across footers.**
+  - **The rule:** a footer whose category has fewer than three apps is topped up from the least-connected apps. Among apps equally connected, each footer now starts with the ids after its own and wraps around.
+  - **Why:** the plain alphabetical tie-break sent every footer to the same apps, and the last id in a tie was never picked. With Edwell added, that left TrimrPix for iOS in two footers, below the three a contract test requires.
+  - **What stays:** the rule is still a function of the registry's content, not its order, and a footer lists its links in the same order as before.
+- **Three footers link to Edwell,** each dropping one link:
+  - BotLens drops TrimrPix for iOS;
+  - TrimrPix and TrimrPix for iOS drop PageLens.
+
+  Edwell's own footer links TrimrPix, TrimrPix for iOS and PageLens. Every shipped app stays in at least three footers.
+
+### Who should move
+- **Edwell (Eddie-tor#32):** take v1.36.0 with `dist/vendor.mjs` on launch day. That brings:
+  - `edwell.en.white.html`, `.midpage.white.html`, `.footer.white.html`, `.nav.html` and `.offer.json`;
+  - `dist/footers/edwell.html`;
+  - `dist/identity/edwell.css`, in place of the stand-in.
+- **BotLens, TrimrPix and TrimrPix for iOS:** their footer gains Edwell when they next take a release. A site that renders `<ij-footer>` from the release gets it with the new `ij-footer.js`; one that pastes `dist/footers/<app>.html` pastes it again. Nothing breaks before then.
+- **Everyone else: nobody.**
+
 ## [1.35.4] — 2026-11-06
 
 A follow-up to the tidy-up in 1.35.3.
@@ -1414,6 +1453,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.36.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.36.0
 [1.35.4]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.4
 [1.35.3]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.3
 [1.35.2]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.2

@@ -1044,6 +1044,20 @@ check('the Offer reads thousands separators both ways, and a free app as 0',
 check('an Offer price it cannot read throws rather than guessing', (() => {
   try { offer({ ...ios, price: { us: 'about three dollars' } }, 'en'); return false; } catch { return true; }
 })());
+const trialApp = { ...mac, price: { us: 'Free', dk: 'Free' }, trial: { days: 14, then: { us: '$9.99', dk: '89,00\u00a0kr' } }, locales: ['en', 'da'] };
+check('a free download with a trial names the trial and the one-time unlock (#114)',
+  factsLine(trialApp, 'en') === 'Free to try for 14 days, then $9.99 once · macOS 14 or later' &&
+  factsLine(trialApp, 'da') === 'Gratis at prøve i 14 dage, derefter 89,00\u00a0kr som engangskøb · macOS 14 eller nyere');
+check('its Offer carries the unlock\'s price in the storefront\'s currency, not 0 (#114)',
+  offer(trialApp, 'en').price === '9.99' && offer(trialApp, 'en').priceCurrency === 'USD' &&
+  offer(trialApp, 'da').price === '89.00' && offer(trialApp, 'da').priceCurrency === 'DKK');
+check('a trial on a paid app, without an unlock price, of no days, or in a locale with no words for it throws (#114)',
+  [
+    [{ ...trialApp, price: { us: '$1.99' } }, 'en'],
+    [{ ...trialApp, trial: { days: 14, then: {} } }, 'en'],
+    [{ ...trialApp, trial: { days: 0, then: trialApp.trial.then } }, 'en'],
+    [{ ...trialApp, price: { se: 'Free' }, trial: { days: 14, then: { se: '99,00\u00a0kr' } } }, 'sv'],
+  ].every(([s, code]) => { try { factsLine(s, code); return false; } catch { return true; } }));
 check('the localised App Store badge, the English Mac badge', badgeFile('app-store', 'da', 'black') === 'app-store-black-da-dk.svg' &&
   badgeFile('mac-app-store', 'da', 'white') === 'mac-app-store-white-en-us.svg');
 
@@ -1102,6 +1116,13 @@ for (const a of storeAppsReg) {
 }
 check(`every store fragment matches the registry (${storeAppsReg.reduce((n, a) => n + a.store.locales.length, 0)} locales, ${PLACEMENTS.length} placements, ${TONES.length + 1} tones, the nav, the Offer and the README block)`,
   fragmentProblems.length === 0, fragmentProblems.join('; '));
+{
+  const edwell = registry.apps.find(a => a.id === 'edwell');
+  check('Edwell\'s facts line is the one its holding page already shows, and its Offer is the $9.99 unlock (#114)',
+    factsLine(edwell.store, 'en') === 'Free to try for 14 days, then $9.99 once · macOS 14 or later' &&
+    read('dist/store/edwell.en.white.html').includes('<p class="ij-store-facts">Free to try for 14 days, then $9.99 once · macOS 14 or later</p>') &&
+    JSON.parse(read('dist/store/edwell.en.offer.json')).price === '9.99');
+}
 check('the README example carries this release\'s WODrounds block, pasted whole (#107)',
   read('docs/readme-example.md').includes(`\n${read('dist/store/wodrounds.en.readme.md')}\n`));
 check('the README\'s badge row and the example use Made by Human\'s own badge, black on light and white on dark',
