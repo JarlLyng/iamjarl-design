@@ -22,6 +22,7 @@ import { NAV_ALPHA, NAV_COLLAPSE_BELOW, MAX_LINKS, currentIndex, heroOnScreen, n
 import { storeLink, factsLine, badgeFile, badgeHeight, badgeAlt, smartBannerHtml, fragmentName, offer, PLACEMENTS, TONES, LOCALES } from '../components/store.js';
 import { LABELS, labelsFor, PROJECTS_ID } from '../components/labels.js';
 import { filesToWarm } from './warm-cdn.js';
+import { iconApps, iconBundle, readMotif, motifExtent, motifLayers, FAMILY_OF_STORE } from './icons.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -1060,6 +1061,84 @@ check('a trial on a paid app, without an unlock price, of no days, or in a local
   ].every(([s, code]) => { try { factsLine(s, code); return false; } catch { return true; } }));
 check('the localised App Store badge, the English Mac badge', badgeFile('app-store', 'da', 'black') === 'app-store-black-da-dk.svg' &&
   badgeFile('mac-app-store', 'da', 'white') === 'mac-app-store-white-en-us.svg');
+
+// --- App icons (#124) ---
+// One Icon Composer bundle per app, from a motif in icons/ and its family in
+// tokens.json. Icon Composer is not on the CI runner, so these check what can be
+// read: the bundles are current, and the motifs keep the spec.
+console.log('\nApp icons:');
+{
+  const spec = tokens.brand.appIcons;
+  const storeApps = registry.apps.filter(a => a.status === 'shipped' && FAMILY_OF_STORE[a.store?.platform]);
+  check('every shipped App Store and Mac App Store app has an icon, in its store\'s family',
+    storeApps.every(a => a.icon?.family === FAMILY_OF_STORE[a.store.platform]),
+    storeApps.filter(a => a.icon?.family !== FAMILY_OF_STORE[a.store.platform]).map(a => a.id).join(', '));
+
+  const stale = [];
+  const apps = iconApps(registry);
+  for (const app of apps) {
+    const files = iconBundle(app, readMotif(ROOT, app), spec, tokens.meta.version);
+    for (const [rel, content] of Object.entries(files)) {
+      const p = `dist/icons/${app.id}.icon/${rel}`;
+      if (!fs.existsSync(path.join(ROOT, p)) || read(p) !== content) stale.push(p);
+    }
+    const onDisk = fs.readdirSync(path.join(ROOT, `dist/icons/${app.id}.icon`), { recursive: true })
+      .map(String).filter(f => fs.statSync(path.join(ROOT, `dist/icons/${app.id}.icon`, f)).isFile());
+    for (const f of onDisk) if (!(f in files)) stale.push(`dist/icons/${app.id}.icon/${f} (not built)`);
+  }
+  const bundles = fs.readdirSync(path.join(ROOT, 'dist/icons'));
+  for (const b of bundles) if (!apps.some(a => `${a.id}.icon` === b)) stale.push(`dist/icons/${b} (no app)`);
+  check(`dist/icons holds the ${apps.length} bundles the build makes from icons/ and tokens.json, and nothing else`, stale.length === 0, stale.join(', '));
+
+  const lo = (spec.canvas - spec.box) / 2, hi = (spec.canvas + spec.box) / 2;
+  const motifProblems = [];
+  const used = new Set(apps.map(a => a.icon.motif ?? a.id));
+  for (const f of fs.readdirSync(path.join(ROOT, 'icons'))) {
+    const name = f.replace(/\.svg$/, '');
+    const svg = read(`icons/${f}`);
+    const body = svg.replace(/<!--[\s\S]*?-->/g, '');
+    if (!used.has(name)) motifProblems.push(`${f}: no app uses it`);
+    if (!body.includes(`viewBox="0 0 ${spec.canvas} ${spec.canvas}"`)) motifProblems.push(`${f}: not a ${spec.canvas} canvas`);
+    const widths = [...body.matchAll(/stroke-width="([\d.]+)"/g)].map(m => Number(m[1]));
+    if (!widths.length || widths.some(w => w !== spec.stroke)) motifProblems.push(`${f}: a line that is not ${spec.stroke}`);
+    if (/#[0-9a-f]{3,8}\b|rgb\(/i.test(body)) motifProblems.push(`${f}: a colour of its own`);
+    if (/<(image|filter|linearGradient|radialGradient|mask|text)\b|\sopacity=|\stransform=/.test(body)) motifProblems.push(`${f}: an image, effect, text or transform`);
+    const e = motifExtent(svg);
+    if (e.minX < lo || e.minY < lo || e.maxX > hi || e.maxY > hi) motifProblems.push(`${f}: outside the ${spec.box} box (${[e.minX, e.minY, e.maxX, e.maxY].map(Math.round).join(', ')})`);
+    if (!motifLayers(svg).every(l => l.opacity > 0 && l.opacity <= 1)) motifProblems.push(`${f}: a layer's opacity`);
+  }
+  check(`every motif keeps the spec: a ${spec.canvas} canvas, one line of ${spec.stroke}, no colour, effect or bitmap of its own, inside the central ${spec.box}`,
+    motifProblems.length === 0, motifProblems.join('; '));
+
+  const colourProblems = [];
+  for (const app of apps) {
+    const fam = spec.families[app.icon.family];
+    const json = JSON.parse(read(`dist/icons/${app.id}.icon/icon.json`));
+    const hex = h => h.toUpperCase();
+    if (!json['fill-specializations'][0].value.solid.startsWith('srgb:')) colourProblems.push(`${app.id}: ground`);
+    for (const layer of json.groups[0].layers) {
+      const svg = n => read(`dist/icons/${app.id}.icon/Assets/${n}`);
+      const colours = n => new Set((svg(n).match(/#[0-9A-Fa-f]{6}/g) ?? []).map(hex));
+      const want = (n, c) => { const got = colours(n); if (got.size !== 1 || !got.has(hex(c))) colourProblems.push(`${app.id}/${n}: ${[...got].join(' ')}`); };
+      for (const s of layer['image-name-specializations']) {
+        want(s.value, s.appearance === 'tinted' ? spec.tinted : s.appearance === 'dark' ? (app.icon.darkLine ?? fam.dark.line) : fam.line);
+      }
+    }
+    const sq = json['supported-platforms'].squares;
+    const okPlatforms = app.icon.family === 'mac' ? sq.length === 1 && sq[0] === 'macOS' : sq.includes('iOS');
+    if (!okPlatforms) colourProblems.push(`${app.id}: platforms ${JSON.stringify(json['supported-platforms'])}`);
+    if (/Watch/.test(app.platform) !== Boolean(json['supported-platforms'].circles)) colourProblems.push(`${app.id}: the watch's circle`);
+  }
+  check('each icon wears its family: the line on every layer, the app\'s own dark line where it has one, white to tint, and its platforms',
+    colourProblems.length === 0, colourProblems.join('; '));
+  check('WODrounds keeps its lime in the dark, and the two TrimrPix apps share one drawing (#124)',
+    read('dist/icons/wodrounds.icon/Assets/symbol-dark.svg').includes('#D0FF00') &&
+    registry.apps.find(a => a.id === 'trimrpix-ios').icon.motif === 'trimrpix' &&
+    !fs.existsSync(path.join(ROOT, 'icons/trimrpix-ios.svg')));
+  check('design.md states the icon spec with the tokens\' numbers, and the README says where the bundles are',
+    read('design.md').includes('### App icons') && read('design.md').includes(`**${spec.stroke}**`) && read('design.md').includes(`**${spec.box}**`) &&
+    read('README.md').includes('## App icons: `dist/icons/<app>.icon`'));
+}
 
 const storeAppsReg = registry.apps.filter(a => a.status === 'shipped' && a.store);
 const fragmentProblems = [];

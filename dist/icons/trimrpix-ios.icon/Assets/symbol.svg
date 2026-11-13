@@ -1,0 +1,13 @@
+<!-- IAMJARL app icon for TrimrPix for iOS, layer "symbol": generated from icons/trimrpix.svg, do not edit. v1.37.0 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <path d="M400 348 C392 298 366 262 326 234" fill="none" stroke="#F140FE" stroke-width="72" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M624 348 C632 298 658 262 698 234" fill="none" stroke="#F140FE" stroke-width="72" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M320 404 C262 384 206 392 172 432 C206 476 262 484 320 464 Z" fill="#F140FE"/>
+  <path d="M704 404 C762 384 818 392 852 432 C818 476 762 484 704 464 Z" fill="#F140FE"/>
+  <path d="M336 584 V428 C336 376 372 344 424 344 H600 C652 344 688 376 688 428 V584" fill="none" stroke="#F140FE" stroke-width="72" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="300" y="584" width="424" height="228" rx="114" fill="none" stroke="#F140FE" stroke-width="72"/>
+  <circle cx="446" cy="470" r="36" fill="#F140FE"/>
+  <circle cx="578" cy="470" r="36" fill="#F140FE"/>
+  <circle cx="446" cy="698" r="30" fill="#F140FE"/>
+  <circle cx="578" cy="698" r="30" fill="#F140FE"/>
+</svg>

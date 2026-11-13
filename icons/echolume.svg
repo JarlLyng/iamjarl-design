@@ -1,0 +1,5 @@
+<!-- The motif of Echolume's app icon (#124). The build colours it per family and
+     writes dist/icons/. One line weight, brand.appIcons.stroke; see design.md. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <path d="M200 560 V400 H512 V624 H824 V464" fill="none" stroke="currentColor" stroke-width="72" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

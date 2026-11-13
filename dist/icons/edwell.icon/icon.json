@@ -1,0 +1,57 @@
+{
+  "fill-specializations": [
+    {
+      "value": {
+        "solid": "srgb:0.00000,0.00000,0.00000,1.00000"
+      }
+    }
+  ],
+  "groups": [
+    {
+      "name": "Edwell",
+      "layers": [
+        {
+          "name": "symbol",
+          "glass": true,
+          "image-name-specializations": [
+            {
+              "value": "symbol.svg"
+            },
+            {
+              "appearance": "tinted",
+              "value": "symbol-tinted.svg"
+            }
+          ]
+        },
+        {
+          "name": "dim",
+          "glass": true,
+          "opacity": 0.4,
+          "image-name-specializations": [
+            {
+              "value": "dim.svg"
+            },
+            {
+              "appearance": "tinted",
+              "value": "dim-tinted.svg"
+            }
+          ]
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.5
+      },
+      "translucency": {
+        "enabled": false,
+        "value": 0
+      },
+      "specular": true
+    }
+  ],
+  "supported-platforms": {
+    "squares": [
+      "macOS"
+    ]
+  }
+}

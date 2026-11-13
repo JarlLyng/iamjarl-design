@@ -1,0 +1,6 @@
+<!-- The motif of WODrounds's app icon (#124). The build colours it per family and
+     writes dist/icons/. One line weight, brand.appIcons.stroke; see design.md. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <circle cx="512" cy="512" r="316" fill="none" stroke="currentColor" stroke-width="72"/>
+  <line x1="512" y1="512" x2="652" y2="372" stroke="currentColor" stroke-width="72" stroke-linecap="round"/>
+</svg>
