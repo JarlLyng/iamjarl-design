@@ -101,6 +101,7 @@ This table gets a row for every release, including the ones where the answer is 
 | **1.35.3** | The repo's documents tidied (SECURITY, COMPONENTS, CONTRIBUTING, README); `meta.updated` kept to the release date by a test | No |
 | **1.35.4** | The photographic hero pattern no longer cites a private repo, and loses its em-dashes | No |
 | **1.36.0** | Edwell in the registry, in `images` with a dark identity; `store.trial` for a free download with a one-time unlock; ties in the footer's top-up spread across footers, so three footers link to Edwell | No, except Edwell (take the release on launch day), and BotLens, TrimrPix and TrimrPix for iOS for Edwell in their footer, on their next release |
+| **1.37.0** | Each app's icon as an Icon Composer document in `dist/icons/`, built from a motif in `icons/` to the spec in design.md | No, except each app in its Xcode 27 pass: take its `.icon` as `AppIcon` |
 
 ### Who needs to migrate
 - ✅ **Everyone** — bump the version. Nothing you use today changes value or name.

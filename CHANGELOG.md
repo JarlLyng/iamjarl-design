@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.37.0] — 2026-11-14
+
+The apps' own icons, rebuilt for iOS 27 and macOS 27 in Icon Composer (#124).
+
+### Added
+- **`dist/icons/<app>.icon`:**
+  - **Which apps:** one Icon Composer document per app, 12 in all. They are WODrounds, Anvil Workout, Walkful, Wean Nicotine, TrimrPix for iOS, TrimrPix, It's mono, yo!, It's 404, yo!, Echolume, TonVault, Patternaut and Edwell.
+  - **Appearances:** each has default, dark, clear and tinted.
+  - **Platforms:** an iPhone app's icon also covers its Mac build and, in a circle, its watch app.
+- **`icons/`:** the motifs, one per app. Each is one line drawn in `currentColor`, which the build colours per family. The two TrimrPix apps share one drawing.
+- **The spec, in design.md (App icons) and in `tokens.json` under `brand.appIcons`:**
+  - one line weight, 72 on the 1024 canvas, with round caps and joins;
+  - the symbol inside the central 704;
+  - the ground is a flat fill, and Icon Composer draws the shape;
+  - glass with Apple's specular edge and neutral shadow, and translucency off;
+  - in the dark, the iPhone apps are magenta on black, WODrounds lime on black, and the Mac apps as by day.
+- **Contract tests:**
+  - every shipped App Store and Mac App Store app has an icon in its store's family;
+  - `dist/icons/` is exactly what the build makes;
+  - every motif keeps one line weight, no colour, bitmap, effect or transform of its own, and the box;
+  - each bundle wears its family's colours on its platforms.
+
+### Changed, against the icons in the stores today
+- **Thicker lines:** 72 everywhere, up from 54 to 62 on the iPhone icons. It's mono's was 60.
+- **Smaller symbols,** inside the 704 box and mostly about 640 wide, as It's mono's and Edwell's already were.
+- **One Mac shape.** It's 404, Echolume and TonVault lose their square corners and full-bleed art, and Patternaut loses its baked-in shadow.
+- **One TrimrPix drawing,** the line cow on both platforms.
+- **WODrounds' violet gradient** becomes the family's flat magenta.
+- **Fewer details where 72 leaves no room:**
+  - Patternaut's card has three contacts, not four;
+  - TonVault's discs have two stripes, not three;
+  - Walkful's and Wean's drawings keep their shapes at the new weight.
+
+### Who should move
+- **Each app, in its Xcode 27 pass:**
+  - take `dist/icons/<app>.icon` from v1.37.0 as its `AppIcon`, as the README's App icons section shows;
+  - add it to the watch target where there is one;
+  - delete the old `AppIcon.appiconset`.
+
+  Echolume's icon request (echolume#102) is answered by this.
+- **Websites: nobody.** Nothing a page loads changes.
+
 ## [1.36.0] — 2026-11-12
 
 Edwell, a Mac video editor, joins the registry on its launch day (#114), and the store facts learn to say "free to try".
@@ -1453,6 +1495,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.37.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.37.0
 [1.36.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.36.0
 [1.35.4]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.4
 [1.35.3]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.3

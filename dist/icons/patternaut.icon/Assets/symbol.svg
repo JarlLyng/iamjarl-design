@@ -1,0 +1,12 @@
+<!-- IAMJARL app icon for Patternaut, layer "symbol": generated from icons/patternaut.svg, do not edit. v1.37.0 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <path d="M292 196 H652 L788 332 V772 Q788 828 732 828 H292 Q236 828 236 772 V252 Q236 196 292 196 Z" fill="none" stroke="#D0FF00" stroke-width="72" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="340" y1="268" x2="340" y2="332" stroke="#D0FF00" stroke-width="72" stroke-linecap="round"/>
+  <line x1="452" y1="268" x2="452" y2="332" stroke="#D0FF00" stroke-width="72" stroke-linecap="round"/>
+  <line x1="564" y1="268" x2="564" y2="332" stroke="#D0FF00" stroke-width="72" stroke-linecap="round"/>
+  <rect x="336" y="408" width="88" height="88" rx="20" fill="#D0FF00"/>
+  <rect x="600" y="408" width="88" height="88" rx="20" fill="#D0FF00"/>
+  <rect x="468" y="540" width="88" height="88" rx="20" fill="#D0FF00"/>
+  <rect x="336" y="672" width="88" height="88" rx="20" fill="#D0FF00"/>
+  <rect x="600" y="672" width="88" height="88" rx="20" fill="#D0FF00"/>
+</svg>

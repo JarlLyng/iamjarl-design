@@ -103,6 +103,10 @@
     dl.meta { display: grid; grid-template-columns: max-content 1fr; gap: var(--ij-spacing-xs) var(--ij-spacing-md); margin: 0; font-size: var(--ij-font-size-sm); }
     dl.meta dt { color: var(--ij-color-text-secondary); }
     dl.meta dd { margin: 0; }
+    .app-icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: var(--ij-spacing-md); margin-top: var(--ij-spacing-lg); }
+    .app-icons figure { margin: 0; text-align: center; font-size: var(--ij-font-size-xs); color: var(--ij-color-text-secondary); }
+    .app-icons .ground { aspect-ratio: 1; border-radius: 22.37%; display: grid; box-shadow: inset 0 0 0 1px var(--ij-color-border-subtle); }
+    .app-icons .line { -webkit-mask: var(--motif) center / contain no-repeat; mask: var(--motif) center / contain no-repeat; }
 
     .bar { height: var(--ij-spacing-md); background: var(--ij-color-primary); border-radius: var(--ij-radius-sm); }
     .scale-row { display: grid; grid-template-columns: minmax(0, 9rem) 1fr; align-items: center; gap: var(--ij-spacing-md); padding: var(--ij-spacing-xs) 0; }
@@ -151,6 +155,7 @@
         <li><a href="#kit">Marketing kit</a></li>
         <li><a href="#components">Components</a></li>
         <li><a href="#icons">Icons</a></li>
+        <li><a href="#app-icons">App icons</a></li>
         <li><a href="#guidance">Guidance</a></li>
       </ul>
       <div class="toolbar">
@@ -337,6 +342,13 @@
         <li>Don't mix icon weights on the same screen.</li>
         <li>Default colour is <code>text.primary</code>; <code>primary</code> for active or emphasis; <code>error</code> for destructive.</li>
       </ul>
+    </section>
+
+    <section id="app-icons" aria-labelledby="app-icons-h">
+      <h2 id="app-icons-h">App icons</h2>
+      <p class="small">Each app's icon, as Icon Composer builds it for iOS 27 and macOS 27: one line of the family's colour on its ground. Drawn here from the motifs in <a href="./icons/"><code>icons/</code></a>, in the default appearance; the release ships them as <code>dist/icons/&lt;app&gt;.icon</code>. The spec is in <a href="./design.md#app-icons">design.md</a>.</p>
+      <dl class="meta" id="app-icon-meta"></dl>
+      <div class="app-icons" id="app-icon-grid"></div>
     </section>
 
     <section id="guidance" aria-labelledby="guidance-h">
@@ -665,6 +677,22 @@
     for (const [k, v] of Object.entries(icons)) {
       $('icon-meta').append(el('dt', { text: k }), el('dd', { 'data-token': `brand.icons.${k}` }, code(Array.isArray(v) ? v.join(', ') : String(v))));
     }
+    // ---------- app icons (#124) ----------
+    (function leaves(node, at) {
+      if (typeof node !== 'object' || node === null) {
+        $('app-icon-meta').append(el('dt', { text: at.replace(/^brand\.appIcons\./, '') }), el('dd', { 'data-token': at }, code(String(node))));
+        return;
+      }
+      for (const [k, v] of Object.entries(node)) leaves(v, `${at}.${k}`);
+    })(tokens.brand.appIcons, 'brand.appIcons');
+    for (const app of registry.apps.filter(a => a.status === 'shipped' && a.icon)) {
+      const fam = tokens.brand.appIcons.families[app.icon.family];
+      $('app-icon-grid').append(el('figure', {},
+        el('div', { class: 'ground', style: `background: ${fam.ground}` },
+          el('div', { class: 'line', style: `background: ${fam.line}; --motif: url(./icons/${app.icon.motif ?? app.id}.svg)`, role: 'img', 'aria-label': `${app.name}'s icon` })),
+        el('figcaption', { text: app.name })));
+    }
+
     for (const [k, list] of Object.entries(tokens.guidance ?? {})) {
       $('guidance-grid').append(el('div', { class: 'card', 'data-token': `guidance.${k}` },
         el('h3', { text: k.replace(/([A-Z])/g, ' $1').toLowerCase(), style: 'margin-top:0' }),

@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { camelToKebab, modeColorLines, identitySheetCss } from './css-modes.js';
+import { iconApps, iconBundle, readMotif } from './icons.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -1756,6 +1757,17 @@ async function main() {
     writeFile(path.join(identityDir, `${id}.css`), css);
   }
 
+  // App icons (#124): one Icon Composer bundle per app. The folder is wholly
+  // generated, so it is written afresh and an app that drops its icon drops it.
+  const registryForIcons = JSON.parse(fs.readFileSync(path.join(ROOT, 'apps.json'), 'utf-8'));
+  const iconsDir = path.join(ROOT, 'dist', 'icons');
+  fs.rmSync(iconsDir, { recursive: true, force: true });
+  const icons = iconApps(registryForIcons);
+  for (const app of icons) {
+    const files = iconBundle(app, readMotif(ROOT, app), tokens.brand.appIcons, tokens.meta.version);
+    for (const [rel, content] of Object.entries(files)) writeFile(path.join(iconsDir, `${app.id}.icon`, rel), content);
+  }
+
   const fontFaces = generateFontFaces(tokens);
   for (const [name, css] of fontFaces) {
     writeFile(path.join(ROOT, 'dist', 'fonts', `${name}.css`), css);
@@ -1773,7 +1785,7 @@ async function main() {
 
   console.log(
     `\nDone! Generated 9 platform files, ${fragments.length} footer fragments` +
-    `, ${identity.length} identity sheet(s).`
+    `, ${identity.length} identity sheet(s), ${icons.length} app icons.`
   );
 }
 

@@ -32,6 +32,7 @@ It is written to work equally well for **people** (the design overview) and **AI
 - `scripts/`: the build (`build.js`), the checks (`validate.js`, `test.js`, `test-browser.js`) and the release helpers.
 - `patterns/`: page patterns that are rules rather than code, such as the photographic hero.
 - `docs/readme-example.md`: the README store block, rendered as GitHub shows it.
+- `icons/`: each app icon's motif, one line drawn in `currentColor`, [below](#app-icons-disticonsappicon).
 - `Package.swift`, `Sources/` and `Tests/`: the Swift package and its tests.
 - The documents: `design.md`, `COMPONENTS.md`, `CHANGELOG.md`, `MIGRATION.md`, `CONTRIBUTING.md`, `SECURITY.md`, and `AGENTS.md` for AI assistants.
 
@@ -44,6 +45,7 @@ Built by `scripts/build.js` and committed, so a tag holds exactly what it ships:
 - `dist/footers/<app>.html`: each app's cross-links, pre-rendered for pasting into served HTML.
 - `dist/store/`: each app's store pieces per store language. That means the button for each spot and tone, the nav's call to action, the JSON-LD offer, Safari's Smart App Banner and the block for its README.
 - `dist/identity/<app>.css`: each app site's identity (ground, text, accent, face).
+- `dist/icons/<app>.icon`: each app's icon, as an Icon Composer document.
 - `dist/fonts/<face>.css`: one `@font-face` sheet per face, pointing at the woff2 in `fonts/`.
 - `dist/kit/`: the marketing kit (`kit.css`, `kit.js`) and its build-time helpers (`loose.js`, `wave.js`).
 - `dist/drawings/`, `dist/scenes/`: the drawings and the photo scenes' lines.
@@ -67,7 +69,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.36.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.37.0")
 ]
 ```
 
@@ -115,7 +117,7 @@ On watchOS `Palette` is always the dark value, because the watch has one appeara
 ### React web (npm)
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.36.0
+npm install github:jarllyng/iamjarl-design#v1.37.0
 ```
 
 Pin the tag, as above. To upgrade, change the tag and install again: `npm update` doesn't move a
@@ -155,7 +157,7 @@ const theme = colors.light;
 ### Expo / React Native
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.36.0
+npm install github:jarllyng/iamjarl-design#v1.37.0
 ```
 
 ```typescript
@@ -175,7 +177,7 @@ const theme = useTheme();
 ### Chrome extension (Manifest V3)
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.36.0
+npm install github:jarllyng/iamjarl-design#v1.37.0
 ```
 
 **Popup, options page, side panel:** link the standard CSS file:
@@ -254,7 +256,7 @@ every site instead of nine hand-kept lists. Works in any page, with no build ste
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.36.0/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -311,7 +313,7 @@ live site.
 | Needs `integrity`? | worth keeping: the same hashes | no: nothing crosses an origin | yes, worth it |
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.36.0
+npm install github:jarllyng/iamjarl-design#v1.37.0
 ```
 
 ```js
@@ -346,12 +348,12 @@ It needs Node 18 or later and the system's `tar`, and nothing else. It downloads
 
 ```bash
 # Once: keep the script in the site's repo, checked against the tag's own hash.
-curl -sfL https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.36.0/dist/vendor.mjs -o scripts/iamjarl-vendor.mjs
-curl -sfL https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.36.0/dist/sri.json | grep '"dist/vendor.mjs"'
+curl -sfL https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.37.0/dist/vendor.mjs -o scripts/iamjarl-vendor.mjs
+curl -sfL https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.37.0/dist/sri.json | grep '"dist/vendor.mjs"'
 echo "sha384-$(openssl dgst -sha384 -binary scripts/iamjarl-vendor.mjs | openssl base64 -A)"
 
 # Each release: your pages under docs/, the copy at /assets/iamjarl-design@vX.Y.Z/.
-node scripts/iamjarl-vendor.mjs v1.36.0 --root docs
+node scripts/iamjarl-vendor.mjs v1.37.0 --root docs
 ```
 
 - **Check mode:** `--check` writes nothing and exits 1 if anything would change, which suits a site's CI.
@@ -363,10 +365,10 @@ node scripts/iamjarl-vendor.mjs v1.36.0 --root docs
 ```bash
 # 1. The release, from GitHub's own archive of the tag, into a scratch folder.
 SRC=$(mktemp -d)
-curl -sfL https://github.com/JarlLyng/iamjarl-design/archive/refs/tags/v1.36.0.tar.gz | tar -xz --strip-components=1 -C "$SRC"
+curl -sfL https://github.com/JarlLyng/iamjarl-design/archive/refs/tags/v1.37.0.tar.gz | tar -xz --strip-components=1 -C "$SRC"
 
 # 2. The files your page loads, in the same layout, so the font sheet still finds its font.
-DEST=assets/iamjarl-design@v1.36.0
+DEST=assets/iamjarl-design@v1.37.0
 mkdir -p "$DEST"
 #    The licences travel with them: OFL-1.1 asks for the face's beside its font, and MIT for the rest.
 #    The store fragments' badges come from here too: take the ones your fragments name.
@@ -388,7 +390,7 @@ git add "$DEST"
   git check-ignore -v $(find "$DEST" -type f)
 ```
 
-Then link the copies with the same `integrity` as the CDN snippets, from `/assets/iamjarl-design@v1.36.0/dist/…`.
+Then link the copies with the same `integrity` as the CDN snippets, from `/assets/iamjarl-design@v1.37.0/dist/…`.
 Keep the version in the folder's name, so a bump is a new folder and a changed link, never a file
 edited in place. Take only what your page loads, and the badges your store fragments name.
 
@@ -412,23 +414,23 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.36.0/dist/css/tokens.css"
-  integrity="sha384-4ElIrKMgfNJRZ4e32tAsA9Bcmrw0YrPTz194TDrOXZbYAF6+mbF/yssQCRNBYqRs"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/css/tokens.css"
+  integrity="sha384-f96934QRS+GUYh7693ni5ppFOaByZymwrOtv1nv3lvsX11XtOrx4AcBVNENubcuf"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.36.0/dist/components/ij-footer.js"
-  integrity="sha384-Z7md8d03PQnv03JqgFjepwr8CKkyDVpJqtaU+9/AEB6LAfSVIuH/0TiKXJ219Xbv"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/components/ij-footer.js"
+  integrity="sha384-Oadwv1j7Omd4WYmUYO2VhxbP1lJ7tK54riivqPQ9sAvdSa4UeTjjXNkNsEQSnYJe"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.36.0/dist/components/ij-nav.js"
-  integrity="sha384-SWuiwp5zwGo90jQaJ3mUO13FViQPYZ6UfEObwkeiaz2HQAfmQCae2iCeJ24VJAMT"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/components/ij-nav.js"
+  integrity="sha384-yJBQuDMN8soypLrUk47C4+7VDvVvRB1TGFyBgGeDGtA+Izf03Lf4N0riqnWzhwoC"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.36.0/dist/components/ij-store-cta.js"
-  integrity="sha384-2isbLpGTk34kzGyk4QE8PJoi5R7hqiXqF1D422cRgOlHzEa+T0FS9wUnM+Ha2WtA"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/components/ij-store-cta.js"
+  integrity="sha384-bd0SbHpuFTXFposZvR5TzJRQVpfydWjcPe1yHhQSEwyaa2M6DiDTuZXemJBVs2mN"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
@@ -460,7 +462,7 @@ The component builds the cross-links at runtime, so crawlers that do not execute
 pre-rendered fragment for your app and the component will slot it instead of regenerating:
 
 ```bash
-curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.36.0/dist/footers/botlens.html
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/footers/botlens.html
 ```
 
 ```html
@@ -527,7 +529,7 @@ it supplies the landmark, the sticky translucent bar, the phone layout and the k
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.36.0/dist/components/ij-nav.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/components/ij-nav.js"></script>
 
 <ij-nav>
   <a slot="brand" href="/">Echolume</a>
@@ -769,7 +771,7 @@ reuse. Left empty, the element renders the fragment itself from the registry, wh
 without a build step, but crawlers will not see that copy:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.36.0/dist/components/ij-store-cta.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/components/ij-store-cta.js"></script>
 <ij-store-cta app="wodrounds" placement="midpage" tone="white">…fragment…</ij-store-cta>
 ```
 
@@ -807,7 +809,7 @@ JavaScript. See the eight live demos: [Walkful](https://jarllyng.github.io/iamja
 <link rel="stylesheet" href="…/dist/identity/<app>.css" integrity="…" crossorigin="anonymous">
 <link rel="stylesheet" href="…/dist/fonts/<face>.css" integrity="…" crossorigin="anonymous">
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.36.0/dist/kit/kit.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/kit/kit.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 
 <body class="ij-page">
@@ -998,7 +1000,7 @@ dependencies), loaded after the page; nothing waits for it:
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.36.0/dist/kit/kit.js"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/kit/kit.js"
   integrity="<from sri.json>" crossorigin="anonymous"></script>
 ```
 
@@ -1062,7 +1064,7 @@ nothing on a site that did not ask for a new identity. If your app has no file i
 ```html
 <!-- tokens.css first, from the SRI block above, then the identity sheet -->
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.36.0/dist/identity/<app>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/identity/<app>.css"
   integrity="<from sri.json, see below>"
   crossorigin="anonymous">
 ```
@@ -1071,7 +1073,7 @@ nothing on a site that did not ask for a new identity. If your app has no file i
 yours:
 
 ```bash
-curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.36.0/dist/sri.json | grep 'identity/<app>.css'
+curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/sri.json | grep 'identity/<app>.css'
 ```
 
 Each sheet carries the version in its header, so its hash changes every release. Move the tag and
@@ -1106,7 +1108,7 @@ Giving it `"scheme": "dark"` makes the class unnecessary.
 
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.36.0/dist/fonts/<face>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/fonts/<face>.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 ```
 
@@ -1116,6 +1118,31 @@ Giving it `"scheme": "dark"` makes the class unnecessary.
 and the browser never fetches them as a resource, so an `integrity` attribute has nothing to check.
 
 ---
+
+## App icons: `dist/icons/<app>.icon`
+
+Each app's icon, as an Icon Composer document for Xcode 27 (#124).
+- **Built from:** a motif in [`icons/`](icons) and its family in `tokens.json`.
+- **The spec:** the line, the box, the layers and the appearances are in [`design.md`](design.md#app-icons).
+- **What's included:** default, dark, clear and tinted, on iPhone and Mac, and on the watch for an app that has one.
+- **One drawing for TrimrPix:** the iPhone and Mac apps share it, each in its own family's colours.
+
+**Take it from the release your app pins,** as the app's `AppIcon`:
+
+```bash
+SRC=$(mktemp -d)
+curl -sfL https://github.com/JarlLyng/iamjarl-design/archive/refs/tags/v1.37.0.tar.gz | tar -xz --strip-components=1 -C "$SRC"
+rm -rf "<App>/AppIcon.icon" && cp -R "$SRC/dist/icons/<app>.icon" "<App>/AppIcon.icon"
+```
+
+Then, in Xcode:
+1. Add `AppIcon.icon` to the app's target, and to the watch app's target if it has one.
+2. Set the target's App Icon to `AppIcon`.
+3. Delete the old `AppIcon.appiconset` from the asset catalog, so there is one icon.
+
+tvOS keeps its own `.brandassets`: Icon Composer doesn't make tvOS icons.
+
+**Open it in Icon Composer to look, not to change.** A change belongs in `icons/` here. Otherwise the next release won't keep it, and the icons drift apart again.
 
 ## Token reference & naming
 

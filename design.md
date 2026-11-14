@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.36.0)
+# IAMJARL Design System (v1.37.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -345,6 +345,55 @@ In a native app, size a symbol with the text style it sits beside (`.font(.body)
   - Use `error`.
 
 Icons should communicate meaning, not decoration. If an icon does not add clarity, omit it.
+
+### App icons
+Decided by the owner on 2026-11-13 (#124), for iOS 27 and macOS 27. Each app's icon is built in Icon Composer from a motif in `icons/`, and the build writes one `.icon` per app to `dist/icons/`. The numbers live in `tokens.json` under `brand.appIcons`.
+
+**Two families, one line each.**
+- **iPhone apps** are a magenta (`#F140FE`) line on white.
+- **Mac apps** are a lime (`#D0FF00`) line on black.
+
+Each app draws one thing: WODrounds' dial, Walkful's footprints, Edwell's playhead over its timeline. The two TrimrPix apps share one drawing, each in its own family's colours.
+
+**One line weight.** The line is **72** on the 1024 canvas, with round caps and joins. Apple asks for no very thin lines, and a vector line gets the glass treatment where a bitmap would not. At the sizes the systems draw, the line comes out at:
+
+| Icon | Size | The line |
+|---|---|---|
+| App Store, Icon Composer | 1024 px | 72 px |
+| Mac Dock, at 2x | 256 px | 18 px |
+| iPhone home screen (60 pt at 3x) | 180 px | 12.7 px |
+| Settings and Spotlight (29 pt at 3x) | 87 px | 6.1 px |
+| Mac list and Finder, at 1x | 16 px | 1.1 px |
+
+Small details may be solid shapes instead: a dot, a heel, a play triangle. A motif that has no room for a detail at this weight drops it. Patternaut's card has three contacts rather than four, and TonVault's discs two stripes rather than three.
+
+**The box.** The symbol stays inside the central **704** of the 1024 canvas, line included. Most symbols fill about 640 on their long side, as It's mono's waves and Edwell's timeline do. A round one, such as WODrounds' dial or Anvil's plate, may use the full 704. The box is the same on iPhone and Mac.
+
+**Icon Composer draws the shape.** The ground is the icon's fill: one flat colour, square and unmasked. Icon Composer masks it to each platform's shape. As a result:
+- every Mac icon has the same corners;
+- no icon fills its frame edge to edge;
+- no icon carries a shadow of its own.
+
+**Layers.** The ground, then one group: the symbol.
+- **More than one layer:** a motif may split the symbol into layers. Edwell's two upper timeline bars are a second layer at 40 % under the playhead.
+- **Glass:** the layers are glass, with Apple's specular edge and its neutral shadow on.
+- **Translucency is off,** so the line keeps its colour.
+
+**Appearances.**
+
+| | iPhone family | Mac family |
+|---|---|---|
+| Default | magenta on white | lime on black |
+| Dark | magenta on black; WODrounds lime on black | as default |
+| Clear | the system's: the ground clears and the line turns to frosted glass | the same |
+| Tinted | the system's tint, on a white line | the same |
+
+**What a motif may not have:**
+- a colour of its own, because motifs are drawn in `currentColor`;
+- a bitmap, gradient, filter, text or transform;
+- a line of another weight.
+
+A contract test holds every motif to this and to the box.
 
 ## Rules (non-negotiable)
 1. **Do not hardcode colors**.
