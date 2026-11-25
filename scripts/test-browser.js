@@ -432,9 +432,10 @@ try {
       links: [...document.querySelectorAll('ij-nav > [slot="links"]')].map(a => cs(a).color),
     };
   })()`);
-  check('the dot and the CTA carry the family accent (music, light: #177082)',
-    colours.dot === 'rgb(23, 112, 130)' && colours.ctaBg === 'rgb(23, 112, 130)', JSON.stringify(colours));
-  check('the CTA label is onPrimary', colours.ctaText === 'rgb(255, 255, 255)', colours.ctaText);
+  // Echolume's accent is its icon's lime since #116, by day as by night.
+  check('the dot and the CTA carry the site\'s accent (Echolume: the icon\'s lime, #D0FF00)',
+    colours.dot === 'rgb(208, 255, 0)' && colours.ctaBg === 'rgb(208, 255, 0)', JSON.stringify(colours));
+  check('the CTA label is the colour that reads on the accent (black on lime)', colours.ctaText === 'rgb(0, 0, 0)', colours.ctaText);
   check("the wordmark takes the family's display face (Echolume: Outfit)", await p.eval(
     `getComputedStyle(${slotted('brand', 'Echolume')}).fontFamily.startsWith('Outfit')`),
     await p.eval(`getComputedStyle(${slotted('brand', 'Echolume')}).fontFamily`));
@@ -445,8 +446,8 @@ try {
   const dark = await p.eval(`({
     dot: getComputedStyle(${SR}.querySelector('.dot')).backgroundColor,
     ctaText: getComputedStyle(${slotted('cta', 'Download')}).color })`);
-  check('in dark mode, the dark accent (#23ACC7) with black on it',
-    dark.dot === 'rgb(35, 172, 199)' && dark.ctaText === 'rgb(0, 0, 0)', JSON.stringify(dark));
+  check('in dark mode, the dark accent (Echolume: the same lime) with black on it',
+    dark.dot === 'rgb(208, 255, 0)' && dark.ctaText === 'rgb(0, 0, 0)', JSON.stringify(dark));
 
   await p.media([{ name: 'prefers-reduced-transparency', value: 'reduce' }]);
   await open('full', 'index.html');
@@ -1261,8 +1262,9 @@ try {
   await p.goto(`${base}/fixture/footer-justify/index.html`);
   await p.settle(150);
   const hoverPrimary = await p.eval(`getComputedStyle(document.querySelector('ij-footer')).getPropertyValue('--_hover').trim()`);
-  check('footer hover is the family accent under an identity sheet, primary without',
-    /^(#177082|rgb\(23, 112, 130\))$/i.test(hoverAccent) && /^(#A435D2|rgb\(164, 53, 210\))$/i.test(hoverPrimary),
+  // Echolume's text-safe accent by day is the olive beside its lime (#116).
+  check('footer hover is the site\'s text-safe accent under an identity sheet, primary without',
+    /^(#4A5900|rgb\(74, 89, 0\))$/i.test(hoverAccent) && /^(#A435D2|rgb\(164, 53, 210\))$/i.test(hoverPrimary),
     `with sheet ${hoverAccent}, without ${hoverPrimary}`);
   await p.media([{ name: 'prefers-color-scheme', value: 'dark' }]);
   await p.goto(`${base}/fixture/identity-light-only/index.html`);
