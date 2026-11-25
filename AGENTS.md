@@ -111,6 +111,31 @@ DesignTokens.Focus.width   // 2
 DesignTokens.Focus.offset  // 2
 ```
 
+### Android (Jetpack Compose)
+Copy the one generated file from the tag the app pins, and commit it. No credentials are needed:
+```bash
+curl -sfL https://raw.githubusercontent.com/JarlLyng/iamjarl-design/vX.Y.Z/dist/kotlin/DesignTokens.kt \
+  -o app/src/main/java/com/iamjarl/design/DesignTokens.kt
+```
+Then:
+```kotlin
+import com.iamjarl.design.DesignTokens
+
+DesignTokens.Palette.primary                  // follows the system light/dark setting
+DesignTokens.Palette.Text.primary             // also Background, Surface, Border, State
+DesignTokens.ColorToken.State.error           // fills; pair with onError
+DesignTokens.adaptive(light, dark)            // for an app's own derived colours
+DesignTokens.Spacing.md                       // 12.dp
+DesignTokens.Radius.lg                        // 16.dp
+DesignTokens.Typography.Style.lg.textStyle    // sp, follows the system font size
+DesignTokens.Typography.material3()           // for MaterialTheme(typography = ...)
+DesignTokens.Typography.numeral(DesignTokens.Typography.Numeral.lg)  // tabular digits
+DesignTokens.Motion.Duration.normal           // 250 ms
+DesignTokens.Opacity.disabled                 // 0.4f
+DesignTokens.VERSION                          // the tokens.json version of the copy
+```
+Never hand-copy a token as a `Color(0x...)` literal: take it from this file.
+
 ### React web
 ```bash
 npm install github:jarllyng/iamjarl-design

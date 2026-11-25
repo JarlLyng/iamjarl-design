@@ -102,6 +102,7 @@ This table gets a row for every release, including the ones where the answer is 
 | **1.35.4** | The photographic hero pattern no longer cites a private repo, and loses its em-dashes | No |
 | **1.36.0** | Edwell in the registry, in `images` with a dark identity; `store.trial` for a free download with a one-time unlock; ties in the footer's top-up spread across footers, so three footers link to Edwell | No, except Edwell (take the release on launch day), and BotLens, TrimrPix and TrimrPix for iOS for Edwell in their footer, on their next release |
 | **1.37.0** | Each app's icon as an Icon Composer document in `dist/icons/`, built from a motif in `icons/` to the spec in design.md | No, except each app in its Xcode 27 pass: take its `.icon` as `AppIcon` |
+| **1.38.0** | Kotlin for Jetpack Compose in `dist/kotlin/DesignTokens.kt`, which an Android app copies at a tag; built and tested in CI | No, except the Android apps: copy the file instead of hand-copied colours |
 
 ### Who needs to migrate
 - ✅ **Everyone** — bump the version. Nothing you use today changes value or name.

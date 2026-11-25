@@ -34,11 +34,13 @@ It is written to work equally well for **people** (the design overview) and **AI
 - `docs/readme-example.md`: the README store block, rendered as GitHub shows it.
 - `icons/`: each app icon's motif, one line drawn in `currentColor`, [below](#app-icons-disticonsappicon).
 - `Package.swift`, `Sources/` and `Tests/`: the Swift package and its tests.
+- `android/`: a Gradle module that compiles the Kotlin file and runs its tests in CI. It doesn't ship.
 - The documents: `design.md`, `COMPONENTS.md`, `CHANGELOG.md`, `MIGRATION.md`, `CONTRIBUTING.md`, `SECURITY.md`, and `AGENTS.md` for AI assistants.
 
 ### Generated outputs
 Built by `scripts/build.js` and committed, so a tag holds exactly what it ships:
 - `Sources/IAMJARLDesignTokens/DesignTokens.swift`: Swift, as a Swift package.
+- `dist/kotlin/DesignTokens.kt`: Kotlin for Jetpack Compose, one file an Android app copies at a tag, [above](#android-jetpack-compose). Its tests are generated into `android/`.
 - `dist/css/tokens.css`: CSS custom properties, light and dark. `tokens.shadow.css` scopes the same variables to `:host`, for Shadow DOM and content scripts.
 - `dist/ts/`: an ESM runtime (`tokens.js`, the npm entry), its TypeScript declarations and the TypeScript source.
 - `dist/components/`: `ij-footer.js`, `ij-nav.js` and `ij-store-cta.js`, one file each, with the registry inlined.
@@ -69,7 +71,7 @@ Or in your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.37.0")
+    .package(url: "https://github.com/jarllyng/iamjarl-design.git", from: "1.38.0")
 ]
 ```
 
@@ -114,10 +116,63 @@ app: `.ijNumeral(.lg, design: .rounded)`.
 
 On watchOS `Palette` is always the dark value, because the watch has one appearance.
 
+### Android (Jetpack Compose)
+
+One generated Kotlin file, `dist/kotlin/DesignTokens.kt`, that the app copies from the release tag
+it pins (#128). There is nothing to sign in to: a fresh checkout and an app's CI build read it from
+GitHub as anyone can.
+
+```bash
+curl -sfL https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.38.0/dist/kotlin/DesignTokens.kt \
+  -o app/src/main/java/com/iamjarl/design/DesignTokens.kt
+```
+
+- **Commit the copy** with the app, so it builds offline and a diff shows what a new release changes.
+- **The version is in the file:** its first line, and `DesignTokens.VERSION` at runtime.
+- **To upgrade,** run the line again with the new tag.
+- **Don't edit it.** A change belongs in `tokens.json` here.
+- **It needs** `androidx.compose.ui` and `androidx.compose.material3`, which a Compose app already has. The package is `com.iamjarl.design`.
+
+```kotlin
+import com.iamjarl.design.DesignTokens
+
+// Colours that follow the system's light or dark setting
+Text(
+    "Start",
+    color = DesignTokens.Palette.Text.primary,
+    style = DesignTokens.Typography.Style.lg.textStyle,
+)
+Box(Modifier.background(DesignTokens.Palette.Background.app).padding(DesignTokens.Spacing.md))
+
+// Material 3's type scale with the token sizes in their slots
+MaterialTheme(typography = DesignTokens.Typography.material3()) { /* ... */ }
+
+// A number that is the interface: tabular digits, capped growth
+Text("12:30", style = DesignTokens.Typography.numeral(DesignTokens.Typography.Numeral.lg))
+```
+
+**The same groups as the Swift package:**
+- `Palette` and `ColorToken` (with `Light`, `Dark` and the shared `State` fills);
+- `Spacing`, `Radius` and `Focus` in `dp`;
+- `Typography`;
+- `Shadow`;
+- `Motion`, with durations in milliseconds and easings as `CubicBezierEasing`;
+- `Container` and `Breakpoint`;
+- `ZIndex` and `Opacity`.
+
+The gradients and the marketing scale are web only, here as there.
+
+**Type follows the system font size.** Every size is in `sp`, so the phone's font size scales it.
+- **`material3()`** puts each size in the Material 3 slot nearest it, so `MaterialTheme` carries the scale. The slots run from `bodySmall` for `xs` to `displaySmall` for `xxl`.
+- **`numeral()`** caps that growth at 1.5×, as `.ijNumeral` does on iOS.
+
+**`DesignTokens.adaptive(light, dark)`** makes an app's own derived colour follow the setting, as it
+does in SwiftUI.
+
 ### React web (npm)
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.37.0
+npm install github:jarllyng/iamjarl-design#v1.38.0
 ```
 
 Pin the tag, as above. To upgrade, change the tag and install again: `npm update` doesn't move a
@@ -157,7 +212,7 @@ const theme = colors.light;
 ### Expo / React Native
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.37.0
+npm install github:jarllyng/iamjarl-design#v1.38.0
 ```
 
 ```typescript
@@ -177,7 +232,7 @@ const theme = useTheme();
 ### Chrome extension (Manifest V3)
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.37.0
+npm install github:jarllyng/iamjarl-design#v1.38.0
 ```
 
 **Popup, options page, side panel:** link the standard CSS file:
@@ -256,7 +311,7 @@ every site instead of nine hand-kept lists. Works in any page, with no build ste
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/components/ij-footer.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.38.0/dist/components/ij-footer.js"></script>
 
 <ij-footer app="tonvault" tagline="An IAMJARL app. Pay once, own it.">
   <a slot="links" href="/privacy">Privacy</a>
@@ -313,7 +368,7 @@ live site.
 | Needs `integrity`? | worth keeping: the same hashes | no: nothing crosses an origin | yes, worth it |
 
 ```bash
-npm install github:jarllyng/iamjarl-design#v1.37.0
+npm install github:jarllyng/iamjarl-design#v1.38.0
 ```
 
 ```js
@@ -348,12 +403,12 @@ It needs Node 18 or later and the system's `tar`, and nothing else. It downloads
 
 ```bash
 # Once: keep the script in the site's repo, checked against the tag's own hash.
-curl -sfL https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.37.0/dist/vendor.mjs -o scripts/iamjarl-vendor.mjs
-curl -sfL https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.37.0/dist/sri.json | grep '"dist/vendor.mjs"'
+curl -sfL https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.38.0/dist/vendor.mjs -o scripts/iamjarl-vendor.mjs
+curl -sfL https://raw.githubusercontent.com/JarlLyng/iamjarl-design/v1.38.0/dist/sri.json | grep '"dist/vendor.mjs"'
 echo "sha384-$(openssl dgst -sha384 -binary scripts/iamjarl-vendor.mjs | openssl base64 -A)"
 
 # Each release: your pages under docs/, the copy at /assets/iamjarl-design@vX.Y.Z/.
-node scripts/iamjarl-vendor.mjs v1.37.0 --root docs
+node scripts/iamjarl-vendor.mjs v1.38.0 --root docs
 ```
 
 - **Check mode:** `--check` writes nothing and exits 1 if anything would change, which suits a site's CI.
@@ -365,10 +420,10 @@ node scripts/iamjarl-vendor.mjs v1.37.0 --root docs
 ```bash
 # 1. The release, from GitHub's own archive of the tag, into a scratch folder.
 SRC=$(mktemp -d)
-curl -sfL https://github.com/JarlLyng/iamjarl-design/archive/refs/tags/v1.37.0.tar.gz | tar -xz --strip-components=1 -C "$SRC"
+curl -sfL https://github.com/JarlLyng/iamjarl-design/archive/refs/tags/v1.38.0.tar.gz | tar -xz --strip-components=1 -C "$SRC"
 
 # 2. The files your page loads, in the same layout, so the font sheet still finds its font.
-DEST=assets/iamjarl-design@v1.37.0
+DEST=assets/iamjarl-design@v1.38.0
 mkdir -p "$DEST"
 #    The licences travel with them: OFL-1.1 asks for the face's beside its font, and MIT for the rest.
 #    The store fragments' badges come from here too: take the ones your fragments name.
@@ -390,7 +445,7 @@ git add "$DEST"
   git check-ignore -v $(find "$DEST" -type f)
 ```
 
-Then link the copies with the same `integrity` as the CDN snippets, from `/assets/iamjarl-design@v1.37.0/dist/…`.
+Then link the copies with the same `integrity` as the CDN snippets, from `/assets/iamjarl-design@v1.38.0/dist/…`.
 Keep the version in the folder's name, so a bump is a new folder and a changed link, never a file
 edited in place. Take only what your page loads, and the badges your store fragments name.
 
@@ -414,23 +469,23 @@ build time and regenerate every release &mdash; copy them from here, never from 
 <!-- SRI:BEGIN -->
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/css/tokens.css"
-  integrity="sha384-f96934QRS+GUYh7693ni5ppFOaByZymwrOtv1nv3lvsX11XtOrx4AcBVNENubcuf"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.38.0/dist/css/tokens.css"
+  integrity="sha384-e+LXt4kr/VWY5Hqo5mPByu7UVlfuOW0e1qbT7yB+RjzeH1bWhxhfqYbHfHRWrZ31"
   crossorigin="anonymous">
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/components/ij-footer.js"
-  integrity="sha384-Oadwv1j7Omd4WYmUYO2VhxbP1lJ7tK54riivqPQ9sAvdSa4UeTjjXNkNsEQSnYJe"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.38.0/dist/components/ij-footer.js"
+  integrity="sha384-U+x8hCiSz4YRUIPKhvTy7r//2bELoaLPun6x09Wp90LNZF2sWn6QvcDXpw+FcO6U"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/components/ij-nav.js"
-  integrity="sha384-yJBQuDMN8soypLrUk47C4+7VDvVvRB1TGFyBgGeDGtA+Izf03Lf4N0riqnWzhwoC"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.38.0/dist/components/ij-nav.js"
+  integrity="sha384-PU6O4VohIxLgpo70HW+OJV0J6Y037bUE2d2ZWLw81sC1MR0pg+G0ud8m+4KyZct6"
   crossorigin="anonymous"></script>
 
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/components/ij-store-cta.js"
-  integrity="sha384-bd0SbHpuFTXFposZvR5TzJRQVpfydWjcPe1yHhQSEwyaa2M6DiDTuZXemJBVs2mN"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.38.0/dist/components/ij-store-cta.js"
+  integrity="sha384-uvbmKeKYnd8mAbkGYXd1hPHNpEaBGFHLvnEudAj7IuJw8HzydTrlzknKZoAiOt1R"
   crossorigin="anonymous"></script>
 ```
 <!-- SRI:END -->
@@ -462,7 +517,7 @@ The component builds the cross-links at runtime, so crawlers that do not execute
 pre-rendered fragment for your app and the component will slot it instead of regenerating:
 
 ```bash
-curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/footers/botlens.html
+curl -sO https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.38.0/dist/footers/botlens.html
 ```
 
 ```html
@@ -529,7 +584,7 @@ it supplies the landmark, the sticky translucent bar, the phone layout and the k
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/components/ij-nav.js"></script>
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.38.0/dist/components/ij-nav.js"></script>
 
 <ij-nav>
   <a slot="brand" href="/">Echolume</a>
@@ -771,7 +826,7 @@ reuse. Left empty, the element renders the fragment itself from the registry, wh
 without a build step, but crawlers will not see that copy:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/components/ij-store-cta.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.38.0/dist/components/ij-store-cta.js"></script>
 <ij-store-cta app="wodrounds" placement="midpage" tone="white">…fragment…</ij-store-cta>
 ```
 
@@ -809,7 +864,7 @@ JavaScript. See the eight live demos: [Walkful](https://jarllyng.github.io/iamja
 <link rel="stylesheet" href="…/dist/identity/<app>.css" integrity="…" crossorigin="anonymous">
 <link rel="stylesheet" href="…/dist/fonts/<face>.css" integrity="…" crossorigin="anonymous">
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/kit/kit.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.38.0/dist/kit/kit.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 
 <body class="ij-page">
@@ -1000,7 +1055,7 @@ dependencies), loaded after the page; nothing waits for it:
 
 ```html
 <script type="module"
-  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/kit/kit.js"
+  src="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.38.0/dist/kit/kit.js"
   integrity="<from sri.json>" crossorigin="anonymous"></script>
 ```
 
@@ -1064,7 +1119,7 @@ nothing on a site that did not ask for a new identity. If your app has no file i
 ```html
 <!-- tokens.css first, from the SRI block above, then the identity sheet -->
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/identity/<app>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.38.0/dist/identity/<app>.css"
   integrity="<from sri.json, see below>"
   crossorigin="anonymous">
 ```
@@ -1073,7 +1128,7 @@ nothing on a site that did not ask for a new identity. If your app has no file i
 yours:
 
 ```bash
-curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/sri.json | grep 'identity/<app>.css'
+curl -s https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.38.0/dist/sri.json | grep 'identity/<app>.css'
 ```
 
 Each sheet carries the version in its header, so its hash changes every release. Move the tag and
@@ -1108,7 +1163,7 @@ Giving it `"scheme": "dark"` makes the class unnecessary.
 
 ```html
 <link rel="stylesheet"
-  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.37.0/dist/fonts/<face>.css"
+  href="https://cdn.jsdelivr.net/gh/jarllyng/iamjarl-design@v1.38.0/dist/fonts/<face>.css"
   integrity="<from sri.json>" crossorigin="anonymous">
 ```
 
@@ -1131,7 +1186,7 @@ Each app's icon, as an Icon Composer document for Xcode 27 (#124).
 
 ```bash
 SRC=$(mktemp -d)
-curl -sfL https://github.com/JarlLyng/iamjarl-design/archive/refs/tags/v1.37.0.tar.gz | tar -xz --strip-components=1 -C "$SRC"
+curl -sfL https://github.com/JarlLyng/iamjarl-design/archive/refs/tags/v1.38.0.tar.gz | tar -xz --strip-components=1 -C "$SRC"
 rm -rf "<App>/AppIcon.icon" && cp -R "$SRC/dist/icons/<app>.icon" "<App>/AppIcon.icon"
 ```
 
