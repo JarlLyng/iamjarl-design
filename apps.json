@@ -219,10 +219,12 @@
       "identity": {
         "display": "mono",
         "light": {
-          "accent": "#177082"
+          "accent": "#D0FF00",
+          "accentText": "#4A5900"
         },
         "dark": {
-          "accent": "#23ACC7"
+          "accent": "#D0FF00",
+          "accentText": "#D0FF00"
         }
       },
       "store": {
@@ -488,10 +490,12 @@
       "identity": {
         "display": "mono",
         "light": {
-          "accent": "#177082"
+          "accent": "#D0FF00",
+          "accentText": "#4A5900"
         },
         "dark": {
-          "accent": "#23ACC7"
+          "accent": "#D0FF00",
+          "accentText": "#D0FF00"
         }
       },
       "store": {

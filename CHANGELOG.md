@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.38.2] — 2026-11-25
+
+It's 404, yo! and Patternaut take their icons' lime, as Echolume did in 1.38.1 (#132).
+
+### Changed
+- **Their accent is the icon's lime, `#D0FF00`, by day and by night,** in place of the `music` family's teal (`#177082` by day, `#23ACC7` by night). The owner decided on 2026-11-25 that both follow the rule set on 2026-10-12: Mac sites take the lime from their icon.
+  - **Text by day:** both sheets follow the visitor's mode, so links and small highlights take the dark olive `#4A5900`.
+  - **Text by night:** the lime itself.
+  - **Unchanged:** the ground, JetBrains Mono and the visual language.
+  - `its-404-yo.css` and `patternaut.css` now declare the same accent values as `echolume.css`.
+- **`design.md`:** It's 404 and Patternaut have a row with the lime. Only BotLens and PageLens still carry a family's values.
+
+### Who should move
+- **Patternaut:** take v1.38.2 with the copy script. It serves v1.32.2 today.
+- **It's 404, yo!:**
+  - take v1.38.2 with the copy script;
+  - have its `styles.css` take `--primary` from the sheet's accent, so the purple it sets by day goes.
+- **Everyone else: nobody.**
+
 ## [1.38.1] — 2026-11-25
 
 Echolume's site takes its icon's lime, as the Mac sites do (#116).
@@ -1552,6 +1571,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.38.2]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.38.2
 [1.38.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.38.1
 [1.38.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.38.0
 [1.37.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.37.0
