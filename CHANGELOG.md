@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.39.0] — 2026-11-25
+
+Categorical fills, so an app can tell kinds of things apart by colour: first the clip types on Edwell's timeline (#112).
+
+### Added
+- **`category.blue`, `category.teal`, `category.amber` and `category.rose`,** mode-aware, in every output:
+  - CSS: `--ij-color-category-*`;
+  - TypeScript;
+  - Swift: `DesignTokens.Palette.Category.*`;
+  - Kotlin: `DesignTokens.Palette.Category.*`.
+
+  | | blue | teal | amber | rose |
+  |---|---|---|---|---|
+  | Light | `#AFCBFF` | `#7FDFCF` | `#EAC582` | `#FFB2BF` |
+  | Dark | `#335189` | `#036056` | `#6B4D01` | `#7F3848` |
+  - **Fills, with `text.primary` on them:** 12.4:1 to 13.4:1 by day, and 7.5:1 to 8.2:1 by night.
+  - **Held apart from what already means something.** They are at least 0.18 in OKLab from `primary` (which marks a selection) and from the state colours (which mark a problem). They are at least 0.11 from each other.
+  - **Named by hue, not by use.** Edwell's timeline maps video to blue, image to amber, audio to teal and title to rose.
+- **`design.md`:**
+  - a "Categorical fills" section;
+  - rule 8: they label kinds and nothing else, as fills, never text, and never in place of `primary` or a state colour.
+  - `AGENTS.md` gains the same rule and the accessors.
+- **`scripts/color.js`:** `oklab()` and `deltaEOK()`.
+- **Checks:**
+  - `validate.js` holds `text.primary` at AA on every fill;
+  - it keeps the fills 0.15 from `primary` and the state colours, and 0.1 from each other;
+  - Swift's and Kotlin's generated tests cover the new colours in light and dark;
+  - `test.js` checks design.md's table against `tokens.json`.
+- **The docs page** lists the fills with the contrast of `text.primary` on each.
+
+### Who should move
+- **Edwell:** in `Theme.swift`, replace the one neutral `clipFill` with a fill per clip type from `DesignTokens.Palette.Category`. Take it from v1.39.0 of the Swift package.
+- **Everyone else: nobody.** Nothing existing changes.
 ## [1.38.2] — 2026-11-25
 
 It's 404, yo! and Patternaut take their icons' lime, as Echolume did in 1.38.1 (#132).
@@ -1571,6 +1604,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.39.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.39.0
 [1.38.2]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.38.2
 [1.38.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.38.1
 [1.38.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.38.0

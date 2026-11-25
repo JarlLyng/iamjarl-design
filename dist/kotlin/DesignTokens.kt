@@ -1,4 +1,4 @@
-// IAMJARL design tokens v1.38.2 for Jetpack Compose. Generated from tokens.json by
+// IAMJARL design tokens v1.39.0 for Jetpack Compose. Generated from tokens.json by
 // scripts/build.js: do not edit. Copy it from the release tag your app pins, as the
 // README says under "Android (Jetpack Compose)"; DesignTokens.VERSION is the version.
 // It needs androidx.compose.ui and androidx.compose.material3.
@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
  */
 object DesignTokens {
     /** The tokens.json version this file was generated from. */
-    const val VERSION: String = "1.38.2"
+    const val VERSION: String = "1.39.0"
 
     object Spacing {
         val xs: Dp = 4.dp
@@ -240,6 +240,13 @@ object DesignTokens {
                 val warning: Color = Color(0xFFC2410C)
                 val error: Color = Color(0xFFD70015)
             }
+
+            object Category {
+                val blue: Color = Color(0xFFAFCBFF)
+                val teal: Color = Color(0xFF7FDFCF)
+                val amber: Color = Color(0xFFEAC582)
+                val rose: Color = Color(0xFFFFB2BF)
+            }
         }
 
         object Dark {
@@ -278,6 +285,13 @@ object DesignTokens {
                 val success: Color = Color(0xFF4CAF50)
                 val warning: Color = Color(0xFFFF6B35)
                 val error: Color = Color(0xFFFF453A)
+            }
+
+            object Category {
+                val blue: Color = Color(0xFF335189)
+                val teal: Color = Color(0xFF036056)
+                val amber: Color = Color(0xFF6B4D01)
+                val rose: Color = Color(0xFF7F3848)
             }
         }
     }
@@ -329,6 +343,13 @@ object DesignTokens {
             val success: Color @Composable get() = adaptive(ColorToken.Light.State.success, ColorToken.Dark.State.success)
             val warning: Color @Composable get() = adaptive(ColorToken.Light.State.warning, ColorToken.Dark.State.warning)
             val error: Color @Composable get() = adaptive(ColorToken.Light.State.error, ColorToken.Dark.State.error)
+        }
+
+        object Category {
+            val blue: Color @Composable get() = adaptive(ColorToken.Light.Category.blue, ColorToken.Dark.Category.blue)
+            val teal: Color @Composable get() = adaptive(ColorToken.Light.Category.teal, ColorToken.Dark.Category.teal)
+            val amber: Color @Composable get() = adaptive(ColorToken.Light.Category.amber, ColorToken.Dark.Category.amber)
+            val rose: Color @Composable get() = adaptive(ColorToken.Light.Category.rose, ColorToken.Dark.Category.rose)
         }
     }
 }

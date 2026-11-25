@@ -1,5 +1,5 @@
 /* IAMJARL identity for Edwell: generated, do not edit */
-/* design system v1.38.2. Dark only: this sheet holds the site in that mode whatever the visitor's setting. */
+/* design system v1.39.0. Dark only: this sheet holds the site in that mode whatever the visitor's setting. */
 /* Display face: Fraunces (OFL-1.1). Self-host it; see design.md. */
 
 :root {
@@ -46,6 +46,10 @@
     --ij-color-state-success: #4CAF50;
     --ij-color-state-warning: #FF6B35;
     --ij-color-state-error: #FF453A;
+    --ij-color-category-blue: #335189;
+    --ij-color-category-teal: #036056;
+    --ij-color-category-amber: #6B4D01;
+    --ij-color-category-rose: #7F3848;
     --ij-color-bg-app: #000000;
     --ij-color-bg-card: #0D0D0D;
     --ij-color-surface-default: #0D0D0D;
@@ -86,6 +90,10 @@
   --ij-color-state-success: #4CAF50;
   --ij-color-state-warning: #FF6B35;
   --ij-color-state-error: #FF453A;
+  --ij-color-category-blue: #335189;
+  --ij-color-category-teal: #036056;
+  --ij-color-category-amber: #6B4D01;
+  --ij-color-category-rose: #7F3848;
   --ij-color-bg-app: #000000;
   --ij-color-bg-card: #0D0D0D;
   --ij-color-surface-default: #0D0D0D;

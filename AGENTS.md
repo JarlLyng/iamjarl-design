@@ -69,6 +69,7 @@ DesignTokens.Palette.Text.primary            // also secondary, tertiary, disabl
 DesignTokens.Palette.Background.app          // also muted, card, disabled
 DesignTokens.Palette.Border.subtle
 DesignTokens.Palette.State.error             // text-safe state colours; also success, warning
+DesignTokens.Palette.Category.blue           // categorical fills; also teal, amber, rose
 DesignTokens.adaptive(light:dark:)           // for an app's own derived colours
 
 // The older form, which needs @Environment(\.colorScheme) passed in, still works:
@@ -124,6 +125,7 @@ import com.iamjarl.design.DesignTokens
 DesignTokens.Palette.primary                  // follows the system light/dark setting
 DesignTokens.Palette.Text.primary             // also Background, Surface, Border, State
 DesignTokens.ColorToken.State.error           // fills; pair with onError
+DesignTokens.Palette.Category.blue            // categorical fills; also teal, amber, rose
 DesignTokens.adaptive(light, dark)            // for an app's own derived colours
 DesignTokens.Spacing.md                       // 12.dp
 DesignTokens.Radius.lg                        // 16.dp
@@ -196,6 +198,7 @@ const theme = colors[scheme]; // theme.primary, theme.text.primary, etc.
 7. State colors: shared `success/warning/error` are **fills** (pair with `on*`). For colored **text** on a normal background use the mode-aware `state.*` tokens — never a raw fill color as text.
 8. Don't hand-roll hover/pressed/disabled — use `primaryHover`/`primaryPressed`, `text.disabled`/`background.disabled`, or `opacity.disabled`.
 9. Stacking: use the `zIndex` scale (`modal`, `popover`, `toast`, …), never magic numbers.
+10. Kinds of things (clip types, categories): the mode-aware `category.*` fills (`blue`, `teal`, `amber`, `rose`) with `text.primary` on them. They are fills, never text, and never stand in for `primary` or a state colour.
 
 ## UI recipes
 - **Primary button**: bg=`primary` (hover `primaryHover`, pressed `primaryPressed`), text=`onPrimary`, radius=`md`, padding=`spacing.md`/`spacing.xl`; disabled=`background.disabled`+`text.disabled`

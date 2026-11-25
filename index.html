@@ -412,7 +412,7 @@
     }
 
     // CSS variable and Swift name for a mode colour, following build.js.
-    const GROUP_CSS = { text: 'text', background: 'bg', surface: 'surface', border: 'border', state: 'state' };
+    const GROUP_CSS = { text: 'text', background: 'bg', surface: 'surface', border: 'border', state: 'state', category: 'category' };
     function modeCss(group, key) {
       if (group === 'gradients') return `--ij-gradient-${kebab(key)}`;
       return group ? `--ij-color-${GROUP_CSS[group]}-${kebab(key)}` : `--ij-color-${kebab(key)}`;
@@ -461,6 +461,8 @@
         contrast = key === 'disabled' ? verdict(ratio(value, m.background.app), 0, 'on background.app — disabled text is exempt')
           : key === 'inverse' ? verdict(ratio(value, m.primary), 4.5, 'on primary')
           : verdict(ratio(value, m.background.app), 4.5, 'on background.app');
+      } else if (group === 'category') {
+        contrast = verdict(ratio(m.text.primary, value), 4.5, 'under text.primary');
       } else if (!group && key === 'primary') {
         contrast = verdict(ratio(m.onPrimary, value), 4.5, 'under onPrimary');
       } else if (!group && key === 'onPrimary') {
@@ -482,7 +484,7 @@
       const groups = [['Brand', null, Object.entries(m).filter(([, v]) => typeof v === 'string')]];
       for (const g of Object.keys(m)) if (typeof m[g] === 'object' && g !== 'gradients') groups.push([cap(g), g, Object.entries(m[g])]);
       for (const [title, group, entries] of groups) {
-        const table = el('table', {}, el('caption', { text: group === 'state' ? 'State — text-safe' : title }),
+        const table = el('table', {}, el('caption', { text: group === 'state' ? 'State — text-safe' : group === 'category' ? 'Category: fills, with text.primary on them' : title }),
           el('thead', {}, el('tr', {}, ...['', 'Token', 'Value', 'Contrast', 'CSS · Swift', ''].map(h => el('th', { scope: 'col', text: h })))),
           el('tbody', {}, entries.map(([k, v]) => colourRow(mode, group, k, v))));
         panel.append(el('div', { class: 'table-wrap' }, table));

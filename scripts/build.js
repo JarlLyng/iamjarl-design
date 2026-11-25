@@ -417,6 +417,7 @@ function generateSwift(tokens) {
       { key: 'surface', label: 'Surface' },
       { key: 'border', label: 'Border' },
       { key: 'state', label: 'State' },
+      { key: 'category', label: 'Category' },
     ];
 
     for (const group of groups) {

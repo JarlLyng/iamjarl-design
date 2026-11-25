@@ -8,7 +8,7 @@ import os from 'node:os';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { parseHex, parseRgba, parseColor, contrastRatio } from './color.js';
+import { parseHex, parseRgba, parseColor, contrastRatio, deltaEOK } from './color.js';
 import { extractNotes, sriNotes } from './release-notes.js';
 import { selectLinks, categoryReach } from '../components/select-links.js';
 import { identityFor, mix, TEXT_MIX } from '../components/identity.js';
@@ -289,6 +289,21 @@ check('exports["./css"] is set', pkg.exports?.['./css']);
 // This is the validator's safety line; if the contrast math regresses,
 // inaccessible token pairs could ship. Test it against known values.
 console.log('\nColor math (unit):');
+
+// OKLab distance (#112): nothing from itself, 1 from black to white, and a
+// hue step the eye calls plain well above a step it barely sees.
+check('deltaEOK: 0 for a colour and itself, 1 from black to white',
+  deltaEOK(parseColor('#336699'), parseColor('#336699')) === 0 &&
+  Math.abs(deltaEOK(parseColor('#000000'), parseColor('#FFFFFF')) - 1) < 1e-6);
+check('deltaEOK: blue to red is far, one step of grey is near',
+  deltaEOK(parseColor('#0000FF'), parseColor('#FF0000')) > 0.5 && deltaEOK(parseColor('#808080'), parseColor('#818181')) < 0.01);
+{
+  const modes = JSON.parse(read('tokens.json')).tokens.colors.modes;
+  const keys = Object.keys(modes.light.category ?? {});
+  check('design.md\'s table of categorical fills is tokens.json\'s, in both modes (#112)',
+    keys.length === 4 && ['light', 'dark'].every(mode =>
+      read('design.md').includes(`| ${mode[0].toUpperCase() + mode.slice(1)} | ${keys.map(k => '`' + modes[mode].category[k] + '`').join(' | ')} |`)));
+}
 
 // parseHex
 const red = parseHex('#FF0000');

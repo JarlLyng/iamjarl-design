@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - IAMJARL Design Tokens (SwiftUI)
 //
-// Auto-generated from tokens.json v1.38.2. Do not edit manually.
+// Auto-generated from tokens.json v1.39.0. Do not edit manually.
 // Run: node scripts/build.js
 //
 // Design DNA:
@@ -248,6 +248,13 @@ public enum DesignTokens {
         public static let warning = Color(hex: "#C2410C")
         public static let error = Color(hex: "#D70015")
       }
+
+      public enum Category {
+        public static let blue = Color(hex: "#AFCBFF")
+        public static let teal = Color(hex: "#7FDFCF")
+        public static let amber = Color(hex: "#EAC582")
+        public static let rose = Color(hex: "#FFB2BF")
+      }
     }
 
     // Mode-aware colors (Dark)
@@ -287,6 +294,13 @@ public enum DesignTokens {
         public static let success = Color(hex: "#4CAF50")
         public static let warning = Color(hex: "#FF6B35")
         public static let error = Color(hex: "#FF453A")
+      }
+
+      public enum Category {
+        public static let blue = Color(hex: "#335189")
+        public static let teal = Color(hex: "#036056")
+        public static let amber = Color(hex: "#6B4D01")
+        public static let rose = Color(hex: "#7F3848")
       }
     }
   }
@@ -427,6 +441,13 @@ public enum DesignTokens {
       public static let success = DesignTokens.adaptive(light: ColorToken.Light.State.success, dark: ColorToken.Dark.State.success)
       public static let warning = DesignTokens.adaptive(light: ColorToken.Light.State.warning, dark: ColorToken.Dark.State.warning)
       public static let error = DesignTokens.adaptive(light: ColorToken.Light.State.error, dark: ColorToken.Dark.State.error)
+    }
+
+    public enum Category {
+      public static let blue = DesignTokens.adaptive(light: ColorToken.Light.Category.blue, dark: ColorToken.Dark.Category.blue)
+      public static let teal = DesignTokens.adaptive(light: ColorToken.Light.Category.teal, dark: ColorToken.Dark.Category.teal)
+      public static let amber = DesignTokens.adaptive(light: ColorToken.Light.Category.amber, dark: ColorToken.Dark.Category.amber)
+      public static let rose = DesignTokens.adaptive(light: ColorToken.Light.Category.rose, dark: ColorToken.Dark.Category.rose)
     }
   }
 }
