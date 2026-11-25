@@ -1,4 +1,4 @@
-// IAMJARL design tokens v1.38.0 for Jetpack Compose. Generated from tokens.json by
+// IAMJARL design tokens v1.38.1 for Jetpack Compose. Generated from tokens.json by
 // scripts/build.js: do not edit. Copy it from the release tag your app pins, as the
 // README says under "Android (Jetpack Compose)"; DesignTokens.VERSION is the version.
 // It needs androidx.compose.ui and androidx.compose.material3.
@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
  */
 object DesignTokens {
     /** The tokens.json version this file was generated from. */
-    const val VERSION: String = "1.38.0"
+    const val VERSION: String = "1.38.1"
 
     object Spacing {
         val xs: Dp = 4.dp

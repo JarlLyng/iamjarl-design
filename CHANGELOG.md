@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.38.1] — 2026-11-25
+
+Echolume's site takes its icon's lime, as the Mac sites do (#116).
+
+### Changed
+- **Echolume's accent is the icon's lime, `#D0FF00`, by day and by night.** It had kept the `music` family's teal (`#177082` by day, `#23ACC7` by night). The owner decided on 2026-10-12, with It's mono's brief, that Mac sites take the lime from their icon, and Echolume's entry predated that.
+  - **The site follows the visitor's mode,** so the lime has a text-safe partner: by day the dark olive `#4A5900` writes links and small highlights, as on TonVault and TrimrPix. By night the lime reads as text itself.
+  - **Only the accent changes.** The ground, the Outfit face and the visual language are left for Echolume's own brief.
+- **`design.md`:**
+  - Echolume has its own row in the identities table;
+  - "What is shared, and what is open" now states the Mac sites' lime thread instead of saying that nothing ties the sites together yet.
+- **Browser tests:** they use Echolume as the example identity, and now expect its lime, black on it, and the olive for the footer's hover.
+
+### Who should move
+- **Echolume:** load `dist/identity/echolume.css` from v1.38.1 when the site next takes a release, and change its hard-coded teal `theme-color` in the same PR.
+- **Everyone else: nobody.**
+
 ## [1.38.0] — 2026-11-25
 
 Kotlin for Jetpack Compose, so the Android apps take the tokens instead of copying them by hand (#128).
@@ -1535,6 +1552,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.38.1]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.38.1
 [1.38.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.38.0
 [1.37.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.37.0
 [1.36.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.36.0
