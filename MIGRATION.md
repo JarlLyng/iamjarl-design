@@ -105,6 +105,7 @@ This table gets a row for every release, including the ones where the answer is 
 | **1.38.0** | Kotlin for Jetpack Compose in `dist/kotlin/DesignTokens.kt`, which an Android app copies at a tag; built and tested in CI | No, except the Android apps: copy the file instead of hand-copied colours |
 | **1.38.1** | Echolume's identity takes its icon's lime, with a dark olive for text by day | No, except Echolume: load its identity sheet from v1.38.1 and drop the teal `theme-color` |
 | **1.38.2** | It's 404's and Patternaut's identities take their icons' lime, with a dark olive for text by day | No, except It's 404 and Patternaut: take their sheets from v1.38.2; It's 404 also takes `--primary` from the sheet |
+| **1.39.0** | Four mode-aware categorical fills, `category.blue/teal/amber/rose`, for telling kinds of things apart | No, except Edwell: a fill per clip type in place of its neutral `clipFill` |
 
 ### Who needs to migrate
 - ✅ **Everyone** — bump the version. Nothing you use today changes value or name.

@@ -1,4 +1,4 @@
-# IAMJARL Design System (v1.38.2)
+# IAMJARL Design System (v1.39.0)
 
 This document defines a shared visual DNA across all IAMJARL apps and web projects.
 Use together with `tokens.json` (single source of truth).
@@ -24,6 +24,23 @@ Use together with `tokens.json` (single source of truth).
 - The shared `success` / `warning` / `error` colors are **fills** — only use them as backgrounds, always paired with their `on*` color (`onSuccess`, etc.).
 - For colored **text/icons on a normal background** (e.g. inline error messages, success labels), use the mode-aware `state.success` / `state.warning` / `state.error` tokens. These are tuned per mode to meet WCAG AA against `background.app`.
 - Never use a raw fill color as text — `success` (#4CAF50) on white is only 2.78:1 and fails AA.
+
+#### Categorical fills
+For telling kinds of things apart at a glance, where a colour is the quickest cue: the clip types on Edwell's timeline (#112). There are four mode-aware fills: `category.blue`, `category.teal`, `category.amber` and `category.rose`.
+
+| | blue | teal | amber | rose |
+|---|---|---|---|---|
+| Light | `#AFCBFF` | `#7FDFCF` | `#EAC582` | `#FFB2BF` |
+| Dark | `#335189` | `#036056` | `#6B4D01` | `#7F3848` |
+
+- **Fills, never text.** `text.primary` reads on each at AA in its mode, so a label sits straight on the fill, and a waveform or thumbnail on top of it.
+- **Apart from what already means something.**
+  - `primary` marks a selection and the state colours mark a problem, so the fills keep an OKLab distance of at least 0.15 from both.
+  - They keep at least 0.1 from each other, which is plain at a glance.
+  - The validator checks both distances.
+- **Named by hue, not by use.** An app maps them to its own kinds. Edwell's timeline maps video to blue, image to amber, audio to teal and title to rose.
+- **Four, and no more.** A fifth kind would have to come close to one of them or to a colour that already means something. Tell it apart by its icon or content instead.
+- **For app interfaces.** A site's colour is its identity accent.
 
 #### Interaction & disabled states
 - Hover/pressed: use `primaryHover` / `primaryPressed` (mode-aware) instead of darkening primary by hand.
@@ -414,6 +431,9 @@ A contract test holds every motif to this and to the box.
 7. **If contrast is uncertain, default to maximum contrast**.
    - Black text on bright colors.
    - White text on dark colors.
+8. **Categorical fills label kinds, nothing else**.
+   - Use `category.*` as fills, with `text.primary` on them, never as text.
+   - Never to say selected, success, warning or error: that is `primary` and the state colours.
 
 ## Implementation Guidance
 

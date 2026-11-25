@@ -1,5 +1,5 @@
 /* IAMJARL identity for TrimrPix for iOS: generated, do not edit */
-/* design system v1.38.2. Light only: this sheet holds the site in that mode whatever the visitor's setting. */
+/* design system v1.39.0. Light only: this sheet holds the site in that mode whatever the visitor's setting. */
 /* Display face: Bricolage Grotesque (OFL-1.1). Self-host it; see design.md. */
 /* Numeral face: JetBrains Mono (OFL-1.1), for .ij-numeral. Load it too. */
 
@@ -48,6 +48,10 @@
     --ij-color-state-success: #2E7D32;
     --ij-color-state-warning: #C2410C;
     --ij-color-state-error: #D70015;
+    --ij-color-category-blue: #AFCBFF;
+    --ij-color-category-teal: #7FDFCF;
+    --ij-color-category-amber: #EAC582;
+    --ij-color-category-rose: #FFB2BF;
     --ij-color-bg-app: #F1F0F6;
     --ij-color-bg-card: #FFFFFF;
     --ij-color-surface-default: #FFFFFF;
@@ -88,6 +92,10 @@
   --ij-color-state-success: #2E7D32;
   --ij-color-state-warning: #C2410C;
   --ij-color-state-error: #D70015;
+  --ij-color-category-blue: #AFCBFF;
+  --ij-color-category-teal: #7FDFCF;
+  --ij-color-category-amber: #EAC582;
+  --ij-color-category-rose: #FFB2BF;
   --ij-color-bg-app: #F1F0F6;
   --ij-color-bg-card: #FFFFFF;
   --ij-color-surface-default: #FFFFFF;

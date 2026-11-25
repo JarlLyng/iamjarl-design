@@ -1,4 +1,4 @@
-/* IAMJARL Design Tokens v1.38.2: generated, do not edit */
+/* IAMJARL Design Tokens v1.39.0: generated, do not edit */
 /* Shadow DOM variant: variables scoped to :host for content scripts */
 
 :host {
@@ -157,6 +157,10 @@
   --ij-color-state-success: #2E7D32;
   --ij-color-state-warning: #C2410C;
   --ij-color-state-error: #D70015;
+  --ij-color-category-blue: #AFCBFF;
+  --ij-color-category-teal: #7FDFCF;
+  --ij-color-category-amber: #EAC582;
+  --ij-color-category-rose: #FFB2BF;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -185,6 +189,10 @@
     --ij-color-state-success: #4CAF50;
     --ij-color-state-warning: #FF6B35;
     --ij-color-state-error: #FF453A;
+    --ij-color-category-blue: #335189;
+    --ij-color-category-teal: #036056;
+    --ij-color-category-amber: #6B4D01;
+    --ij-color-category-rose: #7F3848;
   }
 }
 
@@ -214,6 +222,10 @@
   --ij-color-state-success: #2E7D32;
   --ij-color-state-warning: #C2410C;
   --ij-color-state-error: #D70015;
+  --ij-color-category-blue: #AFCBFF;
+  --ij-color-category-teal: #7FDFCF;
+  --ij-color-category-amber: #EAC582;
+  --ij-color-category-rose: #FFB2BF;
 }
 
 .dark {
@@ -241,4 +253,8 @@
   --ij-color-state-success: #4CAF50;
   --ij-color-state-warning: #FF6B35;
   --ij-color-state-error: #FF453A;
+  --ij-color-category-blue: #335189;
+  --ij-color-category-teal: #036056;
+  --ij-color-category-amber: #6B4D01;
+  --ij-color-category-rose: #7F3848;
 }

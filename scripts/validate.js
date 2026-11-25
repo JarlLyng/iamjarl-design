@@ -3,7 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { parseColor, contrastRatio } from './color.js';
+import { parseColor, contrastRatio, deltaEOK } from './color.js';
 import { LOCALES, badgeFile, factsLine, offer, storeLink } from '../components/store.js';
 import { identityFor, MODES, COLOR_FIELDS, PANELS } from '../components/identity.js';
 
@@ -393,6 +393,42 @@ function validateNumerals(tokens) {
   else pass(`numerals ${vals.join(' / ')} ascend`);
 }
 
+// The categorical fills (#112) exist to tell kinds of things apart at a glance,
+// so they must be told apart: from the colours that already mean something
+// (primary, which marks a selection, and the state colours, which mark a
+// problem) and from each other. Distances in OKLab, where 0.1 is plain at a glance.
+const CATEGORY_FROM_RESERVED = 0.15;
+const CATEGORY_FROM_EACH_OTHER = 0.1;
+function validateCategories(tokens) {
+  console.log('\nCategorical fills (OKLab distance):');
+  const { modes, shared } = tokens.tokens.colors;
+  let problems = 0;
+  for (const mode of ['light', 'dark']) {
+    const m = modes[mode];
+    const cats = Object.entries(m.category ?? {});
+    if (!cats.length) { fail(`${mode}.category is missing`); problems++; continue; }
+    const reserved = {
+      primary: m.primary, 'state.success': m.state.success, 'state.warning': m.state.warning, 'state.error': m.state.error,
+      'shared.success': shared.success, 'shared.warning': shared.warning, 'shared.error': shared.error,
+    };
+    let nearest = Infinity;
+    for (const [k, v] of cats) {
+      for (const [rk, rv] of Object.entries(reserved)) {
+        const d = deltaEOK(parseColor(v), parseColor(rv));
+        nearest = Math.min(nearest, d);
+        if (d < CATEGORY_FROM_RESERVED) { fail(`${mode}.category.${k} is ${d.toFixed(3)} from ${rk}, under ${CATEGORY_FROM_RESERVED}`); problems++; }
+      }
+    }
+    let closest = Infinity;
+    for (let i = 0; i < cats.length; i++) for (let j = i + 1; j < cats.length; j++) {
+      const d = deltaEOK(parseColor(cats[i][1]), parseColor(cats[j][1]));
+      closest = Math.min(closest, d);
+      if (d < CATEGORY_FROM_EACH_OTHER) { fail(`${mode}.category.${cats[i][0]} and .${cats[j][0]} are ${d.toFixed(3)} apart, under ${CATEGORY_FROM_EACH_OTHER}`); problems++; }
+    }
+    if (!problems) pass(`${mode}: ${cats.length} fills, at least ${nearest.toFixed(3)} from primary and the state colours, at least ${closest.toFixed(3)} from each other`);
+  }
+}
+
 function validateContrast(tokens) {
   console.log('\nContrast checks (WCAG 2.1 AA ≥ 4.5:1):');
 
@@ -408,6 +444,12 @@ function validateContrast(tokens) {
   for (const mode of ['light', 'dark']) {
     const m = tokens.tokens.colors.modes[mode];
     pairs.push({ fg: `${mode}.onPrimary`, bg: `${mode}.primary`, fgVal: m.onPrimary, bgVal: m.primary });
+
+    // Categorical fills (#112) carry a label in text.primary, so it must read on
+    // each of them without a chip.
+    for (const [key, value] of Object.entries(m.category ?? {})) {
+      pairs.push({ fg: `${mode}.text.primary`, bg: `${mode}.category.${key}`, fgVal: m.text.primary, bgVal: value });
+    }
 
     // State colors used as foreground/text must pass AA against the app background.
     // (The shared state colors are fills; these mode-aware variants are for text.)
@@ -661,6 +703,7 @@ function main() {
 
   validateStructure(tokens);
   validateContrast(tokens);
+  validateCategories(tokens);
   validateApps(tokens);
 
   console.log();

@@ -461,7 +461,8 @@
         "background",
         "surface",
         "border",
-        "state"
+        "state",
+        "category"
       ],
       "properties": {
         "primary": {
@@ -583,6 +584,30 @@
               "$ref": "#/$defs/color"
             },
             "default": {
+              "$ref": "#/$defs/color"
+            }
+          }
+        },
+        "category": {
+          "type": "object",
+          "description": "Categorical fills (#112): for telling kinds of things apart at a glance, such as clip types on a timeline. Fills, never text: text.primary reads on each at AA. Held apart from primary, the state colours and each other.",
+          "required": [
+            "blue",
+            "teal",
+            "amber",
+            "rose"
+          ],
+          "properties": {
+            "blue": {
+              "$ref": "#/$defs/color"
+            },
+            "teal": {
+              "$ref": "#/$defs/color"
+            },
+            "amber": {
+              "$ref": "#/$defs/color"
+            },
+            "rose": {
               "$ref": "#/$defs/color"
             }
           }
