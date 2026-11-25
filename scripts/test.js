@@ -102,6 +102,35 @@ check('ijNumeral uses tabular digits and is capped',
 check('adaptive colours cover UIKit, AppKit and watchOS',
   ['os(watchOS)', 'canImport(UIKit)', 'canImport(AppKit)'].every(x => swiftSrc('Adaptive.swift').includes(x)));
 
+// --- Kotlin output (#128) ---
+// The values themselves are tested in Kotlin, by the Gradle module in android/
+// that CI runs. These check what the file promises and that nothing is left out.
+console.log('\nKotlin output:');
+{
+  const kt = read('dist/kotlin/DesignTokens.kt');
+  const version = JSON.parse(read('tokens.json')).meta.version;
+  check('the Kotlin file names its version on its first line and at runtime',
+    kt.split('\n')[0].includes(`v${version}`) && kt.includes(`const val VERSION: String = "${version}"`));
+  for (const group of ['Spacing', 'Radius', 'Typography', 'Shadow', 'Motion', 'Container', 'Breakpoint', 'Focus', 'ZIndex', 'Opacity', 'ColorToken', 'Palette']) {
+    check(`Kotlin has the Swift package's ${group}`, kt.includes(`object ${group} {`));
+  }
+  const pairs = [...kt.slice(kt.indexOf('object Palette {')).matchAll(/adaptive\(ColorToken\.Light\.([\w.`]+), ColorToken\.Dark\.([\w.`]+)\)/g)];
+  check(`the Kotlin palette covers every mode-aware colour (${modeLeaves.length}), each from the same token in light and dark`,
+    pairs.length === modeLeaves.length && pairs.every(([, l, d]) => l === d));
+  check('every Kotlin colour has a generated test, in light and in dark',
+    (read('android/tokens/src/test/kotlin/com/iamjarl/design/PaletteTests.kt').match(/assertColour\("[^"]+", DesignTokens\.ColorToken\.(Light|Dark)\./g) || []).length === modeLeaves.length * 2);
+  check('the Kotlin file leaves out what the Swift package leaves out: gradients and the marketing scale',
+    !/gradient|linear-gradient|Marketing/i.test(kt));
+  check('every type size sits in a Material 3 slot, and numerals are tabular and capped',
+    Object.keys(JSON.parse(read('tokens.json')).brand.typography.sizes).every(k => new RegExp(`^\\s+${k}\\(Size\\.${k}, LineHeight\\.${k}, "\\w+"\\)`, 'm').test(kt)) &&
+    kt.includes('fontFeatureSettings = "tnum"') && kt.includes('numeralMaxScale'));
+  check('the README pins the Kotlin copy to this release, and AGENTS.md shows it',
+    read('README.md').includes(`raw.githubusercontent.com/JarlLyng/iamjarl-design/v${version}/dist/kotlin/DesignTokens.kt`) &&
+    read('AGENTS.md').includes('### Android (Jetpack Compose)'));
+  check('CI compiles the Kotlin output and runs its tests',
+    read('.github/workflows/pr-ci.yml').includes(':tokens:testDebugUnitTest') && read('android/tokens/build.gradle.kts').includes('../../dist/kotlin'));
+}
+
 // --- CSS output ---
 console.log('\nCSS output:');
 const css = read('dist/css/tokens.css');

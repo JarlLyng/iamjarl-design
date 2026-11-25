@@ -5,6 +5,46 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.38.0] — 2026-11-25
+
+Kotlin for Jetpack Compose, so the Android apps take the tokens instead of copying them by hand (#128).
+
+### Added
+- **`dist/kotlin/DesignTokens.kt`:** one file for Jetpack Compose, generated from `tokens.json` next to the Swift package, in the package `com.iamjarl.design`.
+  - **The Swift package's groups:**
+    - `Palette` and `ColorToken`, with `Light`, `Dark` and the shared `State` fills;
+    - `Spacing`, `Radius` and `Focus` in `dp`;
+    - `Typography`;
+    - `Shadow`;
+    - `Motion`, with durations in milliseconds and easings as `CubicBezierEasing`;
+    - `Container` and `Breakpoint`;
+    - `ZIndex` and `Opacity`.
+
+    The gradients and the marketing scale stay web only, as in the Swift package.
+  - **`Palette`** follows the system's light or dark setting. `adaptive(light, dark)` makes an app's own colour do the same.
+  - **Type is in `sp`,** so the system font size scales it.
+    - `Typography.material3()` puts each size in the nearest Material 3 slot, from `bodySmall` for `xs` to `displaySmall` for `xxl`.
+    - `numeral()` sets tabular digits and caps the growth at 1.5×.
+  - **The version** is on the file's first line and in `DesignTokens.VERSION`.
+- **How an app takes it:** it copies the file from the tag it pins, with one `curl` from raw.githubusercontent.com, and commits it. No credentials are needed. The steps are in the README under Android (Jetpack Compose), and in `AGENTS.md`.
+- **`android/`:** a Gradle module that compiles the file as an Android library. It uses the versions WODrounds builds with: AGP 9.2.1, Kotlin's Compose plugin 2.2.21 and Compose BOM 2026.05.01. It runs generated tests:
+  - every colour against `tokens.json`, in light and in dark, parsed in Kotlin;
+  - spacing, radius, type and its Material 3 slots, motion, opacity and z-index.
+- **CI:**
+  - a `kotlin` job runs those tests on every PR, with Gradle 9.4.1 from gradle.org checked against its published SHA-256;
+  - the PR's sync check and the release commit cover the generated Kotlin tests too.
+- **Contract tests:**
+  - the file's version;
+  - the Swift package's groups;
+  - a palette entry for every mode-aware colour, from the same token in both modes, with a test for each;
+  - nothing that is web only;
+  - the README's pinned copy step.
+
+### Who should move
+- **WODrounds (JarlLyng/WODrounds#234):** replace the hand-copied `Color(0x...)` literals in `TimerScreen.kt` with the file from v1.38.0.
+- **It's chopped, yo!** takes it when it gets its Compose screens.
+- **Everyone else: nobody.**
+
 ## [1.37.0] — 2026-11-14
 
 The apps' own icons, rebuilt for iOS 27 and macOS 27 in Icon Composer (#124).
@@ -1495,6 +1535,7 @@ First stable release. New token groups for interaction states, disabled UI, stac
 - GitHub Actions workflow to regenerate platform files and tag versions on push.
 - Light + dark mode support across all platforms.
 
+[1.38.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.38.0
 [1.37.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.37.0
 [1.36.0]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.36.0
 [1.35.4]: https://github.com/jarllyng/iamjarl-design/releases/tag/v1.35.4

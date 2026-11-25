@@ -11,6 +11,7 @@ on:
       - 'scripts/**'
       - 'Sources/**'
       - 'Tests/**'
+      - 'android/**'
       - 'fonts/**'
       - 'badges/**'
       # The docs page has a browser test of its own
@@ -54,7 +55,7 @@ jobs:
 
       - name: Verify generated files are in sync
         run: |
-          if ! git diff --exit-code Sources/ Tests/ dist/; then
+          if ! git diff --exit-code Sources/ Tests/ dist/ android/tokens/src/test/; then
             echo "::error::Generated files are out of sync. Run 'node scripts/build.js' locally and commit the changes."
             exit 1
           fi
@@ -70,6 +71,27 @@ jobs:
 
       - name: Verify npm pack contents
         run: npm pack --dry-run
+
+  # The Kotlin output for Jetpack Compose (#128): compiled as an Android library
+  # against the Compose versions the portfolio's apps use, and tested against
+  # tokens.json in light and dark. The runner has a JDK and the Android SDK.
+  # Gradle comes from gradle.org, checked against its published SHA-256, so
+  # there is no wrapper jar in the repo and no third-party action.
+  kotlin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Fetch Gradle 9.4.1
+        run: |
+          curl -sfL -o "$RUNNER_TEMP/gradle.zip" https://services.gradle.org/distributions/gradle-9.4.1-bin.zip
+          echo "2ab2958f2a1e51120c326cad6f385153bb11ee93b3c216c5fccebfdfbb7ec6cb  $RUNNER_TEMP/gradle.zip" | sha256sum -c -
+          unzip -q "$RUNNER_TEMP/gradle.zip" -d "$RUNNER_TEMP"
+
+      - name: Compile and test the Kotlin output
+        run: |
+          export JAVA_HOME="$JAVA_HOME_17_X64"
+          "$RUNNER_TEMP/gradle-9.4.1/bin/gradle" -p android --console=plain :tokens:testDebugUnitTest
 
   swift-build:
     runs-on: macos-latest

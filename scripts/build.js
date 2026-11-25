@@ -574,6 +574,349 @@ function generateSwift(tokens) {
 }
 
 // ============================================================
+// KOTLIN / JETPACK COMPOSE GENERATOR (#128)
+// ============================================================
+//
+// One file an Android app copies from a release tag: the same groups as the
+// Swift package, and the same omissions (gradients and the marketing scale are
+// web only). It needs androidx.compose.ui and androidx.compose.material3, which
+// a Compose app already has. android/ compiles it and runs its tests in CI.
+
+// The Material 3 slot each size sits in: the slot whose default size is
+// nearest. Every size is in sp, so the system font size scales it wherever it
+// is used; the slot is where MaterialTheme carries it.
+//   bodySmall 12 · bodyMedium 14 · bodyLarge 16 · titleMedium 16 · headlineSmall 24 · displaySmall 36
+const KOTLIN_TEXT_STYLES = {
+  xs: 'bodySmall',
+  sm: 'bodyMedium',
+  base: 'bodyLarge',
+  lg: 'titleMedium',
+  xl: 'headlineSmall',
+  xxl: 'displaySmall',
+};
+
+const KOTLIN_KEYWORDS = new Set([
+  'as', 'break', 'class', 'continue', 'do', 'else', 'false', 'for', 'fun', 'if', 'in',
+  'interface', 'is', 'null', 'object', 'package', 'return', 'super', 'this', 'throw',
+  'true', 'try', 'typealias', 'typeof', 'val', 'var', 'when', 'while',
+]);
+const kotlinName = key => (KOTLIN_KEYWORDS.has(key) ? '`' + key + '`' : key);
+const kotlinNum = n => (Number.isInteger(n) ? String(n) : String(n));
+const kotlinFloat = n => `${Number.isInteger(n) ? `${n}` : `${n}`}f`;
+
+// "#RRGGBB" or "rgba(r, g, b, a)" as a Compose Color literal, 0xAARRGGBB. Alpha
+// is rounded to 8 bits, as a browser rounds it.
+function kotlinColor(value) {
+  const hex2 = n => Math.round(n).toString(16).padStart(2, '0').toUpperCase();
+  if (isRgba(value)) {
+    const [r, g, b, a] = value.slice(5, -1).split(',').map(s => Number(s.trim()));
+    return `Color(0x${hex2(a * 255)}${hex2(r)}${hex2(g)}${hex2(b)})`;
+  }
+  const h = value.replace('#', '').toUpperCase();
+  if (h.length !== 6) throw new Error(`Cannot write the colour "${value}" for Kotlin`);
+  return `Color(0xFF${h})`;
+}
+
+function generateKotlin(tokens) {
+  const { meta, brand, tokens: t } = tokens;
+  const lines = [];
+  const w = (line = '') => lines.push(line);
+  const sizeKeys = Object.keys(brand.typography.sizes);
+  const unmapped = sizeKeys.filter(k => !(k in KOTLIN_TEXT_STYLES));
+  if (unmapped.length) throw new Error(`typography.sizes without a Material 3 slot in KOTLIN_TEXT_STYLES: ${unmapped.join(', ')}`);
+  const missingLh = sizeKeys.filter(k => !(k in brand.typography.lineHeights));
+  if (missingLh.length) throw new Error(`typography.sizes without a lineHeight: ${missingLh.join(', ')}`);
+
+  w(`// IAMJARL design tokens v${meta.version} for Jetpack Compose. Generated from tokens.json by`);
+  w('// scripts/build.js: do not edit. Copy it from the release tag your app pins, as the');
+  w('// README says under "Android (Jetpack Compose)"; DesignTokens.VERSION is the version.');
+  w('// It needs androidx.compose.ui and androidx.compose.material3.');
+  w('@file:Suppress("EnumEntryName", "unused")');
+  w();
+  w('package com.iamjarl.design');
+  w();
+  w('import androidx.compose.animation.core.CubicBezierEasing');
+  w('import androidx.compose.foundation.isSystemInDarkTheme');
+  w('import androidx.compose.runtime.Composable');
+  w('import androidx.compose.ui.graphics.Color');
+  w('import androidx.compose.ui.platform.LocalDensity');
+  w('import androidx.compose.ui.text.TextStyle');
+  w('import androidx.compose.ui.text.font.FontWeight');
+  w('import androidx.compose.ui.unit.Dp');
+  w('import androidx.compose.ui.unit.TextUnit');
+  w('import androidx.compose.ui.unit.dp');
+  w('import androidx.compose.ui.unit.sp');
+  w();
+  w('/**');
+  w(' * The IAMJARL design tokens: the same groups as the Swift package, from the same');
+  w(' * tokens.json. Colours that follow the system\'s light or dark setting are in');
+  w(' * [Palette]; their two values are in [ColorToken.Light] and [ColorToken.Dark].');
+  w(' *');
+  w(' *     Text("Start", color = DesignTokens.Palette.Text.primary,');
+  w(' *          style = DesignTokens.Typography.Style.lg.textStyle)');
+  w(' */');
+  w('object DesignTokens {');
+  w('    /** The tokens.json version this file was generated from. */');
+  w(`    const val VERSION: String = "${meta.version}"`);
+  w();
+
+  const dpGroup = (name, obj, doc) => {
+    if (doc) w(`    /** ${doc} */`);
+    w(`    object ${name} {`);
+    for (const [k, v] of Object.entries(obj)) w(`        val ${kotlinName(k)}: Dp = ${kotlinNum(v)}.dp`);
+    w('    }');
+    w();
+  };
+  dpGroup('Spacing', t.spacing);
+  dpGroup('Radius', t.radius);
+
+  // Typography
+  w('    object Typography {');
+  w('        /** Sizes in sp, so the system font size scales them. */');
+  w('        object Size {');
+  for (const [k, v] of Object.entries(brand.typography.sizes)) w(`            val ${kotlinName(k)}: TextUnit = ${kotlinNum(v)}.sp`);
+  w('        }');
+  w();
+  w('        object LineHeight {');
+  for (const [k, v] of Object.entries(brand.typography.lineHeights)) w(`            val ${kotlinName(k)}: TextUnit = ${kotlinNum(v)}.sp`);
+  w('        }');
+  w();
+  w('        object Weight {');
+  for (const [k, v] of Object.entries(brand.typography.weights)) w(`            val ${kotlinName(k)}: FontWeight = FontWeight(${v})`);
+  w('        }');
+  w();
+  w('        /**');
+  w('         * The text scale, as styles in sp that follow the system font size. [material3]');
+  w('         * puts each in the Material 3 slot nearest it, so MaterialTheme carries the scale.');
+  w('         */');
+  w('        enum class Style(val size: TextUnit, val lineHeight: TextUnit, val material3Slot: String) {');
+  sizeKeys.forEach((k, i) => w(`            ${k}(Size.${k}, LineHeight.${k}, "${KOTLIN_TEXT_STYLES[k]}")${i === sizeKeys.length - 1 ? ';' : ','}`));
+  w();
+  w('            val textStyle: TextStyle get() = TextStyle(fontSize = size, lineHeight = lineHeight)');
+  w('        }');
+  w();
+  w('        /**');
+  w(`         * Material 3's type scale with the token sizes in their slots: ${sizeKeys.map(k => `${k} ${KOTLIN_TEXT_STYLES[k]}`).join(', ')}.`);
+  w('         * Every other property of a slot is Material 3\'s own. Pass it to MaterialTheme.');
+  w('         */');
+  w('        fun material3(');
+  w('            base: androidx.compose.material3.Typography = androidx.compose.material3.Typography(),');
+  w('        ): androidx.compose.material3.Typography = base.copy(');
+  for (const k of sizeKeys) {
+    const slot = KOTLIN_TEXT_STYLES[k];
+    w(`            ${slot} = base.${slot}.copy(fontSize = Size.${k}, lineHeight = LineHeight.${k}),`);
+  }
+  w('        )');
+  w();
+  const numeralKeys = Object.keys(brand.typography.numerals ?? {});
+  w('        /** Numbers that are the interface: timers, counters, readouts. Set one with [numeral]. */');
+  w('        enum class Numeral(val size: TextUnit) {');
+  numeralKeys.forEach((k, i) => w(`            ${k}(${brand.typography.numerals[k]}.sp)${i === numeralKeys.length - 1 ? ';' : ','}`));
+  w('        }');
+  w();
+  w('        /** How far a numeral may grow with the system font size, as a multiple of its size. */');
+  w('        const val numeralMaxScale: Float = 1.5f');
+  w();
+  w('        /**');
+  w('         * A numeral\'s style: tabular digits, so it does not shift sideways as the digits');
+  w('         * change, growing with the system font size up to [numeralMaxScale].');
+  w('         */');
+  w('        @Composable');
+  w('        fun numeral(numeral: Numeral, weight: FontWeight = FontWeight.Bold): TextStyle {');
+  w('            val fontScale = LocalDensity.current.fontScale');
+  w('            val scale = minOf(fontScale, numeralMaxScale)');
+  w('            return TextStyle(');
+  w('                fontSize = (numeral.size.value * scale / fontScale).sp,');
+  w('                fontWeight = weight,');
+  w('                fontFeatureSettings = "tnum",');
+  w('            )');
+  w('        }');
+  w('    }');
+  w();
+
+  // Shadows
+  if (t.shadows) {
+    w('    object Shadow {');
+    w('        data class Value(val x: Dp, val y: Dp, val blur: Dp, val opacity: Float)');
+    w();
+    for (const [k, v] of Object.entries(t.shadows)) {
+      w(`        val ${kotlinName(k)}: Value = Value(x = ${kotlinNum(v.x)}.dp, y = ${kotlinNum(v.y)}.dp, blur = ${kotlinNum(v.blur)}.dp, opacity = ${kotlinFloat(v.opacity)})`);
+    }
+    w('    }');
+    w();
+  }
+
+  // Motion
+  if (t.motion) {
+    w('    object Motion {');
+    w('        /** Milliseconds, as tween() and the animation specs take them. */');
+    w('        object Duration {');
+    for (const [k, v] of Object.entries(t.motion.duration)) w(`            const val ${kotlinName(k)}: Int = ${v}`);
+    w('        }');
+    w();
+    w('        object Easing {');
+    for (const [k, [a, b, c, d]] of Object.entries(t.motion.easing)) {
+      w(`            val ${kotlinName(k)}: CubicBezierEasing = CubicBezierEasing(${kotlinFloat(a)}, ${kotlinFloat(b)}, ${kotlinFloat(c)}, ${kotlinFloat(d)})`);
+    }
+    w('        }');
+    w('    }');
+    w();
+  }
+
+  if (t.container) dpGroup('Container', t.container);
+  if (t.breakpoints) dpGroup('Breakpoint', t.breakpoints, 'Widths in dp, for adaptive layouts.');
+  if (t.focus) dpGroup('Focus', t.focus);
+
+  if (t.zIndex) {
+    w('    /** For Modifier.zIndex(). */');
+    w('    object ZIndex {');
+    for (const [k, v] of Object.entries(t.zIndex)) w(`        const val ${kotlinName(k)}: Float = ${kotlinFloat(v)}`);
+    w('    }');
+    w();
+  }
+  if (t.opacity) {
+    w('    object Opacity {');
+    for (const [k, v] of Object.entries(t.opacity)) w(`        const val ${kotlinName(k)}: Float = ${kotlinFloat(v)}`);
+    w('    }');
+    w();
+  }
+
+  // Colours
+  const colorLine = (indent, k, v) => `${indent}val ${kotlinName(k)}: Color = ${kotlinColor(v)}${isRgba(v) ? ` // ${v}` : ''}`;
+  w('    object ColorToken {');
+  for (const [k, v] of Object.entries(t.colors.static)) w(colorLine('        ', k, v));
+  w();
+  w('        /** The shared state fills. Not mode-dependent; pair each with its on- colour. */');
+  w('        object State {');
+  for (const [k, v] of Object.entries(t.colors.shared)) w(colorLine('            ', k, v));
+  w('        }');
+  for (const mode of ['light', 'dark']) {
+    const m = t.colors.modes[mode];
+    w();
+    w(`        object ${swiftGroup(mode)} {`);
+    for (const [k, v] of Object.entries(m)) if (typeof v === 'string') w(colorLine('            ', k, v));
+    // gradients are CSS only, as in the Swift package.
+    for (const [g, obj] of Object.entries(m)) {
+      if (typeof obj !== 'object' || g === 'gradients') continue;
+      w();
+      w(`            object ${swiftGroup(g)} {`);
+      for (const [k, v] of Object.entries(obj)) w(colorLine('                ', k, v));
+      w('            }');
+    }
+    w('        }');
+  }
+  w('    }');
+  w();
+  w('    /** Light or dark by a flag: the choice [adaptive] makes from the system setting. */');
+  w('    fun <T> pick(light: T, dark: T, isDark: Boolean): T = if (isDark) dark else light');
+  w();
+  w('    /** A colour that follows the system\'s light or dark setting, as DesignTokens.adaptive does in SwiftUI. */');
+  w('    @Composable');
+  w('    fun adaptive(light: Color, dark: Color): Color = pick(light, dark, isSystemInDarkTheme())');
+  w();
+  w('    /**');
+  w('     * Every mode-aware colour, following the system\'s light or dark setting. The');
+  w('     * shared state fills are not mode-dependent and stay in [ColorToken.State].');
+  w('     */');
+  w('    object Palette {');
+  const entries = paletteEntries(t.colors.modes);
+  const ref = e => e.slice(0, -1).map(swiftGroup).concat(kotlinName(e[e.length - 1])).join('.');
+  const getter = (indent, e) =>
+    `${indent}val ${kotlinName(e[e.length - 1])}: Color @Composable get() = adaptive(ColorToken.Light.${ref(e)}, ColorToken.Dark.${ref(e)})`;
+  for (const e of entries.filter(x => x.length === 1)) w(getter('        ', e));
+  for (const g of [...new Set(entries.filter(x => x.length === 2).map(x => x[0]))]) {
+    w();
+    w(`        object ${swiftGroup(g)} {`);
+    for (const e of entries.filter(x => x.length === 2 && x[0] === g)) w(getter('            ', e));
+    w('        }');
+  }
+  w('    }');
+  w('}');
+  w();
+  return lines.join('\n');
+}
+
+// The Kotlin tests, next to the Swift package's: every value against the string
+// tokens.json holds, in light and in dark, parsed in Kotlin rather than taken
+// from the generator, so a wrong conversion fails.
+function generateKotlinTests(tokens) {
+  const { meta, brand, tokens: t } = tokens;
+  const entries = paletteEntries(t.colors.modes);
+  const ref = e => e.slice(0, -1).map(swiftGroup).concat(kotlinName(e[e.length - 1])).join('.');
+  const head = cls => [
+    `// Auto-generated by scripts/build.js from tokens.json v${meta.version}. Do not edit manually.`,
+    '',
+    'package com.iamjarl.design',
+    '',
+  ];
+  const palette = [
+    ...head(),
+    'import org.junit.Assert.assertEquals',
+    'import org.junit.Test',
+    '',
+    `/** One check per mode-aware colour (${entries.length}) in light and in dark, and each shared and static colour. */`,
+    'class PaletteTests {',
+    '    @Test',
+    '    fun everyColourIsItsToken() {',
+    `        assertEquals("${meta.version}", DesignTokens.VERSION)`,
+    ...Object.entries(t.colors.static).map(([k, v]) => `        assertColour("${v}", DesignTokens.ColorToken.${kotlinName(k)}, "static.${k}")`),
+    ...Object.entries(t.colors.shared).map(([k, v]) => `        assertColour("${v}", DesignTokens.ColorToken.State.${kotlinName(k)}, "shared.${k}")`),
+    ...['light', 'dark'].flatMap(mode => entries.map(e => {
+      const v = e.reduce((o, k) => o[k], t.colors.modes[mode]);
+      return `        assertColour("${v}", DesignTokens.ColorToken.${swiftGroup(mode)}.${ref(e)}, "${mode}.${e.join('.')}")`;
+    })),
+    '    }',
+    '',
+    '    @Test',
+    '    fun pickFollowsTheSetting() {',
+    '        assertEquals(DesignTokens.ColorToken.Light.primary, DesignTokens.pick(DesignTokens.ColorToken.Light.primary, DesignTokens.ColorToken.Dark.primary, isDark = false))',
+    '        assertEquals(DesignTokens.ColorToken.Dark.primary, DesignTokens.pick(DesignTokens.ColorToken.Light.primary, DesignTokens.ColorToken.Dark.primary, isDark = true))',
+    '    }',
+    '}',
+    '',
+  ].join('\n');
+  const sizeKeys = Object.keys(brand.typography.sizes);
+  const scale = [
+    ...head(),
+    'import androidx.compose.ui.unit.dp',
+    'import androidx.compose.ui.unit.sp',
+    'import org.junit.Assert.assertEquals',
+    'import org.junit.Test',
+    '',
+    '/** Spacing, radius, type, motion and opacity against tokens.json. */',
+    'class ScaleTests {',
+    '    @Test',
+    '    fun spacingAndRadiusAreDp() {',
+    ...Object.entries(t.spacing).map(([k, v]) => `        assertEquals(${kotlinNum(v)}.dp, DesignTokens.Spacing.${kotlinName(k)})`),
+    ...Object.entries(t.radius).map(([k, v]) => `        assertEquals(${kotlinNum(v)}.dp, DesignTokens.Radius.${kotlinName(k)})`),
+    '    }',
+    '',
+    '    @Test',
+    '    fun typeIsSpInItsMaterial3Slot() {',
+    '        val m3 = DesignTokens.Typography.material3()',
+    ...sizeKeys.flatMap(k => [
+      `        assertEquals(${brand.typography.sizes[k]}.sp, DesignTokens.Typography.Style.${k}.textStyle.fontSize)`,
+      `        assertEquals(${brand.typography.lineHeights[k]}.sp, DesignTokens.Typography.Style.${k}.textStyle.lineHeight)`,
+      `        assertEquals(${brand.typography.sizes[k]}.sp, m3.${KOTLIN_TEXT_STYLES[k]}.fontSize)`,
+      `        assertEquals("${KOTLIN_TEXT_STYLES[k]}", DesignTokens.Typography.Style.${k}.material3Slot)`,
+    ]),
+    ...Object.entries(brand.typography.numerals ?? {}).map(([k, v]) => `        assertEquals(${v}.sp, DesignTokens.Typography.Numeral.${k}.size)`),
+    ...Object.entries(brand.typography.weights).map(([k, v]) => `        assertEquals(${v}, DesignTokens.Typography.Weight.${kotlinName(k)}.weight)`),
+    '    }',
+    '',
+    '    @Test',
+    '    fun motionIsMillisecondsAndOpacityAFraction() {',
+    ...Object.entries(t.motion.duration).map(([k, v]) => `        assertEquals(${v}, DesignTokens.Motion.Duration.${kotlinName(k)})`),
+    ...Object.entries(t.opacity).map(([k, v]) => `        assertEquals(${kotlinFloat(v)}, DesignTokens.Opacity.${kotlinName(k)}, 0f)`),
+    ...Object.entries(t.zIndex).map(([k, v]) => `        assertEquals(${kotlinFloat(v)}, DesignTokens.ZIndex.${kotlinName(k)}, 0f)`),
+    '    }',
+    '}',
+    '',
+  ].join('\n');
+  return { 'PaletteTests.kt': palette, 'ScaleTests.kt': scale };
+}
+
+// ============================================================
 // CSS GENERATOR
 // ============================================================
 
@@ -1579,7 +1922,7 @@ const README_PINS = [
   /(iamjarl-design#v)\d+\.\d+\.\d+/g,             // npm from GitHub
   /(iamjarl-design\.git", from: ")\d+\.\d+\.\d+/g, // Swift Package Manager
   /(iamjarl-design\/archive\/refs\/tags\/v)\d+\.\d+\.\d+/g, // a copy served from the site itself
-  /(raw\.githubusercontent\.com\/JarlLyng\/iamjarl-design\/v)\d+\.\d+\.\d+(?=\/dist\/(?:vendor\.mjs|sri\.json))/g, // the copy script
+  /(raw\.githubusercontent\.com\/JarlLyng\/iamjarl-design\/v)\d+\.\d+\.\d+(?=\/dist\/(?:vendor\.mjs|sri\.json|kotlin\/DesignTokens\.kt))/g, // the copy script, the Kotlin file
   /(iamjarl-vendor\.mjs v)\d+\.\d+\.\d+/g,             // running it
 ];
 
@@ -1732,6 +2075,13 @@ async function main() {
   for (const [f, html] of storeFragments) writeFile(path.join(storeDir, f), html);
   writeReadmeExample(storeFragments);
   writeFile(path.join(ROOT, 'Tests', 'IAMJARLDesignTokensTests', 'PaletteTests.swift'), generateSwiftPaletteTests(tokens));
+
+  // Kotlin for Jetpack Compose (#128), and its tests in the Gradle module that
+  // compiles it (android/).
+  writeFile(path.join(ROOT, 'dist', 'kotlin', 'DesignTokens.kt'), generateKotlin(tokens));
+  for (const [name, src] of Object.entries(generateKotlinTests(tokens))) {
+    writeFile(path.join(ROOT, 'android', 'tokens', 'src', 'test', 'kotlin', 'com', 'iamjarl', 'design', name), src);
+  }
 
   // Build-time cross-link fragments, one per shipped app
   const fragments = await generateFooterFragments(tokens);
